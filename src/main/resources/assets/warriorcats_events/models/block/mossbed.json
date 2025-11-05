@@ -1,0 +1,9 @@
+{
+  "parent": "warriorcats_events:custom/moss_bed",
+  "textures": {
+    "all": "warriorcats_events:block/mossbed",
+    "particle": "minecraft:block/azalea_leaves",
+    "1": "warriorcats_events:block/mossbed"
+  },
+  "render_type": "solid"
+}

@@ -1,0 +1,7 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "warriorcats_events:item/moss_bed_item"
+  },
+  "render_type": "translucent"
+}

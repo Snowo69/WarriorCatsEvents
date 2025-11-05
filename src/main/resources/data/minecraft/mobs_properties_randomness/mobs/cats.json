@@ -1,0 +1,60 @@
+{
+    "target": "#warriorcats:warriors",
+    "properties": [
+        {
+    "property": "attribute_modifier",
+    "attribute": "minecraft:generic.max_health",
+    "modifier_name": "More health to target",
+    "amount": {
+        "min": 8,
+        "max": 16
+    },
+    "operation": "addition"
+},
+{
+    "property": "event",
+    "event": "attack",
+    "id": "warriorcats:bleedin",
+    "target": "other",
+    "function": "warriorcats:hiss_at_hit", 
+    "apply_properties": [{
+        "property": "potion_effect",
+        "effect": "minecraft:wither",
+        "hide_particles": true,
+        "amplifier": 3,
+        "duration": 2
+        
+    },
+    {
+        "property": "potion_effect",
+        "effect": "alexsmobs:fear",
+        "amplifier": 0,
+        "duration": 2
+    }
+    ]
+},
+{
+    "property": "event",
+    "event": "kill",
+    "id": "warriorcats:stamina",
+    "target": "this",
+    "function": "warriorcats:purr_at_kill", 
+    "apply_properties": [{
+            "property": "potion_effect",
+            "effect": "minecraft:regeneration",
+            "hide_particles": true,
+            "amplifier": 3,
+            "duration": 3
+        },
+        {
+            "property": "potion_effect",
+            "effect": "minecraft:speed",
+            "hide_particles": true,
+            "amplifier": 3,
+            "duration": 3
+        }
+    ]
+}
+    ]
+    
+}
