@@ -1,6 +1,6 @@
 {
   "parent": "block/mimic",
   "textures": {
-    "layer0": "warriorcats_events:block/sorrel"
+    "layer0": "warriorcats_events:block/daisy"
   }
 }

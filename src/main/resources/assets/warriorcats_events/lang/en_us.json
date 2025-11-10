@@ -1,6 +1,32 @@
 {
-  "block.warriorcats_events.mossbed": "Moss nest",
+  "block.warriorcats_events.mossbed": "Moss Nest",
+  "block.warriorcats_events.mossbed.tooltip": "A comfortable moss nest, lined with feathers and ferns",
+
   "item.warriorcats_events.dock_leaves": "Dock Leaves",
-  "item.warriorcats_events.sorrel": "Sorrel",
-  "item.warriorcats_events.starclan_knowledge": "Starclan's Knowledge"
+  "item.warriorcats_events.dock_leaves.tooltip": "Good for making poultices and wraping herbs",
+
+  "item.warriorcats_events.sorrel_leaves": "Sorrel Leaves",
+  "item.warriorcats_events.sorrel_leaves.tooltip": "Traveling herb. Used to ease hunger",
+
+
+  "item.warriorcats_events.starclan_knowledge": "Starclan's Knowledge",
+  "item.warriorcats_events.starclan_knowledge.tooltip": "Contains the 9 lives ceremony",
+
+  "item.warriorcats_events.dock_poultice": "Dock Poultice",
+  "item.warriorcats_events.dock_poultice.tooltip": "Good for scratches and sore pads",
+
+  "item.warriorcats_events.burnet_leaves": "Burnet Leaves",
+  "item.warriorcats_events.burnet_leaves.tooltip": "Traveling herb. Used to give strength",
+
+  "item.warriorcats_events.chamomile": "Chamomile",
+  "item.warriorcats_events.chamomile.tooltip": "Traveling herb. Strengthens the heart and soothes the mind",
+
+  "item.warriorcats_events.daisy_leaves": "Daisy Leaves",
+  "item.warriorcats_events.daisy_leaves.tooltip": "Traveling herb. Eases the pain of aching joints",
+
+  "item.warriorcats_events.traveling_herbs": "Traveling Herbs",
+  "item.warriorcats_events.traveling_herbs.tooltip": "A bundle of sorrel, burnet, chamomile, and daisy. Perfect for traveling",
+
+  "warriorcats_events.ModBookItem.notleader": "You are not a leader"
+
 }

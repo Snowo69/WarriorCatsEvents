@@ -1,0 +1,7 @@
+{
+  "parent": "block/cross",
+  "textures": {
+    "cross": "warriorcats_events:block/chamomile_stems"
+  },
+  "render_type": "cutout"
+}

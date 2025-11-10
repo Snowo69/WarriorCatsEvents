@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "": [
+      { "model": "warriorcats_events:block/deathberries_bush", "x": 0, "y": 0 },
+      { "model": "warriorcats_events:block/deathberries_bush", "x": 0, "y": 90 },
+      { "model": "warriorcats_events:block/deathberries_bush", "x": 0, "y": 180 },
+      { "model": "warriorcats_events:block/deathberries_bush", "x": 0, "y": 270 }
+    ]
+  }
+}

@@ -6,7 +6,7 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
-import net.snowteb.warriorcats_events.item.custom.ModBookItem;
+import net.snowteb.warriorcats_events.item.custom.*;
 
 public class ModItems {
     public static final DeferredRegister<Item> ITEMS =
@@ -16,11 +16,27 @@ public class ModItems {
 
 
     public static final RegistryObject<Item> DOCK_LEAVES = ITEMS.register("dock_leaves",
-            () -> new Item(new Item.Properties()));
-    public static final RegistryObject<Item> SORREL = ITEMS.register("sorrel",
-            () -> new Item(new Item.Properties().food(ModFoodHerbs.SORREL)));
+            () -> new ItemWithToolTip(new Item.Properties(), "item.warriorcats_events.dock_leaves.tooltip"));
+    public static final RegistryObject<Item> SORREL = ITEMS.register("sorrel_leaves",
+            () -> new ItemWithToolTip(new Item.Properties().food(ModFoodHerbs.SORREL),
+                    "item.warriorcats_events.sorrel_leaves.tooltip"));
+    public static final RegistryObject<Item> BURNET = ITEMS.register("burnet_leaves",
+            () -> new ItemWithToolTip(new Item.Properties().food(ModFoodHerbs.BURNET),
+                    "item.warriorcats_events.burnet_leaves.tooltip"));
+    public static final RegistryObject<Item> CHAMOMILE = ITEMS.register("chamomile",
+            () -> new ItemWithToolTip(new Item.Properties().food(ModFoodHerbs.CHAMOMILE),
+                    "item.warriorcats_events.chamomile.tooltip"));
+    public static final RegistryObject<Item> DAISY = ITEMS.register("daisy_leaves",
+            () -> new ItemWithToolTip(new Item.Properties().food(ModFoodHerbs.DAISY),
+                    "item.warriorcats_events.daisy_leaves.tooltip"));
+    public static final RegistryObject<Item> TRAVELING_HERBS = ITEMS.register("traveling_herbs",
+            () -> new ItemWithToolTip(new Item.Properties().food(ModFoodHerbs.TRAVELING_HERBS),
+            "item.warriorcats_events.traveling_herbs.tooltip"));
+
     public static final RegistryObject<Item> STARCLAN_KNOWLEDGE = ITEMS.register("starclan_knowledge",
-            () -> new ModBookItem(new Item.Properties().stacksTo(1)));
+            () -> new ModBookItemToolTip(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> DOCK_POULTICE = ITEMS.register("dock_poultice",
+            () -> new PoulticeTooltip(new Item.Properties().stacksTo(16)));
 
 
     /* public static final RegistryObject<Item> STARCLAN_BOOK = ITEMS.register("starclan_book",

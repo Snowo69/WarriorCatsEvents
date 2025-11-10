@@ -1,0 +1,7 @@
+{
+  "parent": "block/cross",
+  "textures": {
+    "cross": "warriorcats_events:block/burnet"
+  },
+  "render_type": "cutout"
+}

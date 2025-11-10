@@ -1,0 +1,9 @@
+{
+  "parent": "warriorcats_events:custom/stone_cleft",
+  "textures": {
+    "0": "warriorcats_events:block/stone_cleft_1",
+    "1": "warriorcats_events:block/stone_cleft_2",
+    "particle": "warriorcats_events:block/stone_cleft_1"
+  },
+  "render_type": "solid"
+}

@@ -13,7 +13,8 @@ import net.minecraft.core.BlockPos;
 
 public class MossbedBlock extends Block {
 	public MossbedBlock() {
-		super(BlockBehaviour.Properties.of().sound(SoundType.MOSS).strength(0.4f, 10f).noOcclusion().isRedstoneConductor((bs, br, bp) -> false));
+		super(BlockBehaviour.Properties.of().sound(SoundType.MOSS).strength(0.4f, 10f)
+                .noOcclusion().isRedstoneConductor((bs, br, bp) -> false));
 	}
 
 
