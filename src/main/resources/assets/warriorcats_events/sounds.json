@@ -1,0 +1,41 @@
+{
+  "riverclan": {
+    "sounds": [
+      {
+        "name": "warriorcats_events:riverclan",
+        "stream": true
+      }
+    ]
+  },
+
+  "entity.mouse.ambient": {
+    "sounds": [
+      { "name": "warriorcats_events:entity/mouse/mouse_ambient_1", "volume": 1.0, "pitch": 1.0 },
+      { "name": "warriorcats_events:entity/mouse/mouse_ambient_2", "volume": 1.0, "pitch": 1.0 },
+      { "name": "warriorcats_events:entity/mouse/mouse_ambient_3", "volume": 1.0, "pitch": 1.0 }
+    ]
+  },
+
+  "entity.mouse.hurt": {
+    "sounds": [
+      { "name": "warriorcats_events:entity/mouse/mouse_hurt_1", "volume": 0.7, "pitch": 1.0 },
+      { "name": "warriorcats_events:entity/mouse/mouse_hurt_2", "volume": 0.7, "pitch": 1.0 }
+    ]
+  },
+
+  "entity.mouse.death": {
+    "sounds": [
+      { "name": "warriorcats_events:entity/mouse/mouse_death", "volume": 0.7, "pitch": 0.9 }
+    ]
+  },
+
+
+  "entity.wildcat.scream": {
+    "sounds": [
+      { "name": "warriorcats_events:entity/wildcat/wildcat_scream1", "volume": 0.7, "pitch": 1.4 },
+      { "name": "warriorcats_events:entity/wildcat/wildcat_scream2", "volume": 0.7, "pitch": 1.4 },
+      { "name": "warriorcats_events:entity/wildcat/wildcat_scream3", "volume": 0.7, "pitch": 1.4 }
+    ]
+  }
+
+}

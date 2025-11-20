@@ -10,7 +10,7 @@ import net.snowteb.warriorcats_events.WarriorCatsEvents;
 
 public class ModTags {
     public static class Blocks {
-        public static final TagKey<Block> CUSTOMHERBBLOCKS = tag("custom_herb_blocks"); {}
+        public static final TagKey<Block> CUSTOMHERBBLOCKS = tag("custom_herb_blocks");
 
 
 
@@ -19,11 +19,13 @@ public class ModTags {
         }
     }
     public static class Items {
+        public static final TagKey<Item> PREY = tag("prey");
+        public static final TagKey<Item> HERBS = tag("herbs");
 
 
 
         private static TagKey<Item> tag(String name) {
-            return ItemTags.create(new ResourceLocation(WarriorCatsEvents.MODID, name));
+               return ItemTags.create(new ResourceLocation(WarriorCatsEvents.MODID, name));
         }
     }
 }

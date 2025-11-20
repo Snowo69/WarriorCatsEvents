@@ -1,0 +1,35 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_dock_leaves": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "warriorcats_events:dock_leaves"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "warriorcats_events:warrior_name_randomizer"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_dock_leaves",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "warriorcats_events:warrior_name_randomizer"
+    ]
+  },
+  "sends_telemetry_event": false
+}

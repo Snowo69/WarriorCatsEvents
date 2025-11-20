@@ -1,7 +1,0 @@
-{
-  "parent": "block/cross",
-  "textures": {
-    "cross": "warriorcats_events:block/sorrel"
-  },
-  "render_type": "cutout"
-}

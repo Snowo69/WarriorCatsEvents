@@ -1,5 +1,5 @@
 {
-    "target": "#warriorcats:warriors",
+    "target": "#warriorcats_events:warriors",
     "properties": [
         {
     "property": "attribute_modifier",
@@ -14,9 +14,9 @@
 {
     "property": "event",
     "event": "attack",
-    "id": "warriorcats:bleedin",
+    "id": "warriorcats_events:bleedin",
     "target": "other",
-    "function": "warriorcats:hiss_at_hit", 
+    "function": "warriorcats_events:hiss_at_hit",
     "apply_properties": [{
         "property": "potion_effect",
         "effect": "minecraft:wither",
@@ -38,7 +38,7 @@
     "event": "kill",
     "id": "warriorcats:stamina",
     "target": "this",
-    "function": "warriorcats:purr_at_kill", 
+    "function": "warriorcats_events:purr_at_kill",
     "apply_properties": [{
             "property": "potion_effect",
             "effect": "minecraft:regeneration",

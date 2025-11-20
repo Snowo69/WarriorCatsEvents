@@ -1,5 +1,6 @@
 package net.snowteb.warriorcats_events.item.custom;
 
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -20,17 +21,23 @@ public class ModBookItem extends Item {
         if (!level.isClientSide && hand == InteractionHand.MAIN_HAND) {
             ServerLevel serverLevel = (ServerLevel) level;
 
-            // Ejecutar la función
+            if (player.getTags().contains("leader")) {
             serverLevel.getServer().getCommands().performPrefixedCommand(
                     serverLevel.getServer().createCommandSourceStack()
                             .withEntity(player)
                             .withSuppressedOutput(),
-                    "function warriorcats:starbook"
+                    "function warriorcats_events:starbook"
             );
 
+                itemStack.hurtAndBreak(1, player, (p) ->
+                        p.broadcastBreakEvent(hand));
+
+            } else {
+
+            player.displayClientMessage(Component.translatable("warriorcats_events.ModBookItem.notleader"), true);
+        }
             // Romper el ítem (1 uso)
-            itemStack.hurtAndBreak(1, player, (p) ->
-                    p.broadcastBreakEvent(hand));
+
         }
 
         return InteractionResultHolder.success(itemStack);

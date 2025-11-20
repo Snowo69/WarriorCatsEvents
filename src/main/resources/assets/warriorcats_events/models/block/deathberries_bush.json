@@ -1,7 +1,0 @@
-{
-  "parent": "block/cross",
-  "textures": {
-    "cross": "warriorcats_events:block/deathberries_bush"
-  },
-  "render_type": "cutout"
-}

@@ -3,9 +3,12 @@ package net.snowteb.warriorcats_events.datagen;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.ItemTagsProvider;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
+import net.snowteb.warriorcats_events.block.ModBlocks;
+import net.snowteb.warriorcats_events.item.ModItems;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.CompletableFuture;
@@ -18,6 +21,16 @@ public class ModItemTagGenerator extends ItemTagsProvider {
 
     @Override
     protected void addTags(HolderLookup.Provider pProvider) {
+
+        this.tag(ItemTags.MUSIC_DISCS).add(ModItems.RIVERCLAN_MUSIC_DISC.get());
+        this.tag(ItemTags.CREEPER_DROP_MUSIC_DISCS).add(ModItems.RIVERCLAN_MUSIC_DISC.get());
+
+        this.tag(ItemTags.LOGS_THAT_BURN)
+                .add(ModBlocks.DARK_LOG.get().asItem())
+                .add(ModBlocks.STRIPPED_DARK_LOG.get().asItem())
+                .add(ModBlocks.STARRY_LOG.get().asItem())
+                .add(ModBlocks.STRIPPED_STARRY_LOG.get().asItem());
+
 
     }
 }

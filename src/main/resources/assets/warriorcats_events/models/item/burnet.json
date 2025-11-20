@@ -1,6 +1,0 @@
-{
-  "parent": "block/mimic",
-  "textures": {
-    "layer0": "warriorcats_events:block/burnet"
-  }
-}

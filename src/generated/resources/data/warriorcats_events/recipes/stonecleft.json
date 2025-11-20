@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "tag": "minecraft:saplings"
+    },
+    "B": {
+      "item": "minecraft:cobblestone"
+    },
+    "C": []
+  },
+  "pattern": [
+    "ABA",
+    "BCB",
+    "ABA"
+  ],
+  "result": {
+    "item": "warriorcats_events:stonecleft"
+  },
+  "show_notification": true
+}

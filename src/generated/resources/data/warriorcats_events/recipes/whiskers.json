@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "tag": "minecraft:saplings"
+    },
+    {
+      "item": "minecraft:wheat_seeds"
+    },
+    {
+      "tag": "warriorcats_events:herbs"
+    },
+    {
+      "item": "minecraft:leather"
+    }
+  ],
+  "result": {
+    "count": 8,
+    "item": "warriorcats_events:whiskers"
+  }
+}

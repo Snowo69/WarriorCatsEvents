@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "aba",
+    "bcb",
+    "aba"
+  ],
+"key": {
+  "a": {"item": "warrior_cats_tweaks:healingherbs"},
+  "b": {"item": "minecraft:sugar_cane"},
+  "c": {"item": "warrior_cats_tweaks:paw"}
+},
+  "result": {
+    "item": "warriorcats_events:starclan_knowledge"
+
+  }
+}

@@ -15,21 +15,21 @@ public class ModFoodHerbs {
     // A traveling herb. The leaves are swallowed. Used to give strength. Good for expecting queens.
     public static final FoodProperties BURNET = new FoodProperties.Builder().alwaysEat().fast()
             .nutrition(1).saturationMod(2f)
-            .effect(() -> new MobEffectInstance(MobEffects.DAMAGE_BOOST,450,0),0.6f)
+            .effect(() -> new MobEffectInstance(MobEffects.DAMAGE_BOOST,1200,0),0.6f)
             .effect(() -> new MobEffectInstance(MobEffects.CONFUSION,140,0),1f)
             .build();
 
     // Strengthens the heart and soothes the mind. Also given to traveling cats for strength.
     public static final FoodProperties CHAMOMILE = new FoodProperties.Builder().alwaysEat().fast()
             .nutrition(1).saturationMod(2f)
-            .effect(() -> new MobEffectInstance(MobEffects.MOVEMENT_SPEED,450,0),0.6f)
+            .effect(() -> new MobEffectInstance(MobEffects.MOVEMENT_SPEED,1200,0),0.6f)
             .effect(() -> new MobEffectInstance(MobEffects.CONFUSION,140,0),1f)
             .build();
 
     // Chewed into a paste. Eases the pain of aching joints, such as back pain. It is also a traveling herb.
     public static final FoodProperties DAISY = new FoodProperties.Builder().alwaysEat().fast()
             .nutrition(1).saturationMod(2f)
-            .effect(() -> new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE,450,0),0.6f)
+            .effect(() -> new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE,1200,0),0.6f)
             .effect(() -> new MobEffectInstance(MobEffects.CONFUSION,140,0),1f)
             .build();
 
@@ -42,4 +42,25 @@ public class ModFoodHerbs {
             .effect(() -> new MobEffectInstance(MobEffects.CONFUSION,140,0),1f)
             .build();
 
+    public static final FoodProperties DEATHBERRIES = new FoodProperties.Builder().alwaysEat().fast()
+            .nutrition(1).saturationMod(2f)
+            .effect(() -> new MobEffectInstance(MobEffects.HARM,1,1),1f)
+            .effect(() -> new MobEffectInstance(MobEffects.WITHER,1800,0),1f)
+            .effect(() -> new MobEffectInstance(MobEffects.CONFUSION,1800,0),1f)
+            .effect(() -> new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN,1800,3),1f)
+            .build();
+
+    public static final FoodProperties CATMINT = new FoodProperties.Builder().alwaysEat().fast()
+            .nutrition(1).saturationMod(2f)
+            .effect(() -> new MobEffectInstance(MobEffects.REGENERATION,1200,0),0.6f)
+            .effect(() -> new MobEffectInstance(MobEffects.SLOW_FALLING,140,0),1.0f)
+            .effect(() -> new MobEffectInstance(MobEffects.LEVITATION,30,0),0.1f)
+            .build();
+
+
+
+    public static final FoodProperties MOUSE_FOOD = new FoodProperties.Builder()
+            .nutrition(8).saturationMod(12f).build();
+    public static final FoodProperties SQUIRREL_FOOD = new FoodProperties.Builder()
+            .nutrition(10).saturationMod(14f).build();
 }
