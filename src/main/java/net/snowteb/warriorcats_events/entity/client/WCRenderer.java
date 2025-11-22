@@ -114,6 +114,11 @@ public class WCRenderer extends GeoEntityRenderer<WCatEntity> {
             case 9 -> 1.1f;
             case 10 -> 1.0f;
             case 11 -> 0.9f;
+            case 12 -> 0.9f; //chestnutpatch
+            case 13 -> 1.0f; //ratstar
+            case 14 -> 0.8f; //twitchstream
+            case 15 -> 1.1f; //blazepit
+            case 16 -> 1.0f; //blazepit
             default -> 1.0f;
         };
 
@@ -127,11 +132,15 @@ public class WCRenderer extends GeoEntityRenderer<WCatEntity> {
                        PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
 
         if (entity.isBaby()) {
-            poseStack.scale(0.6f, 0.6f, 0.6f);
+            poseStack.scale(0.4f, 0.4f, 0.4f);
+        }
+        if (entity.isAppScale() && entity.isBaby()){
+            poseStack.scale(1.75f, 1.75f, 1.75f);
         }
 
         super.render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
     }
+
 }
 
 

@@ -29,7 +29,6 @@ public class ModEntities {
                     () -> EntityType.Builder.of(SquirrelEntity::new, MobCategory.CREATURE)
                             .sized(0.5f,0.5f)
                             .build(new ResourceLocation(WarriorCatsEvents.MODID, "squirrel").toString()));
-
     public static final RegistryObject<EntityType<WCatEntity>> WCAT =
             ENTITY_TYPES.register("warrior_cat",
                     () -> EntityType.Builder.of(WCatEntity::new, MobCategory.CREATURE)

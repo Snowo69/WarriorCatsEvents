@@ -1,6 +1,5 @@
 package net.snowteb.warriorcats_events.screen;
 
-import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -12,7 +11,6 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.items.SlotItemHandler;
 import net.snowteb.warriorcats_events.block.ModBlocks;
 import net.snowteb.warriorcats_events.block.entity.StoneCleftBlockEntity;
-import org.jetbrains.annotations.Nullable;
 
 public class StoneCleftMenu extends AbstractContainerMenu {
     public final StoneCleftBlockEntity blockEntity;

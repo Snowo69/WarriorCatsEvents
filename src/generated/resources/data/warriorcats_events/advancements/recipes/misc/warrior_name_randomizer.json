@@ -1,12 +1,12 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_dock_leaves": {
+    "has_item": {
       "conditions": {
         "items": [
           {
             "items": [
-              "warriorcats_events:dock_leaves"
+              "minecraft:air"
             ]
           }
         ]
@@ -22,7 +22,7 @@
   },
   "requirements": [
     [
-      "has_dock_leaves",
+      "has_item",
       "has_the_recipe"
     ]
   ],

@@ -17,6 +17,7 @@ import net.snowteb.warriorcats_events.effect.ModEffects;
 import net.snowteb.warriorcats_events.entity.ModEntities;
 import net.snowteb.warriorcats_events.integration.WCatIntegration;
 import net.snowteb.warriorcats_events.item.ModItems;
+import net.snowteb.warriorcats_events.network.ModPackets;
 import net.snowteb.warriorcats_events.screen.ModMenuTypes;
 import net.snowteb.warriorcats_events.screen.StoneCleftScreen;
 import net.snowteb.warriorcats_events.sound.ModSounds;
@@ -43,11 +44,10 @@ public class WarriorCatsEvents {
         ModEffects.register(modEventBus);
 
 
-       // ModBlocks.BLOCKS.register(modEventBus);
-        // ModItems.ITEMS.register(modEventBus);
 
-
+        modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(this::addCreative);
+
 
         MinecraftForge.EVENT_BUS.register(this);
 
@@ -55,11 +55,18 @@ public class WarriorCatsEvents {
 
 
 
+    }
+
+    private void commonSetup(final FMLCommonSetupEvent event) {
+        event.enqueueWork(() -> {
+
+            ModPackets.register();
+
+        });
+
 
     }
 
-    private void commonSetup(FMLCommonSetupEvent event) {
-    }
 
 
     private void addCreative(BuildCreativeModeTabContentsEvent event) {
@@ -80,6 +87,7 @@ public class WarriorCatsEvents {
             event.accept(ModItems.RIVERCLAN_MUSIC_DISC);
             event.accept(ModBlocks.STONECLEFT);
             event.accept(ModItems.WHISKERS);
+            event.accept(ModItems.CLAWS);
             event.accept(ModItems.WARRIORNAMERANDOMIZER);
             event.accept(ModItems.FRESHKILL_AND_HERBS_BUNDLE);
 

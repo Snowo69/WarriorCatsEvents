@@ -42,13 +42,8 @@ public class Poultice extends Item {
 
                 ((net.minecraft.server.level.ServerLevel) pPlayer.level()).sendParticles(
                         ParticleTypes.HAPPY_VILLAGER,
-                        pTarget.getX(),
-                        pTarget.getY() + pTarget.getBbHeight() * 0.6,
-                        pTarget.getZ(),
-                        30,          // cantidad
-                        0.3, 0.3, 0.3, // dispersión (x, y, z)
-                        1        // velocidad
-                );
+                        pTarget.getX(), pTarget.getY() + pTarget.getBbHeight() * 0.6,
+                        pTarget.getZ(), 30, 0.3, 0.3, 0.3, 1);
 
 
                 pStack.shrink(1);

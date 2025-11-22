@@ -23,7 +23,7 @@ public class ItemWithToolTip extends Item {
     public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
         String raw = Component.translatable(this.tooltipKey).getString();
 
-        String[] lines = raw.split("\\\\n");  // ← MUY IMPORTANTE: dividir por "\\\\n"
+        String[] lines = raw.split("\\\\n");
 
         for (String line : lines) {
             tooltip.add(Component.literal(line).withStyle(ChatFormatting.GRAY));

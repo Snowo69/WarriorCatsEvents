@@ -23,6 +23,7 @@ public class ModItemModelProvider extends ItemModelProvider {
 
         simpleItem(ModItems.RIVERCLAN_MUSIC_DISC);
         simpleItem(ModItems.WHISKERS);
+        simpleItem(ModItems.CLAWS);
         simpleItem(ModItems.MOUSE_FOOD);
         simpleItem(ModItems.SQUIRREL_FOOD);
         simpleItem(ModItems.WARRIORNAMERANDOMIZER);

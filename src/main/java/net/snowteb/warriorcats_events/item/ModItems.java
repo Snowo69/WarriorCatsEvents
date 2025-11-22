@@ -12,6 +12,7 @@ import net.minecraftforge.registries.RegistryObject;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.block.ModBlocks;
 import net.snowteb.warriorcats_events.entity.ModEntities;
+import net.snowteb.warriorcats_events.item.custom.ClawsTooltip;
 import net.snowteb.warriorcats_events.sound.ModSounds;
 import net.snowteb.warriorcats_events.util.ItemWithToolTip;
 import net.snowteb.warriorcats_events.util.ModBookItemToolTip;
@@ -76,14 +77,20 @@ public class ModItems {
     public static final RegistryObject<Item> WHISKERS = ITEMS.register("whiskers",
             () -> new ItemWithToolTip(new Item.Properties().stacksTo(1).durability(100),
                     "item.warriorcats_events.whiskers.tooltip"));
+
+    public static final RegistryObject<Item> CLAWS = ITEMS.register("claws",
+            () -> new ClawsTooltip(new Item.Properties().stacksTo(1).durability(100),
+                    "item.warriorcats_events.claws.tooltip"));
+
     public static final RegistryObject<Item> WARRIORNAMERANDOMIZER = ITEMS.register("warrior_name_randomizer",
             () -> new ItemWithToolTip(new Item.Properties().stacksTo(1).durability(64),
                     "item.warriorcats_events.warrior_name_randomizer.tooltip"));
+
     public static final RegistryObject<Item> FRESHKILL_AND_HERBS_BUNDLE = ITEMS.register("freshkill_and_herbs",
             () -> new ItemWithToolTip(new Item.Properties(),
                     "item.warriorcats_events.freshkill_and_herbs.tooltip"));
 
-
+/*
     public static final RegistryObject<Item> DOCK = ITEMS.register("dock",
             () -> new BlockItem(ModBlocks.DOCK.get(), new Item.Properties()));
     public static final RegistryObject<Item> SORRELPLANT = ITEMS.register("sorrel",
@@ -96,7 +103,7 @@ public class ModItems {
             () -> new BlockItem(ModBlocks.DAISYPLANT.get(), new Item.Properties()));
     public static final RegistryObject<Item> DEATHBERRIESBUSH = ITEMS.register("deathberries_bush",
             () -> new BlockItem(ModBlocks.DEATHBERRIESBUSH.get(), new Item.Properties()));
-
+*/
 
 
 

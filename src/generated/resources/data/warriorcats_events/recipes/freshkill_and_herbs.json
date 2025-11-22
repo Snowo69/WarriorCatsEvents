@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "tag": "warriorcats_events:herbs"
+    },
+    {
+      "tag": "warriorcats_events:prey"
+    },
+    {
+      "tag": "warriorcats_events:herbs"
+    },
+    {
+      "tag": "warriorcats_events:prey"
+    },
+    {
+      "item": "warriorcats_events:dock_leaves"
+    }
+  ],
+  "result": {
+    "count": 3,
+    "item": "warriorcats_events:freshkill_and_herbs"
+  }
+}

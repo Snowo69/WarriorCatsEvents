@@ -20,9 +20,9 @@ public class PoulticeTooltip extends Poultice {
         tooltip.add(Component.translatable("item.warriorcats_events.dock_poultice.tooltip")
 
                 .withStyle(style -> style
-                        .withColor(ChatFormatting.GRAY)  // Color dorado
-                        .withBold(false)  // Negrita
-                        .withItalic(false) // Cursiva
+                        .withColor(ChatFormatting.GRAY)
+                        .withBold(false)
+                        .withItalic(false)
                 ));
 
     }

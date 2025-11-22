@@ -18,6 +18,11 @@ public class ModBiomeModifiers {
     public static final ResourceKey<BiomeModifier> ADD_SORREL = registerKey("add_sorrel");
     public static final ResourceKey<BiomeModifier> ADD_DAISY = registerKey("add_daisy");
     public static final ResourceKey<BiomeModifier> ADD_DOCK = registerKey("add_dock");
+    public static final ResourceKey<BiomeModifier> ADD_BURNET = registerKey("add_burnet");
+    public static final ResourceKey<BiomeModifier> ADD_CHAMOMILE = registerKey("add_chamomile");
+    public static final ResourceKey<BiomeModifier> ADD_DEATHBERRIES = registerKey("add_deathberries");
+    public static final ResourceKey<BiomeModifier> ADD_CATMINT = registerKey("add_catmint");
+
 
 
     public static void bootstrap(BootstapContext<BiomeModifier> context) {
@@ -36,7 +41,22 @@ public class ModBiomeModifiers {
                 biomes.getOrThrow(BiomeTags.IS_OVERWORLD),
                 HolderSet.direct(placedFeatures.getOrThrow(ModPlacedFeatures.DOCK_PLACED_KEY)),
                 GenerationStep.Decoration.VEGETAL_DECORATION));
-
+        context.register(ADD_BURNET, new ForgeBiomeModifiers.AddFeaturesBiomeModifier(
+                biomes.getOrThrow(BiomeTags.IS_OVERWORLD),
+                HolderSet.direct(placedFeatures.getOrThrow(ModPlacedFeatures.BURNET_PLACED_KEY)),
+                GenerationStep.Decoration.VEGETAL_DECORATION));
+        context.register(ADD_CHAMOMILE, new ForgeBiomeModifiers.AddFeaturesBiomeModifier(
+                biomes.getOrThrow(BiomeTags.IS_OVERWORLD),
+                HolderSet.direct(placedFeatures.getOrThrow(ModPlacedFeatures.CHAMOMILE_PLACED_KEY)),
+                GenerationStep.Decoration.VEGETAL_DECORATION));
+        context.register(ADD_DEATHBERRIES, new ForgeBiomeModifiers.AddFeaturesBiomeModifier(
+                biomes.getOrThrow(BiomeTags.IS_OVERWORLD),
+                HolderSet.direct(placedFeatures.getOrThrow(ModPlacedFeatures.DEATHBERRIES_PLACED_KEY)),
+                GenerationStep.Decoration.VEGETAL_DECORATION));
+        context.register(ADD_CATMINT, new ForgeBiomeModifiers.AddFeaturesBiomeModifier(
+                biomes.getOrThrow(BiomeTags.IS_OVERWORLD),
+                HolderSet.direct(placedFeatures.getOrThrow(ModPlacedFeatures.CATMINT_PLACED_KEY)),
+                GenerationStep.Decoration.VEGETAL_DECORATION));
 
 
     }

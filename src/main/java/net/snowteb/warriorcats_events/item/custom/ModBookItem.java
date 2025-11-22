@@ -24,10 +24,7 @@ public class ModBookItem extends Item {
             if (player.getTags().contains("leader")) {
             serverLevel.getServer().getCommands().performPrefixedCommand(
                     serverLevel.getServer().createCommandSourceStack()
-                            .withEntity(player)
-                            .withSuppressedOutput(),
-                    "function warriorcats_events:starbook"
-            );
+                            .withEntity(player).withSuppressedOutput(),"function warriorcats_events:leaderslives_1");
 
                 itemStack.hurtAndBreak(1, player, (p) ->
                         p.broadcastBreakEvent(hand));
@@ -36,7 +33,6 @@ public class ModBookItem extends Item {
 
             player.displayClientMessage(Component.translatable("warriorcats_events.ModBookItem.notleader"), true);
         }
-            // Romper el ítem (1 uso)
 
         }
 

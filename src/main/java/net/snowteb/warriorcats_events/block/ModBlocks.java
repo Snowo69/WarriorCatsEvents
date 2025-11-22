@@ -94,6 +94,7 @@ public class ModBlocks {
 
 
 
+
     public static final RegistryObject<Block> LEAF_DOOR = registerBlock("leaf_door",
             () -> new ModDoorBlock(BlockBehaviour.Properties.copy(Blocks.OAK_DOOR).sound(SoundType.CHERRY_LEAVES).noOcclusion(),
                     ModBlockSetTypes.LEAF));
@@ -135,9 +136,6 @@ public class ModBlocks {
             () -> new SaplingBlock(new DarkTreeGrower(), BlockBehaviour.Properties.copy(Blocks.OAK_SAPLING)));
     public static final RegistryObject<Block> STARRYTREE_SAPLING = registerBlock("starrytree_sapling",
             () -> new SaplingBlock(new StarryTreeGrower(), BlockBehaviour.Properties.copy(Blocks.OAK_SAPLING)));
-
-    //public static final RegistryObject<Block> STARCLAN_PORTAL = registerBlock("starclan_portal",
-      //      () -> new ModBlockPortal(BlockBehaviour.Properties.copy(Blocks.STONE).noLootTable().noOcclusion()));
 
 
 

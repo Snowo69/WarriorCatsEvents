@@ -78,16 +78,7 @@ public class MouseEntity extends Animal implements GeoEntity {
                 then("animation.mouse.sniffaround", Animation.LoopType.LOOP));
         return PlayState.CONTINUE;
     }
-    /*public static void initSpawn(EntityType<WCatEntity> type) {
-        SpawnPlacements.register(
-                type,
-                SpawnPlacements.Type.ON_GROUND,
-                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
-                (entityType, world, reason, pos, random) ->
-                        world.getDifficulty() != Difficulty.PEACEFUL &&
-                                world.getBlockState(pos.below()).is(Blocks.GRASS_BLOCK)
-        );
-    }*/
+
 
     @Override
     public AnimatableInstanceCache getAnimatableInstanceCache() {

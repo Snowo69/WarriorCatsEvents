@@ -1,4 +1,4 @@
-package net.snowteb.warriorcats_events.entity.client;
+package net.snowteb.warriorcats_events.integration;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -28,7 +28,7 @@ public class WCatTypeProvider extends TypeProvider<WCatEntity> {
 
     @Override
     public int getRange() {
-        return 11;
+        return 16;
     }
 
     @Override

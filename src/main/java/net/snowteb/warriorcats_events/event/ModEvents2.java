@@ -21,7 +21,6 @@ public class ModEvents2 {
         event.put(ModEntities.SQUIRREL.get(), SquirrelEntity.setAttributes().build());
         event.put(ModEntities.WCAT.get(), WCatEntity.setAttributes().build());
 
-
     }
 
 }

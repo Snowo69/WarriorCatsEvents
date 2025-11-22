@@ -124,15 +124,6 @@ public class ModConfiguredFeatures {
                         ),
                         List.of(Blocks.GRASS_BLOCK)));
 
-    /*register(context, DARKTREE_KEY, Feature.TREE, new TreeConfiguration.TreeConfigurationBuilder(
-            BlockStateProvider.simple(ModBlocks.DARK_LOG.get()),
-            new FancyTrunkPlacer(5,8,0),
-            BlockStateProvider.simple(Blocks.AIR),
-            new BlobFoliagePlacer(ConstantInt.of(3), ConstantInt.of(2), 3),
-            new TwoLayersFeatureSize(1,0,2)).build());
-
-
-     */
         register(context, DARKTREE_KEY, Feature.TREE, new TreeConfiguration.TreeConfigurationBuilder(
                 BlockStateProvider.simple(ModBlocks.DARK_LOG.get()),
                 new ForkingTrunkPlacer(

@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "tag": "minecraft:leaves"
+    },
+    "B": []
+  },
+  "pattern": [
+    "AAB",
+    "AAB",
+    "AAB"
+  ],
+  "result": {
+    "count": 2,
+    "item": "warriorcats_events:leaf_door"
+  },
+  "show_notification": true
+}

@@ -1,0 +1,15 @@
+/*
+            if (this.isCrouching() && tAnimationState.isMoving()) {
+        tAnimationState.getController().setAnimation(RawAnimation.begin()
+                .then("animation.wcat.crouchwalk", Animation.LoopType.LOOP));
+        animPlayed = false;
+        return PlayState.CONTINUE;
+    }
+
+            if (this.isCrouching()) {
+        tAnimationState.getController().setAnimation(RawAnimation.begin()
+                .then("animation.wcat.crouch", Animation.LoopType.LOOP));
+        animPlayed = false;
+        return PlayState.CONTINUE;
+    }
+            */

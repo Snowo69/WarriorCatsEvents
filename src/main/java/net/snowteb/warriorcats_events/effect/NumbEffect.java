@@ -12,7 +12,7 @@ public class NumbEffect extends MobEffect {
         super(pCategory, pColor);
 
         this.addAttributeModifier(Attributes.MOVEMENT_SPEED,
-                "7f5d3d4b-1a2c-4e28-b7f1-9f8c5d9b6a3d", // único
+                "7f5d3d4b-1a2c-4e28-b7f1-9f8c5d9b6a3d",
                 -0.99,
                 AttributeModifier.Operation.MULTIPLY_TOTAL
         );

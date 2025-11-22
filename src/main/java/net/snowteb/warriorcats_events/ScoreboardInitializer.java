@@ -22,7 +22,7 @@ public class ScoreboardInitializer {
                         net.minecraft.network.chat.Component.literal("Leader's Lives"),
                         ObjectiveCriteria.RenderType.INTEGER
                 );
-                System.out.println("[WarriorCatsEvents] Scoreboard 'Lives' creado.");
+                System.out.println("[WarriorCatsEvents] Scoreboard 'Lives' created.");
             }
         }
     }

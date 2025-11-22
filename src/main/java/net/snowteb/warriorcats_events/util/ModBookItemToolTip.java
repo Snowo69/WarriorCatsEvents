@@ -19,9 +19,9 @@ public class ModBookItemToolTip extends ModBookItem {
     public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
         tooltip.add(Component.translatable("item.warriorcats_events.starclan_knowledge.tooltip")
                 .withStyle(style -> style
-                        .withColor(ChatFormatting.GRAY)  // Color dorado
-                        .withBold(false)  // Negrita
-                        .withItalic(true) // Cursiva
+                        .withColor(ChatFormatting.GRAY)
+                        .withBold(false)
+                        .withItalic(false)
                 ));
     }
 }

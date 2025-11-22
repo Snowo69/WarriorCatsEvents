@@ -1,6 +1,6 @@
 package net.snowteb.warriorcats_events.integration;
 
-import net.snowteb.warriorcats_events.entity.client.WCatTypeProvider;
+//import net.snowteb.warriorcats_events.entity.client.PlayeableCatTypeProvider;
 import net.snowteb.warriorcats_events.entity.ModEntities;
 import tocraft.walkers.api.variant.TypeProviderRegistry;
 import tocraft.walkers.integrations.AbstractIntegration;
@@ -16,5 +16,8 @@ public class WCatIntegration extends AbstractIntegration {
     @Override
     public void registerTypeProvider() {
         TypeProviderRegistry.register(ModEntities.WCAT.get(), new WCatTypeProvider());
+        //TypeProviderRegistry.register(ModEntities.PLAYEABLECAT.get(), new PlayeableCatTypeProvider());
     }
+
+
 }
