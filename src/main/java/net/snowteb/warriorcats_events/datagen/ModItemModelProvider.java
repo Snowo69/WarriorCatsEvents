@@ -28,6 +28,7 @@ public class ModItemModelProvider extends ItemModelProvider {
         simpleItem(ModItems.SQUIRREL_FOOD);
         simpleItem(ModItems.WARRIORNAMERANDOMIZER);
         simpleItem(ModItems.FRESHKILL_AND_HERBS_BUNDLE);
+        simpleItem(ModItems.TRAVELING_HERBS);
 
 
         simpleBlockItem(ModBlocks.LEAF_DOOR);

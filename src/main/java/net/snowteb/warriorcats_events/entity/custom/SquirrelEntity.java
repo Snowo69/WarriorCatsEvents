@@ -1,6 +1,8 @@
 package net.snowteb.warriorcats_events.entity.custom;
 
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -34,7 +36,7 @@ public class SquirrelEntity extends Animal implements GeoEntity {
                 .add(Attributes.MAX_HEALTH, 1D)
                 .add(Attributes.ATTACK_SPEED, 1.0f)
                 .add(Attributes.ATTACK_DAMAGE, 1f)
-                .add(Attributes.MOVEMENT_SPEED, 0.4f);
+                .add(Attributes.MOVEMENT_SPEED, 0.35f);
     }
 
     @Override
@@ -78,6 +80,18 @@ public class SquirrelEntity extends Animal implements GeoEntity {
     public AnimatableInstanceCache getAnimatableInstanceCache() {
         return cache;
     }
+
+    @Override
+    protected void dropCustomDeathLoot(DamageSource damageSource, int lootingMultiplier, boolean recentlyHit) {
+        super.dropCustomDeathLoot(damageSource, lootingMultiplier, recentlyHit);
+    }
+
+    @Override
+    protected ResourceLocation getDefaultLootTable() {
+        return new ResourceLocation("warriorcats_events", "entities/squirrel");
+    }
+
+
 
     /*
     @Override

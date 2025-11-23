@@ -1,6 +1,6 @@
-// 1.20.1	2025-11-19T22:05:55.8887634	Loot Tables
+// 1.20.1	2025-11-22T17:54:20.0661556	Loot Tables
 49e785cdac936850fc9caf3874a062215d84fcac data/warriorcats_events/loot_tables/blocks/burnet.json
-6d98cf6cbd03cca574c3635066ab6624280fd5bd data/warriorcats_events/loot_tables/blocks/catmint.json
+bb40e6c90928fb07ec6fa5e7655188e1cc60ea83 data/warriorcats_events/loot_tables/blocks/catmint.json
 d7f591b2bfb4d4596a07d256949d27355aa623d8 data/warriorcats_events/loot_tables/blocks/chamomile_stems.json
 5916606dbbe88f057be974795c21f442b4ad6eb8 data/warriorcats_events/loot_tables/blocks/daisy.json
 475e2364a77a0dc5b25206d39d9e3109b11c34f6 data/warriorcats_events/loot_tables/blocks/darktree_sapling.json

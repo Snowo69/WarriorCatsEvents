@@ -1,4 +1,4 @@
-package net.snowteb.warriorcats_events.worldgen;
+package net.snowteb.warriorcats_events.datagen;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistrySetBuilder;
@@ -7,6 +7,9 @@ import net.minecraft.data.PackOutput;
 import net.minecraftforge.common.data.DatapackBuiltinEntriesProvider;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
+import net.snowteb.warriorcats_events.worldgen.ModBiomeModifiers;
+import net.snowteb.warriorcats_events.worldgen.ModConfiguredFeatures;
+import net.snowteb.warriorcats_events.worldgen.ModPlacedFeatures;
 
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;

@@ -78,7 +78,6 @@ public class WarriorCatsEvents {
             event.accept(ModItems.CHAMOMILE);
             event.accept(ModItems.MOUSE_FOOD);
             event.accept(ModItems.SQUIRREL_FOOD);
-
             event.accept(ModItems.TRAVELING_HERBS);
         }
 
@@ -103,13 +102,16 @@ public class WarriorCatsEvents {
 
         }
 
+
         if (event.getTabKey() == CreativeModeTabs.NATURAL_BLOCKS) {
+
             event.accept(ModBlocks.DOCK);
             event.accept(ModBlocks.SORRELPLANT);
             event.accept(ModBlocks.BURNETPLANT);
             event.accept(ModBlocks.CHAMOMILEPLANT);
             event.accept(ModBlocks.DAISYPLANT);
             event.accept(ModBlocks.DEATHBERRIESBUSH);
+            event.accept(ModBlocks.CATMINTPLANT);
 
             event.accept(ModBlocks.LEAF_DOOR);
             event.accept(ModBlocks.MOSSBED);
@@ -122,11 +124,14 @@ public class WarriorCatsEvents {
 
         }
 
+
         if (event.getTabKey() == CreativeModeTabs.SPAWN_EGGS) {
             event.accept(ModItems.MOUSE_SPAWN_EGG);
             event.accept(ModItems.SQUIRREL_SPAWN_EGG);
             event.accept(ModItems.WILDCAT_SPAWN_EGG);
         }
+
+
 
 
 

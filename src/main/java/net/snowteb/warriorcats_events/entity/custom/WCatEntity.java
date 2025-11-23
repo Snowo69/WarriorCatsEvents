@@ -443,7 +443,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
 
     public static AttributeSupplier.Builder setAttributes() {
         return Mob.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 10.0D)
+                .add(Attributes.MAX_HEALTH, 20.0D)
                 .add(Attributes.MOVEMENT_SPEED, 0.3D)
                 .add(Attributes.ATTACK_DAMAGE, 4.0D)
                 .add(Attributes.FOLLOW_RANGE, 16.0D)
@@ -691,7 +691,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
     @Override
     public AgeableMob getBreedOffspring(ServerLevel level, AgeableMob otherParent) {
 
-        if (otherParent instanceof WCatEntity partner) {
+        if (otherParent instanceof WCatEntity partner && this.isTame() && ((WCatEntity) otherParent).isTame()) {
 
 
             if (this.getGender() == 1) {

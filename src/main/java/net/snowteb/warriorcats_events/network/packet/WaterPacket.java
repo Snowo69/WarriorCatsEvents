@@ -49,7 +49,7 @@ public class WaterPacket {
                 player.getCapability(PlayerThirstProvider.PLAYER_THIRST).ifPresent(thirst -> {
                     thirst.addThirst(1);
                     ModPackets.sendToPlayer(new ThirstDataSyncStCPacket(thirst.getThirst()), player);
-                    player.displayClientMessage(Component.literal("Thirst level: " + thirst.getThirst()).withStyle(ChatFormatting.GRAY), true);
+                    player.displayClientMessage(Component.literal("Thirst level: " + 5*thirst.getThirst() + "%").withStyle(ChatFormatting.GRAY), true);
                     level.sendParticles(ParticleTypes.SPLASH, player.getX(),player.getY() + 0.4, player.getZ(), 10, 0.3, 0.2, 0.3, 0.01);
                 });
 

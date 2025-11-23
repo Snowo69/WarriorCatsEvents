@@ -17,14 +17,13 @@ public class PoulticeTooltip extends Poultice {
 
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
-        tooltip.add(Component.translatable("item.warriorcats_events.dock_poultice.tooltip")
+        String raw = Component.translatable("item.warriorcats_events.dock_poultice.tooltip").getString();
 
-                .withStyle(style -> style
-                        .withColor(ChatFormatting.GRAY)
-                        .withBold(false)
-                        .withItalic(false)
-                ));
+        String[] lines = raw.split("\\\\n");
 
+        for (String line : lines) {
+            tooltip.add(Component.literal(line).withStyle(ChatFormatting.GRAY));
+        }
     }
 }
 

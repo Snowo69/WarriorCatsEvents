@@ -56,7 +56,7 @@ public class ModItems {
     public static final RegistryObject<Item> DEATHBERRIES = ITEMS.register("deathberries",
             () -> new ItemWithToolTip(new Item.Properties().food(ModFoodHerbs.DEATHBERRIES),
                     "item.warriorcats_events.deathberries.tooltip"));
-    public static final RegistryObject<Item> CATMINT = ITEMS.register("catmint",
+    public static final RegistryObject<Item> CATMINT = ITEMS.register("catmint_leaves",
             () -> new ItemWithToolTip(new Item.Properties().food(ModFoodHerbs.CATMINT),
                     "item.warriorcats_events.catmint.tooltip"));
 
@@ -79,18 +79,19 @@ public class ModItems {
                     "item.warriorcats_events.whiskers.tooltip"));
 
     public static final RegistryObject<Item> CLAWS = ITEMS.register("claws",
-            () -> new ClawsTooltip(new Item.Properties().stacksTo(1).durability(100),
+            () -> new ClawsTooltip(new Item.Properties().stacksTo(1).durability(192),
                     "item.warriorcats_events.claws.tooltip"));
 
     public static final RegistryObject<Item> WARRIORNAMERANDOMIZER = ITEMS.register("warrior_name_randomizer",
-            () -> new ItemWithToolTip(new Item.Properties().stacksTo(1).durability(64),
+            () -> new ItemWithToolTip(new Item.Properties().stacksTo(1).durability(32),
                     "item.warriorcats_events.warrior_name_randomizer.tooltip"));
 
     public static final RegistryObject<Item> FRESHKILL_AND_HERBS_BUNDLE = ITEMS.register("freshkill_and_herbs",
             () -> new ItemWithToolTip(new Item.Properties(),
                     "item.warriorcats_events.freshkill_and_herbs.tooltip"));
 
-/*
+
+    // DO NOT REMOVE ANY OF THIS
     public static final RegistryObject<Item> DOCK = ITEMS.register("dock",
             () -> new BlockItem(ModBlocks.DOCK.get(), new Item.Properties()));
     public static final RegistryObject<Item> SORRELPLANT = ITEMS.register("sorrel",
@@ -103,7 +104,10 @@ public class ModItems {
             () -> new BlockItem(ModBlocks.DAISYPLANT.get(), new Item.Properties()));
     public static final RegistryObject<Item> DEATHBERRIESBUSH = ITEMS.register("deathberries_bush",
             () -> new BlockItem(ModBlocks.DEATHBERRIESBUSH.get(), new Item.Properties()));
-*/
+    public static final RegistryObject<Item> CATMINTPLANT = ITEMS.register("catmint",
+            () -> new BlockItem(ModBlocks.CATMINTPLANT.get(), new Item.Properties()));
+
+
 
 
 

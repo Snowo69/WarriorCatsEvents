@@ -47,4 +47,11 @@ public class PlayerThirstProvider implements ICapabilityProvider, INBTSerializab
     public void deserializeNBT(CompoundTag nbt) {
         createPlayerThirst().loadNBT(nbt);
     }
+
+    public PlayerThirst getOrCreateThirst() {
+        PlayerThirst t = createPlayerThirst();
+        t.reset();
+        return t;
+    }
+
 }

@@ -4,17 +4,17 @@ license="All Rights Reserved"
 
 [[mods]]
 modId="warriorcats_events"
-displayName="WarriorCats Events"
+displayName="WarriorCats Events (Tester's Beta)"
 description="Turn your world into a Warrior Cats survival experience!"
-version="2.2.1"
+version="3.0.1"
 authors="Mapple"
-credits="*Artists*"
+credits="Soon..."
 logoFile="banner.png"
 logoBlur=false
 displayTest="IGNORE_SERVER_VERSION"
 updateJSONURL=""
 displayURL="https://www.curseforge.com/servers/minecraft"
-license= "MIT"
+license= "All Rights Reserved"
 
 [[dependencies.warriorcats_events]]
     modId="minecraft"

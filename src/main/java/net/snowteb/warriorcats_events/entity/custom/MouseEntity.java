@@ -1,5 +1,6 @@
 package net.snowteb.warriorcats_events.entity.custom;
 
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.Difficulty;
@@ -84,6 +85,18 @@ public class MouseEntity extends Animal implements GeoEntity {
     public AnimatableInstanceCache getAnimatableInstanceCache() {
         return cache;
     }
+
+    @Override
+    protected void dropCustomDeathLoot(DamageSource damageSource, int lootingMultiplier, boolean recentlyHit) {
+        super.dropCustomDeathLoot(damageSource, lootingMultiplier, recentlyHit);
+    }
+
+    @Override
+    protected ResourceLocation getDefaultLootTable() {
+        return new ResourceLocation("warriorcats_events", "entities/mouse");
+    }
+
+
 
     @Override
     protected SoundEvent getAmbientSound() {

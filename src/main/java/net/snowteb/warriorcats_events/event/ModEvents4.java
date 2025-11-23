@@ -28,7 +28,10 @@ public class ModEvents4 {
         if(event.getObject() instanceof Player) {
 
             if(!event.getObject().getCapability(PlayerThirstProvider.PLAYER_THIRST).isPresent()) {
-                event.addCapability(new ResourceLocation(WarriorCatsEvents.MODID, "properties"), new PlayerThirstProvider());
+                PlayerThirstProvider provider = new PlayerThirstProvider();
+                provider.getOrCreateThirst();
+                event.addCapability(new ResourceLocation(WarriorCatsEvents.MODID, "properties"), provider);
+
             }
         }
     }

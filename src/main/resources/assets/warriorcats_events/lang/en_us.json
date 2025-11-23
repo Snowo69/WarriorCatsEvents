@@ -9,11 +9,11 @@
   "item.warriorcats_events.sorrel_leaves.tooltip": "Traveling herb. Used to ease hunger",
 
 
-  "item.warriorcats_events.starclan_knowledge": "Starclan's Knowledge",
-  "item.warriorcats_events.starclan_knowledge.tooltip": "Contains the 9 lives ceremony",
+  "item.warriorcats_events.starclan_knowledge": "The lives of a leader",
+  "item.warriorcats_events.starclan_knowledge.tooltip": "Contains the 9 lives' ceremony",
 
   "item.warriorcats_events.dock_poultice": "Dock Poultice",
-  "item.warriorcats_events.dock_poultice.tooltip": "Good for scratches and sore pads\\Right click: Heal a Wild Cat.",
+  "item.warriorcats_events.dock_poultice.tooltip": "Good for scratches and sore pads\\nRight click: Heal a Wild Cat.",
 
   "item.warriorcats_events.burnet_leaves": "Burnet Leaves",
   "item.warriorcats_events.burnet_leaves.tooltip": "Traveling herb. Used to give strength",
@@ -41,6 +41,14 @@
 
   "item.warriorcats_events.freshkill_and_herbs": "Freshkill And Herbs",
   "item.warriorcats_events.freshkill_and_herbs.tooltip": "Give this to a Wild Cat to recruit it! Sure they will love it.",
+
+  "item.warriorcats_events.claws": "Claws",
+  "item.warriorcats_events.claws.tooltip": "Designed by nature to hunt and fight.\\nThese will also help gathering herbs and leaves without breaking them.",
+
+  "item.warriorcats_events.catmint_leaves": "Catmint",
+  "item.warriorcats_events.catmint.tooltip": "The best remedy for greencough so far.\\nVery tasty, it would make you touch the sky!\\nGive this to tamed Wild Cats to make them be mates.",
+
+  "block.warriorcats_events.catmint": "Catmint",
 
   "block.warriorcats_events.stone_cleft": "Stone Cleft",
   "block.warriorcats_events.stonecleft": "Stone Cleft",

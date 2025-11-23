@@ -20,7 +20,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "warriorcats_events:catmint"
+          "name": "warriorcats_events:catmint_leaves"
         }
       ],
       "functions": [
@@ -58,7 +58,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "warriorcats_events:catmint"
+          "name": "warriorcats_events:catmint_leaves"
         }
       ],
       "functions": [
