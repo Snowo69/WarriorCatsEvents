@@ -9,13 +9,13 @@ import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-public class CtSwaterPacket {
+public class CtSHissPacket {
 
-    public CtSwaterPacket() {
+    public CtSHissPacket() {
 
     }
 
-    public CtSwaterPacket(FriendlyByteBuf buf) {
+    public CtSHissPacket(FriendlyByteBuf buf) {
 
     }
 
@@ -30,7 +30,7 @@ public class CtSwaterPacket {
             ServerPlayer player = context.getSender();
             ServerLevel level = player.serverLevel().getLevel();
 
-            level.playSound(null, player.blockPosition(), SoundEvents.CAT_HISS, SoundSource.PLAYERS, 1.0f ,1.0f);
+            level.playSound(null, player.blockPosition(), SoundEvents.CAT_HISS, SoundSource.PLAYERS, 0.7f ,1.0f);
 
 
         });

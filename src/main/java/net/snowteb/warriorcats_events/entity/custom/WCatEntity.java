@@ -95,6 +95,9 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
     private final int KITTINGTIME = 20 * 60 * 8; // 8min
     private boolean wasBaby = this.isBaby();
 
+    private boolean playingAnimation = false;
+
+
 
     private static final EntityDataAccessor<Integer> GENDER =
             SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.INT);
@@ -893,11 +896,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
 
 
    private <T extends GeoAnimatable> PlayState predicate(AnimationState<T> tAnimationState) {
-
-       if (HLAnimationRunning && !tAnimationState.getController().isPlayingTriggeredAnimation()) {
-           this.setHeadLocked(false);
-           HLAnimationRunning = false;
-       }
+       this.setPlayingAnimation(tAnimationState.getController().isPlayingTriggeredAnimation());
 
        if (tAnimationState.isMoving()) {
            tAnimationState.getController().setAnimation(RawAnimation.begin().
@@ -1118,24 +1117,24 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
     public void setVariant(int variant) {
         this.entityData.set(VARIANT, variant);
     float scale = switch (variant) {
-            case 0 -> 0.8f;
-            case 1 -> 1.0f;
-            case 2 -> 1.1f;
-            case 3 -> 0.9f;
-            case 4 -> 0.8f;
-            case 5 -> 1.0f;
-            case 6 -> 1.1f;
-            case 7 -> 1.3f;
-            case 8 -> 0.8f;
-            case 9 -> 1.1f;
-            case 10 -> 1.0f;
-            case 11 -> 0.9f;
-            case 12 -> 0.9f; //chestnutpatch
-            case 13 -> 1.0f; //ratstar
-            case 14 -> 0.8f; //twitchstream
-            case 15 -> 1.1f; //blazepit
-            case 16 -> 1.0f; //bengalpelt
-            default -> 1.0f;
+            case 0 -> 0.5f;
+            case 1 -> 0.6f;
+            case 2 -> 0.6f;
+            case 3 -> 0.5f;
+            case 4 -> 0.5f;
+            case 5 -> 0.6f;
+            case 6 -> 0.7f;
+            case 7 -> 0.7f;
+            case 8 -> 0.5f;
+            case 9 -> 0.7f;
+            case 10 -> 0.6f;
+            case 11 -> 0.5f;
+            case 12 -> 0.5f; //chestnutpatch
+            case 13 -> 0.6f; //ratstar
+            case 14 -> 0.5f; //twitchstream
+            case 15 -> 0.7f; //blazepit
+            case 16 -> 0.6f; //bengalpelt
+            default -> 0.5f;
         };
         this.entityData.set(SCALE, scale);
     }
@@ -1236,6 +1235,14 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
     }
     public void setAppScale(boolean value) {
         this.entityData.set(APP_SCALE, value);
+    }
+
+    public void setPlayingAnimation(boolean value) {
+        this.playingAnimation = value;
+    }
+
+    public boolean isPlayingAnimation() {
+        return this.playingAnimation;
     }
 
 

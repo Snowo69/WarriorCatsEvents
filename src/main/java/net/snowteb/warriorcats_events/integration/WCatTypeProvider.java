@@ -35,4 +35,6 @@ public class WCatTypeProvider extends TypeProvider<WCatEntity> {
     public Component modifyText(WCatEntity wCatEntity, MutableComponent mutableComponent) {
         return mutableComponent.append("Variant " + wCatEntity.getVariant());
     }
+
+    
 }

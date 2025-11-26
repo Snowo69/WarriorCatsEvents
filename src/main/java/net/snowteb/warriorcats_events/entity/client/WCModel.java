@@ -47,18 +47,19 @@ public class WCModel extends GeoModel<WCatEntity> {
         return new ResourceLocation(WarriorCatsEvents.MODID, "animations/wcat.animation.json");
     }
 
-/*
+
     @Override
     public void setCustomAnimations(WCatEntity animatable, long instanceId, AnimationState<WCatEntity> animationState) {
-        CoreGeoBone head = getAnimationProcessor().getBone("head");
+        CoreGeoBone head = getAnimationProcessor().getBone("mainHead");
 
-        if (head != null && !animatable.isHeadLocked()) {
+
+        if (head != null) {
             EntityModelData entityModelData = animationState.getData(DataTickets.ENTITY_MODEL_DATA);
 
             head.setRotX(entityModelData.headPitch() * Mth.DEG_TO_RAD);
             head.setRotY(entityModelData.netHeadYaw() * Mth.DEG_TO_RAD);
         }
     }
-    */
+
 
 }

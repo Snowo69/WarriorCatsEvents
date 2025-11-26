@@ -7,9 +7,7 @@ import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.network.simple.SimpleChannel;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
-import net.snowteb.warriorcats_events.network.packet.CtSwaterPacket;
-import net.snowteb.warriorcats_events.network.packet.ThirstDataSyncStCPacket;
-import net.snowteb.warriorcats_events.network.packet.WaterPacket;
+import net.snowteb.warriorcats_events.network.packet.*;
 
 public class ModPackets {
     private static SimpleChannel INSTANCE;
@@ -25,15 +23,14 @@ public class ModPackets {
                 .clientAcceptedVersions(s -> true)
                 .serverAcceptedVersions(s -> true)
                 .simpleChannel();
-        //System.out.println("Registering packets...");
 
 
         INSTANCE = net;
 
-        net.messageBuilder(CtSwaterPacket.class, id(), NetworkDirection.PLAY_TO_SERVER)
-                .decoder(CtSwaterPacket::new)
-                .encoder(CtSwaterPacket::toBytes)
-                .consumerMainThread(CtSwaterPacket::handle)
+        net.messageBuilder(CtSHissPacket.class, id(), NetworkDirection.PLAY_TO_SERVER)
+                .decoder(CtSHissPacket::new)
+                .encoder(CtSHissPacket::toBytes)
+                .consumerMainThread(CtSHissPacket::handle)
                 .add();
         net.messageBuilder(WaterPacket.class, id(), NetworkDirection.PLAY_TO_SERVER)
                 .decoder(WaterPacket::new)
@@ -46,7 +43,50 @@ public class ModPackets {
                 .consumerMainThread(ThirstDataSyncStCPacket::handle)
                 .add();
 
+        net.messageBuilder(CtSMoreSpeedPacket.class, id(), NetworkDirection.PLAY_TO_SERVER)
+                .decoder(CtSMoreSpeedPacket::new)
+                .encoder(CtSMoreSpeedPacket::toBytes)
+                .consumerMainThread(CtSMoreSpeedPacket::handle)
+                .add();
+        net.messageBuilder(CtSMoreHPPacket.class, id(), NetworkDirection.PLAY_TO_SERVER)
+                .decoder(CtSMoreHPPacket::new)
+                .encoder(CtSMoreHPPacket::toBytes)
+                .consumerMainThread(CtSMoreHPPacket::handle)
+                .add();
 
+        net.messageBuilder(SyncSkillDataPacket.class, id(), NetworkDirection.PLAY_TO_CLIENT)
+                .decoder(SyncSkillDataPacket::new)
+                .encoder(SyncSkillDataPacket::toBytes)
+                .consumerMainThread(SyncSkillDataPacket::handle)
+                .add();
+        net.messageBuilder(ReqSkillDataPacket.class, id(), NetworkDirection.PLAY_TO_SERVER)
+                .decoder(ReqSkillDataPacket::new)
+                .encoder(ReqSkillDataPacket::toBytes)
+                .consumerMainThread(ReqSkillDataPacket::handle)
+                .add();
+        net.messageBuilder(ResetSkillsPacket.class, id(), NetworkDirection.PLAY_TO_SERVER)
+                .decoder(ResetSkillsPacket::new)
+                .encoder(ResetSkillsPacket::toBytes)
+                .consumerMainThread(ResetSkillsPacket::handle)
+                .add();
+
+        net.messageBuilder(CtSToggleStealthPacket.class, id(), NetworkDirection.PLAY_TO_SERVER)
+                .decoder(CtSToggleStealthPacket::new)
+                .encoder(CtSToggleStealthPacket::toBytes)
+                .consumerMainThread(CtSToggleStealthPacket::handle)
+                .add();
+
+        net.messageBuilder(StCStealthSyncPacket.class, id(), NetworkDirection.PLAY_TO_CLIENT)
+                .decoder(StCStealthSyncPacket::new)
+                .encoder(StCStealthSyncPacket::toBytes)
+                .consumerMainThread(StCStealthSyncPacket::handle)
+                .add();
+
+        net.messageBuilder(CtSUnlockStealthPacket.class, id(), NetworkDirection.PLAY_TO_SERVER)
+                .encoder(CtSUnlockStealthPacket::encode)
+                .decoder(CtSUnlockStealthPacket::decode)
+                .consumerMainThread(CtSUnlockStealthPacket::handle)
+                .add();
 
     }
 

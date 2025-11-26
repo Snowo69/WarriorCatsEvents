@@ -582,13 +582,13 @@ java.lang.IllegalAccessException: class io.netty.util.internal.PlatformDependent
 [22nov.2025 19:04:47.122] [modloading-worker-0/DEBUG] [net.minecraftforge.fml.javafmlmod.AutomaticEventSubscriber/LOADING]: Auto-subscribing net.snowteb.warriorcats_events.event.ModEvents to FORGE
 [22nov.2025 19:04:47.123] [modloading-worker-0/DEBUG] [mixin/]: Mixing client.accessor.BlazeEntityModelAccessor from walkers.mixins.json into net.minecraft.client.model.BlazeModel
 [22nov.2025 19:04:47.128] [modloading-worker-0/DEBUG] [mixin/]: Mixing client.accessor.OcelotEntityModelAccessor from walkers.mixins.json into net.minecraft.client.model.OcelotModel
-[22nov.2025 19:04:47.135] [modloading-worker-0/DEBUG] [net.minecraftforge.fml.javafmlmod.AutomaticEventSubscriber/LOADING]: Auto-subscribing net.snowteb.warriorcats_events.event.ModEvents2 to MOD
+[22nov.2025 19:04:47.135] [modloading-worker-0/DEBUG] [net.minecraftforge.fml.javafmlmod.AutomaticEventSubscriber/LOADING]: Auto-subscribing net.snowteb.warriorcats_events.event.ModEvents to MOD
 [22nov.2025 19:04:47.136] [modloading-worker-0/DEBUG] [mixin/]: Mixing client.accessor.SpiderEntityModelAccessor from walkers.mixins.json into net.minecraft.client.model.SpiderModel
 [22nov.2025 19:04:47.142] [modloading-worker-0/DEBUG] [net.minecraftforge.fml.javafmlmod.AutomaticEventSubscriber/LOADING]: Auto-subscribing net.snowteb.warriorcats_events.event.ModEvents3 to MOD
-[22nov.2025 19:04:47.146] [modloading-worker-0/DEBUG] [net.minecraftforge.fml.javafmlmod.AutomaticEventSubscriber/LOADING]: Auto-subscribing net.snowteb.warriorcats_events.event.ModEvents4 to FORGE
+[22nov.2025 19:04:47.146] [modloading-worker-0/DEBUG] [net.minecraftforge.fml.javafmlmod.AutomaticEventSubscriber/LOADING]: Auto-subscribing net.snowteb.warriorcats_events.event.ModEvents2 to FORGE
 [22nov.2025 19:04:47.146] [modloading-worker-0/DEBUG] [mixin/]: Mixing client.accessor.RavagerEntityModelAccessor from walkers.mixins.json into net.minecraft.client.model.RavagerModel
 [22nov.2025 19:04:47.153] [modloading-worker-0/DEBUG] [mixin/]: Mixing client.accessor.SquidEntityModelAccessor from walkers.mixins.json into net.minecraft.client.model.SquidModel
-[22nov.2025 19:04:47.162] [modloading-worker-0/DEBUG] [net.minecraftforge.fml.javafmlmod.AutomaticEventSubscriber/LOADING]: Auto-subscribing net.snowteb.warriorcats_events.ScoreboardInitializer to FORGE
+[22nov.2025 19:04:47.162] [modloading-worker-0/DEBUG] [net.minecraftforge.fml.javafmlmod.AutomaticEventSubscriber/LOADING]: Auto-subscribing net.snowteb.warriorcats_events.event.ScoreboardInitializer to FORGE
 [22nov.2025 19:04:47.164] [modloading-worker-0/DEBUG] [net.minecraftforge.fml.javafmlmod.AutomaticEventSubscriber/LOADING]: Auto-subscribing net.snowteb.warriorcats_events.util.ModEntitySpawns to MOD
 [22nov.2025 19:04:47.166] [modloading-worker-0/DEBUG] [net.minecraftforge.fml.javafmlmod.AutomaticEventSubscriber/LOADING]: Auto-subscribing net.snowteb.warriorcats_events.WarriorCatsEvents$ClientEvents to MOD
 [22nov.2025 19:04:47.172] [modloading-worker-0/DEBUG] [net.minecraftforge.fml.javafmlmod.AutomaticEventSubscriber/LOADING]: Attempting to inject @EventBusSubscriber classes into the eventbus for walkers

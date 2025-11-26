@@ -144,8 +144,13 @@
 					]
 				},
 				{
-					"name": "head",
+					"name": "mainHead",
 					"parent": "moreup",
+					"pivot": [0, 9, -6]
+				},
+				{
+					"name": "head",
+					"parent": "mainHead",
 					"pivot": [0, 9, -6],
 					"cubes": [
 						{"origin": [-2.5, 7, -12], "size": [5, 4, 5], "uv": [0, 0]},

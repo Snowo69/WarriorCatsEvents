@@ -1,5 +1,6 @@
 package net.snowteb.warriorcats_events.screen;
 
+import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraftforge.common.extensions.IForgeMenuType;
@@ -18,6 +19,9 @@ public class ModMenuTypes {
 
     public static final RegistryObject<MenuType<StoneCleftMenu>> STONECLEFT_MENU =
             registerMenuType("stone_cleft_menu", StoneCleftMenu::new);
+
+    public static final RegistryObject<MenuType<SkillMenu>> SKILL_MENU =
+            MENUS.register("skill_menu", () -> new MenuType<>(SkillMenu::new, FeatureFlags.DEFAULT_FLAGS));
 
 
 

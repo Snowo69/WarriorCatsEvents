@@ -1,27 +1,23 @@
 package net.snowteb.warriorcats_events.event;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.sounds.SoundInstance;
-import net.minecraft.sounds.SoundSource;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.sound.PlaySoundEvent;
+import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
-import net.snowteb.warriorcats_events.sound.ModSounds;
+import net.snowteb.warriorcats_events.entity.ModEntities;
+import net.snowteb.warriorcats_events.entity.custom.MouseEntity;
+import net.snowteb.warriorcats_events.entity.custom.SquirrelEntity;
+import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 
-@Mod.EventBusSubscriber(modid = WarriorCatsEvents.MODID, value = Dist.CLIENT)
+@Mod.EventBusSubscriber(modid = WarriorCatsEvents.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ModEvents {
 
-
     @SubscribeEvent
-    public static void onPlaySound(PlaySoundEvent event) {
-        SoundInstance sound = event.getSound();
+    public static void entityAttributeEvent(EntityAttributeCreationEvent event) {
+        event.put(ModEntities.MOUSE.get(), MouseEntity.setAttributes().build());
+        event.put(ModEntities.SQUIRREL.get(), SquirrelEntity.setAttributes().build());
+        event.put(ModEntities.WCAT.get(), WCatEntity.setAttributes().build());
 
-        if (sound != null && sound.getLocation().equals(ModSounds.RIVERCLAN.getId())) {
-            Minecraft.getInstance().getSoundManager().stop(null, SoundSource.MUSIC);
-        }
     }
-
 
 }

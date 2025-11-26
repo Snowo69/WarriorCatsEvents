@@ -104,12 +104,12 @@ public class WCRenderer extends GeoEntityRenderer<WCatEntity> {
         float scale = switch (animatable.getVariant()) {
             case 0 -> 0.8f;
             case 1 -> 1.0f;
-            case 2 -> 1.1f;
+            case 2 -> 1.0f;
             case 3 -> 0.9f;
             case 4 -> 0.8f;
             case 5 -> 1.0f;
             case 6 -> 1.1f;
-            case 7 -> 1.3f;
+            case 7 -> 1.2f;
             case 8 -> 0.8f;
             case 9 -> 1.1f;
             case 10 -> 1.0f;
