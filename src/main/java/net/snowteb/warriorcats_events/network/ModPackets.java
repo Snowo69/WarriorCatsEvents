@@ -53,6 +53,21 @@ public class ModPackets {
                 .encoder(CtSMoreHPPacket::toBytes)
                 .consumerMainThread(CtSMoreHPPacket::handle)
                 .add();
+        net.messageBuilder(CtSMoreDMGPacket.class, id(), NetworkDirection.PLAY_TO_SERVER)
+                .decoder(CtSMoreDMGPacket::new)
+                .encoder(CtSMoreDMGPacket::toBytes)
+                .consumerMainThread(CtSMoreDMGPacket::handle)
+                .add();
+        net.messageBuilder(CtSMoreJumpPacket.class, id(), NetworkDirection.PLAY_TO_SERVER)
+                .decoder(CtSMoreJumpPacket::new)
+                .encoder(CtSMoreJumpPacket::toBytes)
+                .consumerMainThread(CtSMoreJumpPacket::handle)
+                .add();
+        net.messageBuilder(CtSMoreArmorPacket.class, id(), NetworkDirection.PLAY_TO_SERVER)
+                .decoder(CtSMoreArmorPacket::new)
+                .encoder(CtSMoreArmorPacket::toBytes)
+                .consumerMainThread(CtSMoreArmorPacket::handle)
+                .add();
 
         net.messageBuilder(SyncSkillDataPacket.class, id(), NetworkDirection.PLAY_TO_CLIENT)
                 .decoder(SyncSkillDataPacket::new)

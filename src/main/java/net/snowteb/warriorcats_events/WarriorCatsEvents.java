@@ -21,6 +21,7 @@ import net.snowteb.warriorcats_events.network.ModPackets;
 import net.snowteb.warriorcats_events.screen.ModMenuTypes;
 import net.snowteb.warriorcats_events.screen.StoneCleftScreen;
 import net.snowteb.warriorcats_events.sound.ModSounds;
+import net.snowteb.warriorcats_events.util.ModAttributes;
 import software.bernie.geckolib.GeckoLib;
 import tocraft.walkers.integrations.Integrations;
 
@@ -42,6 +43,7 @@ public class WarriorCatsEvents {
         ModBlockEntities.register(modEventBus);
         ModMenuTypes.register(modEventBus);
         ModEffects.register(modEventBus);
+        ModAttributes.ATTRIBUTES.register(modEventBus);
 
 
 

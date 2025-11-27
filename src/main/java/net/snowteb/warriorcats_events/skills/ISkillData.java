@@ -8,5 +8,14 @@ public interface ISkillData {
     int getHPLevel();
     void setHPLevel(int level);
 
+    int getDMGLevel();
+    void setDMGLevel(int level);
+
+    int getJumpLevel();
+    void setJumpLevel(int level);
+
+    int getArmorLevel();
+    void setArmorLevel(int level);
+
     void copyFrom(ISkillData other);
 }

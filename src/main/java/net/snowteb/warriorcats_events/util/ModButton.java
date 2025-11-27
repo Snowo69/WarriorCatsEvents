@@ -59,13 +59,13 @@ public class ModButton extends AbstractButton {
         }
 
 
-        float scale = 0.95f;
+        float scale = 0.82f;
 
         gui.pose().pushPose();
         gui.pose().scale(scale, scale, 1.0f);
 
         int textX = (int)((this.getX() + this.width / 2) / scale);
-        int textY = (int)((this.getY() + (this.height - 8) / 2) / scale);
+        int textY = (int)((this.getY() + (this.height - 5) / 2) / scale);
 
         gui.drawCenteredString(
                 Minecraft.getInstance().font,

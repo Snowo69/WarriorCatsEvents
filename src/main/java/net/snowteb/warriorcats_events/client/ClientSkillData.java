@@ -4,11 +4,12 @@ public class ClientSkillData {
 
     private static int speedLevel = 0;
     private static int hpLevel = 0;
-
+/*
     public static void set(int speed, int hp) {
         speedLevel = speed;
         hpLevel = hp;
     }
+
 
     public static int getSpeedLevel() {
         return speedLevel;
@@ -41,4 +42,5 @@ public class ClientSkillData {
     public static void subHP(int amount) {
         hpLevel -= amount;
     }
+     */
 }

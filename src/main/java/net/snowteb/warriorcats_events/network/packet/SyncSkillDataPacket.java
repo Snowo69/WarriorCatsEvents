@@ -14,20 +14,32 @@ import net.minecraft.client.player.LocalPlayer;
 public class SyncSkillDataPacket {
     private final int speedLevel;
     private final int hpLevel;
+    private final int dmgLevel;
+    private final int jumpLevel;
+    private final int armorLevel;
 
-    public SyncSkillDataPacket(int speedLevel, int hpLevel) {
+    public SyncSkillDataPacket(int speedLevel, int hpLevel, int dmgLevel, int jumpLevel, int armorLevel) {
         this.speedLevel = speedLevel;
         this.hpLevel = hpLevel;
+        this.dmgLevel = dmgLevel;
+        this.jumpLevel = jumpLevel;
+        this.armorLevel = armorLevel;
     }
 
     public SyncSkillDataPacket(FriendlyByteBuf buf) {
         this.speedLevel = buf.readInt();
         this.hpLevel = buf.readInt();
+        this.dmgLevel = buf.readInt();
+        this.jumpLevel = buf.readInt();
+        this.armorLevel = buf.readInt();
     }
 
     public void toBytes(FriendlyByteBuf buf) {
         buf.writeInt(speedLevel);
         buf.writeInt(hpLevel);
+        buf.writeInt(dmgLevel);
+        buf.writeInt(jumpLevel);
+        buf.writeInt(armorLevel);
     }
 
     public boolean handle(Supplier<NetworkEvent.Context> supplier) {
@@ -40,6 +52,9 @@ public class SyncSkillDataPacket {
             cap.ifPresent(data -> {
                 data.setSpeedLevel(speedLevel);
                 data.setHPLevel(hpLevel);
+                data.setDMGLevel(dmgLevel);
+                data.setJumpLevel(jumpLevel);
+                data.setArmorLevel(armorLevel);
             });
 
 

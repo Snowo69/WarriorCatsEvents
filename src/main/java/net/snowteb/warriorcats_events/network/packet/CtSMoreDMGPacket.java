@@ -13,15 +13,15 @@ import net.snowteb.warriorcats_events.skills.PlayerSkillProvider;
 
 import java.util.function.Supplier;
 
-import static net.snowteb.warriorcats_events.skills.PlayerSkill.HP_SKILL_UUID;
+import static net.snowteb.warriorcats_events.skills.PlayerSkill.DMG_SKILL_UUID;
 
-public class CtSMoreHPPacket {
+public class CtSMoreDMGPacket {
 
-    public CtSMoreHPPacket() {
+    public CtSMoreDMGPacket() {
 
     }
 
-    public CtSMoreHPPacket(FriendlyByteBuf buf) {
+    public CtSMoreDMGPacket(FriendlyByteBuf buf) {
 
     }
 
@@ -37,41 +37,43 @@ public class CtSMoreHPPacket {
             if (player == null) return;
 
             int currentLevel = player.getCapability(PlayerSkillProvider.SKILL_DATA)
-                    .map(ISkillData::getHPLevel)
-                    .orElse(player.getPersistentData().getInt("skill_hp_level"));
-            int cost = PlayerSkill.defaultHPcost * (currentLevel + 1);
+                    .map(ISkillData::getDMGLevel)
+                    .orElse(player.getPersistentData().getInt("skill_dmg_level"));
+
+            int cost = PlayerSkill.defaultDMGcost * (currentLevel + 1);
             int remaining = cost - player.totalExperience;
 
 
-            if (player.totalExperience < cost && currentLevel < PlayerSkill.maxHPLevel) {
+
+            if (player.totalExperience < cost && currentLevel < PlayerSkill.maxDMGLevel) {
                 player.sendSystemMessage(Component.literal("⚠ You need " + remaining + " XP more.").withStyle(ChatFormatting.RED));
                 return;
             }
 
-            if (currentLevel < PlayerSkill.maxHPLevel) {
+            if (currentLevel < PlayerSkill.maxDMGLevel) {
                 player.giveExperiencePoints(-cost);
-                var attribute = player.getAttribute(Attributes.MAX_HEALTH);
+                var attribute = player.getAttribute(Attributes.ATTACK_DAMAGE);
                 if (attribute == null) return;
 
-                attribute.removeModifier(HP_SKILL_UUID);
-                double bonus = 0.1 * (currentLevel + 1);
+                attribute.removeModifier(DMG_SKILL_UUID);
+                double bonus = 0.12 * (currentLevel + 1);
                 attribute.addPermanentModifier(new AttributeModifier(
-                        HP_SKILL_UUID,
-                        "skill_hp_bonus",
+                        DMG_SKILL_UUID,
+                        "skill_dmg_bonus",
                         bonus,
-                        AttributeModifier.Operation.MULTIPLY_TOTAL
+                        AttributeModifier.Operation.ADDITION
                 ));
 
                 player.getCapability(PlayerSkillProvider.SKILL_DATA).ifPresent(data -> {
-                    data.setHPLevel(currentLevel + 1);
+                    data.setDMGLevel(currentLevel + 1);
                 });
 
-                player.getPersistentData().putInt("skill_hp_level", currentLevel + 1);
+                player.getPersistentData().putInt("skill_dmg_level", currentLevel + 1);
 
-                player.sendSystemMessage(Component.literal("HP level increased to: " + (currentLevel + 1)));
+                player.sendSystemMessage(Component.literal("Damage level increased to: " + (currentLevel + 1)));
             }
             else {
-                player.sendSystemMessage(Component.literal("Health skill is maxed! : Level " + (currentLevel)).withStyle(ChatFormatting.YELLOW));
+                player.sendSystemMessage(Component.literal("Damage skill is maxed! : Level " + (currentLevel)).withStyle(ChatFormatting.YELLOW));
             }
 
         });

@@ -7,6 +7,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.scores.Objective;
 import net.minecraft.world.scores.Scoreboard;
@@ -15,6 +17,7 @@ import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
+import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -30,6 +33,7 @@ import net.snowteb.warriorcats_events.stealth.PlayerStealth;
 import net.snowteb.warriorcats_events.stealth.PlayerStealthProvider;
 import net.snowteb.warriorcats_events.thirst.PlayerThirst;
 import net.snowteb.warriorcats_events.thirst.PlayerThirstProvider;
+import net.snowteb.warriorcats_events.util.ModAttributes;
 
 @Mod.EventBusSubscriber(modid = WarriorCatsEvents.MODID)
 public class ModEvents2 {
@@ -54,7 +58,7 @@ public class ModEvents2 {
     }
 
     @SubscribeEvent
-    public static void onPlayerCloned(PlayerEvent.Clone event) {
+    public static void onPlayerDead(PlayerEvent.Clone event) {
 
         event.getEntity().getCapability(PlayerThirstProvider.PLAYER_THIRST).ifPresent(newStore -> {
             if (event.isWasDeath()) {
@@ -66,38 +70,125 @@ public class ModEvents2 {
             }
 
             if (event.getEntity() instanceof ServerPlayer player) {
-                ModPackets.sendToPlayer(
-                        new ThirstDataSyncStCPacket(newStore.getThirst()),
-                        player
-                );
+                ModPackets.sendToPlayer(new ThirstDataSyncStCPacket(newStore.getThirst()), player);
             }
         });
 
 
-        event.getEntity().getCapability(PlayerStealthProvider.STEALTH_MODE).ifPresent(newStore -> {
-            event.getOriginal().getCapability(PlayerStealthProvider.STEALTH_MODE).ifPresent(oldStore -> {
-                newStore.copyFrom(oldStore);
 
-                if (event.getEntity() instanceof ServerPlayer player) {
-                    newStore.sync(player);
-                }
+        if (event.isWasDeath()) {
+            event.getOriginal().reviveCaps();
+            event.getEntity().getCapability(PlayerStealthProvider.STEALTH_MODE).ifPresent(newStore -> {
+                event.getOriginal().getCapability(PlayerStealthProvider.STEALTH_MODE).ifPresent(oldStore -> {
+                    newStore.copyFrom(oldStore);
+
+                    if (event.getEntity() instanceof ServerPlayer player) {
+                        newStore.sync(player);
+                    }
+                });
             });
-        });
+        }
 
-        event.getEntity().getCapability(PlayerSkillProvider.SKILL_DATA).ifPresent(newStore -> {
-            event.getOriginal().getCapability(PlayerSkillProvider.SKILL_DATA).ifPresent(oldStore -> {
-                newStore.copyFrom(oldStore);
+        if (event.isWasDeath()) {
+            event.getOriginal().reviveCaps();
+            event.getEntity().getCapability(PlayerSkillProvider.SKILL_DATA).ifPresent(newStore -> {
+                event.getOriginal().getCapability(PlayerSkillProvider.SKILL_DATA).ifPresent(oldStore -> {
+                    newStore.copyFrom(oldStore);
 
-                if (event.getEntity() instanceof ServerPlayer player) {
-                    ModPackets.sendToPlayer(
-                            new SyncSkillDataPacket(newStore.getSpeedLevel(), newStore.getHPLevel()),
-                            player
-                    );
-                }
+                    if (event.getEntity() instanceof ServerPlayer player) {
+                        var speedAttr = player.getAttribute(Attributes.MOVEMENT_SPEED);
+                        if (speedAttr != null) {
+                            speedAttr.removeModifier(PlayerSkill.SPEED_SKILL_UUID);
+                            double bonus = 0.025 * newStore.getSpeedLevel();
+                            if (bonus > 0) {
+                                speedAttr.addPermanentModifier(
+                                        new AttributeModifier(
+                                                PlayerSkill.SPEED_SKILL_UUID,
+                                                "skill_speed_bonus",
+                                                bonus,
+                                                AttributeModifier.Operation.MULTIPLY_TOTAL
+                                        )
+                                );
+                            }
+                        }
+                        var hpAttr = player.getAttribute(Attributes.MAX_HEALTH);
+                        if (hpAttr != null) {
+                            hpAttr.removeModifier(PlayerSkill.HP_SKILL_UUID);
+                            double bonus = 0.1 * newStore.getHPLevel();
+                            if (bonus > 0) {
+                                hpAttr.addPermanentModifier(
+                                        new AttributeModifier(
+                                                PlayerSkill.HP_SKILL_UUID,
+                                                "skill_hp_bonus",
+                                                bonus,
+                                                AttributeModifier.Operation.MULTIPLY_TOTAL
+                                        )
+                                );
+                            }
+                        }
+                        var dmgAttr = player.getAttribute(Attributes.ATTACK_DAMAGE);
+                        if (dmgAttr != null) {
+                            dmgAttr.removeModifier(PlayerSkill.DMG_SKILL_UUID);
+                            double bonus = 0.12 * newStore.getDMGLevel();
+                            if (bonus > 0) {
+                                dmgAttr.addPermanentModifier(
+                                        new AttributeModifier(
+                                                PlayerSkill.DMG_SKILL_UUID,
+                                                "skill_dmg_bonus",
+                                                bonus,
+                                                AttributeModifier.Operation.ADDITION
+                                        )
+                                );
+                            }
+                        }
+                        var jumpAttr = player.getAttribute(ModAttributes.PLAYER_JUMP.get());
+                        if (jumpAttr != null) {
+                            jumpAttr.removeModifier(PlayerSkill.JUMP_SKILL_UUID);
+                            double bonus = 0.095 * newStore.getJumpLevel();
+                            if (bonus > 0) {
+                                jumpAttr.addPermanentModifier(
+                                        new AttributeModifier(
+                                                PlayerSkill.JUMP_SKILL_UUID,
+                                                "skill_jump_bonus",
+                                                bonus,
+                                                AttributeModifier.Operation.ADDITION
+                                        )
+                                );
+                            }
+                        }
+                        var armorAttr = player.getAttribute(Attributes.ARMOR);
+                        if (armorAttr != null) {
+                            armorAttr.removeModifier(PlayerSkill.ARMOR_SKILL_UUID);
+                            double bonus = 3.5 * newStore.getArmorLevel();
+                            if (bonus > 0) {
+                                armorAttr.addPermanentModifier(
+                                        new AttributeModifier(
+                                                PlayerSkill.ARMOR_SKILL_UUID,
+                                                "skill_armor_bonus",
+                                                bonus,
+                                                AttributeModifier.Operation.ADDITION
+                                        )
+                                );
+                            }
+                        }
+
+                        ModPackets.sendToPlayer(
+                                new SyncSkillDataPacket(newStore.getSpeedLevel(), newStore.getHPLevel(),
+                                        newStore.getDMGLevel(), newStore.getJumpLevel(), newStore.getArmorLevel()),
+                                player
+                        );
+                    }
+
+
+                });
+
+
             });
-        });
+        }
+
 
     }
+
 
 
 
@@ -152,7 +243,7 @@ public class ModEvents2 {
                                 event.player.getX(),
                                 event.player.getY() + 0.1,
                                 event.player.getZ(),
-                                2, 0.1, 0, 0.1, 0.01
+                                2, 0.1, 0, 0.1, 0.002
                         );
                     }
 
@@ -199,6 +290,21 @@ public class ModEvents2 {
         }
     }
 
+
+    @SubscribeEvent
+    public static void onJump(LivingEvent.LivingJumpEvent event) {
+        if (!(event.getEntity() instanceof Player player)) return;
+
+        double extra = player.getAttribute(ModAttributes.PLAYER_JUMP.get()).getValue();
+
+        if (extra > 0) {
+            player.setDeltaMovement(
+                    player.getDeltaMovement().x,
+                    player.getDeltaMovement().y + extra,
+                    player.getDeltaMovement().z
+            );
+        }
+    }
 
 
 }

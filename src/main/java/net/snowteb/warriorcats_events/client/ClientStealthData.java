@@ -4,7 +4,7 @@ public class ClientStealthData {
 
     private static boolean unlocked = false;
     private static boolean stealthOn = false;
-
+/*
     public static void set(boolean isUnlocked, boolean isStealthOn) {
         unlocked = isUnlocked;
         stealthOn = isStealthOn;
@@ -33,4 +33,5 @@ public class ClientStealthData {
     public static void setStealth(boolean value) {
         stealthOn = value;
     }
+    */
 }

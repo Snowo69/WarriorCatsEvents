@@ -31,6 +31,9 @@ public class PlayerSkillProvider implements ICapabilityProvider, INBTSerializabl
         PlayerSkill s = createSkills();
         tag.putInt("speedLevel", s.getSpeedLevel());
         tag.putInt("hpLevel", s.getHPLevel());
+        tag.putInt("dmgLevel", s.getDMGLevel());
+        tag.putInt("jumpLevel", s.getJumpLevel());
+        tag.putInt("armorLevel", s.getArmorLevel());
         return tag;
     }
 
@@ -39,6 +42,9 @@ public class PlayerSkillProvider implements ICapabilityProvider, INBTSerializabl
         PlayerSkill s = createSkills();
         s.setSpeedLevel(nbt.getInt("speedLevel"));
         s.setHPLevel(nbt.getInt("hpLevel"));
+        s.setDMGLevel(nbt.getInt("dmgLevel"));
+        s.setJumpLevel(nbt.getInt("jumpLevel"));
+        s.setArmorLevel(nbt.getInt("armorLevel"));
     }
 
     public PlayerSkill getOrCreateSkills() {
