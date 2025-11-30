@@ -118,7 +118,10 @@ public class WCRenderer extends GeoEntityRenderer<WCatEntity> {
             case 13 -> 1.0f; //ratstar
             case 14 -> 0.8f; //twitchstream
             case 15 -> 1.1f; //blazepit
-            case 16 -> 1.0f; //blazepit
+            case 16 -> 1.0f; //bengalpelt
+            case 17 -> 1.1f; //sparrowstar
+            case 18 -> 0.8f; //foxeater
+            case 19 -> 1.0f; //willowsong
             default -> 1.0f;
         };
 

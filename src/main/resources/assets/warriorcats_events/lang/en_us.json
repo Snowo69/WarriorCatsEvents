@@ -30,8 +30,8 @@
   "item.warriorcats_events.traveling_herbs": "Traveling Herbs",
   "item.warriorcats_events.traveling_herbs.tooltip": "A bundle of sorrel, burnet, chamomile, and daisy. Perfect for traveling",
 
-  "item.warriorcats_events.riverclan_music_disc": "Riverclan",
-  "item.warriorcats_events.riverclan_music_disc.desc": "Riverclan - Sharon Hurvitz",
+  "item.warriorcats_events.generations_music_disc": "Generations",
+  "item.warriorcats_events.generations_music_disc.desc": "Generations - Sharon Hurvitz",
 
   "item.warriorcats_events.whiskers": "Whiskers",
   "item.warriorcats_events.whiskers.tooltip": "Whiskers allow you to know things about your clanmates!\\n\\nRight Click: Display Wild Cat's information.\\nRight Click + Shift: Change a Wild Cat's role.",
@@ -74,6 +74,8 @@
 
   "key.category.warriorcats_events.key": "Warrior Cats Events",
   "key.warriorcats_events.hiss": "Hiss",
+  "key.warriorcats_events.skillmenu": "Open Skill Tree Menu",
+  "key.warriorcats_events.water": "Drink Water",
 
   "effect.warriorcats_events.numb": "Numb",
 

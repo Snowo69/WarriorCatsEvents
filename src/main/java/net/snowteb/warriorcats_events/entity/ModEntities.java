@@ -9,6 +9,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.entity.custom.MouseEntity;
+import net.snowteb.warriorcats_events.entity.custom.PigeonEntity;
 import net.snowteb.warriorcats_events.entity.custom.SquirrelEntity;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 
@@ -34,6 +35,12 @@ public class ModEntities {
                     () -> EntityType.Builder.of(WCatEntity::new, MobCategory.CREATURE)
                             .sized(1f,1f)
                             .build(new ResourceLocation(WarriorCatsEvents.MODID, "warrior_cat").toString()));
+
+    public static final RegistryObject<EntityType<PigeonEntity>> PIGEON =
+            ENTITY_TYPES.register("pigeon",
+                    () -> EntityType.Builder.of(PigeonEntity::new, MobCategory.CREATURE)
+                            .sized(1f,1f)
+                            .build(new ResourceLocation(WarriorCatsEvents.MODID, "pigeon").toString()));
 
     public static void register(IEventBus eventBus) {
         ENTITY_TYPES.register(eventBus);

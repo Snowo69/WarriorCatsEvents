@@ -24,6 +24,7 @@ import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.OwnerHurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.OwnerHurtTargetGoal;
+import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -85,17 +86,35 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
     private AnimatableInstanceCache cache = new SingletonAnimatableInstanceCache(this);
 
     private boolean kitBorn = false;
-    private boolean lockHead = false;
     boolean animPlayed;
     private CatMode mode = CatMode.FOLLOW;
     private BlockPos wanderCenter = null;
     private static final int WANDER_RADIUS = 15;
-    int maxVariants = 17;
+    int maxVariants = 20;
     private boolean HLAnimationRunning;
     private final int KITTINGTIME = 20 * 60 * 8; // 8min
     private boolean wasBaby = this.isBaby();
 
     private boolean playingAnimation = false;
+
+
+
+
+
+
+
+
+
+
+    private static final EntityDataAccessor<Boolean> ATTACKING =
+            SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.BOOLEAN);
+    public int attackAnimationTimeout = 0;
+
+
+
+
+
+
 
 
 
@@ -131,7 +150,8 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
             // Gray and cream
             "Pearl", "Mist", "Ivory", "Silk", "Feather",
             "Leaf", "Ash", "Fawn", "Soft", "Frost", "Snow",
-            "Cloud", "Storm", "Sparrow", "Rat", "Bengal"
+            "Cloud", "Storm", "Sparrow", "Rat", "Bengal",
+            "Willow"
     };
     private static final String[] PREFIX_3 = {
             // 4, 8
@@ -139,7 +159,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
             "Tiger", "Flame", "Ember", "Bracken", "Fire",
             "Oak", "Rust", "Maple", "Amber", "Hare",
             "Lion", "Dawn", "Dark", "Bumble", "Mole",
-            "Sun", "Blaze", "Chestnut"
+            "Sun", "Blaze", "Chestnut", "Fox"
     };
     private static final String[] PREFIX_4 = {
             // 5, 6, 7, 12
@@ -179,6 +199,10 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
             case 14 -> PREFIX_4; // twitchstream
             case 15 -> PREFIX_3; // blazepit
             case 16 -> PREFIX_2; // bengalpelt
+            case 17 -> PREFIX_2; // sparrowstar
+            case 18 -> PREFIX_3; // foxeater
+            case 19 -> PREFIX_2; // willowsong
+
             default -> PREFIX_1; // fallback
         };
     }
@@ -328,7 +352,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
         @Override
         public boolean canContinueToUse() {
             if (!(cat instanceof WCatEntity)) return false;
-            WCatEntity wcat = (WCatEntity) cat;
+            WCatEntity wcat = cat;
 
             if (wcat.mode == CatMode.SIT) return false;
             if (cat.isOrderedToSit()) return false;
@@ -429,7 +453,8 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
         this.goalSelector.addGoal(3, new BreedGoal(this, 1.0D));
         this.goalSelector.addGoal(4, new CatFollowOwnerGoal(this, 1.2D, 1.0F, 7.0F)); // prioridad alta para seguir si toca
         this.targetSelector.addGoal(5, new HurtByTargetGoal(this));
-        this.goalSelector.addGoal(6, new MeleeAttackGoal(this, 1.2D, false));
+        this.goalSelector.addGoal(6, new WCAttackGoal(this, 1.2D, true));
+        //this.goalSelector.addGoal(6, new MeleeAttackGoal(this, 1.2D, false));
         this.goalSelector.addGoal(7, new BoundedWanderGoal(this, 1.0D));
         this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
         this.goalSelector.addGoal(9, new CasualBlockSeekGoal(this,1.0D,ModBlocks.MOSSBED.get(),15,0.10D));
@@ -888,17 +913,39 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
 
 
     @Override
-    public void registerControllers(AnimatableManager.ControllerRegistrar controllerRegistrar) {
-        controllerRegistrar.add(new AnimationController<>
+    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+        controllers.add(new AnimationController<>
                 (this, "controller", 0, this::predicate));
+        controllers.add(new AnimationController<>
+                (this, "attackController", 0, this::attackPredicate));
 
     }
 
+    private <T extends GeoAnimatable> PlayState attackPredicate(AnimationState<T> state) {
+        var controller = state.getController();
+        if (this.isAttacking() && attackAnimationTimeout <= 0) {
+            attackAnimationTimeout = 100;
+            controller.setAnimation(RawAnimation.begin()
+                    .then("animation.wcat.attack", Animation.LoopType.PLAY_ONCE));
+            controller.forceAnimationReset();
+            return PlayState.CONTINUE;
+        } else {
+            --this.attackAnimationTimeout;
+        }
 
-   private <T extends GeoAnimatable> PlayState predicate(AnimationState<T> tAnimationState) {
+        if(!this.isAttacking()){
+            return PlayState.STOP;
+        }
+        return PlayState.CONTINUE;
+    }
+
+
+
+    private <T extends GeoAnimatable> PlayState predicate(AnimationState<T> tAnimationState) {
+
        this.setPlayingAnimation(tAnimationState.getController().isPlayingTriggeredAnimation());
 
-       if (tAnimationState.isMoving()) {
+       if (tAnimationState.isMoving() && !this.isCrouching()) {
            tAnimationState.getController().setAnimation(RawAnimation.begin().
                    then("animation.wcat.walk", Animation.LoopType.LOOP));
            animPlayed = false;
@@ -935,13 +982,23 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
 
            return PlayState.CONTINUE;
 
+        }
+
+       if (this.isCrouching()){
+           if (tAnimationState.isMoving() && this.isCrouching()) {
+               tAnimationState.getController().setAnimation(RawAnimation.begin().
+                       then("animation.wcat.crouchingwalk", Animation.LoopType.LOOP));
+           } else {
+           tAnimationState.getController().setAnimation(RawAnimation.begin().
+                   then("animation.wcat.crouchingidle", Animation.LoopType.LOOP));
+           }
+           animPlayed = false;
        }
 
-                else
-                if (!animPlayed) {
-                    tAnimationState.getController().setAnimation(RawAnimation.begin().
-                            then("animation.wcat.idle", Animation.LoopType.LOOP));
-                     }
+        else if (!animPlayed) {
+            tAnimationState.getController().setAnimation(RawAnimation.begin().
+                    then("animation.wcat.idle", Animation.LoopType.LOOP));
+        }
 
              return PlayState.CONTINUE;
 
@@ -1106,8 +1163,25 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
         this.entityData.define(RANK, 0);
         this.entityData.define(AGE_SYNC, 0.0f);
         this.entityData.define(APP_SCALE, false);
+        this.entityData.define(ATTACKING, false);
 
     }
+
+
+
+
+
+    public void setAttacking(boolean attacking) {
+       this.entityData.set(ATTACKING, attacking);
+    }
+
+    public boolean isAttacking() {
+       return this.entityData.get(ATTACKING);
+    }
+
+
+
+
 
 
 
@@ -1134,13 +1208,12 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
             case 14 -> 0.5f; //twitchstream
             case 15 -> 0.7f; //blazepit
             case 16 -> 0.6f; //bengalpelt
+            case 17 -> 0.7f; //sparrowstar
+            case 18 -> 0.5f; //foxeater
+            case 19 -> 0.6f; //willowsong
             default -> 0.5f;
         };
         this.entityData.set(SCALE, scale);
-    }
-
-    public void setHeadLocked(boolean value) {
-        this.lockHead = value;
     }
 
     private boolean apprenticeAge = false;
@@ -1148,6 +1221,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
 
     public Vec3 clientMovement = Vec3.ZERO;
     private Vec3 lastClientPos = Vec3.ZERO;
+
     @Override
     public void tick() {
         super.tick();

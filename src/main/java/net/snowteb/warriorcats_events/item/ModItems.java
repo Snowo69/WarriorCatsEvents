@@ -1,6 +1,5 @@
 package net.snowteb.warriorcats_events.item;
 
-import net.minecraft.world.food.Foods;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.RecordItem;
@@ -113,8 +112,8 @@ public class ModItems {
 
 
 
-    public static final RegistryObject<Item> RIVERCLAN_MUSIC_DISC = ITEMS.register("riverclan_music_disc",
-            () -> new RecordItem(6, ModSounds.RIVERCLAN, new Item.Properties().stacksTo(1), 3380));
+    public static final RegistryObject<Item> GENERATIONS_MUSIC_DISC = ITEMS.register("generations_music_disc",
+            () -> new RecordItem(6, ModSounds.GENERATIONS, new Item.Properties().stacksTo(1), 2650));
 
     public static final RegistryObject<Item> STARCLAN_KNOWLEDGE = ITEMS.register("starclan_knowledge",
             () -> new ModBookItemToolTip(new Item.Properties().stacksTo(1)));

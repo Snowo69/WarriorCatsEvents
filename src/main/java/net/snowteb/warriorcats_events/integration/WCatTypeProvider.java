@@ -28,7 +28,7 @@ public class WCatTypeProvider extends TypeProvider<WCatEntity> {
 
     @Override
     public int getRange() {
-        return 16;
+        return 19;
     }
 
     @Override

@@ -259,7 +259,7 @@ public class SkillScreen extends Screen {
             Component Text1 = Component.literal("");
             Component Text2 = Component.literal("");
             if(currentDMGLevel < PlayerSkill.maxDMGLevel) {
-                Text1= Component.literal("Requiered: Damage Level MAX\n");
+                Text1= Component.literal("Requiered: Claws Level MAX\n");
             }
             if(currentHPLevel < PlayerSkill.maxHPLevel) {
                 Text2= Component.literal("Requiered: HP Level MAX");

@@ -21,7 +21,7 @@ public class ModItemModelProvider extends ItemModelProvider {
     protected void registerModels() {
        // simpleItem(ModItems.BURNET);
 
-        simpleItem(ModItems.RIVERCLAN_MUSIC_DISC);
+        simpleItem(ModItems.GENERATIONS_MUSIC_DISC);
         simpleItem(ModItems.WHISKERS);
         simpleItem(ModItems.CLAWS);
         simpleItem(ModItems.MOUSE_FOOD);

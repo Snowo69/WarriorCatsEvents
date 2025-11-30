@@ -2,6 +2,7 @@ package net.snowteb.warriorcats_events.event;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.player.LocalPlayer;
@@ -23,13 +24,16 @@ import net.snowteb.warriorcats_events.block.ModBlocks;
 import net.snowteb.warriorcats_events.client.ThirstHUD;
 import net.snowteb.warriorcats_events.entity.ModEntities;
 import net.snowteb.warriorcats_events.entity.client.MouseRenderer;
+import net.snowteb.warriorcats_events.entity.client.PigeonRenderer;
 import net.snowteb.warriorcats_events.entity.client.SquirrelRenderer;
 import net.snowteb.warriorcats_events.entity.client.WCRenderer;
 import net.snowteb.warriorcats_events.network.ModPackets;
 import net.snowteb.warriorcats_events.network.packet.CtSHissPacket;
 import net.snowteb.warriorcats_events.network.packet.ReqSkillDataPacket;
 import net.snowteb.warriorcats_events.network.packet.WaterPacket;
+import net.snowteb.warriorcats_events.screen.ModMenuTypes;
 import net.snowteb.warriorcats_events.screen.SkillScreen;
+import net.snowteb.warriorcats_events.screen.StoneCleftScreen;
 import net.snowteb.warriorcats_events.skills.StealthClientState;
 import net.snowteb.warriorcats_events.sound.ModSounds;
 import net.snowteb.warriorcats_events.stealth.PlayerStealthProvider;
@@ -63,7 +67,7 @@ public class ClientEvents {
         public static void onPlaySound(PlaySoundEvent event) {
             SoundInstance sound = event.getSound();
 
-            if (sound != null && sound.getLocation().equals(ModSounds.RIVERCLAN.getId())) {
+            if (sound != null && sound.getLocation().equals(ModSounds.GENERATIONS.getId())) {
                 Minecraft.getInstance().getSoundManager().stop(null, SoundSource.MUSIC);
             }
         }
@@ -135,6 +139,7 @@ public class ClientEvents {
             event.registerEntityRenderer(ModEntities.MOUSE.get(), MouseRenderer::new);
             event.registerEntityRenderer(ModEntities.SQUIRREL.get(), SquirrelRenderer::new);
             event.registerEntityRenderer(ModEntities.WCAT.get(), WCRenderer::new);
+            event.registerEntityRenderer(ModEntities.PIGEON.get(), PigeonRenderer::new);
 
 
         }
@@ -154,14 +159,9 @@ public class ClientEvents {
 
 
         @SubscribeEvent
-        public static void onClientSetup(FMLClientSetupEvent event) {
+        public static void clientSetup(FMLClientSetupEvent event) {
+            MenuScreens.register(ModMenuTypes.STONECLEFT_MENU.get(), StoneCleftScreen::new);
 
-            EntityArms.register(HumanoidModel.class, new ClassArmProvider<HumanoidModel>() {
-                @Override
-                public ModelPart getArm(LivingEntity entity, HumanoidModel model) {
-                    return model.rightArm;
-                }
-            });
         }
 
 

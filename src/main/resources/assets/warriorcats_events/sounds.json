@@ -1,8 +1,8 @@
 {
-  "riverclan": {
+  "generations": {
     "sounds": [
       {
-        "name": "warriorcats_events:riverclan",
+        "name": "warriorcats_events:generations",
         "stream": true
       }
     ]

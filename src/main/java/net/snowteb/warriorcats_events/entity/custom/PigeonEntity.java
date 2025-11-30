@@ -1,0 +1,215 @@
+package net.snowteb.warriorcats_events.entity.custom;
+
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.SpawnGroupData;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.control.FlyingMoveControl;
+import net.minecraft.world.entity.ai.goal.*;
+import net.minecraft.world.entity.ai.navigation.FlyingPathNavigation;
+import net.minecraft.world.entity.ai.navigation.PathNavigation;
+import net.minecraft.world.entity.ai.targeting.TargetingConditions;
+import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.animal.Parrot;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.phys.Vec3;
+import software.bernie.geckolib.animatable.GeoEntity;
+import software.bernie.geckolib.core.animatable.GeoAnimatable;
+import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.core.animation.*;
+import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.util.GeckoLibUtil;
+
+import java.util.EnumSet;
+
+public class PigeonEntity extends Parrot implements GeoEntity {
+
+    private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
+    private static final EntityDataAccessor<Integer> PIGEON_VARIANT =
+            SynchedEntityData.defineId(PigeonEntity.class, EntityDataSerializers.INT);
+
+    public PigeonEntity(EntityType<? extends PigeonEntity> type, Level world) {
+        super(type, world);
+        this.moveControl = new FlyingMoveControl(this, 10, false);
+    }
+
+
+    public class FlyAway extends Goal {
+        private final Mob mob;
+        private final double speed;
+        private Player nearestPlayer;
+        double range = 6.0;
+
+        public FlyAway(Mob mob, double speed) {
+            this.mob = mob;
+            this.speed = speed;
+            this.setFlags(EnumSet.of(Flag.MOVE));
+        }
+
+
+        @Override
+        public boolean canUse() {
+
+
+
+            TargetingConditions conditions = TargetingConditions.forNonCombat()
+                    .selector(player -> !player.isInvisible())
+                    .range(range);
+
+            this.nearestPlayer = mob.level().getNearestPlayer(conditions, mob);
+
+
+            return nearestPlayer != null;
+        }
+
+
+
+        @Override
+        public void start() {
+            Vec3 escapePos = getEscapePos();
+            if (escapePos != null) {
+                mob.getNavigation().moveTo(escapePos.x, escapePos.y, escapePos.z, speed);
+            }
+        }
+
+        private Vec3 getEscapePos() {
+            Vec3 mobPos = mob.position();
+            Vec3 playerPos = nearestPlayer.position();
+
+            Vec3 dir = mobPos.subtract(playerPos).normalize();
+            Vec3 target = mobPos.add(dir.scale(10)).add(0, 4, 0);
+
+            return target;
+        }
+    }
+
+    public class RandomFlyingGoal extends Goal {
+        private final Mob mob;
+        private final double speed;
+
+        public RandomFlyingGoal(Mob mob, double speed) {
+            this.mob = mob;
+            this.speed = speed;
+            this.setFlags(EnumSet.of(Flag.MOVE));
+        }
+
+        @Override
+        public boolean canUse() {
+            return mob.getRandom().nextInt(80) == 0;
+        }
+
+        @Override
+        public boolean canContinueToUse() {
+            return false;
+        }
+
+        @Override
+        public void start() {
+            Vec3 vec = this.getRandomAirPos();
+            if (vec != null) {
+                mob.getNavigation().moveTo(vec.x, vec.y, vec.z, speed);
+            }
+        }
+
+        private Vec3 getRandomAirPos() {
+            RandomSource rand = mob.getRandom();
+            double x = mob.getX() + (rand.nextDouble() - 0.5) * 16;
+            double y = mob.getY() + rand.nextInt(6) + 4;
+            double z = mob.getZ() + (rand.nextDouble() - 0.5) * 16;
+            return new Vec3(x, y, z);
+        }
+    }
+
+
+    @Override
+    protected void defineSynchedData() {
+        super.defineSynchedData();
+        this.entityData.define(PIGEON_VARIANT, 0);
+    }
+
+    public int getPigeonVariant() {
+        return this.entityData.get(PIGEON_VARIANT);
+    }
+
+    public void setPigeonVariant(int id) {
+        this.entityData.set(PIGEON_VARIANT, id);
+    }
+
+
+
+    @Override
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor world, DifficultyInstance difficulty, MobSpawnType reason, SpawnGroupData livingdata, CompoundTag tag) {
+        setPigeonVariant(this.random.nextInt(3));
+        return super.finalizeSpawn(world, difficulty, reason, livingdata, tag);
+    }
+
+
+
+    public static AttributeSupplier.Builder setAttributes() {
+        return Animal.createMobAttributes()
+                .add(Attributes.MAX_HEALTH, 1D)
+                .add(Attributes.ATTACK_SPEED, 1.0f)
+                .add(Attributes.ATTACK_DAMAGE, 1f)
+                .add(Attributes.MOVEMENT_SPEED, 0.2f)
+                .add(Attributes.FLYING_SPEED, 0.5f);
+    }
+
+    @Override
+    protected void registerGoals() {
+        this.goalSelector.addGoal(0, new FloatGoal(this));
+        this.goalSelector.addGoal(1,new PanicGoal(this,1.25D));
+        this.goalSelector.addGoal(2, new FlyAway(this, 4.0D));
+        this.goalSelector.addGoal(3,new WaterAvoidingRandomStrollGoal(this,1.0D));
+        this.goalSelector.addGoal(4,new LookAtPlayerGoal(this, Player.class, 6.0F));
+        this.goalSelector.addGoal(5, new RandomFlyingGoal(this, 2.0));
+        this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
+    }
+
+   @Override
+    protected PathNavigation createNavigation(Level level) {
+        return new FlyingPathNavigation(this, level);
+    }
+
+    @Override
+    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+        controllers.add(new AnimationController<>
+                (this, "controller", 0, this::predicate));
+
+    }
+
+
+    private <T extends GeoAnimatable> PlayState predicate(AnimationState<T> tAnimationState) {
+        if (this.isFlying()) {
+            tAnimationState.getController().setAnimation(RawAnimation.begin()
+                    .then("animation.pigeon.fly", Animation.LoopType.LOOP));
+            return PlayState.CONTINUE;
+        }
+
+        if (tAnimationState.isMoving()) {
+            tAnimationState.getController().setAnimation(RawAnimation.begin()
+                    .then("animation.pigeon.walk", Animation.LoopType.LOOP));
+            return PlayState.CONTINUE;
+        }
+
+        tAnimationState.getController().setAnimation(RawAnimation.begin()
+                .then("animation.pigeon.idle", Animation.LoopType.LOOP));
+        return PlayState.CONTINUE;
+    }
+
+
+
+    @Override
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return cache;
+    }
+}

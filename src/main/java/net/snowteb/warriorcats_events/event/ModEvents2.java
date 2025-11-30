@@ -144,7 +144,7 @@ public class ModEvents2 {
                         var jumpAttr = player.getAttribute(ModAttributes.PLAYER_JUMP.get());
                         if (jumpAttr != null) {
                             jumpAttr.removeModifier(PlayerSkill.JUMP_SKILL_UUID);
-                            double bonus = 0.095 * newStore.getJumpLevel();
+                            double bonus = 0.093 * newStore.getJumpLevel();
                             if (bonus > 0) {
                                 jumpAttr.addPermanentModifier(
                                         new AttributeModifier(

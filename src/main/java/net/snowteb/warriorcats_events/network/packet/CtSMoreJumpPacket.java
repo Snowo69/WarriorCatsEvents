@@ -64,7 +64,7 @@ public class CtSMoreJumpPacket {
                     if (attribute == null) return;
 
                     attribute.removeModifier(JUMP_SKILL_UUID);
-                    double bonus = 0.095 * (currentLevel + 1);
+                    double bonus = 0.093 * (currentLevel + 1);
                     attribute.addPermanentModifier(new AttributeModifier(
                             JUMP_SKILL_UUID,
                             "skill_jump_bonus",

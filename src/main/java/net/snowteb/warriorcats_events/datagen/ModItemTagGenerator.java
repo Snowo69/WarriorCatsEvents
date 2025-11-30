@@ -22,8 +22,8 @@ public class ModItemTagGenerator extends ItemTagsProvider {
     @Override
     protected void addTags(HolderLookup.Provider pProvider) {
 
-        this.tag(ItemTags.MUSIC_DISCS).add(ModItems.RIVERCLAN_MUSIC_DISC.get());
-        this.tag(ItemTags.CREEPER_DROP_MUSIC_DISCS).add(ModItems.RIVERCLAN_MUSIC_DISC.get());
+        this.tag(ItemTags.MUSIC_DISCS).add(ModItems.GENERATIONS_MUSIC_DISC.get());
+        this.tag(ItemTags.CREEPER_DROP_MUSIC_DISCS).add(ModItems.GENERATIONS_MUSIC_DISC.get());
 
         this.tag(ItemTags.LOGS_THAT_BURN)
                 .add(ModBlocks.DARK_LOG.get().asItem())

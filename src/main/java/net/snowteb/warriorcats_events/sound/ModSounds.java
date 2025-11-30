@@ -15,8 +15,8 @@ public class ModSounds {
 
 //
 
-    public static final RegistryObject<SoundEvent> RIVERCLAN =
-            registerSoundEvents("riverclan");
+    public static final RegistryObject<SoundEvent> GENERATIONS =
+            registerSoundEvents("generations");
 
     public static final RegistryObject<SoundEvent> MOUSE_AMBIENT =
             registerSoundEvents("entity.mouse.ambient");

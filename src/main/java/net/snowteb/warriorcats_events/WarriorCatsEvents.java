@@ -30,8 +30,6 @@ public class WarriorCatsEvents {
     public static final String MODID = "warriorcats_events";
 
     public WarriorCatsEvents() {
-        System.out.println("[WarriorCatsEvents] Mod Loaded");
-
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         GeckoLib.initialize();
 
@@ -86,7 +84,7 @@ public class WarriorCatsEvents {
 
         if (event.getTabKey() == CreativeModeTabs.TOOLS_AND_UTILITIES) {
             event.accept(ModItems.STARCLAN_KNOWLEDGE);
-            event.accept(ModItems.RIVERCLAN_MUSIC_DISC);
+            event.accept(ModItems.GENERATIONS_MUSIC_DISC);
             event.accept(ModBlocks.STONECLEFT);
             event.accept(ModItems.WHISKERS);
             event.accept(ModItems.CLAWS);
@@ -139,13 +137,5 @@ public class WarriorCatsEvents {
 
 
     }
-    @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
-    public static class ClientEvents {
-        @SubscribeEvent
-        public static void clientSetup(FMLClientSetupEvent event) {
-            MenuScreens.register(ModMenuTypes.STONECLEFT_MENU.get(), StoneCleftScreen::new);
-        }
-    }
-
 
 }
