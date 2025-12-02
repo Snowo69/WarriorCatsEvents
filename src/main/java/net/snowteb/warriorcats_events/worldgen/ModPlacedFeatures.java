@@ -4,6 +4,9 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.data.worldgen.placement.PlacementUtils;
 import net.minecraft.data.worldgen.placement.VegetationPlacements;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.world.level.levelgen.VerticalAnchor;
+import net.minecraft.world.level.levelgen.blockpredicates.BlockPredicate;
 import net.minecraft.world.level.levelgen.placement.*;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.minecraft.core.registries.Registries;
@@ -23,6 +26,7 @@ public class ModPlacedFeatures {
     public static final ResourceKey<PlacedFeature> DAISY_PLACED_KEY = registerKey("daisy_placed");
     public static final ResourceKey<PlacedFeature> DEATHBERRIES_PLACED_KEY = registerKey("deathberries_placed");
     public static final ResourceKey<PlacedFeature> CATMINT_PLACED_KEY = registerKey("catmint_placed");
+    public static final ResourceKey<PlacedFeature> GLOWSHROOM_PLACED_KEY = registerKey("glowshroom_placed");
 
     public static final ResourceKey<PlacedFeature> STARRYTREE_PLACED_KEY = registerKey("starrytree_placed");
 
@@ -30,29 +34,41 @@ public class ModPlacedFeatures {
         HolderGetter<ConfiguredFeature<?, ?>> configuredFeatures = context.lookup(Registries.CONFIGURED_FEATURE);
 
         register(context, DOCK_PLACED_KEY, configuredFeatures.getOrThrow(ModConfiguredFeatures.DOCK_KEY),
-                List.of(RarityFilter.onAverageOnceEvery(32), InSquarePlacement.spread(),
+                List.of(RarityFilter.onAverageOnceEvery(64), InSquarePlacement.spread(),
                         PlacementUtils.HEIGHTMAP_WORLD_SURFACE, BiomeFilter.biome()));
+
         register(context, SORREL_PLACED_KEY, configuredFeatures.getOrThrow(ModConfiguredFeatures.SORREL_KEY),
-                List.of(RarityFilter.onAverageOnceEvery(32), InSquarePlacement.spread(),
+                List.of(RarityFilter.onAverageOnceEvery(64), InSquarePlacement.spread(),
                         PlacementUtils.HEIGHTMAP_WORLD_SURFACE, BiomeFilter.biome()));
+
         register(context, BURNET_PLACED_KEY, configuredFeatures.getOrThrow(ModConfiguredFeatures.BURNET_KEY),
-                List.of(RarityFilter.onAverageOnceEvery(32), InSquarePlacement.spread(),
+                List.of(RarityFilter.onAverageOnceEvery(64), InSquarePlacement.spread(),
                         PlacementUtils.HEIGHTMAP_WORLD_SURFACE, BiomeFilter.biome()));
+
         register(context, CHAMOMILE_PLACED_KEY, configuredFeatures.getOrThrow(ModConfiguredFeatures.CHAMOMILE_KEY),
-                List.of(RarityFilter.onAverageOnceEvery(32), InSquarePlacement.spread(),
+                List.of(RarityFilter.onAverageOnceEvery(64), InSquarePlacement.spread(),
                         PlacementUtils.HEIGHTMAP_WORLD_SURFACE, BiomeFilter.biome()));
+
         register(context, DAISY_PLACED_KEY, configuredFeatures.getOrThrow(ModConfiguredFeatures.DAISY_KEY),
-                List.of(RarityFilter.onAverageOnceEvery(32), InSquarePlacement.spread(),
+                List.of(RarityFilter.onAverageOnceEvery(64), InSquarePlacement.spread(),
                         PlacementUtils.HEIGHTMAP_WORLD_SURFACE, BiomeFilter.biome()));
+
         register(context, DEATHBERRIES_PLACED_KEY, configuredFeatures.getOrThrow(ModConfiguredFeatures.DEATHBERRIES_KEY),
-                List.of(RarityFilter.onAverageOnceEvery(64), InSquarePlacement.spread(),
+                List.of(RarityFilter.onAverageOnceEvery(128), InSquarePlacement.spread(),
                         PlacementUtils.HEIGHTMAP_WORLD_SURFACE, BiomeFilter.biome()));
+
         register(context, CATMINT_PLACED_KEY, configuredFeatures.getOrThrow(ModConfiguredFeatures.CATMINT_KEY),
-                List.of(RarityFilter.onAverageOnceEvery(64), InSquarePlacement.spread(),
+                List.of(RarityFilter.onAverageOnceEvery(128), InSquarePlacement.spread(),
+                        PlacementUtils.HEIGHTMAP_WORLD_SURFACE, BiomeFilter.biome()));
+
+        register(context, GLOWSHROOM_PLACED_KEY, configuredFeatures.getOrThrow(ModConfiguredFeatures.GLOWSHROOM_KEY),
+                List.of(RarityFilter.onAverageOnceEvery(128), InSquarePlacement.spread(),
                         PlacementUtils.HEIGHTMAP_WORLD_SURFACE, BiomeFilter.biome()));
 
 
-        register(context, STARRYTREE_PLACED_KEY, configuredFeatures.getOrThrow(ModConfiguredFeatures.STARRYTREE_KEY),
+
+
+                register(context, STARRYTREE_PLACED_KEY, configuredFeatures.getOrThrow(ModConfiguredFeatures.STARRYTREE_KEY),
                 VegetationPlacements.treePlacement(PlacementUtils.countExtra(3, 0.1f, 2),
                         ModBlocks.STARRYTREE_SAPLING.get()));
 

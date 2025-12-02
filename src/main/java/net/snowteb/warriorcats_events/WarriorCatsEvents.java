@@ -113,6 +113,7 @@ public class WarriorCatsEvents {
             event.accept(ModBlocks.DAISYPLANT);
             event.accept(ModBlocks.DEATHBERRIESBUSH);
             event.accept(ModBlocks.CATMINTPLANT);
+            event.accept(ModBlocks.GLOWSHROOM);
 
             event.accept(ModBlocks.LEAF_DOOR);
             event.accept(ModBlocks.MOSSBED);
@@ -130,6 +131,7 @@ public class WarriorCatsEvents {
             event.accept(ModItems.MOUSE_SPAWN_EGG);
             event.accept(ModItems.SQUIRREL_SPAWN_EGG);
             event.accept(ModItems.WILDCAT_SPAWN_EGG);
+            event.accept(ModItems.PIGEON_SPAWN_EGG);
         }
 
 

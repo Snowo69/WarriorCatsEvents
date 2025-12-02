@@ -5,6 +5,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
@@ -36,20 +37,26 @@ public class SquirrelEntity extends Animal implements GeoEntity {
                 .add(Attributes.MAX_HEALTH, 1D)
                 .add(Attributes.ATTACK_SPEED, 1.0f)
                 .add(Attributes.ATTACK_DAMAGE, 1f)
-                .add(Attributes.MOVEMENT_SPEED, 0.35f);
+                .add(Attributes.MOVEMENT_SPEED, 0.30f);
     }
 
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1, new PanicGoal(this, 1.3D));
-        this.goalSelector.addGoal(2, new AvoidEntityGoal<>(this, Player.class, 6.0f, 1.2D, 1.5D));
+        //this.goalSelector.addGoal(2, new AvoidEntityGoal<>(this, Player.class, 6.0f, 1.2D, 1.5D));
+        this.goalSelector.addGoal(2, new AvoidEntityGoal<>(this, LivingEntity.class,
+                6.0F, 1.2D, 1.5D,
+                e -> e instanceof Player || e instanceof WCatEntity && shouldScareFrom((WCatEntity)e)));
         this.goalSelector.addGoal(4, new MoveToLogsGoal(this, 1.0D, 15));
         this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 0.6D));
-
         this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 8.0F));
-
         this.goalSelector.addGoal(7, new RandomLookAroundGoal(this));
+    }
+
+
+    private boolean shouldScareFrom(WCatEntity cat) {
+        return cat.mode == WCatEntity.CatMode.WANDER;
     }
 
 

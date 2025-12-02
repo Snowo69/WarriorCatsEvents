@@ -2,6 +2,7 @@ package net.snowteb.warriorcats_events.entity.custom;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
@@ -10,8 +11,10 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
@@ -22,17 +25,23 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.OwnerHurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.OwnerHurtTargetGoal;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
+import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.animal.Chicken;
+import net.minecraft.world.entity.animal.Rabbit;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.network.NetworkHooks;
 import net.snowteb.warriorcats_events.block.ModBlocks;
@@ -48,14 +57,11 @@ import software.bernie.geckolib.core.animation.*;
 import software.bernie.geckolib.core.animation.AnimationState;
 import software.bernie.geckolib.core.object.PlayState;
 
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class WCatEntity extends TamableAnimal implements GeoEntity{
 
-    private enum CatMode {
+    public enum CatMode {
         SIT,
         FOLLOW,
         WANDER
@@ -85,9 +91,10 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
 
     private AnimatableInstanceCache cache = new SingletonAnimatableInstanceCache(this);
 
+    private Goal preyTarget;
     private boolean kitBorn = false;
     boolean animPlayed;
-    private CatMode mode = CatMode.FOLLOW;
+    public CatMode mode = CatMode.WANDER;
     private BlockPos wanderCenter = null;
     private static final int WANDER_RADIUS = 15;
     int maxVariants = 20;
@@ -101,21 +108,9 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
 
 
 
-
-
-
-
-
     private static final EntityDataAccessor<Boolean> ATTACKING =
             SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.BOOLEAN);
     public int attackAnimationTimeout = 0;
-
-
-
-
-
-
-
 
 
     private static final EntityDataAccessor<Integer> GENDER =
@@ -446,6 +441,11 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
 
     @Override
     protected void registerGoals() {
+        this.preyTarget = new NearestAttackableTargetGoal<>(this, Animal.class, 10, false, false, (target) -> {
+            return mode == CatMode.WANDER && (target instanceof MouseEntity || target instanceof PigeonEntity || target instanceof SquirrelEntity);
+        });
+
+
         this.goalSelector.addGoal(0, new FloatGoal(this));
 
         this.targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
@@ -453,11 +453,12 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
         this.goalSelector.addGoal(3, new BreedGoal(this, 1.0D));
         this.goalSelector.addGoal(4, new CatFollowOwnerGoal(this, 1.2D, 1.0F, 7.0F)); // prioridad alta para seguir si toca
         this.targetSelector.addGoal(5, new HurtByTargetGoal(this));
-        this.goalSelector.addGoal(6, new WCAttackGoal(this, 1.2D, true));
+        this.targetSelector.addGoal(6, this.preyTarget);
+        this.goalSelector.addGoal(7, new WCAttackGoal(this, 1.2D, true));
         //this.goalSelector.addGoal(6, new MeleeAttackGoal(this, 1.2D, false));
-        this.goalSelector.addGoal(7, new BoundedWanderGoal(this, 1.0D));
-        this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
-        this.goalSelector.addGoal(9, new CasualBlockSeekGoal(this,1.0D,ModBlocks.MOSSBED.get(),15,0.10D));
+        this.goalSelector.addGoal(8, new BoundedWanderGoal(this, 1.0D));
+        this.goalSelector.addGoal(9, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(10, new CasualBlockSeekGoal(this,1.0D,ModBlocks.MOSSBED.get(),15,0.10D));
 
     }
 
@@ -472,7 +473,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
     public static AttributeSupplier.Builder setAttributes() {
         return Mob.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, 20.0D)
-                .add(Attributes.MOVEMENT_SPEED, 0.3D)
+                .add(Attributes.MOVEMENT_SPEED, 0.33D)
                 .add(Attributes.ATTACK_DAMAGE, 4.0D)
                 .add(Attributes.FOLLOW_RANGE, 16.0D)
                 .add(Attributes.ARMOR, 1.0D);
@@ -510,6 +511,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
                 this.tame(pPlayer);
                 this.level().broadcastEntityEvent(this, (byte) 7);
 
+
                 if (!this.hasCustomName()) {
                     int variant = this.getVariant();
                     String[] prefixSet = getPrefixSetForVariant(variant);
@@ -531,6 +533,9 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
 
                 }
 
+                mode = CatMode.FOLLOW;
+                sendModeMessage(pPlayer);
+
             } else {
                 this.level().broadcastEntityEvent(this, (byte) 6);
                 this.setCustomName(null);
@@ -542,21 +547,25 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
             return InteractionResult.sidedSuccess(this.level().isClientSide());
         }
 
-        if (this.isTame() && pPlayer.isShiftKeyDown() && pPlayer.getUUID().equals(this.getOwnerUUID()) && pPlayer.getMainHandItem().isEmpty()) {
-            switch (mode) {
-                case SIT:
-                    mode = CatMode.FOLLOW;
-                    break;
-                case FOLLOW:
-                    mode = CatMode.WANDER;
-                    wanderCenter = this.blockPosition();
-                    break;
-                case WANDER:
-                    mode = CatMode.SIT;
-                    break;
+        if (this.isTame() && pPlayer.isShiftKeyDown() && pPlayer.getUUID().equals(this.getOwnerUUID())
+                && pPlayer.getMainHandItem().isEmpty()) {
+            if (!this.level().isClientSide()) {
+                switch (mode) {
+                    case SIT:
+                        mode = CatMode.FOLLOW;
+                        this.setInSittingPose(false);
+                        break;
+                    case FOLLOW:
+                        mode = CatMode.WANDER;
+                        wanderCenter = this.blockPosition();
+                        break;
+                    case WANDER:
+                        mode = CatMode.SIT;
+                        this.setInSittingPose(true);
+                        break;
+                }
+                sendModeMessage(pPlayer);
             }
-
-            sendModeMessage(pPlayer);
             return InteractionResult.SUCCESS;
         }
 
@@ -790,8 +799,22 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
                     for (int dx = -2; dx <= 2; dx++) {
                         for (int dz = -2; dz <= 2; dz++) {
                             BlockPos tpPos = ownerPos.offset(dx, 0, dz);
+                            BlockPos below = tpPos.below();
+                            BlockPos above = tpPos.above();
 
-                            if (this.level().getBlockState(tpPos.below()).isSolid()) {
+                            BlockState floor = level().getBlockState(below);
+                            BlockState blockAt = level().getBlockState(tpPos);
+                            BlockState blockAbove = level().getBlockState(above);
+
+                            AABB targetBox = this.getBoundingBox().move(tpPos.getX() + 0.5 - this.getX(), tpPos.getY() - this.getY(), tpPos.getZ() + 0.5 - this.getZ());
+
+                            boolean solidFloor = floor.isSolid();
+                            boolean spaceAir = blockAt.isAir() && blockAbove.isAir();
+                            boolean noFluid = blockAt.getFluidState().isEmpty() && blockAbove.getFluidState().isEmpty();
+                            boolean notLeaves = !blockAt.is(BlockTags.LEAVES);
+                            boolean noCollision = level().noCollision(this, targetBox);
+
+                            if (solidFloor && spaceAir && noFluid && notLeaves && noCollision) {
                                 this.teleportTo(tpPos.getX() + 0.5, tpPos.getY(), tpPos.getZ() + 0.5);
                                 this.getNavigation().stop();
                                 return;
@@ -801,6 +824,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
                 }
             }
         }
+
     }
 
 
@@ -810,14 +834,28 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
     @Override
     public boolean canAttack(LivingEntity target) {
         if (target instanceof TamableAnimal tam && tam.isTame()) {
-            return false;
+
+            LivingEntity myOwner = this.getOwner();
+            UUID thisOwnerUUID = myOwner != null ? myOwner.getUUID() : null;
+            UUID targetOwner = tam.getOwnerUUID();
+
+            if (targetOwner != null && thisOwnerUUID != null && targetOwner.equals(thisOwnerUUID)) {
+                return false;
+            }
         }
         return super.canAttack(target);
     }
     @Override
     public boolean isAlliedTo(Entity other) {
         if (other instanceof TamableAnimal tam && tam.isTame()) {
-            return true;
+
+            LivingEntity myOwner = this.getOwner();
+            UUID thisOwnerUUID = myOwner != null ? myOwner.getUUID() : null;
+            UUID targetOwner = tam.getOwnerUUID();
+
+            if (targetOwner != null && thisOwnerUUID != null && targetOwner.equals(thisOwnerUUID)) {
+                return true;
+            }
         }
         return super.isAlliedTo(other);
     }
@@ -954,34 +992,44 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
 
 
 
-        if (this.random.nextInt(1200) == 0 ) {
-           int rand = this.random.nextInt(3);
+        if (this.random.nextInt(1200) == 0) {
+           int rand = this.random.nextInt(4);
 
            if (rand == 0 && !animPlayed) {
 
                tAnimationState.getController().setAnimation(RawAnimation.begin()
-                       .then("animation.wcat.groom", Animation.LoopType.PLAY_ONCE)
-                       .then("animation.wcat.idle", Animation.LoopType.LOOP));
+                       .then("animation.wcat.groom", Animation.LoopType.PLAY_ONCE));
                animPlayed = true;
 
            } else if (rand == 1 && !animPlayed) {
 
                tAnimationState.getController().setAnimation(RawAnimation.begin()
-                       .then("animation.wcat.scratch", Animation.LoopType.PLAY_ONCE)
-                       .then("animation.wcat.idle", Animation.LoopType.LOOP));
+                       .then("animation.wcat.scratch", Animation.LoopType.PLAY_ONCE));
                animPlayed = true;
 
            } else if (rand == 2 && !animPlayed){
 
                tAnimationState.getController().setAnimation(RawAnimation.begin()
-                       .then("animation.wcat.stretch", Animation.LoopType.PLAY_ONCE)
-                       .then("animation.wcat.idle", Animation.LoopType.LOOP));
+                       .then("animation.wcat.stretch", Animation.LoopType.PLAY_ONCE));
+               animPlayed = true;
+           }
+           else if (rand == 3 && !animPlayed){
+
+               tAnimationState.getController().setAnimation(RawAnimation.begin()
+                       .then("animation.wcat.roll", Animation.LoopType.PLAY_ONCE));
                animPlayed = true;
            }
 
 
            return PlayState.CONTINUE;
 
+        }
+        if (animPlayed && tAnimationState.getController().hasAnimationFinished()) {
+            tAnimationState.getController().setAnimation(RawAnimation.begin()
+                    .then("animation.wcat.idle", Animation.LoopType.LOOP));
+            animPlayed = false;
+
+            return PlayState.CONTINUE;
         }
 
        if (this.isCrouching()){

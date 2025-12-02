@@ -31,6 +31,7 @@ public class ModBlockLootTables extends BlockLootSubProvider {
         this.dropSelf(ModBlocks.STONECLEFT.get());
         this.dropSelf(ModBlocks.DARKTREE_SAPLING.get());
         this.dropSelf(ModBlocks.STARRYTREE_SAPLING.get());
+        this.dropSelf(ModBlocks.GLOWSHROOM.get());
 
         /*this.add(ModBlocks.DOCK.get(),
                 block -> createSingleItemTableWithSilkTouch(

@@ -19,6 +19,8 @@ public class ModEffects {
 
     public static final RegistryObject<MobEffect> NUMB_EFFECT = MOB_EFFECTS.register("numb",
             () -> new NumbEffect(MobEffectCategory.NEUTRAL, 0x969595));
+    public static final RegistryObject<MobEffect> DEATHBERRIES = MOB_EFFECTS.register("deathberries",
+            () -> new DeathberriesEffect(MobEffectCategory.HARMFUL, 0x969595));
 
 
     public static void register(IEventBus eventBus) {

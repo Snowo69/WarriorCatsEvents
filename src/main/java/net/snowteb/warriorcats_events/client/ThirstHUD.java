@@ -27,6 +27,7 @@ public class ThirstHUD {
         int iconCount = 10;
 
         boolean lowThirst = thirst <= 6;
+        boolean extraLowThirst = thirst <= 3;
         int tickCount = net.minecraft.client.Minecraft.getInstance().player.tickCount;
 
         for (int i = 0; i < iconCount; i++) {
@@ -40,6 +41,9 @@ public class ThirstHUD {
 
             int yOffset = 0;
             if (lowThirst) {
+                yOffset = (int)(Math.sin((tickCount + i) * 1.0) * 2);
+            }
+            if (extraLowThirst) {
                 yOffset = (int)(Math.sin((tickCount + i) * 3.0) * 2);
             }
 

@@ -3,6 +3,7 @@ package net.snowteb.warriorcats_events.item;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.food.FoodProperties;
+import net.snowteb.warriorcats_events.effect.ModEffects;
 
 public class ModFoodHerbs {
 
@@ -45,9 +46,8 @@ public class ModFoodHerbs {
     public static final FoodProperties DEATHBERRIES = new FoodProperties.Builder().alwaysEat().fast()
             .nutrition(1).saturationMod(2f)
             .effect(() -> new MobEffectInstance(MobEffects.HARM,1,1),1f)
-            .effect(() -> new MobEffectInstance(MobEffects.WITHER,1800,0),1f)
-            .effect(() -> new MobEffectInstance(MobEffects.CONFUSION,1800,0),1f)
-            .effect(() -> new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN,1800,3),1f)
+            .effect(() -> new MobEffectInstance(ModEffects.DEATHBERRIES.get(),7200,0),1f)
+            .effect(() -> new MobEffectInstance(MobEffects.CONFUSION,7200,0),1f)
             .build();
 
     public static final FoodProperties CATMINT = new FoodProperties.Builder().alwaysEat().fast()
@@ -60,7 +60,9 @@ public class ModFoodHerbs {
 
 
     public static final FoodProperties MOUSE_FOOD = new FoodProperties.Builder()
-            .nutrition(8).saturationMod(12f).build();
+            .nutrition(6).saturationMod(6f).build();
     public static final FoodProperties SQUIRREL_FOOD = new FoodProperties.Builder()
-            .nutrition(10).saturationMod(14f).build();
+            .nutrition(8).saturationMod(10f).build();
+    public static final FoodProperties PIGEON_FOOD = new FoodProperties.Builder()
+            .nutrition(10).saturationMod(12f).build();
 }

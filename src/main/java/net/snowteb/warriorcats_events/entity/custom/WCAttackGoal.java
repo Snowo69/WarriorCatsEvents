@@ -1,15 +1,28 @@
 package net.snowteb.warriorcats_events.entity.custom;
 
+import net.minecraft.core.particles.BlockParticleOption;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
+import net.minecraft.world.level.block.Blocks;
 
 public class WCAttackGoal extends MeleeAttackGoal {
     private final WCatEntity entity;
     private int attackDelay = 10;
     private int ticksUntilNextAttack = 10;
     private boolean shouldCountTillNextAttack = false;
+
+    BlockParticleOption particle = new BlockParticleOption(
+            ParticleTypes.BLOCK,
+            Blocks.REDSTONE_BLOCK.defaultBlockState()
+    );
 
     public WCAttackGoal(PathfinderMob pMob, double pSpeedModifier, boolean pFollowingTargetEvenIfNotSeen) {
         super(pMob, pSpeedModifier, pFollowingTargetEvenIfNotSeen);
@@ -86,6 +99,17 @@ public class WCAttackGoal extends MeleeAttackGoal {
         this.resetAttackCooldown();
         this.mob.swing(InteractionHand.MAIN_HAND);
         this.mob.doHurtTarget(pEnemy);
+        if (!mob.level().isClientSide()){
+            ServerLevel level = ((ServerLevel) mob.level());
+            level.sendParticles(particle,
+                    pEnemy.getX(), pEnemy.getY(), pEnemy.getZ(),
+                    10,
+                    0.1,0.2,0.1, 0.1);
+            if (level.random.nextInt(3) == 0) {
+                level.playSound(mob, mob.blockPosition(), SoundEvents.CAT_HISS, SoundSource.HOSTILE, 0.6F, 1.0F);
+            }
+        }
+
     }
 
 

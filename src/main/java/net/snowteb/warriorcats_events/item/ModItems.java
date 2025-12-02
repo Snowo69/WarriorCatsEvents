@@ -31,6 +31,9 @@ public class ModItems {
     public static final RegistryObject<Item> WILDCAT_SPAWN_EGG = ITEMS.register("wildcat_spawn_egg",
             () -> new ForgeSpawnEggItem(ModEntities.WCAT,0xfcfbe6, 0xf5dfb8,
                     new Item.Properties()));
+    public static final RegistryObject<Item> PIGEON_SPAWN_EGG = ITEMS.register("pigeon_spawn_egg",
+            () -> new ForgeSpawnEggItem(ModEntities.PIGEON,0xa8acb3, 0xccc9bc,
+                    new Item.Properties()));
 
 
 
@@ -70,6 +73,8 @@ public class ModItems {
             () -> new Item(new Item.Properties().food(ModFoodHerbs.MOUSE_FOOD)));
     public static final RegistryObject<Item> SQUIRREL_FOOD = ITEMS.register("squirrel",
             () -> new Item(new Item.Properties().food(ModFoodHerbs.SQUIRREL_FOOD)));
+    public static final RegistryObject<Item> PIGEON_FOOD = ITEMS.register("pigeon",
+            () -> new Item(new Item.Properties().food(ModFoodHerbs.PIGEON_FOOD)));
 
 
 
@@ -120,6 +125,9 @@ public class ModItems {
 
     public static final RegistryObject<Item> MOSS_BED = ITEMS.register("mossbed",
             () -> new BlockItem(ModBlocks.MOSSBED.get(), new Item.Properties().stacksTo(16)));
+
+    public static final RegistryObject<Item> GLOW_SHROOM = ITEMS.register("glowshroom",
+            () -> new BlockItem(ModBlocks.GLOWSHROOM.get(), new Item.Properties().stacksTo(16)));
 
 
 

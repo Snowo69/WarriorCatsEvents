@@ -18,7 +18,7 @@ public class NumbEffect extends MobEffect {
 
 
     public void applyEffectTick(LivingEntity entity, int amplifier) {
-        if(entity.getDeltaMovement().y > 0 && !entity.isInWaterOrBubble()){
+        if(entity.getDeltaMovement().y > 0 && !entity.isInWaterOrBubble()) {
             entity.setDeltaMovement(entity.getDeltaMovement().multiply(1, 0, 1));
         }
     }

@@ -104,7 +104,7 @@ public class ModBlocks {
                     ModBlockSetTypes.LEAF));
 
     public static final RegistryObject<Block> MOSSBED = BLOCKS.register("mossbed", MossbedBlock::new);
-
+    public static final RegistryObject<Block> GLOWSHROOM = BLOCKS.register("glowshroom", GlowshroomBlock::new);
 
 
     public static final RegistryObject<Block> STONECLEFT = registerBlock("stonecleft",

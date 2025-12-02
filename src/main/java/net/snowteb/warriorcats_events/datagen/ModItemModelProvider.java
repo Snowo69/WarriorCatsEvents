@@ -19,13 +19,13 @@ public class ModItemModelProvider extends ItemModelProvider {
 
     @Override
     protected void registerModels() {
-       // simpleItem(ModItems.BURNET);
 
         simpleItem(ModItems.GENERATIONS_MUSIC_DISC);
         simpleItem(ModItems.WHISKERS);
         simpleItem(ModItems.CLAWS);
         simpleItem(ModItems.MOUSE_FOOD);
         simpleItem(ModItems.SQUIRREL_FOOD);
+        simpleItem(ModItems.PIGEON_FOOD);
         simpleItem(ModItems.WARRIORNAMERANDOMIZER);
         simpleItem(ModItems.FRESHKILL_AND_HERBS_BUNDLE);
         simpleItem(ModItems.TRAVELING_HERBS);
@@ -36,6 +36,7 @@ public class ModItemModelProvider extends ItemModelProvider {
         withExistingParent(ModItems.MOUSE_SPAWN_EGG.getId().getPath(), mcLoc("item/template_spawn_egg"));
         withExistingParent(ModItems.SQUIRREL_SPAWN_EGG.getId().getPath(), mcLoc("item/template_spawn_egg"));
         withExistingParent(ModItems.WILDCAT_SPAWN_EGG.getId().getPath(), mcLoc("item/template_spawn_egg"));
+        withExistingParent(ModItems.PIGEON_SPAWN_EGG.getId().getPath(), mcLoc("item/template_spawn_egg"));
 
 
         basicItem(ModItems.DOCK_LEAVES.get());
@@ -45,6 +46,7 @@ public class ModItemModelProvider extends ItemModelProvider {
         basicItem(ModItems.DAISY.get());
         basicItem(ModItems.DEATHBERRIES.get());
         basicItem(ModItems.CATMINT.get());
+        basicItem(ModItems.GLOW_SHROOM.get());
 
 
         {

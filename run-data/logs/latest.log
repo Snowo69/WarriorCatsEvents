@@ -1,24 +1,24 @@
-[27nov.2025 20:38:28.723] [main/INFO] [cpw.mods.modlauncher.Launcher/MODLAUNCHER]: ModLauncher running: args [--launchTarget, forgedatauserdev, --assetIndex, 5, --assetsDir, C:\Users\juane\.gradle\caches\forge_gradle\assets, --gameDir, ., --fml.forgeVersion, 47.4.0, --fml.mcVersion, 1.20.1, --fml.forgeGroup, net.minecraftforge, --fml.mcpVersion, 20230612.114412, --mod, warriorcats_events, --all, --output, C:\Users\juane\OneDrive\Escritorio\Mods\frg MDK\forge-1.20.1-47.4.0-mdk\src\generated\resources, --existing, C:\Users\juane\OneDrive\Escritorio\Mods\frg MDK\forge-1.20.1-47.4.0-mdk\src\main\resources]
-[27nov.2025 20:38:28.728] [main/INFO] [cpw.mods.modlauncher.Launcher/MODLAUNCHER]: ModLauncher 10.0.9+10.0.9+main.dcd20f30 starting: java version 17.0.12 by Oracle Corporation; OS Windows 11 arch amd64 version 10.0
-[27nov.2025 20:38:28.828] [main/INFO] [net.minecraftforge.fml.loading.ImmediateWindowHandler/]: ImmediateWindowProvider not loading because launch target is forgedatauserdev
-[27nov.2025 20:38:28.874] [main/INFO] [mixin/]: SpongePowered MIXIN Subsystem Version=0.8.5 Source=union:/C:/Users/juane/.gradle/caches/modules-2/files-2.1/org.spongepowered/mixin/0.8.5/9d1c0c3a304ae6697ecd477218fa61b850bf57fc/mixin-0.8.5.jar%23129!/ Service=ModLauncher Env=CLIENT
-[27nov.2025 20:38:29.119] [main/WARN] [net.minecraftforge.fml.loading.moddiscovery.ModFileParser/LOADING]: Mod file C:\Users\juane\.gradle\caches\modules-2\files-2.1\net.minecraftforge\javafmllanguage\1.20.1-47.4.0\f0c0b352173d0a378cbdcec9cfc4ba65899a721\javafmllanguage-1.20.1-47.4.0.jar is missing mods.toml file
-[27nov.2025 20:38:29.122] [main/WARN] [net.minecraftforge.fml.loading.moddiscovery.ModFileParser/LOADING]: Mod file C:\Users\juane\.gradle\caches\modules-2\files-2.1\net.minecraftforge\lowcodelanguage\1.20.1-47.4.0\e862740d8c84d08dbfedea412bef88fe42e727c5\lowcodelanguage-1.20.1-47.4.0.jar is missing mods.toml file
-[27nov.2025 20:38:29.124] [main/WARN] [net.minecraftforge.fml.loading.moddiscovery.ModFileParser/LOADING]: Mod file C:\Users\juane\.gradle\caches\modules-2\files-2.1\net.minecraftforge\mclanguage\1.20.1-47.4.0\5719b3a297a33f877ed5dde4cb4bd75c859096af\mclanguage-1.20.1-47.4.0.jar is missing mods.toml file
-[27nov.2025 20:38:29.127] [main/WARN] [net.minecraftforge.fml.loading.moddiscovery.ModFileParser/LOADING]: Mod file C:\Users\juane\.gradle\caches\modules-2\files-2.1\net.minecraftforge\fmlcore\1.20.1-47.4.0\235975dafa4309945b59c56b53f31dc5b65a6051\fmlcore-1.20.1-47.4.0.jar is missing mods.toml file
-[27nov.2025 20:38:29.295] [main/INFO] [net.minecraftforge.fml.loading.moddiscovery.JarInJarDependencyLocator/]: Found 3 dependencies adding them to mods collection
-[27nov.2025 20:38:30.422] [main/INFO] [mixin/]: Compatibility level set to JAVA_17
-[27nov.2025 20:38:30.430] [main/INFO] [cpw.mods.modlauncher.LaunchServiceHandler/MODLAUNCHER]: Launching target 'forgedatauserdev' with arguments [--gameDir, ., --assetsDir, C:\Users\juane\.gradle\caches\forge_gradle\assets, --assetIndex, 5, --mod, warriorcats_events, --all, --output, C:\Users\juane\OneDrive\Escritorio\Mods\frg MDK\forge-1.20.1-47.4.0-mdk\src\generated\resources, --existing, C:\Users\juane\OneDrive\Escritorio\Mods\frg MDK\forge-1.20.1-47.4.0-mdk\src\main\resources]
-[27nov.2025 20:38:30.897] [main/INFO] [mixin/]: Remapping refMap craftedcore-1.20.1_common-refmap.json using C:\Users\juane\OneDrive\Escritorio\Mods\frg MDK\forge-1.20.1-47.4.0-mdk\build\createSrgToMcp\output.srg
-[27nov.2025 20:38:30.900] [main/INFO] [mixin/]: Remapping refMap walkers-1.20.1_common-refmap.json using C:\Users\juane\OneDrive\Escritorio\Mods\frg MDK\forge-1.20.1-47.4.0-mdk\build\createSrgToMcp\output.srg
-[27nov.2025 20:38:30.901] [main/INFO] [mixin/]: Remapping refMap geckolib.refmap.json using C:\Users\juane\OneDrive\Escritorio\Mods\frg MDK\forge-1.20.1-47.4.0-mdk\build\createSrgToMcp\output.srg
-[27nov.2025 20:38:31.341] [main/WARN] [mixin/]: Error loading class: net/bettercombat/compatibility/CompatibilityFlags (java.lang.ClassNotFoundException: net.bettercombat.compatibility.CompatibilityFlags)
-[27nov.2025 20:38:31.533] [main/INFO] [net.minecraftforge.data.loading.DatagenModLoader/]: Initializing Data Gatherer for mods [warriorcats_events]
-[27nov.2025 20:38:31.621] [main/INFO] [MixinExtras|Service/]: Initializing MixinExtras via com.llamalad7.mixinextras.service.MixinExtrasServiceImpl(version=0.4.1).
-[27nov.2025 20:38:35.779] [modloading-worker-0/INFO] [net.minecraftforge.common.ForgeMod/FORGEMOD]: Forge mod loading, version 47.4.0, for MC 1.20.1 with MCP 20230612.114412
-[27nov.2025 20:38:35.780] [modloading-worker-0/INFO] [net.minecraftforge.common.MinecraftForge/FORGE]: MinecraftForge v47.4.0 Initialized
-[27nov.2025 20:38:35.845] [modloading-worker-0/WARN] [software.bernie.geckolib.GeckoLib/]: Minecraft.getInstance() was null, could not register reload listeners
-[27nov.2025 20:38:36.125] [ForkJoinPool.commonPool-worker-1/ERROR] [tocraft.craftedcore.CraftedCore/]: Couldn't get patreons from https://raw.githubusercontent.com/ToCraft/craftedcore/main/common/src/main/resources/patreons.txt
+[01dic.2025 16:56:39.718] [main/INFO] [cpw.mods.modlauncher.Launcher/MODLAUNCHER]: ModLauncher running: args [--launchTarget, forgedatauserdev, --assetIndex, 5, --assetsDir, C:\Users\juane\.gradle\caches\forge_gradle\assets, --gameDir, ., --fml.forgeVersion, 47.4.0, --fml.mcVersion, 1.20.1, --fml.forgeGroup, net.minecraftforge, --fml.mcpVersion, 20230612.114412, --mod, warriorcats_events, --all, --output, C:\Users\juane\OneDrive\Escritorio\Mods\frg MDK\forge-1.20.1-47.4.0-mdk\src\generated\resources, --existing, C:\Users\juane\OneDrive\Escritorio\Mods\frg MDK\forge-1.20.1-47.4.0-mdk\src\main\resources]
+[01dic.2025 16:56:39.731] [main/INFO] [cpw.mods.modlauncher.Launcher/MODLAUNCHER]: ModLauncher 10.0.9+10.0.9+main.dcd20f30 starting: java version 17.0.12 by Oracle Corporation; OS Windows 11 arch amd64 version 10.0
+[01dic.2025 16:56:39.862] [main/INFO] [net.minecraftforge.fml.loading.ImmediateWindowHandler/]: ImmediateWindowProvider not loading because launch target is forgedatauserdev
+[01dic.2025 16:56:39.925] [main/INFO] [mixin/]: SpongePowered MIXIN Subsystem Version=0.8.5 Source=union:/C:/Users/juane/.gradle/caches/modules-2/files-2.1/org.spongepowered/mixin/0.8.5/9d1c0c3a304ae6697ecd477218fa61b850bf57fc/mixin-0.8.5.jar%23129!/ Service=ModLauncher Env=CLIENT
+[01dic.2025 16:56:40.211] [main/WARN] [net.minecraftforge.fml.loading.moddiscovery.ModFileParser/LOADING]: Mod file C:\Users\juane\.gradle\caches\modules-2\files-2.1\net.minecraftforge\javafmllanguage\1.20.1-47.4.0\f0c0b352173d0a378cbdcec9cfc4ba65899a721\javafmllanguage-1.20.1-47.4.0.jar is missing mods.toml file
+[01dic.2025 16:56:40.214] [main/WARN] [net.minecraftforge.fml.loading.moddiscovery.ModFileParser/LOADING]: Mod file C:\Users\juane\.gradle\caches\modules-2\files-2.1\net.minecraftforge\lowcodelanguage\1.20.1-47.4.0\e862740d8c84d08dbfedea412bef88fe42e727c5\lowcodelanguage-1.20.1-47.4.0.jar is missing mods.toml file
+[01dic.2025 16:56:40.218] [main/WARN] [net.minecraftforge.fml.loading.moddiscovery.ModFileParser/LOADING]: Mod file C:\Users\juane\.gradle\caches\modules-2\files-2.1\net.minecraftforge\mclanguage\1.20.1-47.4.0\5719b3a297a33f877ed5dde4cb4bd75c859096af\mclanguage-1.20.1-47.4.0.jar is missing mods.toml file
+[01dic.2025 16:56:40.221] [main/WARN] [net.minecraftforge.fml.loading.moddiscovery.ModFileParser/LOADING]: Mod file C:\Users\juane\.gradle\caches\modules-2\files-2.1\net.minecraftforge\fmlcore\1.20.1-47.4.0\235975dafa4309945b59c56b53f31dc5b65a6051\fmlcore-1.20.1-47.4.0.jar is missing mods.toml file
+[01dic.2025 16:56:40.466] [main/INFO] [net.minecraftforge.fml.loading.moddiscovery.JarInJarDependencyLocator/]: Found 3 dependencies adding them to mods collection
+[01dic.2025 16:56:41.983] [main/INFO] [mixin/]: Compatibility level set to JAVA_17
+[01dic.2025 16:56:41.993] [main/INFO] [cpw.mods.modlauncher.LaunchServiceHandler/MODLAUNCHER]: Launching target 'forgedatauserdev' with arguments [--gameDir, ., --assetsDir, C:\Users\juane\.gradle\caches\forge_gradle\assets, --assetIndex, 5, --mod, warriorcats_events, --all, --output, C:\Users\juane\OneDrive\Escritorio\Mods\frg MDK\forge-1.20.1-47.4.0-mdk\src\generated\resources, --existing, C:\Users\juane\OneDrive\Escritorio\Mods\frg MDK\forge-1.20.1-47.4.0-mdk\src\main\resources]
+[01dic.2025 16:56:42.519] [main/INFO] [mixin/]: Remapping refMap craftedcore-1.20.1_common-refmap.json using C:\Users\juane\OneDrive\Escritorio\Mods\frg MDK\forge-1.20.1-47.4.0-mdk\build\createSrgToMcp\output.srg
+[01dic.2025 16:56:42.524] [main/INFO] [mixin/]: Remapping refMap walkers-1.20.1_common-refmap.json using C:\Users\juane\OneDrive\Escritorio\Mods\frg MDK\forge-1.20.1-47.4.0-mdk\build\createSrgToMcp\output.srg
+[01dic.2025 16:56:42.527] [main/INFO] [mixin/]: Remapping refMap geckolib.refmap.json using C:\Users\juane\OneDrive\Escritorio\Mods\frg MDK\forge-1.20.1-47.4.0-mdk\build\createSrgToMcp\output.srg
+[01dic.2025 16:56:43.132] [main/WARN] [mixin/]: Error loading class: net/bettercombat/compatibility/CompatibilityFlags (java.lang.ClassNotFoundException: net.bettercombat.compatibility.CompatibilityFlags)
+[01dic.2025 16:56:43.654] [main/INFO] [net.minecraftforge.data.loading.DatagenModLoader/]: Initializing Data Gatherer for mods [warriorcats_events]
+[01dic.2025 16:56:43.805] [main/INFO] [MixinExtras|Service/]: Initializing MixinExtras via com.llamalad7.mixinextras.service.MixinExtrasServiceImpl(version=0.4.1).
+[01dic.2025 16:56:49.857] [modloading-worker-0/INFO] [net.minecraftforge.common.ForgeMod/FORGEMOD]: Forge mod loading, version 47.4.0, for MC 1.20.1 with MCP 20230612.114412
+[01dic.2025 16:56:49.858] [modloading-worker-0/INFO] [net.minecraftforge.common.MinecraftForge/FORGE]: MinecraftForge v47.4.0 Initialized
+[01dic.2025 16:56:50.030] [modloading-worker-0/WARN] [software.bernie.geckolib.GeckoLib/]: Minecraft.getInstance() was null, could not register reload listeners
+[01dic.2025 16:56:50.539] [ForkJoinPool.commonPool-worker-1/ERROR] [tocraft.craftedcore.CraftedCore/]: Couldn't get patreons from https://raw.githubusercontent.com/ToCraft/craftedcore/main/common/src/main/resources/patreons.txt
 java.io.FileNotFoundException: https://raw.githubusercontent.com/ToCraft/craftedcore/main/common/src/main/resources/patreons.txt
 	at sun.net.www.protocol.http.HttpURLConnection.getInputStream0(HttpURLConnection.java:2014) ~[?:?]
 	at sun.net.www.protocol.http.HttpURLConnection.getInputStream(HttpURLConnection.java:1610) ~[?:?]
@@ -27,28 +27,30 @@ java.io.FileNotFoundException: https://raw.githubusercontent.com/ToCraft/crafted
 	at tocraft.craftedcore.VIPs.getUUIDOfPeople(VIPs.java:84) ~[craftedcore-forge-1.20.1-5.8_mapped_parchment_2023.09.03-1.20.1.jar:?]
 	at tocraft.craftedcore.VIPs.getPatreons(VIPs.java:51) ~[craftedcore-forge-1.20.1-5.8_mapped_parchment_2023.09.03-1.20.1.jar:?]
 	at tocraft.craftedcore.VIPs.cachePatreons(VIPs.java:31) ~[craftedcore-forge-1.20.1-5.8_mapped_parchment_2023.09.03-1.20.1.jar:?]
-	at java.util.concurrent.CompletableFuture$AsyncRun.run(CompletableFuture.java:1804) ~[?:?]
+	at java.util.concurrent.CompletableFuture$AsyncRun.run$$$capture(CompletableFuture.java:1804) ~[?:?]
+	at java.util.concurrent.CompletableFuture$AsyncRun.run(CompletableFuture.java) ~[?:?]
 	at java.util.concurrent.CompletableFuture$AsyncRun.exec(CompletableFuture.java:1796) ~[?:?]
-	at java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373) ~[?:?]
+	at java.util.concurrent.ForkJoinTask.doExec$$$capture(ForkJoinTask.java:373) ~[?:?]
+	at java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java) ~[?:?]
 	at java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182) ~[?:?]
 	at java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655) ~[?:?]
 	at java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622) ~[?:?]
 	at java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165) ~[?:?]
-[27nov.2025 20:38:36.271] [main/WARN] [net.minecraft.server.packs.VanillaPackResourcesBuilder/]: Assets URL 'union:/C:/Users/juane/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.20.1-47.4.0_mapped_parchment_2023.09.03-1.20.1/forge-1.20.1-47.4.0_mapped_parchment_2023.09.03-1.20.1-recomp.jar%23191!/assets/.mcassetsroot' uses unexpected schema
-[27nov.2025 20:38:36.271] [main/WARN] [net.minecraft.server.packs.VanillaPackResourcesBuilder/]: Assets URL 'union:/C:/Users/juane/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.20.1-47.4.0_mapped_parchment_2023.09.03-1.20.1/forge-1.20.1-47.4.0_mapped_parchment_2023.09.03-1.20.1-recomp.jar%23191!/data/.mcassetsroot' uses unexpected schema
-[27nov.2025 20:38:36.403] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Recipes
-[27nov.2025 20:38:36.434] [main/INFO] [net.minecraft.data.DataGenerator/]: Recipes finished after 30 ms
-[27nov.2025 20:38:36.434] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Loot Tables
-[27nov.2025 20:38:36.470] [main/INFO] [net.minecraft.data.DataGenerator/]: Loot Tables finished after 35 ms
-[27nov.2025 20:38:36.470] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Block States: warriorcats_events
-[27nov.2025 20:38:36.582] [main/INFO] [net.minecraft.data.DataGenerator/]: Block States: warriorcats_events finished after 111 ms
-[27nov.2025 20:38:36.582] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Item Models: warriorcats_events
-[27nov.2025 20:38:36.588] [main/INFO] [net.minecraft.data.DataGenerator/]: Item Models: warriorcats_events finished after 6 ms
-[27nov.2025 20:38:36.588] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Tags for minecraft:block mod id warriorcats_events
-[27nov.2025 20:38:36.597] [main/INFO] [net.minecraft.data.DataGenerator/]: Tags for minecraft:block mod id warriorcats_events finished after 8 ms
-[27nov.2025 20:38:36.597] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Tags for minecraft:item mod id warriorcats_events
-[27nov.2025 20:38:36.598] [main/INFO] [net.minecraft.data.DataGenerator/]: Tags for minecraft:item mod id warriorcats_events finished after 0 ms
-[27nov.2025 20:38:36.598] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Registries
-[27nov.2025 20:38:36.613] [main/INFO] [net.minecraft.data.DataGenerator/]: Registries finished after 14 ms
-[27nov.2025 20:38:36.613] [main/INFO] [net.minecraft.data.DataGenerator/]: All providers took: 209 ms
-[27nov.2025 20:38:36.623] [main/INFO] [net.minecraft.data.HashCache/]: Caching: total files: 146, old count: 148, new count: 147, removed stale: 0, written: 0
+[01dic.2025 16:56:50.732] [main/WARN] [net.minecraft.server.packs.VanillaPackResourcesBuilder/]: Assets URL 'union:/C:/Users/juane/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.20.1-47.4.0_mapped_parchment_2023.09.03-1.20.1/forge-1.20.1-47.4.0_mapped_parchment_2023.09.03-1.20.1-recomp.jar%23191!/assets/.mcassetsroot' uses unexpected schema
+[01dic.2025 16:56:50.733] [main/WARN] [net.minecraft.server.packs.VanillaPackResourcesBuilder/]: Assets URL 'union:/C:/Users/juane/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.20.1-47.4.0_mapped_parchment_2023.09.03-1.20.1/forge-1.20.1-47.4.0_mapped_parchment_2023.09.03-1.20.1-recomp.jar%23191!/data/.mcassetsroot' uses unexpected schema
+[01dic.2025 16:56:50.936] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Recipes
+[01dic.2025 16:56:50.978] [main/INFO] [net.minecraft.data.DataGenerator/]: Recipes finished after 41 ms
+[01dic.2025 16:56:50.978] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Loot Tables
+[01dic.2025 16:56:51.048] [main/INFO] [net.minecraft.data.DataGenerator/]: Loot Tables finished after 69 ms
+[01dic.2025 16:56:51.048] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Block States: warriorcats_events
+[01dic.2025 16:56:51.229] [main/INFO] [net.minecraft.data.DataGenerator/]: Block States: warriorcats_events finished after 181 ms
+[01dic.2025 16:56:51.229] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Item Models: warriorcats_events
+[01dic.2025 16:56:51.246] [main/INFO] [net.minecraft.data.DataGenerator/]: Item Models: warriorcats_events finished after 15 ms
+[01dic.2025 16:56:51.246] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Tags for minecraft:block mod id warriorcats_events
+[01dic.2025 16:56:51.263] [main/INFO] [net.minecraft.data.DataGenerator/]: Tags for minecraft:block mod id warriorcats_events finished after 16 ms
+[01dic.2025 16:56:51.263] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Tags for minecraft:item mod id warriorcats_events
+[01dic.2025 16:56:51.264] [main/INFO] [net.minecraft.data.DataGenerator/]: Tags for minecraft:item mod id warriorcats_events finished after 1 ms
+[01dic.2025 16:56:51.265] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Registries
+[01dic.2025 16:56:51.294] [main/INFO] [net.minecraft.data.DataGenerator/]: Registries finished after 28 ms
+[01dic.2025 16:56:51.294] [main/INFO] [net.minecraft.data.DataGenerator/]: All providers took: 357 ms
+[01dic.2025 16:56:51.312] [main/INFO] [net.minecraft.data.HashCache/]: Caching: total files: 153, old count: 154, new count: 154, removed stale: 0, written: 1

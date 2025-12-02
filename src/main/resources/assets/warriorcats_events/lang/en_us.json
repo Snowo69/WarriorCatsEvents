@@ -8,7 +8,6 @@
   "item.warriorcats_events.sorrel_leaves": "Sorrel Leaves",
   "item.warriorcats_events.sorrel_leaves.tooltip": "Traveling herb. Used to ease hunger",
 
-
   "item.warriorcats_events.starclan_knowledge": "The lives of a leader",
   "item.warriorcats_events.starclan_knowledge.tooltip": "Contains the 9 lives' ceremony",
 
@@ -66,9 +65,7 @@
   "block.warriorcats_events.leaf_door": "Leaf Door",
   "block.warriorcats_events.starrytree_sapling": "Starry Tree Sapling",
   "block.warriorcats_events.darktree_sapling": "Dark Tree Sapling",
-
-
-
+  "block.warriorcats_events.glowshroom": "Glowshroom",
 
   "warriorcats_events.ModBookItem.notleader": "You are not a leader",
 
@@ -78,13 +75,20 @@
   "key.warriorcats_events.water": "Drink Water",
 
   "effect.warriorcats_events.numb": "Numb",
+  "effect.warriorcats_events.deathberries": "Deathberries",
 
   "entity.warriorcats_events.warrior_cat": "Wild Cat",
+  "entity.warriorcats_events.mouse": "Mouse",
+  "entity.warriorcats_events.squirrel": "Squirrel",
+  "entity.warriorcats_events.pigeon": "Pigeon",
+
   "item.warriorcats_events.wildcat_spawn_egg": "Wild Cat Spawn Egg",
   "item.warriorcats_events.mouse_spawn_egg": "Mouse Spawn Egg",
   "item.warriorcats_events.squirrel_spawn_egg": "Squirrel Spawn Egg",
+  "item.warriorcats_events.pigeon_spawn_egg": "Pigeon Spawn Egg",
 
   "item.warriorcats_events.mouse": "Mouse",
-  "item.warriorcats_events.squirrel": "Squirrel"
+  "item.warriorcats_events.squirrel": "Squirrel",
+  "item.warriorcats_events.pigeon": "Pigeon"
 
 }

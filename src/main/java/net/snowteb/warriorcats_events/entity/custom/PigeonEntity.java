@@ -6,10 +6,7 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.DifficultyInstance;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.entity.SpawnGroupData;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.FlyingMoveControl;
@@ -27,6 +24,7 @@ import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.core.animation.*;
+import software.bernie.geckolib.core.animation.AnimationState;
 import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
@@ -45,10 +43,11 @@ public class PigeonEntity extends Parrot implements GeoEntity {
 
 
     public class FlyAway extends Goal {
+
         private final Mob mob;
         private final double speed;
-        private Player nearestPlayer;
-        double range = 6.0;
+        private final double range = 10;
+        private LivingEntity nearestThreat;
 
         public FlyAway(Mob mob, double speed) {
             this.mob = mob;
@@ -56,23 +55,40 @@ public class PigeonEntity extends Parrot implements GeoEntity {
             this.setFlags(EnumSet.of(Flag.MOVE));
         }
 
-
         @Override
         public boolean canUse() {
 
-
-
             TargetingConditions conditions = TargetingConditions.forNonCombat()
-                    .selector(player -> !player.isInvisible())
+                    .selector(e -> !e.isInvisible())
                     .range(range);
 
-            this.nearestPlayer = mob.level().getNearestPlayer(conditions, mob);
+            Player nearestPlayer = mob.level().getNearestPlayer(conditions, mob);
 
+            WCatEntity nearestWCat = mob.level().getNearestEntity(
+                    WCatEntity.class,
+                    conditions,
+                    mob,
+                    mob.getX(), mob.getY(), mob.getZ(),
+                    mob.getBoundingBox().inflate(range)
+            );
 
-            return nearestPlayer != null;
+            if (nearestWCat != null && !shouldScareFrom(nearestWCat)) {
+                nearestWCat = null;
+            }
+
+            nearestThreat = pickNearest(nearestPlayer, nearestWCat);
+
+            return nearestThreat != null;
         }
 
+        private LivingEntity pickNearest(LivingEntity e1, LivingEntity e2) {
+            if (e1 == null) return e2;
+            if (e2 == null) return e1;
+            double d1 = e1.distanceTo(mob);
+            double d2 = e2.distanceTo(mob);
 
+            return d1 < d2 ? e1 : e2;
+        }
 
         @Override
         public void start() {
@@ -84,14 +100,18 @@ public class PigeonEntity extends Parrot implements GeoEntity {
 
         private Vec3 getEscapePos() {
             Vec3 mobPos = mob.position();
-            Vec3 playerPos = nearestPlayer.position();
+            Vec3 targetPos = nearestThreat.position();
 
-            Vec3 dir = mobPos.subtract(playerPos).normalize();
-            Vec3 target = mobPos.add(dir.scale(10)).add(0, 4, 0);
-
-            return target;
+            Vec3 dir = mobPos.subtract(targetPos).normalize();
+            return mobPos.add(dir.scale(10)).add(0, 4, 0);
         }
     }
+
+    private boolean shouldScareFrom(WCatEntity cat) {
+        return cat.mode == WCatEntity.CatMode.WANDER;
+    }
+
+
 
     public class RandomFlyingGoal extends Goal {
         private final Mob mob;
