@@ -8,11 +8,11 @@
     "minecraft:dark_forest",
     "minecraft:grove",
     "minecraft:taiga",
-    "minecraft:snowy_taiga",
     "minecraft:old_growth_pine_taiga",
     "minecraft:old_growth_spruce_taiga",
-
+    "minecraft:savanna",
     "minecraft:plains",
-    "minecraft:sunflower_plains"
+    "minecraft:sunflower_plains",
+    "minecraft:cherry_grove"
     ]
 }

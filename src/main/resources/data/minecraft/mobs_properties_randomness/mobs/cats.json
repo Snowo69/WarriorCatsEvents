@@ -13,28 +13,6 @@
 },
 {
     "property": "event",
-    "event": "attack",
-    "id": "warriorcats_events:bleedin",
-    "target": "other",
-    "function": "warriorcats_events:hiss_at_hit",
-    "apply_properties": [{
-        "property": "potion_effect",
-        "effect": "minecraft:wither",
-        "hide_particles": true,
-        "amplifier": 3,
-        "duration": 2
-        
-    },
-    {
-        "property": "potion_effect",
-        "effect": "alexsmobs:fear",
-        "amplifier": 0,
-        "duration": 2
-    }
-    ]
-},
-{
-    "property": "event",
     "event": "kill",
     "id": "warriorcats:stamina",
     "target": "this",

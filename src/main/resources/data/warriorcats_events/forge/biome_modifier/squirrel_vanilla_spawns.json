@@ -3,7 +3,7 @@
   "biomes": "#warriorcats_events:vanilla_spawn_biomes",
   "spawners": {
     "type": "warriorcats_events:squirrel",
-    "weight": 30,
+    "weight": 50,
     "minCount": 1,
     "maxCount": 2
   }

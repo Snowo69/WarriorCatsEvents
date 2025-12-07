@@ -4,11 +4,15 @@ license="All Rights Reserved"
 
 [[mods]]
 modId="warriorcats_events"
-displayName="WarriorCats Events (Tester's Beta)"
+displayName="WarriorCats Events (Beta)"
 description="Turn your world into a Warrior Cats survival experience!"
-version="3.1.0 beta"
-authors="Snow / Maple"
-credits="Soon..."
+version="4.4.1 beta"
+authors="Klyonstar / Snowstar"
+credits="""
+Sharon Hurvitz (Author of "Generations")
+Bookwom, Telefonjoker, Cat,
+Whale_shark, Sejr
+"""
 logoFile="banner.png"
 logoBlur=false
 displayTest="IGNORE_SERVER_VERSION"
@@ -24,23 +28,30 @@ license= "All Rights Reserved"
     side="BOTH"
 
 [[dependencies.geckolib]]
-modId="geckolib"
-mandatory=true
-versionRange="[4.8.2,)"
-ordering="NONE"
-side="BOTH"
+    modId="geckolib"
+    mandatory=true
+    versionRange="[4.8.2,)"
+    ordering="NONE"
+    side="BOTH"
 
 [[dependencies.walkers]]
-modId="walkers"
-mandatory=true
-versionRange="[5.7,)"
-ordering="NONE"
-side="BOTH"
+    modId="walkers"
+    mandatory=true
+    versionRange="[5.7,)"
+    ordering="NONE"
+    side="BOTH"
 
 [[dependencies.craftedcore]]
-modId="craftedcore"
+    modId="craftedcore"
+    mandatory=true
+    versionRange="[5.8,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.patchouli]]
+modId="patchouli"
 mandatory=true
-versionRange="[5.8,)"
+versionRange="[1.20.1-84-FORGE,)"
 ordering="NONE"
 side="BOTH"
 

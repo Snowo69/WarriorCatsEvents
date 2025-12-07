@@ -1,0 +1,88 @@
+{
+
+
+  "name": "- Credits",
+  "priority": true,
+  "icon": "minecraft:enchanted_book",
+  "category": "warriorcats_events:credits_category",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "warriorcats_events:generations_music_disc",
+      "text": "$(8)Thanks to Sharon Hurvitz for allowing me to implement one of her magnificent songs into the mod! $(br2)If you have the chance, take a deeper look into her work and her music!",
+      "title": "Generations"
+    },
+    {
+      "type": "patchouli:link",
+      "url": "https://linktr.ee/sharonhurvitz",
+      "link_text": "Linktree",
+      "text": "$(8) $(br2)''Sharon Hurvitz is a mastering engineer and composer, known for her immersive sonic environments and intricate, imaginative scores. Her work ranges from soft minimalistic touches, to grand and driving orchestral music.''",
+      "title": "Sharon Hurvitz"
+    },
+    {
+      "type": "patchouli:entity",
+      "entity": "warriorcats_events:warrior_cat{Variant:12,OnGround:1b}",
+      "rotate": false,
+      "title": "Chestnutpatch",
+      "default_rotation": -30,
+      "text": "$(8)Thanks to 'Bookwom' for allowing Chestnutpatch to be part of this mod!"
+    },
+    {
+      "type": "patchouli:entity",
+      "entity": "warriorcats_events:warrior_cat{Variant:13,OnGround:1b}",
+      "rotate": false,
+      "title": "Ratstar",
+      "default_rotation": -30,
+      "text": "$(8)Thanks to 'Telefonjoker' for allowing Ratstar to be part of this mod!"
+    },
+    {
+      "type": "patchouli:entity",
+      "entity": "warriorcats_events:warrior_cat{Variant:14,OnGround:1b}",
+      "rotate": false,
+      "title": "Twitchstream",
+      "default_rotation": -30,
+      "text": "$(8)Thanks to 'Cat' for allowing Twitchstream to be part of this mod!"
+    },
+    {
+      "type": "patchouli:entity",
+      "entity": "warriorcats_events:warrior_cat{Variant:15,OnGround:1b}",
+      "rotate": false,
+      "title": "Blazepit",
+      "default_rotation": -30,
+      "text": "$(8)Thanks to 'Cat' for allowing Blazepit to be part of this mod!"
+    },
+    {
+      "type": "patchouli:entity",
+      "entity": "warriorcats_events:warrior_cat{Variant:17,OnGround:1b}",
+      "rotate": false,
+      "title": "Sparrowstar",
+      "default_rotation": -30,
+      "text": "$(8)Thanks to 'Whale_shark' for allowing Sparrowstar to be part of this mod!"
+    },
+    {
+      "type": "patchouli:entity",
+      "entity": "warriorcats_events:warrior_cat{Variant:18,OnGround:1b}",
+      "rotate": false,
+      "title": "Foxeater",
+      "default_rotation": -30,
+      "text": "$(8)Thanks to 'Sejr' for allowing Foxeater to be part of this mod!"
+    },
+    {
+      "type": "patchouli:entity",
+      "entity": "warriorcats_events:warrior_cat{Variant:19,OnGround:1b}",
+      "rotate": false,
+      "title": "Willowsong",
+      "default_rotation": -30,
+      "text": "$(8)Thanks to 'Sejr' for allowing Willowsong to be part of this mod!"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "minecraft:nether_star",
+      "title": "Collaborators",
+      "default_rotation": -30,
+      "text": "$(8)Thanks to 'Boxfish' for being an exceptional tester and key piece in the making of this mod.$(br2)Thanks to 'The Artificer's Throne' for their brilliant ideas and opinions that helped improve this mod. $(br2)Thanks to everyone who followed this project from the beginning.$(br)"
+    }
+  ]
+
+
+}

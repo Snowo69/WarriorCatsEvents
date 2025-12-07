@@ -29,7 +29,7 @@ public class SquirrelRenderer extends GeoEntityRenderer<SquirrelEntity> {
         if(entity.isBaby()) {
             poseStack.scale(0.3F, 0.3F, 0.3F);
         } else {
-            poseStack.scale(0.4F, 0.4F, 0.4F);
+            poseStack.scale(0.5F, 0.5F, 0.5F);
         }
 
 

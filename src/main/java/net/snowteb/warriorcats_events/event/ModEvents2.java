@@ -2,7 +2,10 @@ package net.snowteb.warriorcats_events.event;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -10,6 +13,8 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.scores.Objective;
 import net.minecraft.world.scores.Scoreboard;
 import net.minecraft.world.scores.criteria.ObjectiveCriteria;
@@ -24,6 +29,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
+import net.snowteb.warriorcats_events.item.ModItems;
 import net.snowteb.warriorcats_events.network.ModPackets;
 import net.snowteb.warriorcats_events.network.packet.SyncSkillDataPacket;
 import net.snowteb.warriorcats_events.network.packet.ThirstDataSyncStCPacket;
@@ -37,6 +43,7 @@ import net.snowteb.warriorcats_events.util.ModAttributes;
 
 @Mod.EventBusSubscriber(modid = WarriorCatsEvents.MODID)
 public class ModEvents2 {
+
 
     @SubscribeEvent
     public static void onAttachCapabilitiesPlayer(AttachCapabilitiesEvent<Entity> event) {
@@ -190,9 +197,6 @@ public class ModEvents2 {
     }
 
 
-
-
-
     @SubscribeEvent
     public static void onRegisterCapabilities(RegisterCapabilitiesEvent event) {
         event.register(PlayerThirst.class);
@@ -206,7 +210,7 @@ public class ModEvents2 {
 
             event.player.getCapability(PlayerThirstProvider.PLAYER_THIRST).ifPresent(thirst -> {
 
-                if (thirst.getThirst() > 0 && event.player.getRandom().nextFloat() < 0.00042) {
+                if (thirst.getThirst() > 0 && event.player.getRandom().nextFloat() < 0.00028 && !(event.player.isCreative() || event.player.isSpectator())) {
                     int oldThirst = thirst.getThirst();
                     thirst.subThirst(1);
                     if (oldThirst != thirst.getThirst()) {
@@ -235,7 +239,7 @@ public class ModEvents2 {
             event.player.getCapability(PlayerStealthProvider.STEALTH_MODE).ifPresent(cap -> {
 
 
-                    if (cap.isStealthOn() && cap.isUnlocked()) {
+                    if (cap.isStealthOn() && cap.isUnlocked() && cap.isOn()) {
                         ServerLevel level = (ServerLevel) event.player.level();
 
                         level.sendParticles(
@@ -285,7 +289,6 @@ public class ModEvents2 {
                         net.minecraft.network.chat.Component.literal("Leader's Lives"),
                         ObjectiveCriteria.RenderType.INTEGER
                 );
-                System.out.println("[WarriorCatsEvents] Scoreboard 'Lives' created.");
             }
         }
     }
@@ -304,6 +307,38 @@ public class ModEvents2 {
                     player.getDeltaMovement().z
             );
         }
+    }
+
+    @SubscribeEvent
+    public static void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
+        Player player = event.getEntity();
+
+        CompoundTag data = player.getPersistentData();
+        CompoundTag persistent;
+
+        if (data.contains(Player.PERSISTED_NBT_TAG)) {
+            persistent = data.getCompound(Player.PERSISTED_NBT_TAG);
+        } else {
+            persistent = new CompoundTag();
+            data.put(Player.PERSISTED_NBT_TAG, persistent);
+        }
+
+        if (persistent.getBoolean("warriorcats_events.starting_items")) {
+            return;
+        }
+
+        persistent.putBoolean("warriorcats_events.starting_items", true);
+        player.getInventory().add(new ItemStack(ModItems.WARRIORS_GUIDE.get()));
+        player.getInventory().add(new ItemStack(ModItems.CLAWS.get()));
+        player.sendSystemMessage(Component.literal("You have received your own [Claws] and [A Warrior's Guide]!").withStyle(ChatFormatting.YELLOW));
+        player.sendSystemMessage(Component.literal("Get support and stay tuned for mod updates: ").append(
+                Component.literal("[Discord]")
+                        .withStyle(style -> style
+                                .withColor(0x579dff)
+                                .withUnderlined(true)
+                                .withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://discord.gg/SkYvZr9DBb"))
+                        )
+        ));
     }
 
 

@@ -45,6 +45,7 @@ public class ModConfiguredFeatures {
     public static final ResourceKey<ConfiguredFeature<?,?>> DEATHBERRIES_KEY = registerKey("deathberries");
     public static final ResourceKey<ConfiguredFeature<?,?>> CATMINT_KEY = registerKey("catmint");
     public static final ResourceKey<ConfiguredFeature<?,?>> GLOWSHROOM_KEY = registerKey("glowshroom");
+    public static final ResourceKey<ConfiguredFeature<?,?>> YARROW_KEY = registerKey("yarrow");
 
     public static final ResourceKey<ConfiguredFeature<?,?>> DARKTREE_KEY = registerKey("darktree_key");
     public static final ResourceKey<ConfiguredFeature<?,?>> STARRYTREE_KEY = registerKey("starrytree_key");
@@ -52,6 +53,7 @@ public class ModConfiguredFeatures {
 
     public static void bootstrap(BootstapContext<ConfiguredFeature<?, ?>> context) {
 
+        /*
         register(context, DOCK_KEY, Feature.RANDOM_PATCH,
                 FeatureUtils.simplePatchConfiguration(Feature.SIMPLE_BLOCK,
                         new SimpleBlockConfiguration(
@@ -129,6 +131,126 @@ public class ModConfiguredFeatures {
                         ),
                         List.of(Blocks.GRASS_BLOCK)));
 
+        register(context, YARROW_KEY, Feature.RANDOM_PATCH,
+                FeatureUtils.simplePatchConfiguration(Feature.SIMPLE_BLOCK,
+                        new SimpleBlockConfiguration(
+                                BlockStateProvider.simple(
+                                        ModBlocks.YARROWPLANT.get()
+                                                .defaultBlockState()
+                                                .setValue(SweetBerryBushBlock.AGE, 3)
+                                )
+                        ),
+                        List.of(Blocks.GRASS_BLOCK)));
+
+         */
+
+
+        register(context, DOCK_KEY, Feature.RANDOM_PATCH,
+                new RandomPatchConfiguration(
+                        5,
+                        5,
+                        0,
+                        PlacementUtils.onlyWhenEmpty(
+                                Feature.SIMPLE_BLOCK,
+                                new SimpleBlockConfiguration(
+                                        BlockStateProvider.simple(
+                                                ModBlocks.DOCK.get()
+                                                        .defaultBlockState()
+                                                        .setValue(SweetBerryBushBlock.AGE, 3)
+                                        )))));
+        register(context, SORREL_KEY, Feature.RANDOM_PATCH,
+                new RandomPatchConfiguration(
+                        5,
+                        5,
+                        0,
+                        PlacementUtils.onlyWhenEmpty(
+                                Feature.SIMPLE_BLOCK,
+                                new SimpleBlockConfiguration(
+                                        BlockStateProvider.simple(
+                                                ModBlocks.SORRELPLANT.get()
+                                                        .defaultBlockState()
+                                                        .setValue(SweetBerryBushBlock.AGE, 3)
+                                        )))));
+        register(context, BURNET_KEY, Feature.RANDOM_PATCH,
+                new RandomPatchConfiguration(
+                        5,
+                        5,
+                        0,
+                        PlacementUtils.onlyWhenEmpty(
+                                Feature.SIMPLE_BLOCK,
+                                new SimpleBlockConfiguration(
+                                        BlockStateProvider.simple(
+                                                ModBlocks.BURNETPLANT.get()
+                                                        .defaultBlockState()
+                                                        .setValue(SweetBerryBushBlock.AGE, 3)
+                                        )))));
+        register(context, CHAMOMILE_KEY, Feature.RANDOM_PATCH,
+                new RandomPatchConfiguration(
+                        5,
+                        5,
+                        0,
+                        PlacementUtils.onlyWhenEmpty(
+                                Feature.SIMPLE_BLOCK,
+                                new SimpleBlockConfiguration(
+                                        BlockStateProvider.simple(
+                                                ModBlocks.DAISYPLANT.get()
+                                                        .defaultBlockState()
+                                                        .setValue(SweetBerryBushBlock.AGE, 3)
+                                        )))));
+        register(context, DAISY_KEY, Feature.RANDOM_PATCH,
+                new RandomPatchConfiguration(
+                        5,
+                        5,
+                        0,
+                        PlacementUtils.onlyWhenEmpty(
+                                Feature.SIMPLE_BLOCK,
+                                new SimpleBlockConfiguration(
+                                        BlockStateProvider.simple(
+                                                ModBlocks.DAISYPLANT.get()
+                                                        .defaultBlockState()
+                                                        .setValue(SweetBerryBushBlock.AGE, 3)
+                                        )))));
+        register(context, DEATHBERRIES_KEY, Feature.RANDOM_PATCH,
+                new RandomPatchConfiguration(
+                        3,
+                        5,
+                        0,
+                        PlacementUtils.onlyWhenEmpty(
+                                Feature.SIMPLE_BLOCK,
+                                new SimpleBlockConfiguration(
+                                        BlockStateProvider.simple(
+                                                ModBlocks.DEATHBERRIESBUSH.get()
+                                                        .defaultBlockState()
+                                                        .setValue(SweetBerryBushBlock.AGE, 3)
+                                        )))));
+        register(context, CATMINT_KEY, Feature.RANDOM_PATCH,
+                new RandomPatchConfiguration(
+                        3,
+                        5,
+                        0,
+                        PlacementUtils.onlyWhenEmpty(
+                                Feature.SIMPLE_BLOCK,
+                                new SimpleBlockConfiguration(
+                                        BlockStateProvider.simple(
+                                                ModBlocks.CATMINTPLANT.get()
+                                                        .defaultBlockState()
+                                                        .setValue(SweetBerryBushBlock.AGE, 3)
+                                        )))));
+        register(context, YARROW_KEY, Feature.RANDOM_PATCH,
+                new RandomPatchConfiguration(
+                        3,
+                        5,
+                        0,
+                        PlacementUtils.onlyWhenEmpty(
+                                Feature.SIMPLE_BLOCK,
+                                new SimpleBlockConfiguration(
+                                        BlockStateProvider.simple(
+                                                ModBlocks.YARROWPLANT.get()
+                                                        .defaultBlockState()
+                                                        .setValue(SweetBerryBushBlock.AGE, 3)
+                                        )))));
+
+
 
         register(context, GLOWSHROOM_KEY, Feature.RANDOM_PATCH,
                 new RandomPatchConfiguration(
@@ -139,6 +261,9 @@ public class ModConfiguredFeatures {
                                 Feature.SIMPLE_BLOCK,
                                 new SimpleBlockConfiguration(
                                         BlockStateProvider.simple(ModBlocks.GLOWSHROOM.get())))));
+
+
+
 
 
 

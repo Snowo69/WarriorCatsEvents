@@ -29,6 +29,7 @@ public class ModItemModelProvider extends ItemModelProvider {
         simpleItem(ModItems.WARRIORNAMERANDOMIZER);
         simpleItem(ModItems.FRESHKILL_AND_HERBS_BUNDLE);
         simpleItem(ModItems.TRAVELING_HERBS);
+        simpleItem(ModItems.WARRIORS_GUIDE);
 
 
         simpleBlockItem(ModBlocks.LEAF_DOOR);
@@ -37,6 +38,7 @@ public class ModItemModelProvider extends ItemModelProvider {
         withExistingParent(ModItems.SQUIRREL_SPAWN_EGG.getId().getPath(), mcLoc("item/template_spawn_egg"));
         withExistingParent(ModItems.WILDCAT_SPAWN_EGG.getId().getPath(), mcLoc("item/template_spawn_egg"));
         withExistingParent(ModItems.PIGEON_SPAWN_EGG.getId().getPath(), mcLoc("item/template_spawn_egg"));
+        withExistingParent(ModItems.BADGER_SPAWN_EGG.getId().getPath(), mcLoc("item/template_spawn_egg"));
 
 
         basicItem(ModItems.DOCK_LEAVES.get());
@@ -46,6 +48,7 @@ public class ModItemModelProvider extends ItemModelProvider {
         basicItem(ModItems.DAISY.get());
         basicItem(ModItems.DEATHBERRIES.get());
         basicItem(ModItems.CATMINT.get());
+        basicItem(ModItems.YARROW.get());
         basicItem(ModItems.GLOW_SHROOM.get());
 
 
@@ -91,6 +94,12 @@ public class ModItemModelProvider extends ItemModelProvider {
                     new ResourceLocation("item/generated")
             ).texture("layer0",
                     new ResourceLocation(WarriorCatsEvents.MODID, "block/catmint_stage3")
+            );
+            withExistingParent(
+                    ModBlocks.YARROWPLANT.getId().getPath(),
+                    new ResourceLocation("item/generated")
+            ).texture("layer0",
+                    new ResourceLocation(WarriorCatsEvents.MODID, "block/yarrow_stage3")
             );
 
         }

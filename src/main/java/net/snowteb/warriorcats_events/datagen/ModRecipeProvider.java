@@ -6,6 +6,7 @@ import net.minecraft.data.recipes.*;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.ShapelessRecipe;
 import net.minecraftforge.common.crafting.conditions.IConditionBuilder;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
@@ -27,13 +28,13 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
     protected void buildRecipes(Consumer<FinishedRecipe> pWriter) {
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.STONECLEFT.get())
                 .pattern("ABA")
-                .pattern("BCB")
+                .pattern("B B")
                 .pattern("ABA")
                 .define('A', ItemTags.SAPLINGS)
                 .define('B', Items.COBBLESTONE)
-                .define('C', Items.AIR)
                 .unlockedBy("has_item", has(Items.AIR))
                 .save(pWriter);
+
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.TRAVELING_HERBS.get(), 1)
                 .requires(ModItems.SORREL.get())
                 .requires(ModItems.BURNET.get())
@@ -82,19 +83,24 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .unlockedBy("has_item", has(Items.AIR))
                 .save(pWriter);
 
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.DOCK_POULTICE.get(), 2)
+                .requires(ModItems.DOCK_LEAVES.get())
+                .unlockedBy("has_item", has(Items.AIR))
+                .save(pWriter);
+
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.LEAF_DOOR.get(), 2)
                 .pattern("AAB")
                 .pattern("AAB")
                 .pattern("AAB")
                 .define('A', ItemTags.LEAVES)
-                .define('B', Items.AIR)
+                .define('B', Ingredient.EMPTY)
                 .unlockedBy("has_item", has(Items.AIR))
                 .save(pWriter);
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.MOSSBED.get(), 2)
                 .pattern("AAA")
                 .pattern("BDB")
                 .pattern("CBC")
-                .define('A', Items.AIR)
+                .define('A', Ingredient.EMPTY)
                 .define('B', ItemTags.LEAVES)
                 .define('C', Items.FEATHER)
                 .define('D', Items.GRASS)

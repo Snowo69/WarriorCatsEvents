@@ -5,6 +5,10 @@ public interface IStealthData {
 
     void setUnlocked(boolean value);
 
+    boolean isOn();
+
+    void setOn(boolean value);
+
     boolean isStealthOn();
     void setStealthOn(boolean value);
 

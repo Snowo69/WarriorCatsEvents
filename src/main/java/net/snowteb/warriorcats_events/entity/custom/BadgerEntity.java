@@ -1,0 +1,164 @@
+package net.snowteb.warriorcats_events.entity.custom;
+
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.AgeableMob;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.goal.*;
+import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.snowteb.warriorcats_events.entity.ModEntities;
+import net.snowteb.warriorcats_events.sound.ModSounds;
+import net.snowteb.warriorcats_events.util.MoveToGrassGoal;
+import org.jetbrains.annotations.Nullable;
+import software.bernie.geckolib.animatable.GeoEntity;
+import software.bernie.geckolib.core.animatable.GeoAnimatable;
+import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.core.animatable.instance.SingletonAnimatableInstanceCache;
+import software.bernie.geckolib.core.animation.*;
+import software.bernie.geckolib.core.object.PlayState;
+
+public class BadgerEntity extends Animal implements GeoEntity {
+
+    private static final EntityDataAccessor<Boolean> ATTACKING =
+            SynchedEntityData.defineId(BadgerEntity.class, EntityDataSerializers.BOOLEAN);
+    public int attackAnimationTimeout = 0;
+    private Goal preyTarget;
+
+    private AnimatableInstanceCache cache = new SingletonAnimatableInstanceCache(this);
+
+    public BadgerEntity(EntityType<? extends Animal> pEntityType, Level pLevel) {
+        super(pEntityType, pLevel);
+    }
+
+    public static AttributeSupplier.Builder setAttributes() {
+        return Animal.createMobAttributes()
+                .add(Attributes.MAX_HEALTH, 35D)
+                .add(Attributes.ATTACK_SPEED, 1.0f)
+                .add(Attributes.ATTACK_DAMAGE, 4.5f)
+                .add(Attributes.MOVEMENT_SPEED, 0.30f);
+    }
+
+    @Override
+    protected void registerGoals() {
+        this.preyTarget = new NearestAttackableTargetGoal<>(this, Animal.class, 10, false, false, (target) -> {
+            return (target instanceof WCatEntity || target instanceof MouseEntity || target instanceof SquirrelEntity);
+        });
+
+        this.goalSelector.addGoal(0, new FloatGoal(this));
+        this.goalSelector.addGoal(1, new BadgerAttackGoal(this, 1.2D, true));
+        this.goalSelector.addGoal(2, new WaterAvoidingRandomStrollGoal(this, 0.6D));
+        this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 8.0F));
+        this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
+
+        this.targetSelector.addGoal(0, new HurtByTargetGoal(this));
+        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Player.class, true));
+        this.targetSelector.addGoal(2, this.preyTarget);
+    }
+
+
+    @Override
+    protected void defineSynchedData() {
+        super.defineSynchedData();
+        this.entityData.define(ATTACKING, false);
+    }
+
+
+
+    @Override
+    public @Nullable AgeableMob getBreedOffspring(ServerLevel pLevel, AgeableMob pOtherParent) {
+        return ModEntities.BADGER.get().create(pLevel);
+    }
+
+    @Override
+    public void registerControllers(AnimatableManager.ControllerRegistrar controllerRegistrar) {
+        controllerRegistrar.add(new AnimationController<>
+                (this, "controller", 0, this::predicate));
+        controllerRegistrar.add(new AnimationController<>
+                (this, "attackController", 0, this::attackPredicate));
+
+    }
+
+    private <T extends GeoAnimatable> PlayState attackPredicate(AnimationState<T> state) {
+        var controller = state.getController();
+        if (this.isAttacking() && attackAnimationTimeout <= 0) {
+            attackAnimationTimeout = 100;
+            controller.setAnimation(RawAnimation.begin()
+                    .then("animation.badger.attack", Animation.LoopType.PLAY_ONCE));
+            controller.forceAnimationReset();
+            return PlayState.CONTINUE;
+        } else {
+            --this.attackAnimationTimeout;
+        }
+
+        if(!this.isAttacking()){
+            return PlayState.STOP;
+        }
+        return PlayState.CONTINUE;
+    }
+
+    private <T extends GeoAnimatable> PlayState predicate(AnimationState<T> tAnimationState) {
+        if(tAnimationState.isMoving()) {
+            tAnimationState.getController().setAnimation(RawAnimation.begin().
+                    then("animation.badger.walk", Animation.LoopType.LOOP));
+            return PlayState.CONTINUE;
+        }
+
+        tAnimationState.getController().setAnimation(RawAnimation.begin().
+                then("animation.badger.idle", Animation.LoopType.LOOP));
+        return PlayState.CONTINUE;
+    }
+
+
+    @Override
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return cache;
+    }
+
+    @Override
+    protected void dropCustomDeathLoot(DamageSource damageSource, int lootingMultiplier, boolean recentlyHit) {
+        super.dropCustomDeathLoot(damageSource, lootingMultiplier, recentlyHit);
+    }
+
+    @Override
+    protected ResourceLocation getDefaultLootTable() {
+        return new ResourceLocation("warriorcats_events", "entities/badger");
+    }
+
+
+    public void setAttacking(boolean attacking) {
+        this.entityData.set(ATTACKING, attacking);
+    }
+
+    public boolean isAttacking() {
+        return this.entityData.get(ATTACKING);
+    }
+
+
+
+    @Override
+    protected SoundEvent getAmbientSound() {
+        return ModSounds.BADGER_AMBIENT.get();
+    }
+
+    @Override
+    protected SoundEvent getHurtSound(DamageSource source) {
+        return ModSounds.BADGER_HURT_ATTACK.get();
+    }
+
+    @Override
+    protected SoundEvent getDeathSound() {
+        return ModSounds.BADGER_SCREECH.get();
+    }
+
+}

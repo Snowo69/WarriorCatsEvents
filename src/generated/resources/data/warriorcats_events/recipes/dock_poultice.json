@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "warriorcats_events:dock_leaves"
+    }
+  ],
+  "result": {
+    "count": 2,
+    "item": "warriorcats_events:dock_poultice"
+  }
+}

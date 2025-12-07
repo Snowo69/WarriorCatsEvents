@@ -1,8 +1,8 @@
 package net.snowteb.warriorcats_events.entity.custom;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
@@ -11,7 +11,6 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.BlockTags;
@@ -28,16 +27,12 @@ import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.OwnerHurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.OwnerHurtTargetGoal;
-import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.animal.Animal;
-import net.minecraft.world.entity.animal.Chicken;
-import net.minecraft.world.entity.animal.Rabbit;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.levelgen.Heightmap;
@@ -45,6 +40,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.network.NetworkHooks;
 import net.snowteb.warriorcats_events.block.ModBlocks;
+import net.snowteb.warriorcats_events.client.AnimationClientData;
 import net.snowteb.warriorcats_events.entity.ModEntities;
 import net.snowteb.warriorcats_events.item.ModItems;
 import net.snowteb.warriorcats_events.sound.ModSounds;
@@ -56,6 +52,7 @@ import software.bernie.geckolib.core.animatable.instance.SingletonAnimatableInst
 import software.bernie.geckolib.core.animation.*;
 import software.bernie.geckolib.core.animation.AnimationState;
 import software.bernie.geckolib.core.object.PlayState;
+import tocraft.walkers.api.PlayerShape;
 
 import java.util.*;
 
@@ -74,7 +71,6 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
         WARRIOR,
         MEDICINE
     }
-    private Rank rank = Rank.NONE;
 
     private static final EntityDataAccessor<Integer> VARIANT =
         SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.INT);
@@ -98,7 +94,6 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
     private BlockPos wanderCenter = null;
     private static final int WANDER_RADIUS = 15;
     int maxVariants = 20;
-    private boolean HLAnimationRunning;
     private final int KITTINGTIME = 20 * 60 * 8; // 8min
     private boolean wasBaby = this.isBaby();
 
@@ -137,7 +132,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
             //MultiColor
             "Leaf", "Marble", "Fleck", "Dapple", "Spotted",
             "Tawny", "Mottle", "Speckle", "Brindle", "Splotch",
-            "Bumble", "Bright", "Sun"
+            "Bumble", "Bright", "Sun", "Rainbow"
 
     };
     private static final String[] PREFIX_2 = {
@@ -455,19 +450,12 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
         this.targetSelector.addGoal(5, new HurtByTargetGoal(this));
         this.targetSelector.addGoal(6, this.preyTarget);
         this.goalSelector.addGoal(7, new WCAttackGoal(this, 1.2D, true));
-        //this.goalSelector.addGoal(6, new MeleeAttackGoal(this, 1.2D, false));
         this.goalSelector.addGoal(8, new BoundedWanderGoal(this, 1.0D));
         this.goalSelector.addGoal(9, new RandomLookAroundGoal(this));
         this.goalSelector.addGoal(10, new CasualBlockSeekGoal(this,1.0D,ModBlocks.MOSSBED.get(),15,0.10D));
 
     }
 
-
-
-    @Override
-    public MobType getMobType() {
-        return MobType.UNDEFINED;
-    }
 
 
     public static AttributeSupplier.Builder setAttributes() {
@@ -487,7 +475,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                 (entityType, world, reason, pos, random) ->
                         world.getDifficulty() != Difficulty.PEACEFUL &&
-                                world.getBlockState(pos.below()).is(Blocks.GRASS_BLOCK)
+                                world.getBlockState(pos.below()).isSolid()
         );
     }
 
@@ -539,8 +527,8 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
             } else {
                 this.level().broadcastEntityEvent(this, (byte) 6);
                 this.setCustomName(null);
+              }
             }
-        }
 
 
             this.gameEvent(GameEvent.EAT);
@@ -674,19 +662,6 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
                 } else {
                     ageText = "Fully grown";
                 }
-            /*
-                if (!this.level().isClientSide()) {
-                    Minecraft.getInstance().player.sendSystemMessage(Component.literal("sMoons:" + moons));
-                    Minecraft.getInstance().player.sendSystemMessage(Component.literal("sSynchAge:" + syncAge));
-                }
-                if (this.level().isClientSide()) {
-                Minecraft.getInstance().player.sendSystemMessage(Component.literal("cMoons:" + moons));
-                Minecraft.getInstance().player.sendSystemMessage(Component.literal("cSynchAge:" + syncAge));
-                }
-            */
-
-
-
 
             if (this.getKittingTicks() > 20) {KitTime = String.format("%.2f min", kittingTime);}
                 else { KitTime = "Not expecting";}
@@ -956,8 +931,74 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
                 (this, "controller", 0, this::predicate));
         controllers.add(new AnimationController<>
                 (this, "attackController", 0, this::attackPredicate));
+        controllers.add(new AnimationController<>
+                (this, "playerController", 0, this::playerPredicate));
 
     }
+
+    private <T extends GeoAnimatable> PlayState playerPredicate(AnimationState<T> state) {
+
+        Player player = Minecraft.getInstance().player;
+
+        if (!AnimationClientData.isPlayerShape) {
+            AnimationClientData.reset();
+            return PlayState.CONTINUE;
+        }
+
+        int anim1 = AnimationClientData.getAnim1();
+        int anim2 = AnimationClientData.getAnim2();
+        int anim3 = AnimationClientData.getAnim3();
+        int anim4 = AnimationClientData.getAnim4();
+        int anim5 = AnimationClientData.getAnim5();
+        int anim6 = AnimationClientData.getAnim6();
+
+        if (PlayerShape.getCurrentShape(player) instanceof WCatEntity) {
+
+            if (!animPlayed) {
+                if (anim1 == 1) {
+                    state.getController().setAnimation(RawAnimation.begin()
+                            .then("animation.wcat.groom", Animation.LoopType.PLAY_ONCE));
+                    animPlayed = true;
+                } else if (anim2 == 1) {
+                    state.getController().setAnimation(RawAnimation.begin()
+                            .then("animation.wcat.stretch", Animation.LoopType.PLAY_ONCE));
+                    animPlayed = true;
+                } else if (anim3 == 1) {
+                    state.getController().setAnimation(RawAnimation.begin()
+                            .then("animation.wcat.scratch", Animation.LoopType.PLAY_ONCE));
+                    animPlayed = true;
+                } else if (anim4 == 1) {
+                    state.getController().setAnimation(RawAnimation.begin()
+                            .then("animation.wcat.attack", Animation.LoopType.PLAY_ONCE));
+                    animPlayed = true;
+                } else if (anim5 == 1) {
+                    state.getController().setAnimation(RawAnimation.begin()
+                            .then("animation.wcat.standstand", Animation.LoopType.PLAY_ONCE)
+                            .then("animation.wcat.standidle", Animation.LoopType.LOOP));
+                    animPlayed = true;
+                }
+                else if (anim6 == 1) {
+                    state.getController().setAnimation(RawAnimation.begin()
+                            .then("animation.wcat.sitlay", Animation.LoopType.PLAY_ONCE)
+                            .then("animation.wcat.layidle", Animation.LoopType.LOOP));
+                    animPlayed = true;
+                }
+
+            }
+
+            if ((animPlayed && state.getController().hasAnimationFinished()) || state.isMoving()) {
+                state.getController().setAnimation(RawAnimation.begin()
+                        .then("animation.wcat.idle", Animation.LoopType.LOOP));
+                animPlayed = false;
+                AnimationClientData.reset();
+
+                return PlayState.CONTINUE;
+            }
+        }
+
+        return PlayState.CONTINUE;
+    }
+
 
     private <T extends GeoAnimatable> PlayState attackPredicate(AnimationState<T> state) {
         var controller = state.getController();
@@ -981,7 +1022,12 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
 
     private <T extends GeoAnimatable> PlayState predicate(AnimationState<T> tAnimationState) {
 
-       this.setPlayingAnimation(tAnimationState.getController().isPlayingTriggeredAnimation());
+       if (!this.onGround() && !this.isInWater()) {
+           tAnimationState.getController().setAnimation(RawAnimation.begin().
+                   then("animation.wcat.falling", Animation.LoopType.LOOP));
+           animPlayed = false;
+           return PlayState.CONTINUE;
+       }
 
        if (tAnimationState.isMoving() && !this.isCrouching()) {
            tAnimationState.getController().setAnimation(RawAnimation.begin().
@@ -990,9 +1036,8 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
            return PlayState.CONTINUE;
        }
 
+        if (this.random.nextInt(1200) == 0 && !AnimationClientData.isPlayerShape) {
 
-
-        if (this.random.nextInt(1200) == 0) {
            int rand = this.random.nextInt(4);
 
            if (rand == 0 && !animPlayed) {

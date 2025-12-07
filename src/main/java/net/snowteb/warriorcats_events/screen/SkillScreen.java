@@ -15,6 +15,8 @@ import net.snowteb.warriorcats_events.network.packet.*;
 import net.snowteb.warriorcats_events.skills.ISkillData;
 import net.snowteb.warriorcats_events.skills.PlayerSkill;
 import net.snowteb.warriorcats_events.skills.PlayerSkillProvider;
+import net.snowteb.warriorcats_events.stealth.IStealthData;
+import net.snowteb.warriorcats_events.stealth.PlayerStealth;
 import net.snowteb.warriorcats_events.stealth.PlayerStealthProvider;
 import net.snowteb.warriorcats_events.util.ModButton;
 
@@ -30,6 +32,7 @@ public class SkillScreen extends Screen {
     String nextToughnessLevel;
 
     String stealthCost;
+    Component stealthSwitchText;
 
 
     int currentSpeedLevel;
@@ -115,13 +118,23 @@ public class SkillScreen extends Screen {
                      if (stealth.isUnlocked()) {
                         stealthCost = "MAX";
                      } else {
+                         stealthSwitchText = Component.literal("--");
                          stealthCost = PlayerSkill.defaultStealthcost + "xp";
-                         }
+                     }
+
+                     if (stealth.isOn()) {
+                         stealthSwitchText = Component.literal("On").withStyle(ChatFormatting.GREEN);
+                     } else {
+                         stealthSwitchText = Component.literal("Off").withStyle(ChatFormatting.YELLOW);
+                     }
+
 
                 });
 
             }
             );
+
+
         }
 
         this.clearWidgets();
@@ -205,9 +218,16 @@ public class SkillScreen extends Screen {
                 new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/modbutton.png"),
                 80, 20
         ));
-
-
-
+        this.addRenderableWidget(new ModButton(
+                this.width / 2 + 45,
+                this.height / 2 - 17,
+                20, 20,
+                stealthSwitchText,
+                b ->  {
+                    ModPackets.sendToServer(new CtSSwitchStealthPacket());},
+                new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/modbutton.png"),
+                20, 20
+        ));
 
 
 

@@ -33,15 +33,6 @@ public class ModBlockLootTables extends BlockLootSubProvider {
         this.dropSelf(ModBlocks.STARRYTREE_SAPLING.get());
         this.dropSelf(ModBlocks.GLOWSHROOM.get());
 
-        /*this.add(ModBlocks.DOCK.get(),
-                block -> createSingleItemTableWithSilkTouch(
-                        block,
-                        ModItems.DOCK_LEAVES.get(),
-                        UniformGenerator.between(1.0F, 2.0F)
-                )
-
-            );*/
-
         //DOCK
         {this.add(ModBlocks.DOCK.get(), block -> this.applyExplosionDecay(
                 block, LootTable.lootTable().withPool(LootPool.lootPool().when(
@@ -153,6 +144,22 @@ public class ModBlockLootTables extends BlockLootSubProvider {
                                 .apply(ApplyBonusCount.addUniformBonusCount(Enchantments.BLOCK_FORTUNE))
                 )));
         }
+        //YARROW
+        {        this.add(ModBlocks.YARROWPLANT.get(), block -> this.applyExplosionDecay(
+                block, LootTable.lootTable().withPool(LootPool.lootPool().when(
+                                        LootItemBlockStatePropertyCondition.hasBlockStateProperties(ModBlocks.YARROWPLANT.get())
+                                                .setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(SweetBerryBushBlock.AGE, 3))
+                                ).add(LootItem.lootTableItem(ModItems.YARROW.get()))
+                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(2.0F, 3.0F)))
+                                .apply(ApplyBonusCount.addUniformBonusCount(Enchantments.BLOCK_FORTUNE))
+                ).withPool(LootPool.lootPool().when(
+                                        LootItemBlockStatePropertyCondition.hasBlockStateProperties(ModBlocks.YARROWPLANT.get())
+                                                .setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(SweetBerryBushBlock.AGE, 2))
+                                ).add(LootItem.lootTableItem(ModItems.YARROW.get()))
+                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(1.0F, 2.0F)))
+                                .apply(ApplyBonusCount.addUniformBonusCount(Enchantments.BLOCK_FORTUNE))
+                )));
+        }
 
 
 
@@ -164,7 +171,6 @@ public class ModBlockLootTables extends BlockLootSubProvider {
                 )
 
         );
-
 
         this.add(ModBlocks.LEAF_DOOR.get(),
                 block -> createDoorTable(ModBlocks.LEAF_DOOR.get()));

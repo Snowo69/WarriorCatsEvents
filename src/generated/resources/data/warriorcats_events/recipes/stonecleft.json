@@ -7,12 +7,11 @@
     },
     "B": {
       "item": "minecraft:cobblestone"
-    },
-    "C": []
+    }
   },
   "pattern": [
     "ABA",
-    "BCB",
+    "B B",
     "ABA"
   ],
   "result": {

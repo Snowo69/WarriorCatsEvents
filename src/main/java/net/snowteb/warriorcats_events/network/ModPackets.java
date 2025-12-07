@@ -103,6 +103,17 @@ public class ModPackets {
                 .consumerMainThread(CtSUnlockStealthPacket::handle)
                 .add();
 
+        net.messageBuilder(CtSSwitchShape.class, id(), NetworkDirection.PLAY_TO_SERVER)
+                .decoder(CtSSwitchShape::new)
+                .encoder(CtSSwitchShape::toBytes)
+                .consumerMainThread(CtSSwitchShape::handle)
+                .add();
+
+        net.messageBuilder(CtSSwitchStealthPacket.class, id(), NetworkDirection.PLAY_TO_SERVER)
+                .encoder(CtSSwitchStealthPacket::encode)
+                .decoder(CtSSwitchStealthPacket::decode)
+                .consumerMainThread(CtSSwitchStealthPacket::handle)
+                .add();
     }
 
 

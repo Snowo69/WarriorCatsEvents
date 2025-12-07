@@ -43,6 +43,7 @@ public class ModFoodHerbs {
             .effect(() -> new MobEffectInstance(MobEffects.CONFUSION,140,0),1f)
             .build();
 
+    // Deathberries
     public static final FoodProperties DEATHBERRIES = new FoodProperties.Builder().alwaysEat().fast()
             .nutrition(1).saturationMod(2f)
             .effect(() -> new MobEffectInstance(MobEffects.HARM,1,1),1f)
@@ -50,12 +51,22 @@ public class ModFoodHerbs {
             .effect(() -> new MobEffectInstance(MobEffects.CONFUSION,7200,0),1f)
             .build();
 
+    // Catmint
     public static final FoodProperties CATMINT = new FoodProperties.Builder().alwaysEat().fast()
             .nutrition(1).saturationMod(2f)
             .effect(() -> new MobEffectInstance(MobEffects.REGENERATION,1200,0),0.6f)
             .effect(() -> new MobEffectInstance(MobEffects.SLOW_FALLING,140,0),1.0f)
             .effect(() -> new MobEffectInstance(MobEffects.LEVITATION,30,0),0.1f)
             .build();
+
+    // blah blah blep
+    public static final FoodProperties YARROW = new FoodProperties.Builder().alwaysEat().fast()
+            .nutrition(1).saturationMod(1f)
+            .effect(() -> new MobEffectInstance(MobEffects.CONFUSION,600,0),1f)
+            .effect(() -> new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN,600,1),1f)
+            .build();
+
+
 
 
 

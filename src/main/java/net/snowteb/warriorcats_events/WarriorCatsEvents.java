@@ -77,29 +77,37 @@ public class WarriorCatsEvents {
             event.accept(ModItems.BURNET);
             event.accept(ModItems.DAISY);
             event.accept(ModItems.CHAMOMILE);
+            event.accept(ModItems.YARROW);
+            event.accept(ModItems.CATMINT);
+
             event.accept(ModItems.MOUSE_FOOD);
             event.accept(ModItems.SQUIRREL_FOOD);
+            event.accept(ModItems.PIGEON_FOOD);
+
             event.accept(ModItems.TRAVELING_HERBS);
+
+
         }
 
         if (event.getTabKey() == CreativeModeTabs.TOOLS_AND_UTILITIES) {
-            event.accept(ModItems.STARCLAN_KNOWLEDGE);
             event.accept(ModItems.GENERATIONS_MUSIC_DISC);
             event.accept(ModBlocks.STONECLEFT);
             event.accept(ModItems.WHISKERS);
             event.accept(ModItems.CLAWS);
             event.accept(ModItems.WARRIORNAMERANDOMIZER);
             event.accept(ModItems.FRESHKILL_AND_HERBS_BUNDLE);
+            event.accept(ModItems.DOCK_POULTICE);
 
         }
 
         if (event.getTabKey() == CreativeModeTabs.INGREDIENTS) {
-            event.accept(ModItems.DOCK_POULTICE);
             event.accept(ModItems.DOCK_LEAVES);
             event.accept(ModItems.SORREL);
             event.accept(ModItems.BURNET);
             event.accept(ModItems.DAISY);
             event.accept(ModItems.CHAMOMILE);
+            event.accept(ModItems.YARROW);
+            event.accept(ModItems.CATMINT);
 
         }
 
@@ -113,6 +121,7 @@ public class WarriorCatsEvents {
             event.accept(ModBlocks.DAISYPLANT);
             event.accept(ModBlocks.DEATHBERRIESBUSH);
             event.accept(ModBlocks.CATMINTPLANT);
+            event.accept(ModBlocks.YARROWPLANT);
             event.accept(ModBlocks.GLOWSHROOM);
 
             event.accept(ModBlocks.LEAF_DOOR);
@@ -132,6 +141,7 @@ public class WarriorCatsEvents {
             event.accept(ModItems.SQUIRREL_SPAWN_EGG);
             event.accept(ModItems.WILDCAT_SPAWN_EGG);
             event.accept(ModItems.PIGEON_SPAWN_EGG);
+            event.accept(ModItems.BADGER_SPAWN_EGG);
         }
 
 

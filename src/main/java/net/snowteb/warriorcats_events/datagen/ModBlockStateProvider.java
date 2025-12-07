@@ -36,6 +36,7 @@ public class ModBlockStateProvider extends BlockStateProvider {
         makeBush(((SweetBerryBushBlock) ModBlocks.DAISYPLANT.get()), "daisy_stage", "daisy_stage");
         makeBush(((SweetBerryBushBlock) ModBlocks.DEATHBERRIESBUSH.get()), "deathberries_stage", "deathberries_stage");
         makeBush(((SweetBerryBushBlock) ModBlocks.CATMINTPLANT.get()), "catmint_stage", "catmint_stage");
+        makeBush(((SweetBerryBushBlock) ModBlocks.YARROWPLANT.get()), "yarrow_stage", "yarrow_stage");
 
         saplingBlock(ModBlocks.STARRYTREE_SAPLING);
         saplingBlock(ModBlocks.DARKTREE_SAPLING);
@@ -61,7 +62,6 @@ public class ModBlockStateProvider extends BlockStateProvider {
 
         leavesBlock(ModBlocks.STARRY_LEAVES);
 
-        //blockWithItem(ModBlocks.STARCLAN_PORTAL);
     }
 
     private void blockItem(RegistryObject<Block> blockRegistryObject) {
@@ -81,8 +81,6 @@ public class ModBlockStateProvider extends BlockStateProvider {
         getVariantBuilder(block).forAllStates(state -> {
 
             int age = state.getValue(SweetBerryBushBlock.AGE);
-
-            // Construye: "block/dock_age_0", "block/dock_age_1", etc.
             String texPath = "block/" + textureBaseName + age;
 
             return new ConfiguredModel[]{

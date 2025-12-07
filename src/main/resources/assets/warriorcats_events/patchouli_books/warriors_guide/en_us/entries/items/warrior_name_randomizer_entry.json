@@ -1,0 +1,24 @@
+{
+
+
+  "name": "- Warrior Name Randomizer",
+  "icon": "warriorcats_events:warrior_name_randomizer",
+  "category": "warriorcats_events:items_category",
+  "pages": [
+    {
+      "type": "patchouli:image",
+      "images": [
+        "warriorcats_events:textures/book/items/warrior_name_randomizer.png"
+      ],
+      "title": "Warrior Name Randomizer"
+    },
+    {
+      "type": "patchouli:crafting",
+      "text": "This way you can change any of your clanmates' name. Surely no cat could stay as Loudbelly forever?",
+      "title": "Warrior Name Randomizer",
+      "recipe": "warriorcats_events:warrior_name_randomizer"
+    }
+  ]
+
+
+}

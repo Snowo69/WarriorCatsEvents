@@ -1,10 +1,11 @@
 {
   "values": [
-    "warriorcats_events:mouse_food",
-    "warriorcats_events:squirrel_food",
+    "warriorcats_events:mouse",
+    "warriorcats_events:squirrel",
+    "warriorcats_events:pigeon",
     "minecraft:mutton",
     "minecraft:rabbit",
-    "warriorcats_events:beef",
-    "warriorcats_events:porkchop"
+    "minecraft:beef",
+    "minecraft:porkchop"
   ]
 }

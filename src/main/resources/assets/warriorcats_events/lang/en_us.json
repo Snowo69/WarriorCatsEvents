@@ -6,7 +6,7 @@
   "item.warriorcats_events.dock_leaves.tooltip": "Good for making poultices and wraping herbs",
 
   "item.warriorcats_events.sorrel_leaves": "Sorrel Leaves",
-  "item.warriorcats_events.sorrel_leaves.tooltip": "Traveling herb. Used to ease hunger",
+  "item.warriorcats_events.sorrel_leaves.tooltip": "Traveling herb. Used to ease hunger and thirst",
 
   "item.warriorcats_events.starclan_knowledge": "The lives of a leader",
   "item.warriorcats_events.starclan_knowledge.tooltip": "Contains the 9 lives' ceremony",
@@ -42,13 +42,16 @@
   "item.warriorcats_events.freshkill_and_herbs.tooltip": "Give this to a Wild Cat to recruit it! Sure they will love it.",
 
   "item.warriorcats_events.claws": "Claws",
-  "item.warriorcats_events.claws.tooltip": "Designed by nature to hunt and fight.\\nThese will also help gathering herbs and leaves without breaking them.",
+  "item.warriorcats_events.claws.tooltip": "Designed by nature to hunt and fight.\\nThese will also help gathering plants and leaves without breaking them.",
 
   "item.warriorcats_events.catmint_leaves": "Catmint",
   "item.warriorcats_events.catmint.tooltip": "The best remedy for greencough so far.\\nVery tasty, it would make you touch the sky!\\nGive this to tamed Wild Cats to make them be mates.",
 
-  "block.warriorcats_events.catmint": "Catmint",
+  "item.warriorcats_events.yarrow_leaves": "Yarrow",
+  "item.warriorcats_events.yarrow.tooltip": "A not so very good tasting herb. These could make any cat vomit.",
 
+
+  "block.warriorcats_events.catmint": "Catmint",
   "block.warriorcats_events.stone_cleft": "Stone Cleft",
   "block.warriorcats_events.stonecleft": "Stone Cleft",
   "block.warriorcats_events.dark_log": "Dark Log",
@@ -66,6 +69,7 @@
   "block.warriorcats_events.starrytree_sapling": "Starry Tree Sapling",
   "block.warriorcats_events.darktree_sapling": "Dark Tree Sapling",
   "block.warriorcats_events.glowshroom": "Glowshroom",
+  "block.warriorcats_events.yarrow": "Yarrow",
 
   "warriorcats_events.ModBookItem.notleader": "You are not a leader",
 
@@ -73,6 +77,7 @@
   "key.warriorcats_events.hiss": "Hiss",
   "key.warriorcats_events.skillmenu": "Open Skill Tree Menu",
   "key.warriorcats_events.water": "Drink Water",
+  "key.warriorcats_events.emotes": "Emote Wheel",
 
   "effect.warriorcats_events.numb": "Numb",
   "effect.warriorcats_events.deathberries": "Deathberries",
@@ -81,14 +86,19 @@
   "entity.warriorcats_events.mouse": "Mouse",
   "entity.warriorcats_events.squirrel": "Squirrel",
   "entity.warriorcats_events.pigeon": "Pigeon",
+  "entity.warriorcats_events.badger": "Badger",
 
   "item.warriorcats_events.wildcat_spawn_egg": "Wild Cat Spawn Egg",
   "item.warriorcats_events.mouse_spawn_egg": "Mouse Spawn Egg",
   "item.warriorcats_events.squirrel_spawn_egg": "Squirrel Spawn Egg",
   "item.warriorcats_events.pigeon_spawn_egg": "Pigeon Spawn Egg",
+  "item.warriorcats_events.badger_spawn_egg": "Badger Spawn Egg",
 
   "item.warriorcats_events.mouse": "Mouse",
   "item.warriorcats_events.squirrel": "Squirrel",
-  "item.warriorcats_events.pigeon": "Pigeon"
+  "item.warriorcats_events.pigeon": "Pigeon",
+
+  "item.warriorcats_events.warriors_guide": "A Warrior's Guide",
+  "item.warriorcats_events.warriors_guide.tooltip": "Every warrior needs guidance at some point!"
 
 }

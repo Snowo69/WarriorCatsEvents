@@ -19,8 +19,7 @@ public class ModBlockTagGenerator extends BlockTagsProvider {
 
     @Override
     protected void addTags(HolderLookup.Provider pProvider) {
-        /* this.tag(ModTags.Blocks.CUSTOMHERBBLOCKS)
-                .add(ModBlocks.DEATHBERRIESBUSH.get()).addTag(Tags.Blocks.ORES); */
+
         this.tag(BlockTags.DOORS).add(ModBlocks.LEAF_DOOR.get());
         this.tag(BlockTags.LOGS_THAT_BURN)
                 .add(ModBlocks.DARK_LOG.get())

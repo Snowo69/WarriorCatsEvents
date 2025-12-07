@@ -1,0 +1,23 @@
+{
+
+
+  "name": "- Emotes System",
+  "icon": "minecraft:armor_stand",
+  "category": "warriorcats_events:features_category",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "$(8)The Emotes system only works client side. Not compatible with Multiplayer yet. $(br2)The emote wheel is displayed using they emote wheel keybind ('Y' by default). This has many cool emotes that your character will be able to play. It also has an orange button which is the Morph button, and will automatically switch your shape from Player to Wild Cat and Wild Cat to Player, in case you find it confusing to manually do it using commands.$(br)",
+      "title": "Emote System"
+    },
+    {
+      "type": "patchouli:image",
+      "images": [
+        "warriorcats_events:textures/book/features/emote_system.png"
+      ],
+      "text": "$(8)The emote wheel has currently 7 emotes that might change in future updates."
+    }
+  ]
+
+
+}

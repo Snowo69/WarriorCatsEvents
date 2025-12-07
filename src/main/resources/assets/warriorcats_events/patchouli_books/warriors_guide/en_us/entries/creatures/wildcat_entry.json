@@ -1,0 +1,105 @@
+{
+
+
+  "name": "- Wild Cat",
+  "icon": "warriorcats_events:wildcat_spawn_egg",
+  "category": "warriorcats_events:creatures_category",
+  "pages": [
+    {
+      "type": "patchouli:entity",
+      "entity": "warriorcats_events:warrior_cat{Variant:3,OnGround:1b}",
+      "rotate": false,
+      "default_rotation": -30,
+      "text": "This is us! I hope you already know everything about our species... You do, right?"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "About the Wild Cat",
+      "rotate": false,
+      "text": "Wild Cats can be found in every biome as long as it's not too cold or too hot. As you might know, we all have different colors and fur patterns that makes us unique. Some look like flames, some like stone, others have colorful spots! $(br2)Wild Cats have also their own unique size, so don't be afraid if you find a cat bigger than you, true strength comes only from experience."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "About the Wild Cat",
+      "text": "Wild Cats are generally peaceful. You will find them hunting or just padding through the woods. But if you provoke them, they wont hesitate to defend themselves.$(br2)You can usually find loner cats in groups of one to three cats."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Interacting",
+      "text": "There are many different ways you can interact with your own kind. Each of them will be explained in the next pages."
+    },
+
+    {
+      "type": "patchouli:text",
+      "title": "Recruiting",
+      "text": "Wild Cats can be recruited for your own clan if you earn their friendship! Living in the wild is always better with company, and having allies by your side will make everything a lot easier. $(br2)Wild Cats can be recruited if you give them something they need or might like. Fresh-kill and herbs is by far the best choice. Who could deny a good meal and some care?"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "warriorcats_events:freshkill_and_herbs",
+      "title": "Recruiting",
+      "text": "The Fresh-kill and Herbs bundle will allow you to recruit any Wild Cat. $(br)When recruited, a Wild Cat will automatically obtain a warrior name and their clan role will be set as warrior by default. But you can change any of this later. What you can't change is their gender, which is displayed beside their name when recruited."
+    },
+
+    {
+      "type": "patchouli:text",
+      "title": "Following Orders",
+      "text": "An already recruited Wild Cat, can receive orders from their leader. Which means that they can follow you, stay, or you can just tell them to do whatever they want and wander around. Wild Cats wont wander too far, they are smart! They know there might always be danger if they go further than fifteen fox-lengths. $(br2)$(7)$(o)Change a Wild Cat's state by right-clicking on them."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Following Orders",
+      "text": "While following you, Wild Cats wont hunt or scare prey, they will only defend you against threats or help you in battles. $(br2)While wandering, Wild Cats will hunt for themselves and will defend you if you need it as well. They prefer to stay cozy so you will often find them near moss beds. $(br2)While staying, a Wild Cat wont move unless ordered, which means that they wont hunt or defend you, they will stay right there until they receive a new order.$(br)"
+    },
+
+    {
+      "type": "patchouli:text",
+      "title": "Cats' Information",
+      "text": "Wild Cats have all sort of valuable information to know about. Such as their age, gender, name, clan role, their current mate, and even if they are expecting kits or not!"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "warriorcats_events:whiskers",
+      "title": "Cats' Information",
+      "text": "You can know all of a cat's information using your Whiskers. And with this same item you can also change their clan role."
+    },
+
+    {
+      "type": "patchouli:text",
+      "title": "Breeding",
+      "text": "Have you heard about catmint? They say that if two cats eat enough of it, they will fall in love with each other, as if catmint magically showed where their feelings truly lie!"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "warriorcats_events:catmint_leaves",
+      "title": "Breeding",
+      "text": "If two of your clanmates are under the effects of catmint, they will take each other as a mate and will eventually even have kits! $(br2)Wild Cats can sometimes take mates of their same gender. But to have kits, only cats of opposite gender work. $(br2)Once a she-cat is expecting kits, you can check the time until the kits are born using your Whiskers."
+    },
+
+    {
+      "type": "patchouli:text",
+      "title": "Kits",
+      "text": "Every litter of kits can be of one to three kits. Once they are born, they can be very different colors and sizes, or even sometimes they are born looking all the same. $(br2)Kits are fully grown once they reach the age of 12 moons, which usually takes about 90 minutes."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Kits",
+      "text": "Kits are born with a default kit name and clan role, which will change as they grow. $(br2)A kit will automatically become an apprentice once they reach the age of 6 moons, and will become a full warrior once they reach the age of 12 moons. Their name prefix can always be changed as they grow."
+    },
+
+    {
+      "type": "patchouli:text",
+      "title": "Changing Names",
+      "text": "Remember what i said about Loudbelly? $(br2)Whenever you want to change one of your clanmate's name, you can use the Name Randomizer. This will change the cat's prefix if they are a kit, and their whole name if they are fully grown."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "warriorcats_events:warrior_name_randomizer",
+      "title": "Changing Names",
+      "text": "The Name Randomizer has limited use, so if you are really indecisive, you might want to make a few of these."
+    }
+
+  ]
+
+
+}

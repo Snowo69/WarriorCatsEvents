@@ -2,6 +2,7 @@ package net.snowteb.warriorcats_events.entity.custom;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.EntityType;
@@ -15,6 +16,7 @@ import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.snowteb.warriorcats_events.entity.ModEntities;
+import net.snowteb.warriorcats_events.sound.ModSounds;
 import net.snowteb.warriorcats_events.util.MoveToLogsGoal;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
@@ -37,14 +39,13 @@ public class SquirrelEntity extends Animal implements GeoEntity {
                 .add(Attributes.MAX_HEALTH, 1D)
                 .add(Attributes.ATTACK_SPEED, 1.0f)
                 .add(Attributes.ATTACK_DAMAGE, 1f)
-                .add(Attributes.MOVEMENT_SPEED, 0.30f);
+                .add(Attributes.MOVEMENT_SPEED, 0.27f);
     }
 
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1, new PanicGoal(this, 1.3D));
-        //this.goalSelector.addGoal(2, new AvoidEntityGoal<>(this, Player.class, 6.0f, 1.2D, 1.5D));
         this.goalSelector.addGoal(2, new AvoidEntityGoal<>(this, LivingEntity.class,
                 6.0F, 1.2D, 1.5D,
                 e -> e instanceof Player || e instanceof WCatEntity && shouldScareFrom((WCatEntity)e)));
@@ -100,10 +101,10 @@ public class SquirrelEntity extends Animal implements GeoEntity {
 
 
 
-    /*
+
     @Override
     protected SoundEvent getAmbientSound() {
-        return ModSounds.SQUIRREL.AMBIENT.get();
+        return ModSounds.SQUIRREL_AMBIENT.get();
     }
 
     @Override
@@ -115,7 +116,7 @@ public class SquirrelEntity extends Animal implements GeoEntity {
     protected SoundEvent getDeathSound() {
         return ModSounds.SQUIRREL_DEATH.get();
     }
-    */
+
 
 
 

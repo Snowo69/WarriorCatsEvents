@@ -181,14 +181,14 @@ public class PigeonEntity extends Parrot implements GeoEntity {
                 .add(Attributes.ATTACK_SPEED, 1.0f)
                 .add(Attributes.ATTACK_DAMAGE, 1f)
                 .add(Attributes.MOVEMENT_SPEED, 0.2f)
-                .add(Attributes.FLYING_SPEED, 0.5f);
+                .add(Attributes.FLYING_SPEED, 0.4f);
     }
 
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1,new PanicGoal(this,1.25D));
-        this.goalSelector.addGoal(2, new FlyAway(this, 4.0D));
+        this.goalSelector.addGoal(2, new FlyAway(this, 3.5D));
         this.goalSelector.addGoal(3,new WaterAvoidingRandomStrollGoal(this,1.0D));
         this.goalSelector.addGoal(4,new LookAtPlayerGoal(this, Player.class, 6.0F));
         this.goalSelector.addGoal(5, new RandomFlyingGoal(this, 2.0));

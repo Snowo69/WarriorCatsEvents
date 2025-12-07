@@ -21,16 +21,15 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.block.ModBlocks;
+import net.snowteb.warriorcats_events.client.AnimationClientData;
 import net.snowteb.warriorcats_events.client.ThirstHUD;
 import net.snowteb.warriorcats_events.entity.ModEntities;
-import net.snowteb.warriorcats_events.entity.client.MouseRenderer;
-import net.snowteb.warriorcats_events.entity.client.PigeonRenderer;
-import net.snowteb.warriorcats_events.entity.client.SquirrelRenderer;
-import net.snowteb.warriorcats_events.entity.client.WCRenderer;
+import net.snowteb.warriorcats_events.entity.client.*;
 import net.snowteb.warriorcats_events.network.ModPackets;
 import net.snowteb.warriorcats_events.network.packet.CtSHissPacket;
 import net.snowteb.warriorcats_events.network.packet.ReqSkillDataPacket;
 import net.snowteb.warriorcats_events.network.packet.WaterPacket;
+import net.snowteb.warriorcats_events.screen.EmoteWheelScreen;
 import net.snowteb.warriorcats_events.screen.ModMenuTypes;
 import net.snowteb.warriorcats_events.screen.SkillScreen;
 import net.snowteb.warriorcats_events.screen.StoneCleftScreen;
@@ -60,6 +59,10 @@ public class ClientEvents {
                 ModPackets.sendToServer(new ReqSkillDataPacket());
             }
 
+            if (ModKeybinds.EMOTES_KEY.consumeClick()) {
+                Minecraft.getInstance().setScreen(new EmoteWheelScreen());
+            }
+
         }
 
 
@@ -81,7 +84,7 @@ public class ClientEvents {
             if (mc.player == null) return;
 
             player.getCapability(PlayerStealthProvider.STEALTH_MODE).ifPresent(cap -> {
-                if (!cap.isUnlocked()) return;
+                if (!cap.isUnlocked() || !cap.isOn()) return;
 
                 boolean shifting = mc.options.keyShift.isDown();
                 StealthClientState.tick(shifting);
@@ -94,25 +97,7 @@ public class ClientEvents {
 
 
 
-        @SubscribeEvent
-        public static void onOverlayRender(RenderGuiOverlayEvent.Pre event) {
 
-            LocalPlayer player = Minecraft.getInstance().player;
-            if (player == null) return;
-
-            player.getCapability(PlayerStealthProvider.STEALTH_MODE).ifPresent(cap -> {
-
-                if (!cap.isUnlocked()) return;
-
-                if (cap.isStealthOn() && cap.isUnlocked()) {
-                    GuiGraphics gui = event.getGuiGraphics();
-                    int w = Minecraft.getInstance().getWindow().getGuiScaledWidth();
-                    int h = Minecraft.getInstance().getWindow().getGuiScaledHeight();
-
-                    gui.fill(0, 0, w, h, 0x71000000);
-                }
-            });
-        }
 
 
 
@@ -127,6 +112,7 @@ public class ClientEvents {
                 event.register(ModKeybinds.HISSING_KEY);
                 event.register(ModKeybinds.WATERDRINK_KEY);
                 event.register(ModKeybinds.SKILLMENU_KEY);
+                event.register(ModKeybinds.EMOTES_KEY);
             }
 
             @SubscribeEvent
@@ -140,6 +126,7 @@ public class ClientEvents {
             event.registerEntityRenderer(ModEntities.SQUIRREL.get(), SquirrelRenderer::new);
             event.registerEntityRenderer(ModEntities.WCAT.get(), WCRenderer::new);
             event.registerEntityRenderer(ModEntities.PIGEON.get(), PigeonRenderer::new);
+            event.registerEntityRenderer(ModEntities.BADGER.get(), BadgerRenderer::new);
 
 
         }

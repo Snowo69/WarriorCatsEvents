@@ -2,7 +2,6 @@ package net.snowteb.warriorcats_events.sound;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraftforge.common.util.ForgeSoundType;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -24,24 +23,27 @@ public class ModSounds {
             registerSoundEvents("entity.mouse.hurt");
     public static final RegistryObject<SoundEvent> MOUSE_DEATH =
             registerSoundEvents("entity.mouse.death");
-    public static final RegistryObject<SoundEvent> WILDCAT_SCREAM =
-            registerSoundEvents("entity.wildcat.scream");
 
+    public static final RegistryObject<SoundEvent> BADGER_AMBIENT =
+            registerSoundEvents("entity.badger.ambient");
+    public static final RegistryObject<SoundEvent> BADGER_HURT_ATTACK =
+            registerSoundEvents("entity.badger.hurt_and_attack");
+    public static final RegistryObject<SoundEvent> BADGER_SCREECH =
+            registerSoundEvents("entity.badger.scream");
 
-
-
-    /*
     public static final RegistryObject<SoundEvent> SQUIRREL_AMBIENT =
             registerSoundEvents("entity.squirrel.ambient");
     public static final RegistryObject<SoundEvent> SQUIRREL_HURT =
             registerSoundEvents("entity.squirrel.hurt");
     public static final RegistryObject<SoundEvent> SQUIRREL_DEATH =
             registerSoundEvents("entity.squirrel.death");
-     */
+
+
+    public static final RegistryObject<SoundEvent> WILDCAT_SCREAM =
+            registerSoundEvents("entity.wildcat.scream");
 
 
 
-//
 
     private static RegistryObject<SoundEvent> registerSoundEvents(String name) {
         return SOUND_EVENTS.register(name,

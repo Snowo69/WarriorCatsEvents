@@ -27,6 +27,7 @@ public class ModPlacedFeatures {
     public static final ResourceKey<PlacedFeature> DEATHBERRIES_PLACED_KEY = registerKey("deathberries_placed");
     public static final ResourceKey<PlacedFeature> CATMINT_PLACED_KEY = registerKey("catmint_placed");
     public static final ResourceKey<PlacedFeature> GLOWSHROOM_PLACED_KEY = registerKey("glowshroom_placed");
+    public static final ResourceKey<PlacedFeature> YARROW_PLACED_KEY = registerKey("yarrow_placed");
 
     public static final ResourceKey<PlacedFeature> STARRYTREE_PLACED_KEY = registerKey("starrytree_placed");
 
@@ -34,35 +35,39 @@ public class ModPlacedFeatures {
         HolderGetter<ConfiguredFeature<?, ?>> configuredFeatures = context.lookup(Registries.CONFIGURED_FEATURE);
 
         register(context, DOCK_PLACED_KEY, configuredFeatures.getOrThrow(ModConfiguredFeatures.DOCK_KEY),
-                List.of(RarityFilter.onAverageOnceEvery(64), InSquarePlacement.spread(),
+                List.of(RarityFilter.onAverageOnceEvery(100), InSquarePlacement.spread(),
                         PlacementUtils.HEIGHTMAP_WORLD_SURFACE, BiomeFilter.biome()));
 
         register(context, SORREL_PLACED_KEY, configuredFeatures.getOrThrow(ModConfiguredFeatures.SORREL_KEY),
-                List.of(RarityFilter.onAverageOnceEvery(64), InSquarePlacement.spread(),
+                List.of(RarityFilter.onAverageOnceEvery(100), InSquarePlacement.spread(),
                         PlacementUtils.HEIGHTMAP_WORLD_SURFACE, BiomeFilter.biome()));
 
         register(context, BURNET_PLACED_KEY, configuredFeatures.getOrThrow(ModConfiguredFeatures.BURNET_KEY),
-                List.of(RarityFilter.onAverageOnceEvery(64), InSquarePlacement.spread(),
+                List.of(RarityFilter.onAverageOnceEvery(100), InSquarePlacement.spread(),
                         PlacementUtils.HEIGHTMAP_WORLD_SURFACE, BiomeFilter.biome()));
 
         register(context, CHAMOMILE_PLACED_KEY, configuredFeatures.getOrThrow(ModConfiguredFeatures.CHAMOMILE_KEY),
-                List.of(RarityFilter.onAverageOnceEvery(64), InSquarePlacement.spread(),
+                List.of(RarityFilter.onAverageOnceEvery(100), InSquarePlacement.spread(),
                         PlacementUtils.HEIGHTMAP_WORLD_SURFACE, BiomeFilter.biome()));
 
         register(context, DAISY_PLACED_KEY, configuredFeatures.getOrThrow(ModConfiguredFeatures.DAISY_KEY),
-                List.of(RarityFilter.onAverageOnceEvery(64), InSquarePlacement.spread(),
+                List.of(RarityFilter.onAverageOnceEvery(100), InSquarePlacement.spread(),
+                        PlacementUtils.HEIGHTMAP_WORLD_SURFACE, BiomeFilter.biome()));
+
+        register(context, YARROW_PLACED_KEY, configuredFeatures.getOrThrow(ModConfiguredFeatures.YARROW_KEY),
+                List.of(RarityFilter.onAverageOnceEvery(100), InSquarePlacement.spread(),
                         PlacementUtils.HEIGHTMAP_WORLD_SURFACE, BiomeFilter.biome()));
 
         register(context, DEATHBERRIES_PLACED_KEY, configuredFeatures.getOrThrow(ModConfiguredFeatures.DEATHBERRIES_KEY),
-                List.of(RarityFilter.onAverageOnceEvery(128), InSquarePlacement.spread(),
+                List.of(RarityFilter.onAverageOnceEvery(200), InSquarePlacement.spread(),
                         PlacementUtils.HEIGHTMAP_WORLD_SURFACE, BiomeFilter.biome()));
 
         register(context, CATMINT_PLACED_KEY, configuredFeatures.getOrThrow(ModConfiguredFeatures.CATMINT_KEY),
-                List.of(RarityFilter.onAverageOnceEvery(128), InSquarePlacement.spread(),
+                List.of(RarityFilter.onAverageOnceEvery(200), InSquarePlacement.spread(),
                         PlacementUtils.HEIGHTMAP_WORLD_SURFACE, BiomeFilter.biome()));
 
         register(context, GLOWSHROOM_PLACED_KEY, configuredFeatures.getOrThrow(ModConfiguredFeatures.GLOWSHROOM_KEY),
-                List.of(RarityFilter.onAverageOnceEvery(128), InSquarePlacement.spread(),
+                List.of(RarityFilter.onAverageOnceEvery(200), InSquarePlacement.spread(),
                         PlacementUtils.HEIGHTMAP_WORLD_SURFACE, BiomeFilter.biome()));
 
 

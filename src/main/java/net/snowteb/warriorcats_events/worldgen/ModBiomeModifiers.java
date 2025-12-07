@@ -23,6 +23,7 @@ public class ModBiomeModifiers {
     public static final ResourceKey<BiomeModifier> ADD_DEATHBERRIES = registerKey("add_deathberries");
     public static final ResourceKey<BiomeModifier> ADD_CATMINT = registerKey("add_catmint");
     public static final ResourceKey<BiomeModifier> ADD_GLOWSHROOM = registerKey("add_glowshroom");
+    public static final ResourceKey<BiomeModifier> ADD_YARROW = registerKey("add_yarrow");
 
 
 
@@ -63,6 +64,11 @@ public class ModBiomeModifiers {
         context.register(ADD_CATMINT, new ForgeBiomeModifiers.AddFeaturesBiomeModifier(
                 biomes.getOrThrow(BiomeTags.IS_OVERWORLD),
                 HolderSet.direct(placedFeatures.getOrThrow(ModPlacedFeatures.CATMINT_PLACED_KEY)),
+                GenerationStep.Decoration.VEGETAL_DECORATION));
+
+        context.register(ADD_YARROW, new ForgeBiomeModifiers.AddFeaturesBiomeModifier(
+                biomes.getOrThrow(BiomeTags.IS_OVERWORLD),
+                HolderSet.direct(placedFeatures.getOrThrow(ModPlacedFeatures.YARROW_PLACED_KEY)),
                 GenerationStep.Decoration.VEGETAL_DECORATION));
 
         context.register(ADD_GLOWSHROOM, new ForgeBiomeModifiers.AddFeaturesBiomeModifier(

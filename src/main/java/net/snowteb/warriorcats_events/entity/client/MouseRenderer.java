@@ -28,7 +28,7 @@ public class MouseRenderer extends GeoEntityRenderer<MouseEntity> {
         if(entity.isBaby()) {
             poseStack.scale(0.2F, 0.2F, 0.2F);
         } else {
-            poseStack.scale(0.4F, 0.4F, 0.4F);
+            poseStack.scale(0.6F, 0.6F, 0.6F);
         }
 
 

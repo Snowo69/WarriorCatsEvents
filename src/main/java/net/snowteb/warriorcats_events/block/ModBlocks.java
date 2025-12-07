@@ -35,10 +35,6 @@ public class ModBlocks {
             DeferredRegister.create(ForgeRegistries.BLOCKS, WarriorCatsEvents.MODID);
 
 
-    /*public static final RegistryObject<Block> DOCK = registerBlock("dock",
-            () -> new ModCustomBushDock(BlockBehaviour.Properties.copy(Blocks.FERN).sound(ModBlocks.CUSTOMHERBS)
-                    .strength(0.1f)));*/
-
     public static final RegistryObject<Block> DOCK = BLOCKS.register("dock",
             () -> new GenericBushBlock(
                     BlockBehaviour.Properties.copy(Blocks.SWEET_BERRY_BUSH).randomTicks(),
@@ -91,6 +87,14 @@ public class ModBlocks {
             () -> new GenericBushBlock(
                     BlockBehaviour.Properties.copy(Blocks.SWEET_BERRY_BUSH).randomTicks(),
                     ModItems.DEATHBERRIES,
+                    1,
+                    2,
+                    SoundEvents.AZALEA_LEAVES_FALL
+            ));
+    public static final RegistryObject<Block> YARROWPLANT = BLOCKS.register("yarrow",
+            () -> new GenericBushBlock(
+                    BlockBehaviour.Properties.copy(Blocks.SWEET_BERRY_BUSH).randomTicks(),
+                    ModItems.YARROW,
                     1,
                     2,
                     SoundEvents.AZALEA_LEAVES_FALL

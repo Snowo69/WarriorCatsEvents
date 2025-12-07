@@ -26,7 +26,7 @@ public class ThirstHUD {
         int thirst = ClientThirstData.getPlayerThirst();
         int iconCount = 10;
 
-        boolean lowThirst = thirst <= 6;
+        boolean lowThirst = thirst <= 5;
         boolean extraLowThirst = thirst <= 3;
         int tickCount = net.minecraft.client.Minecraft.getInstance().player.tickCount;
 

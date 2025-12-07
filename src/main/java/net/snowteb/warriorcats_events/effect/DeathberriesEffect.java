@@ -2,7 +2,6 @@ package net.snowteb.warriorcats_events.effect;
 
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -13,7 +12,7 @@ public class DeathberriesEffect extends MobEffect {
         super(pCategory, pColor);
 
         this.addAttributeModifier(Attributes.MOVEMENT_SPEED,
-                "7f5d3d4b-1a2c-4e28-b7f1-9f8c5d9b6a3d",
+                "7f5d3d4b-1a2c-4e69-b7f1-9f8c5d9b6a3d",
                 -0.7F, AttributeModifier.Operation.MULTIPLY_BASE);
 
     }

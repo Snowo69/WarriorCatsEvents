@@ -5,6 +5,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraftforge.network.NetworkEvent;
+import net.snowteb.warriorcats_events.network.ModPackets;
 import net.snowteb.warriorcats_events.stealth.PlayerStealthProvider;
 
 import java.util.function.Supplier;
@@ -33,7 +34,7 @@ public class CtSToggleStealthPacket {
 
             player.getCapability(PlayerStealthProvider.STEALTH_MODE).ifPresent(cap -> {
 
-                if (!cap.isUnlocked()) {
+                if (!cap.isUnlocked() || !cap.isOn()) {
                     cap.setStealthOn(false);
                     player.setInvisible(false);
                     return;
@@ -59,6 +60,8 @@ public class CtSToggleStealthPacket {
                             0.8f
                     );
                 }
+                ModPackets.sendToPlayer(
+                        new StCStealthSyncPacket(cap.isUnlocked(), cap.isStealthOn(), cap.isOn()), player);
                 player.setInvisible(state);
             });
 
