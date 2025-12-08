@@ -1,5 +1,6 @@
 package net.snowteb.warriorcats_events.event;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.MenuScreens;
@@ -8,6 +9,7 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.client.resources.sounds.SoundInstance;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
@@ -25,6 +27,7 @@ import net.snowteb.warriorcats_events.client.AnimationClientData;
 import net.snowteb.warriorcats_events.client.ThirstHUD;
 import net.snowteb.warriorcats_events.entity.ModEntities;
 import net.snowteb.warriorcats_events.entity.client.*;
+//import net.snowteb.warriorcats_events.entity.custom.ModModelLayers;
 import net.snowteb.warriorcats_events.network.ModPackets;
 import net.snowteb.warriorcats_events.network.packet.CtSHissPacket;
 import net.snowteb.warriorcats_events.network.packet.ReqSkillDataPacket;
@@ -96,7 +99,17 @@ public class ClientEvents {
         }
 
 
-
+        @SubscribeEvent
+        public static void onClientLogin(ClientPlayerNetworkEvent.LoggingIn event) {
+            if (event.getPlayer().level().isClientSide()) {
+                if (UpdateCheck.updateAvailable) {
+                    event.getPlayer().sendSystemMessage(
+                            Component.literal("[Warrior Cats Events] New version available: "
+                                    + UpdateCheck.latestVersion).withStyle(ChatFormatting.YELLOW)
+                    );
+                }
+            }
+        }
 
 
 
@@ -106,6 +119,14 @@ public class ClientEvents {
 
     @Mod.EventBusSubscriber(modid = WarriorCatsEvents.MODID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
     public static class ClientModBusEvents {
+
+
+        /*
+        @SubscribeEvent
+        public static void registerLayer(EntityRenderersEvent.RegisterLayerDefinitions event) {
+            event.registerLayerDefinition(ModModelLayers.VANILLAWCAT_LAYER, VanillaWCatModel::createBodyLayer);
+        }
+        */
 
             @SubscribeEvent
             public static void onKeyRegister(RegisterKeyMappingsEvent event) {
@@ -127,6 +148,7 @@ public class ClientEvents {
             event.registerEntityRenderer(ModEntities.WCAT.get(), WCRenderer::new);
             event.registerEntityRenderer(ModEntities.PIGEON.get(), PigeonRenderer::new);
             event.registerEntityRenderer(ModEntities.BADGER.get(), BadgerRenderer::new);
+            //event.registerEntityRenderer(ModEntities.VANILLAWCAT.get(), VanillaWCatRenderer::new);
 
 
         }
@@ -148,10 +170,8 @@ public class ClientEvents {
         @SubscribeEvent
         public static void clientSetup(FMLClientSetupEvent event) {
             MenuScreens.register(ModMenuTypes.STONECLEFT_MENU.get(), StoneCleftScreen::new);
-
+            UpdateCheck.checkForUpdates();
         }
-
-
 
     }
 

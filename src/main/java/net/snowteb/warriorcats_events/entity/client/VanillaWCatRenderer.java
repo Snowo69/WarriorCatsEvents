@@ -1,20 +1,28 @@
 package net.snowteb.warriorcats_events.entity.client;
 
-import net.minecraft.client.animation.AnimationChannel;
-import net.minecraft.client.animation.AnimationDefinition;
-import net.minecraft.client.animation.Keyframe;
+/*
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.EntityModel;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.entity.MobRenderer;
+import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
-import net.snowteb.warriorcats_events.WarriorCatsEvents;
+import net.minecraft.world.entity.Entity;
+import net.snowteb.warriorcats_events.client.AnimationClientData;
+import net.snowteb.warriorcats_events.entity.custom.ModModelLayers;
+import net.snowteb.warriorcats_events.entity.custom.VanillaWCatEntity;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
-import software.bernie.geckolib.constant.DataTickets;
-import software.bernie.geckolib.core.animatable.model.CoreGeoBone;
-import software.bernie.geckolib.core.animation.AnimationState;
-import software.bernie.geckolib.loading.json.raw.Bone;
-import software.bernie.geckolib.model.GeoModel;
-import software.bernie.geckolib.model.data.EntityModelData;
+import software.bernie.geckolib.cache.object.BakedGeoModel;
+import tocraft.walkers.api.PlayerShape;
 
-public class WCModel extends GeoModel<WCatEntity> {
+public class VanillaWCatRenderer extends MobRenderer<VanillaWCatEntity, VanillaWCatModel<VanillaWCatEntity>> {
+    public VanillaWCatRenderer(EntityRendererProvider.Context pContext) {
+        super(pContext, new VanillaWCatModel<>(pContext.bakeLayer(ModModelLayers.VANILLAWCAT_LAYER)), 1.0F);
+    }
 
     public static final ResourceLocation[] TEXTURES = {
             new ResourceLocation("warriorcats_events:textures/entity/wcat/wcskin1.png"),
@@ -40,33 +48,28 @@ public class WCModel extends GeoModel<WCatEntity> {
     };
 
     @Override
-    public ResourceLocation getModelResource(WCatEntity object) {
-        return new ResourceLocation(WarriorCatsEvents.MODID, "geo/wcat.geo.json");
+    public ResourceLocation getTextureLocation(VanillaWCatEntity pEntity) {
+        return TEXTURES[pEntity.getVariant()];
     }
 
     @Override
-    public ResourceLocation getTextureResource(WCatEntity object) {
-        return TEXTURES[object.getVariant()];
-    }
+    public void render(VanillaWCatEntity pEntity, float pEntityYaw, float pPartialTicks, PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight) {
 
-    @Override
-    public ResourceLocation getAnimationResource(WCatEntity animatable) {
-        return new ResourceLocation(WarriorCatsEvents.MODID, "animations/wcat.animation.json");
-    }
-
-
-    @Override
-    public void setCustomAnimations(WCatEntity animatable, long instanceId, AnimationState<WCatEntity> animationState) {
-        CoreGeoBone head = getAnimationProcessor().getBone("mainHead");
-
-
-        if (head != null) {
-            EntityModelData entityModelData = animationState.getData(DataTickets.ENTITY_MODEL_DATA);
-
-            head.setRotX(entityModelData.headPitch() * Mth.DEG_TO_RAD);
-            head.setRotY(entityModelData.netHeadYaw() * Mth.DEG_TO_RAD);
+        if (pEntity == PlayerShape.getCurrentShape(Minecraft.getInstance().player)) {
+            AnimationClientData.isPlayerShape = true;
+        } else {
+            AnimationClientData.isPlayerShape = false;
         }
+
+
+        if (pEntity.isBaby()) {
+            pPoseStack.scale(0.4f, 0.4f, 0.4f);
+        }
+        if (pEntity.isAppScale() && pEntity.isBaby()){
+            pPoseStack.scale(1.75f, 1.75f, 1.75f);
+        }
+
+        super.render(pEntity, pEntityYaw, pPartialTicks, pPoseStack, pBuffer, pPackedLight);
     }
-
-
 }
+*/

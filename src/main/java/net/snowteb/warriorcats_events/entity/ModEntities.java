@@ -45,6 +45,15 @@ public class ModEntities {
                             .sized(1f,1f)
                             .build(new ResourceLocation(WarriorCatsEvents.MODID, "badger").toString()));
 
+/*
+    public static final RegistryObject<EntityType<VanillaWCatEntity>> VANILLAWCAT =
+            ENTITY_TYPES.register("van_wild_cat",
+                    () -> EntityType.Builder.of(VanillaWCatEntity::new, MobCategory.CREATURE)
+                            .sized(0.9f,0.9f)
+                            .build(new ResourceLocation(WarriorCatsEvents.MODID, "van_wild_cat").toString()));
+
+
+ */
     public static void register(IEventBus eventBus) {
         ENTITY_TYPES.register(eventBus);
     }

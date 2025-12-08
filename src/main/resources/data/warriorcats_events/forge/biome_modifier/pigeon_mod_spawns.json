@@ -3,7 +3,7 @@
   "biomes": "#warriorcats_events:mod_spawn_biomes",
   "spawners": {
     "type": "warriorcats_events:pigeon",
-    "weight": 50,
+    "weight": 35,
     "minCount": 3,
     "maxCount": 5
   }

@@ -1,5 +1,6 @@
 package net.snowteb.warriorcats_events;
 
+import com.mojang.logging.LogUtils;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraftforge.api.distmarker.Dist;
@@ -22,12 +23,15 @@ import net.snowteb.warriorcats_events.screen.ModMenuTypes;
 import net.snowteb.warriorcats_events.screen.StoneCleftScreen;
 import net.snowteb.warriorcats_events.sound.ModSounds;
 import net.snowteb.warriorcats_events.util.ModAttributes;
+import org.slf4j.Logger;
 import software.bernie.geckolib.GeckoLib;
 import tocraft.walkers.integrations.Integrations;
 
 @Mod(WarriorCatsEvents.MODID)
 public class WarriorCatsEvents {
     public static final String MODID = "warriorcats_events";
+    public static final String MOD_VERSION = "4.4.2";
+    public static final Logger LOGGER = LogUtils.getLogger();
 
     public WarriorCatsEvents() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();

@@ -3,7 +3,7 @@
   "biomes": "#warriorcats_events:vanilla_spawn_biomes",
   "spawners": {
     "type": "warriorcats_events:mouse",
-    "weight": 45,
+    "weight": 35,
     "minCount": 2,
     "maxCount": 4
   }

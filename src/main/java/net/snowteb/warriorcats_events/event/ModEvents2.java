@@ -339,6 +339,8 @@ public class ModEvents2 {
                                 .withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://discord.gg/SkYvZr9DBb"))
                         )
         ));
+
+
     }
 
 
