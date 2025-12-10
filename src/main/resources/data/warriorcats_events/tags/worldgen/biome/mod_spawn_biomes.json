@@ -14,6 +14,7 @@
     "wythers:boreal_forest_yellow",
     "wythers:cool_forest",
     "wythers:cool_forest_edge",
+    "wythers:cold_plains",
     "wythers:deep_dark_forest",
     "wythers:dry_tropical_forest",
     "wythers:eucalyptus_deanei_forest",
@@ -58,6 +59,7 @@
     "wythers:tropical_forest_river",
     "wythers:tropical_rainforest",
     "wythers:tsingy_forest",
+    "wythers:tundra",
     "wythers:warm_birch_forest",
     "wythers:wistman_woods"
   ]

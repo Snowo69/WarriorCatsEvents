@@ -118,7 +118,7 @@ public class ModItems {
                     "item.warriorcats_events.whiskers.tooltip"));
 
     public static final RegistryObject<Item> CLAWS = ITEMS.register("claws",
-            () -> new ClawsTooltip(new Item.Properties().stacksTo(1).durability(192),
+            () -> new ClawsTooltip(new Item.Properties().stacksTo(1).durability(260),
                     "item.warriorcats_events.claws.tooltip"));
 
     public static final RegistryObject<Item> WARRIORNAMERANDOMIZER = ITEMS.register("warrior_name_randomizer",

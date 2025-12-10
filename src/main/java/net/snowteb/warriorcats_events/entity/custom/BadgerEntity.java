@@ -135,6 +135,12 @@ public class BadgerEntity extends Animal implements GeoEntity {
         return new ResourceLocation("warriorcats_events", "entities/badger");
     }
 
+    @Override
+    public int getExperienceReward() {
+        return 150 + 10*this.random.nextInt(5);
+    }
+
+
 
     public void setAttacking(boolean attacking) {
         this.entityData.set(ATTACKING, attacking);

@@ -14,7 +14,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.world.Difficulty;
+import net.minecraft.util.Mth;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -92,12 +92,10 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
     boolean animPlayed;
     public CatMode mode = CatMode.WANDER;
     private BlockPos wanderCenter = null;
-    private static final int WANDER_RADIUS = 15;
+    private static final int WANDER_RADIUS = 12;
     int maxVariants = 20;
     private final int KITTINGTIME = 20 * 60 * 8; // 8min
     private boolean wasBaby = this.isBaby();
-
-    private boolean playingAnimation = false;
 
 
 
@@ -461,7 +459,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
 
     public static AttributeSupplier.Builder setAttributes() {
         return Mob.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 20.0D)
+                .add(Attributes.MAX_HEALTH, 30.0D)
                 .add(Attributes.MOVEMENT_SPEED, 0.33D)
                 .add(Attributes.ATTACK_DAMAGE, 4.0D)
                 .add(Attributes.FOLLOW_RANGE, 16.0D)
@@ -474,9 +472,8 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
                 type,
                 SpawnPlacements.Type.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
-                (entityType, world, reason, pos, random) ->
-                        world.getDifficulty() != Difficulty.PEACEFUL &&
-                                world.getBlockState(pos.below()).isSolid()
+                (entityType, level, reason, pos, random)
+                        -> level.getBlockState(pos.below()).isSolid()
         );
     }
 
@@ -762,7 +759,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
             if (this.isOrderedToSit()) this.setOrderedToSit(false);
         }
 
-
+        if (this.tickCount % 10 != 0) return;
         if (mode == CatMode.FOLLOW && this.isTame()) {
             LivingEntity owner = this.getOwner();
 
@@ -1022,7 +1019,13 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
 
     private <T extends GeoAnimatable> PlayState predicate(AnimationState<T> tAnimationState) {
 
-       if (!this.onGround() && !this.isInWater()) {
+        LivingEntity cat = (LivingEntity) tAnimationState.getAnimatable();
+        double speed = cat.getDeltaMovement().length();
+        float animSpeed = (float)(speed * 6.0f);
+        animSpeed = Mth.clamp(animSpeed*animSpeed, 0.2f, 1.5f);
+
+
+        if (!this.onGround() && !this.isInWater()) {
            tAnimationState.getController().setAnimation(RawAnimation.begin().
                    then("animation.wcat.falling", Animation.LoopType.LOOP));
            animPlayed = false;
@@ -1032,6 +1035,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
        if (tAnimationState.isMoving() && !this.isCrouching()) {
            tAnimationState.getController().setAnimation(RawAnimation.begin().
                    then("animation.wcat.walk", Animation.LoopType.LOOP));
+           tAnimationState.getController().setAnimationSpeed(animSpeed);
            animPlayed = false;
            return PlayState.CONTINUE;
        }
@@ -1064,7 +1068,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
                        .then("animation.wcat.roll", Animation.LoopType.PLAY_ONCE));
                animPlayed = true;
            }
-
+            tAnimationState.getController().setAnimationSpeed(1f);
 
            return PlayState.CONTINUE;
 
@@ -1072,6 +1076,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
         if (animPlayed && tAnimationState.getController().hasAnimationFinished()) {
             tAnimationState.getController().setAnimation(RawAnimation.begin()
                     .then("animation.wcat.idle", Animation.LoopType.LOOP));
+            tAnimationState.getController().setAnimationSpeed(1f);
             animPlayed = false;
 
             return PlayState.CONTINUE;
@@ -1081,9 +1086,11 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
            if (tAnimationState.isMoving() && this.isCrouching()) {
                tAnimationState.getController().setAnimation(RawAnimation.begin().
                        then("animation.wcat.crouchingwalk", Animation.LoopType.LOOP));
+               tAnimationState.getController().setAnimationSpeed(1f);
            } else {
            tAnimationState.getController().setAnimation(RawAnimation.begin().
                    then("animation.wcat.crouchingidle", Animation.LoopType.LOOP));
+               tAnimationState.getController().setAnimationSpeed(1f);
            }
            animPlayed = false;
        }
@@ -1091,7 +1098,8 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
         else if (!animPlayed) {
             tAnimationState.getController().setAnimation(RawAnimation.begin().
                     then("animation.wcat.idle", Animation.LoopType.LOOP));
-        }
+           tAnimationState.getController().setAnimationSpeed(1f);
+       }
 
              return PlayState.CONTINUE;
 
@@ -1183,6 +1191,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
 
                 int randomVariant = this.random.nextInt(maxVariants);
                 kit.setVariant(randomVariant);
+                kit.wanderCenter = this.blockPosition();
 
 
                 server.addFreshEntity(kit);
@@ -1280,11 +1289,12 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
     }
     public void setVariant(int variant) {
         this.entityData.set(VARIANT, variant);
-    float scale = switch (variant) {
-            case 0 -> 0.5f;
+    /*
+        float scale = switch (variant) {
+            case 0 -> 0.6f;
             case 1 -> 0.6f;
             case 2 -> 0.6f;
-            case 3 -> 0.5f;
+            case 3 -> 0.6f;
             case 4 -> 0.5f;
             case 5 -> 0.6f;
             case 6 -> 0.7f;
@@ -1292,8 +1302,8 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
             case 8 -> 0.5f;
             case 9 -> 0.7f;
             case 10 -> 0.6f;
-            case 11 -> 0.5f;
-            case 12 -> 0.5f; //chestnutpatch
+            case 11 -> 0.6f;
+            case 12 -> 0.6f; //chestnutpatch
             case 13 -> 0.6f; //ratstar
             case 14 -> 0.5f; //twitchstream
             case 15 -> 0.7f; //blazepit
@@ -1301,8 +1311,36 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
             case 17 -> 0.7f; //sparrowstar
             case 18 -> 0.5f; //foxeater
             case 19 -> 0.6f; //willowsong
-            default -> 0.5f;
+            default -> 0.6f;
         };
+
+     */
+        float scale = switch (variant) {
+            case 0 -> 1f;
+            case 1 -> 1.2f;
+            case 2 -> 1.2f;
+            case 3 -> 1.2f;
+            case 4 -> 1f;
+            case 5 -> 1.2f;
+            case 6 -> 1.2f;
+            case 7 -> 1.4f;
+            case 8 -> 1f;
+            case 9 -> 1.2f;
+            case 10 -> 1.2f;
+            case 11 -> 1.2f;
+            case 12 -> 1.2f; //chestnutpatch
+            case 13 -> 1.2f; //ratstar
+            case 14 -> 1.2f; //twitchstream
+            case 15 -> 1.2f; //blazepit
+            case 16 -> 1.2f; //bengalpelt
+            case 17 -> 1.2f; //sparrowstar
+            case 18 -> 1f; //foxeater
+            case 19 -> 1.2f; //willowsong
+            default -> 1f;
+        };
+
+
+
         this.entityData.set(SCALE, scale);
     }
 
@@ -1401,23 +1439,6 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
         this.entityData.set(APP_SCALE, value);
     }
 
-    public void setPlayingAnimation(boolean value) {
-        this.playingAnimation = value;
-    }
-
-    public boolean isPlayingAnimation() {
-        return this.playingAnimation;
-    }
-
-
-
-
-
-
-
-
-
-
 
     @Override
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor pLevel, DifficultyInstance pDifficulty, MobSpawnType pReason, @Nullable SpawnGroupData pSpawnData, @Nullable CompoundTag pDataTag) {
@@ -1429,6 +1450,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
         }
         int randomVariant = this.random.nextInt(maxVariants);
         this.setVariant(randomVariant);
+
         return data;
     }
 

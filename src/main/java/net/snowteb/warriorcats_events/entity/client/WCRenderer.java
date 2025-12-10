@@ -82,6 +82,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Pose;
 import net.snowteb.warriorcats_events.client.AnimationClientData;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
@@ -125,7 +126,7 @@ public class WCRenderer extends GeoEntityRenderer<WCatEntity> {
             case 17 -> 1.1f; //sparrowstar
             case 18 -> 0.8f; //foxeater
             case 19 -> 1.0f; //willowsong
-            default -> 1.0f;
+            default -> 0.8f;
         };
 
 

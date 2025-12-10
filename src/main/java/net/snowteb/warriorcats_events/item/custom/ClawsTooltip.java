@@ -1,6 +1,6 @@
 package net.snowteb.warriorcats_events.item.custom;
 
-import com.google.common.collect.HashMultimap;
+import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.CriteriaTriggers;
@@ -9,7 +9,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -22,15 +21,10 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.GrowingPlantHeadBlock;
-import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraftforge.common.ToolAction;
 import net.minecraftforge.common.ToolActions;
-import net.snowteb.warriorcats_events.item.ModItems;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -49,16 +43,16 @@ public class ClawsTooltip extends ShearsItem {
 
     @Override
     public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot slot) {
-        Multimap<Attribute, AttributeModifier> modifiers = HashMultimap.create();
-
+        ImmutableMultimap.Builder<Attribute, AttributeModifier> modifier = ImmutableMultimap.builder();
         if (slot == EquipmentSlot.MAINHAND) {
-            modifiers.put(Attributes.ATTACK_DAMAGE,
+            modifier.put(Attributes.ATTACK_DAMAGE,
                     new AttributeModifier(ATTACK_DAMAGE_UUID, "Weapon modifier",
-                            1.2, AttributeModifier.Operation.ADDITION));
-            modifiers.put(Attributes.ATTACK_SPEED,
-                    new AttributeModifier(ATTACK_SPEED_UUID, "Weapon speed",
-                            1, AttributeModifier.Operation.ADDITION));
+                            4.0, AttributeModifier.Operation.ADDITION));
+            modifier.put(Attributes.ATTACK_SPEED,
+                    new AttributeModifier(ATTACK_SPEED_UUID, "Weapon modifier",
+                            1.6, AttributeModifier.Operation.ADDITION));
         }
+        Multimap<Attribute, AttributeModifier> modifiers = modifier.build();
 
         return modifiers;
     }
@@ -118,7 +112,7 @@ public class ClawsTooltip extends ShearsItem {
                 }
 
                 if (player != null) {
-                    itemstack.hurtAndBreak(-2, player, (p_150686_) -> {
+                    itemstack.hurtAndBreak(-3, player, (p_150686_) -> {
                         p_150686_.broadcastBreakEvent(pContext.getHand());
 
                     });

@@ -3,8 +3,8 @@
   "biomes": "#warriorcats_events:vanilla_spawn_biomes",
   "spawners": {
     "type": "warriorcats_events:warrior_cat",
-    "weight": 30,
-    "minCount": 1,
+    "weight": 20,
+    "minCount": 2,
     "maxCount": 3
   }
 }

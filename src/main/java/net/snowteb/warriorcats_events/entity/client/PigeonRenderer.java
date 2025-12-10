@@ -33,7 +33,7 @@ public class PigeonRenderer extends GeoEntityRenderer<PigeonEntity> {
             poseStack.scale(0.3f, 0.3f, 0.3f);
         }
         else {
-            poseStack.scale(0.6F, 0.6F, 0.6F);
+            poseStack.scale(0.5F, 0.5F, 0.5F);
         }
 
         super.render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);

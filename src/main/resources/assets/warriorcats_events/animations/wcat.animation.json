@@ -1941,6 +1941,50 @@
 							"vector": [0, 0, 0]
 						}
 					}
+				},
+				"front_left_leg2down": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.125": {
+							"vector": [25, 0, 0]
+						},
+						"0.375": {
+							"vector": [-20, 0, 0]
+						},
+						"0.625": {
+							"vector": [25, 0, 0]
+						},
+						"0.875": {
+							"vector": [-20, 0, 0]
+						},
+						"1.0": {
+							"vector": [0, 0, 0]
+						}
+					}
+				},
+				"front_right_legDOWN": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.125": {
+							"vector": [-20, 0, 0]
+						},
+						"0.375": {
+							"vector": [25, 0, 0]
+						},
+						"0.625": {
+							"vector": [-20, 0, 0]
+						},
+						"0.875": {
+							"vector": [25, 0, 0]
+						},
+						"1.0": {
+							"vector": [0, 0, 0]
+						}
+					}
 				}
 			}
 		},
@@ -4207,7 +4251,15 @@
 						}
 					},
 					"position": {
-						"vector": [0, 0, 0]
+						"0.5": {
+							"vector": [0, 0, 0]
+						},
+						"0.75": {
+							"vector": [0, 0, 0]
+						},
+						"1.0": {
+							"vector": [0, 0, 1]
+						}
 					}
 				},
 				"front_left_leg": {
@@ -4310,6 +4362,14 @@
 						},
 						"1.0": {
 							"vector": [-17.5, 0, 0]
+						}
+					},
+					"position": {
+						"0.75": {
+							"vector": [0, 0, 0]
+						},
+						"1.0": {
+							"vector": [0, 0, -1]
 						}
 					}
 				},
@@ -4437,6 +4497,9 @@
 				"moreup": {
 					"rotation": {
 						"vector": [14.82912, -16.43162, 7.40756]
+					},
+					"position": {
+						"vector": [0, 0, 1]
 					}
 				},
 				"front_left_leg": {
@@ -4471,6 +4534,9 @@
 				"DOWN": {
 					"rotation": {
 						"vector": [-17.5, 0, 0]
+					},
+					"position": {
+						"vector": [0, 0, -1]
 					}
 				},
 				"back_left_leg": {
@@ -4536,6 +4602,9 @@
 				"moreup": {
 					"rotation": {
 						"vector": [7.5, 0, 0]
+					},
+					"position": {
+						"vector": [0, 0, 0.4]
 					}
 				},
 				"front_left_leg": {
@@ -4702,6 +4771,11 @@
 					},
 					"position": {
 						"vector": [0, 1, 0]
+					}
+				},
+				"DOWN": {
+					"position": {
+						"vector": [0, -0.2, -0.4]
 					}
 				},
 				"back_left_leg": {

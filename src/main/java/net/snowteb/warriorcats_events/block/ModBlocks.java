@@ -112,7 +112,7 @@ public class ModBlocks {
 
 
     public static final RegistryObject<Block> STONECLEFT = registerBlock("stonecleft",
-            () -> new StoneCleftBlock(BlockBehaviour.Properties.copy(Blocks.STONE).noOcclusion()));
+            () -> new StoneCleftBlock(BlockBehaviour.Properties.copy(Blocks.STONE).noOcclusion().requiresCorrectToolForDrops()));
 
     public static final RegistryObject<Block> DARK_LOG = registerBlock("dark_log",
             () -> new ModFlammableRotatedPillarBlock(BlockBehaviour.Properties.copy(Blocks.DARK_OAK_LOG).strength(3f).noLootTable()));

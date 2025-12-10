@@ -3,8 +3,8 @@
   "biomes": "#warriorcats_events:mod_spawn_biomes",
   "spawners": {
     "type": "warriorcats_events:mouse",
-    "weight": 35,
-    "minCount": 2,
+    "weight": 22,
+    "minCount": 3,
     "maxCount": 4
   }
 }

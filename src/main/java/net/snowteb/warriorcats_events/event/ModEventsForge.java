@@ -7,10 +7,13 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
+import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraftforge.client.event.RenderGuiOverlayEvent;
+import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -18,6 +21,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.effect.ModEffects;
+import net.snowteb.warriorcats_events.entity.ModEntities;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.item.ModFoodHerbs;
 import net.snowteb.warriorcats_events.item.ModItems;
@@ -42,7 +46,7 @@ public class ModEventsForge {
         player.getCapability(PlayerThirstProvider.PLAYER_THIRST).ifPresent(thirst -> {
 
             if (stack.getItem().getFoodProperties() == ModFoodHerbs.SORREL) {
-                int randomThirst = 3 + player.getRandom().nextInt(3);
+                int randomThirst = 2 + player.getRandom().nextInt(3);
                 thirst.addThirst(randomThirst);
             }
 
@@ -51,26 +55,28 @@ public class ModEventsForge {
             }
 
             if (stack.getItem().getFoodProperties() == ModFoodHerbs.MOUSE_FOOD) {
-                int randomThirst = 3 + player.getRandom().nextInt(3);
+                int randomThirst = 1 + player.getRandom().nextInt(2);
                 thirst.addThirst(randomThirst);
             }
 
             if (stack.getItem().getFoodProperties() == ModFoodHerbs.SQUIRREL_FOOD) {
-                int randomThirst = 4 + player.getRandom().nextInt(2);
+                int randomThirst = 2 + player.getRandom().nextInt(2);
                 thirst.addThirst(randomThirst);
             }
 
             if (stack.getItem().getFoodProperties() == ModFoodHerbs.PIGEON_FOOD) {
-                int randomThirst = 5 + player.getRandom().nextInt(2);
+                int randomThirst = 2 + player.getRandom().nextInt(2);
                 thirst.addThirst(randomThirst);
             }
 
             if (stack.is(Items.CHICKEN) || stack.is(Items.PORKCHOP)
                     || stack.is(Items.BEEF) || stack.is(Items.MUTTON)
                     || stack.is(Items.RABBIT) || stack.is(Items.SALMON)
-                    || stack.is(Items.COD) || stack.is(Items.TROPICAL_FISH)) {
-                int randomThirst = 4 + player.getRandom().nextInt(3);
+                    || stack.is(Items.COD) || stack.is(Items.TROPICAL_FISH)
+                    || stack.is(Items.SWEET_BERRIES)) {
+                int randomThirst = 1;
                 thirst.addThirst(randomThirst);
+                player.getFoodData().eat(4, 0.75f);
             }
 
 
@@ -88,6 +94,7 @@ public class ModEventsForge {
             if (player.hasEffect(ModEffects.DEATHBERRIES.get())) {
                 player.removeEffect(ModEffects.DEATHBERRIES.get());
             }
+
         }
     }
 
@@ -124,6 +131,20 @@ public class ModEventsForge {
         });
     }
 
+    @SubscribeEvent
+    public static void onEntityJoinWorld(EntityJoinLevelEvent event) {
+        if (event.getEntity() instanceof Creeper creeper) {
+            creeper.goalSelector.addGoal(3,
+                    new AvoidEntityGoal<>(
+                            creeper,
+                            WCatEntity.class,
+                            8.0F,
+                            1.0D,
+                            1.2D
+                    )
+            );
+        }
 
+    }
 
 }

@@ -30,7 +30,7 @@ public class ModEntities {
     public static final RegistryObject<EntityType<WCatEntity>> WCAT =
             ENTITY_TYPES.register("warrior_cat",
                     () -> EntityType.Builder.of(WCatEntity::new, MobCategory.CREATURE)
-                            .sized(0.9f,0.9f)
+                            .sized(0.6f,0.6f)
                             .build(new ResourceLocation(WarriorCatsEvents.MODID, "warrior_cat").toString()));
 
     public static final RegistryObject<EntityType<PigeonEntity>> PIGEON =

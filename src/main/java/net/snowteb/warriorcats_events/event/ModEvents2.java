@@ -210,7 +210,7 @@ public class ModEvents2 {
 
             event.player.getCapability(PlayerThirstProvider.PLAYER_THIRST).ifPresent(thirst -> {
 
-                if (thirst.getThirst() > 0 && event.player.getRandom().nextFloat() < 0.00028 && !(event.player.isCreative() || event.player.isSpectator())) {
+                if (thirst.getThirst() > 0 && event.player.getRandom().nextFloat() < 0.00032 && !(event.player.isCreative() || event.player.isSpectator())) {
                     int oldThirst = thirst.getThirst();
                     thirst.subThirst(1);
                     if (oldThirst != thirst.getThirst()) {
@@ -242,13 +242,19 @@ public class ModEvents2 {
                     if (cap.isStealthOn() && cap.isUnlocked() && cap.isOn()) {
                         ServerLevel level = (ServerLevel) event.player.level();
 
-                        level.sendParticles(
-                                ParticleTypes.CAMPFIRE_COSY_SMOKE,
-                                event.player.getX(),
-                                event.player.getY() + 0.1,
-                                event.player.getZ(),
-                                2, 0.1, 0, 0.1, 0.002
-                        );
+                        if (event.player.tickCount % 2 == 0) {
+                            if (event.player.onGround()) {
+                                level.sendParticles(
+                                        ParticleTypes.CAMPFIRE_COSY_SMOKE,
+                                        event.player.getX(),
+                                        event.player.getY() + 0.1,
+                                        event.player.getZ(),
+                                        2, 0.1, 0, 0.1, 0.002
+                                );
+                            }
+
+                        }
+
                     }
 
 

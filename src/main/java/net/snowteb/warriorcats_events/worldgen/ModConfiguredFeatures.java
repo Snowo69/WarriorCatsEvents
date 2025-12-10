@@ -147,7 +147,7 @@ public class ModConfiguredFeatures {
 
         register(context, DOCK_KEY, Feature.RANDOM_PATCH,
                 new RandomPatchConfiguration(
-                        7,
+                        10,
                         7,
                         0,
                         PlacementUtils.onlyWhenEmpty(
@@ -160,7 +160,7 @@ public class ModConfiguredFeatures {
                                         )))));
         register(context, SORREL_KEY, Feature.RANDOM_PATCH,
                 new RandomPatchConfiguration(
-                        7,
+                        10,
                         7,
                         0,
                         PlacementUtils.onlyWhenEmpty(
@@ -173,7 +173,7 @@ public class ModConfiguredFeatures {
                                         )))));
         register(context, BURNET_KEY, Feature.RANDOM_PATCH,
                 new RandomPatchConfiguration(
-                        7,
+                        10,
                         7,
                         0,
                         PlacementUtils.onlyWhenEmpty(
@@ -186,20 +186,20 @@ public class ModConfiguredFeatures {
                                         )))));
         register(context, CHAMOMILE_KEY, Feature.RANDOM_PATCH,
                 new RandomPatchConfiguration(
-                        7,
+                        10,
                         7,
                         0,
                         PlacementUtils.onlyWhenEmpty(
                                 Feature.SIMPLE_BLOCK,
                                 new SimpleBlockConfiguration(
                                         BlockStateProvider.simple(
-                                                ModBlocks.DAISYPLANT.get()
+                                                ModBlocks.CHAMOMILEPLANT.get()
                                                         .defaultBlockState()
                                                         .setValue(SweetBerryBushBlock.AGE, 3)
                                         )))));
         register(context, DAISY_KEY, Feature.RANDOM_PATCH,
                 new RandomPatchConfiguration(
-                        7,
+                        10,
                         7,
                         0,
                         PlacementUtils.onlyWhenEmpty(
@@ -212,7 +212,7 @@ public class ModConfiguredFeatures {
                                         )))));
         register(context, DEATHBERRIES_KEY, Feature.RANDOM_PATCH,
                 new RandomPatchConfiguration(
-                        5,
+                        7,
                         7,
                         0,
                         PlacementUtils.onlyWhenEmpty(
@@ -225,7 +225,7 @@ public class ModConfiguredFeatures {
                                         )))));
         register(context, CATMINT_KEY, Feature.RANDOM_PATCH,
                 new RandomPatchConfiguration(
-                        5,
+                        7,
                         7,
                         0,
                         PlacementUtils.onlyWhenEmpty(
@@ -238,7 +238,7 @@ public class ModConfiguredFeatures {
                                         )))));
         register(context, YARROW_KEY, Feature.RANDOM_PATCH,
                 new RandomPatchConfiguration(
-                        5,
+                        7,
                         7,
                         0,
                         PlacementUtils.onlyWhenEmpty(
@@ -254,7 +254,7 @@ public class ModConfiguredFeatures {
 
         register(context, GLOWSHROOM_KEY, Feature.RANDOM_PATCH,
                 new RandomPatchConfiguration(
-                        5,
+                        7,
                         7,
                         0,
                         PlacementUtils.onlyWhenEmpty(

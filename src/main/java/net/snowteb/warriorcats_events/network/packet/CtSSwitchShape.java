@@ -7,6 +7,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Pose;
 import net.minecraftforge.network.NetworkEvent;
 import net.snowteb.warriorcats_events.entity.ModEntities;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
@@ -36,24 +37,22 @@ public class CtSSwitchShape {
 
                 EntityType<?> WCAT = ModEntities.WCAT.get();
 
+
                 LivingEntity current = PlayerShape.getCurrentShape(player);
                 ServerLevel level = (ServerLevel) player.level();
 
                 if (!(current instanceof WCatEntity)) {
 
                     LivingEntity wcat = (LivingEntity) WCAT.create(level);
-
+                    if (wcat instanceof WCatEntity wcEntity) {
+                        wcEntity.setVariant(0);
+                    }
                     PlayerShape.updateShapes(player, wcat);
-
                 } else {
                     PlayerShape.updateShapes(player, null);
                 }
-
-
         });
-
         ctx.get().setPacketHandled(true);
-
         return true;
     }
 }

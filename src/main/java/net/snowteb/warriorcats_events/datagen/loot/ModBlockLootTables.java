@@ -124,7 +124,7 @@ public class ModBlockLootTables extends BlockLootSubProvider {
                                         LootItemBlockStatePropertyCondition.hasBlockStateProperties(ModBlocks.DEATHBERRIESBUSH.get())
                                                 .setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(SweetBerryBushBlock.AGE, 2))
                                 ).add(LootItem.lootTableItem(ModItems.DEATHBERRIES.get()))
-                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(1.0F, 2.0F)))
+                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(1.0F, 1.0F)))
                                 .apply(ApplyBonusCount.addUniformBonusCount(Enchantments.BLOCK_FORTUNE))
                 )));
         }

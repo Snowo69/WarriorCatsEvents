@@ -3,13 +3,13 @@ package net.snowteb.warriorcats_events.skills;
 import java.util.UUID;
 
 public class PlayerSkill implements ISkillData {
-    public static int defaultSpeedCost = 85;
-    public static int defaultHPcost = 250;
-    public static int defaultDMGcost = 150;
-    public static int defaultJumpcost = 500;
-    public static int defaultArmorcost = 500;
+    public static int defaultSpeedCost = 30;
+    public static int defaultHPcost = 160;
+    public static int defaultDMGcost = 40;
+    public static int defaultJumpcost = 420;
+    public static int defaultArmorcost = 420;
 
-    public static int defaultStealthcost = 3500;
+    public static int defaultStealthcost = 2921;
 
     public static int maxSpeedLevel = 10;
     public static int maxHPLevel = 5;

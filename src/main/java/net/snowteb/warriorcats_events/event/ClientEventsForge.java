@@ -26,7 +26,7 @@ public class ClientEventsForge {
             if (!cap.isUnlocked()) return;
 
             ResourceLocation screen = new ResourceLocation(WarriorCatsEvents.MODID,
-                    "textures/gui/stealth_overlay_2.png");
+                    "textures/hud/stealth_overlay_4.png");
 
             if (cap.isStealthOn()) {
 
