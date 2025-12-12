@@ -1,8 +1,11 @@
 package net.snowteb.warriorcats_events.entity.custom;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.advancements.Advancement;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.BlockParticleOption;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
@@ -10,15 +13,20 @@ import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -33,17 +41,21 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.network.NetworkHooks;
+import net.snowteb.warriorcats_events.WCEConfig;
 import net.snowteb.warriorcats_events.block.ModBlocks;
 import net.snowteb.warriorcats_events.client.AnimationClientData;
+import net.snowteb.warriorcats_events.effect.ModEffects;
 import net.snowteb.warriorcats_events.entity.ModEntities;
 import net.snowteb.warriorcats_events.item.ModItems;
 import net.snowteb.warriorcats_events.sound.ModSounds;
+import org.apache.logging.log4j.core.jmx.Server;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
@@ -55,6 +67,9 @@ import software.bernie.geckolib.core.object.PlayState;
 import tocraft.walkers.api.PlayerShape;
 
 import java.util.*;
+import java.util.function.Predicate;
+
+import static net.snowteb.warriorcats_events.entity.custom.WCatEntity.Rank.APPRENTICE;
 
 public class WCatEntity extends TamableAnimal implements GeoEntity{
 
@@ -92,9 +107,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
     boolean animPlayed;
     public CatMode mode = CatMode.WANDER;
     private BlockPos wanderCenter = null;
-    private static final int WANDER_RADIUS = 12;
     int maxVariants = 20;
-    private final int KITTINGTIME = 20 * 60 * 8; // 8min
     private boolean wasBaby = this.isBaby();
 
 
@@ -205,6 +218,17 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
         }
     }
 
+    private int getWanderRadius() {
+        return WCEConfig.COMMON.WILDCAT_WANDER_RADIUS.get();
+    }
+    private int getKittingTime() {
+        return 20 * 60 * WCEConfig.COMMON.KITTING_MINUTES.get();
+    }
+    private int getKitGrowthTimeMinutes() {
+        return WCEConfig.COMMON.KIT_GROWTH_MINUTES.get();
+    }
+
+
     @Override
     public Packet<ClientGamePacketListener> getAddEntityPacket() {
         return NetworkHooks.getEntitySpawningPacket(this);
@@ -300,101 +324,128 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
 
 
 
-    public class CasualBlockSeekGoal extends RandomStrollGoal {
+    public class CasualBlockSeekGoal extends Goal {
 
-        private final Block targetBlock;
-        private final int searchRadius;
-        private final double chance;
         private final WCatEntity cat;
+        private final double speed;
+        private final int baseRadius;
+        private final double chance;
+        private int cooldown = 0;
 
-        public CasualBlockSeekGoal(WCatEntity cat, double speed, Block targetBlock, int searchRadius, double chance) {
-            super(cat, speed);
+
+        private BlockPos targetPos = null;
+        private Predicate<BlockState> targetPredicate;
+
+        public CasualBlockSeekGoal(WCatEntity cat, double speed, int baseRadius, double chance) {
             this.cat = cat;
-            this.targetBlock = targetBlock;
-            this.searchRadius = searchRadius;
+            this.speed = speed;
+            this.baseRadius = baseRadius;
             this.chance = chance;
-        }
-
-        @Override
-        protected Vec3 getPosition() {
-            if (this.mob.getRandom().nextDouble() < this.chance) {
-                Vec3 pos = findRandomBlockPos();
-                if (pos != null) return pos;
-            }
-
-            return super.getPosition();
+            this.setFlags(EnumSet.of(Flag.MOVE));
         }
 
         @Override
         public boolean canUse() {
-            if (!(cat instanceof WCatEntity)) return false;
-            WCatEntity wcat = (WCatEntity) cat;
+            if (cooldown > 0) {
+                cooldown--;
+                return false;
+            }
 
-            if (wcat.mode == CatMode.SIT) return false;
             if (cat.isOrderedToSit()) return false;
 
+            if (cat.getRandom().nextDouble() >= this.chance) return false;
 
-            return super.canUse();
+            this.targetPredicate = defineTargetPredicate();
+
+            this.targetPos = findTargetBlock();
+            return this.targetPos != null;
         }
 
         @Override
         public boolean canContinueToUse() {
-            if (!(cat instanceof WCatEntity)) return false;
-            WCatEntity wcat = cat;
-
-            if (wcat.mode == CatMode.SIT) return false;
-            if (cat.isOrderedToSit()) return false;
-
-            return super.canContinueToUse();
+            return targetPos != null &&
+                    !cat.getNavigation().isDone() &&
+                    !cat.isOrderedToSit();
         }
 
-        private Vec3 findRandomBlockPos() {
-            BlockPos mobPos = this.mob.blockPosition();
-            Level level = this.mob.level();
+        @Override
+        public void start() {
+            if (targetPos != null) {
+                cat.getNavigation().moveTo(
+                        targetPos.getX() + 0.5,
+                        targetPos.getY(),
+                        targetPos.getZ() + 0.5,
+                        speed
+                );
+            }
+        }
 
-            List<BlockPos> validPositions = new ArrayList<>();
+        @Override
+        public void stop() {
+            targetPos = null;
+            cat.getNavigation().stop();
+            this.cooldown = 200 + cat.getRandom().nextInt(4)*40;
+        }
 
-            Block chosenBlock = switch (cat.getRank()) {
+        private Predicate<BlockState> defineTargetPredicate() {
+
+            Block targetBlock = switch (cat.getRank()) {
                 case KIT -> ModBlocks.MOSSBED.get();
                 case APPRENTICE -> ModBlocks.MOSSBED.get();
                 case WARRIOR -> ModBlocks.MOSSBED.get();
                 case MEDICINE -> ModBlocks.STONECLEFT.get();
-                case NONE -> this.targetBlock;
+                default -> ModBlocks.MOSSBED.get();
             };
 
-            for (int x = -searchRadius; x <= searchRadius; x++) {
+            return state -> state.is(targetBlock);
+        }
+
+        private BlockPos findTargetBlock() {
+            Level level = cat.level();
+            BlockPos origin = cat.blockPosition();
+
+            List<BlockPos> found = new ArrayList<>();
+
+            int radius = this.baseRadius;
+
+            for (int x = -radius; x <= radius; x++) {
                 for (int y = -2; y <= 2; y++) {
-                    for (int z = -searchRadius; z <= searchRadius; z++) {
-                        BlockPos checkPos = mobPos.offset(x, y, z);
-                        if (level.getBlockState(checkPos).is(chosenBlock)) {
-                            validPositions.add(checkPos);
+                    for (int z = -radius; z <= radius; z++) {
+                        BlockPos pos = origin.offset(x, y, z);
+                        if (targetPredicate.test(level.getBlockState(pos))) {
+                            found.add(pos);
                         }
                     }
                 }
             }
 
-            if (validPositions.isEmpty()) return null;
+            if (found.isEmpty()) return null;
 
-            BlockPos chosen = validPositions.get(this.mob.getRandom().nextInt(validPositions.size()));
-
-            return Vec3.atCenterOf(chosen);
+            return found.get(cat.getRandom().nextInt(found.size()));
         }
     }
-
 
 
 
     private class BoundedWanderGoal extends WaterAvoidingRandomStrollGoal {
 
         private final TamableAnimal cat;
+        private int cooldown = 0;
 
         public BoundedWanderGoal(TamableAnimal cat, double speed) {
             super(cat, speed);
             this.cat = cat;
+            this.setInterval(40);
         }
+
 
         @Override
         public boolean canUse() {
+            if (cooldown > 0) {
+                cooldown--;
+                return false;
+            }
+
             if (!(cat instanceof WCatEntity)) return false;
             WCatEntity wcat = (WCatEntity) cat;
 
@@ -403,12 +454,57 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
             if (cat.isOrderedToSit()) return false;
 
             if (wcat.wanderCenter != null &&
-                    cat.blockPosition().distSqr(wcat.wanderCenter) > WANDER_RADIUS * WANDER_RADIUS) {
+                    cat.blockPosition().distSqr(wcat.wanderCenter) > getWanderRadius() * getWanderRadius()) {
                 return false;
             }
 
-            return super.canUse();
+            if (wcat.wanderCenter == null) return false;
+
+            Vec3 pos = this.getRandomPointInRadius(wcat);
+
+            if (pos == null) return false;
+
+            this.wantedX = pos.x;
+            this.wantedY = pos.y;
+            this.wantedZ = pos.z;
+
+            return true;
         }
+
+        @Override
+        public void stop() {
+            super.stop();
+
+            cooldown = cat.getRandom().nextInt(5)*20 + 140;
+        }
+
+        private Vec3 getRandomPointInRadius(WCatEntity wcat) {
+            int attempts = 10;
+
+            for (int i = 0; i < attempts; i++) {
+
+                double angle = cat.getRandom().nextDouble() * (Math.PI * 2);
+                double r = cat.getRandom().nextDouble() * getWanderRadius();
+
+                double x = wcat.wanderCenter.getX() + 0.5 + Math.cos(angle) * r;
+                double z = wcat.wanderCenter.getZ() + 0.5 + Math.sin(angle) * r;
+                double y = wcat.getY();
+
+                BlockPos groundPos = BlockPos.containing(x, y - 1, z);
+
+                if (cat.level().getBlockState(groundPos).isSolid()) {
+                    return new Vec3(x, y, z);
+                }
+            }
+
+            return null;
+        }
+
+        @Override
+        protected Vec3 getPosition() {
+            return new Vec3(this.wantedX, this.wantedY, this.wantedZ);
+        }
+
 
         @Override
         public boolean canContinueToUse() {
@@ -419,11 +515,11 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
             if (cat.isOrderedToSit()) return false;
 
             if (wcat.wanderCenter != null &&
-                    cat.blockPosition().distSqr(wcat.wanderCenter) > WANDER_RADIUS * WANDER_RADIUS) {
+                    cat.blockPosition().distSqr(wcat.wanderCenter) > getWanderRadius() * getWanderRadius()) {
                 return false;
             }
 
-            return super.canContinueToUse();
+            return !cat.getNavigation().isDone();
         }
     }
 
@@ -451,7 +547,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
         this.goalSelector.addGoal(8, new BoundedWanderGoal(this, 1.0D));
         this.goalSelector.addGoal(9, new RandomLookAroundGoal(this));
         this.goalSelector.addGoal(10, new LookAtPlayerGoal(this, Player.class, 8.0F));
-        this.goalSelector.addGoal(11, new CasualBlockSeekGoal(this,1.0D,ModBlocks.MOSSBED.get(),15,0.10D));
+        this.goalSelector.addGoal(11, new CasualBlockSeekGoal(this,1.0D,15,0.10D));
 
     }
 
@@ -560,7 +656,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
 
             switch (current) {
                 case NONE:
-                    this.setRank(Rank.APPRENTICE);
+                    this.setRank(APPRENTICE);
                     break;
                 case APPRENTICE:
                     this.setRank(Rank.WARRIOR);
@@ -588,6 +684,78 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
             return InteractionResult.SUCCESS;
         }
 
+        if (this.isTame() && itemstack.is(ModItems.WARRIORNAMERANDOMIZER.get()) && pPlayer.isShiftKeyDown()) {
+
+            if (!this.level().isClientSide()) {
+
+                if (this.getVariant() == 12 || this.getVariant() == 13 || this.getVariant() == 14
+                        || this.getVariant() == 15 || this.getVariant() == 16 || this.getVariant() == 17
+                        || this.getVariant() == 18 || this.getVariant() == 19) {
+
+                    itemstack.hurtAndBreak(1, pPlayer, (p) ->
+                            p.broadcastBreakEvent(pHand));
+                    String genderV;
+                    String finalName;
+                    String prefixForVariant = "";
+                    String suffixForVariant = "";
+
+                    if (this.getVariant() == 12) {
+                        prefixForVariant = "Chestnut";
+                        suffixForVariant = "patch";
+                    }
+                    else if (this.getVariant() == 13) {
+                        prefixForVariant = "Rat";
+                        suffixForVariant = "star";
+                    }
+                    else if (this.getVariant() == 14) {
+                        prefixForVariant = "Twitch";
+                        suffixForVariant = "stream";
+                    }
+                    else if (this.getVariant() == 15) {
+                        prefixForVariant = "Blaze";
+                        suffixForVariant = "pit";
+                    }
+                    else if (this.getVariant() == 16) {
+                        prefixForVariant = "Bengal";
+                        suffixForVariant = "pelt";
+                    }
+                    else if (this.getVariant() == 17) {
+                        prefixForVariant = "Sparrow";
+                        suffixForVariant = "star";
+                    }
+                    else if (this.getVariant() == 18) {
+                        prefixForVariant = "Fox";
+                        suffixForVariant = "eater";
+                    }
+                    else if (this.getVariant() == 19) {
+                        prefixForVariant = "Willow";
+                        suffixForVariant = "song";
+                    }
+
+
+                    if (this.getGender() == 0) {
+                        genderV = " ♂";
+                    } else {
+                        genderV = " ♀";
+                    }
+                    if (this.isBaby()){finalName = prefixForVariant + "kit" + genderV;}
+                    else if (this.getRank() == APPRENTICE){finalName = prefixForVariant + "paw" + genderV;}
+                    else {finalName = prefixForVariant + suffixForVariant + genderV;}
+
+                    this.setPrefix(Component.literal(prefixForVariant));
+
+
+                    this.setCustomName(Component.literal(finalName));
+                    this.setCustomNameVisible(true);
+                } else {
+                    return InteractionResult.PASS;
+                }
+
+
+            }
+            return InteractionResult.sidedSuccess(this.level().isClientSide);
+        }
+
         if (this.isTame() && itemstack.is(ModItems.WARRIORNAMERANDOMIZER.get())) {
 
             if (!this.level().isClientSide()) {
@@ -612,7 +780,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
                 String finalName;
 
                 if (this.isBaby()){finalName = prefixSet[i] + "kit" + genderV;}
-                else if (this.getRank() == Rank.APPRENTICE){finalName = prefixSet[i] + "paw" + genderV;}
+                else if (this.getRank() == APPRENTICE){finalName = prefixSet[i] + "paw" + genderV;}
                 else {finalName = prefixSet[i] + SUFIX[j] + genderV;}
 
                 this.setPrefix(Component.literal(prefixSet[i]));
@@ -633,7 +801,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
 
                 boolean expectingKits = this.isExpectingKits();
                 String name = this.hasCustomName() ? this.getCustomName().getString() : "Unknown";
-                float kittingTime = (9600 - this.getKittingTicks())/(20f * 60f);
+                float kittingTime = ((getKittingTime()) - this.getKittingTicks())/(20f * 60f);
                 String KitTime;
                 String genderText = this.isMale() ? "Tom-cat" : "She-cat";
                 String expectingText = expectingKits ? "Yes" : "No";
@@ -648,7 +816,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
                 String ageText;
                 float moons;
             if (!level().isClientSide()) {
-                float moonsCalc = (float)((this.getAge() + 108000) / 9000.0);
+                float moonsCalc = (float)((this.getAge() + (20*60*getKitGrowthTimeMinutes())) / (100.0*getKitGrowthTimeMinutes()));
                 this.entityData.set(AGE_SYNC, moonsCalc);
             }
 
@@ -693,6 +861,67 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
             return InteractionResult.SUCCESS;
         }
 
+        if (this.isBaby()) {
+            if (itemstack.is(ModItems.DEATHBERRIES.get())){
+                if (!this.level().isClientSide()) {
+                    ServerLevel level = ((ServerLevel) this.level());
+                    if (pPlayer instanceof ServerPlayer serverPlayer) {
+
+                        MinecraftServer server = serverPlayer.getServer();
+                        if (server != null) {
+
+                            Advancement adv = server.getAdvancements()
+                                    .getAdvancement(new ResourceLocation("warriorcats_events:fed_kit_deathberries"));
+
+                            if (adv != null) {
+                                serverPlayer.getAdvancements().award(adv, "fed_kit_deathberries");
+                            }
+                        }
+                    }
+
+                    this.addEffect(new MobEffectInstance(ModEffects.DEATHBERRIES.get(), 3600, 0));
+                    this.level().playSound(null, this.blockPosition(), SoundEvents.CAT_EAT, SoundSource.AMBIENT, 0.8f, 1f);
+                    BlockParticleOption particle = new BlockParticleOption(
+                            ParticleTypes.BLOCK,
+                            Blocks.REDSTONE_BLOCK.defaultBlockState()
+                    );
+                    level.sendParticles(
+                            particle,
+                            this.getX(),
+                            this.getY(),
+                            this.getZ(),
+                            10,
+                            0.2f, 0.2f, 0.2f, 0.1
+                    );
+                }
+
+                this.gameEvent(GameEvent.EAT);
+                return InteractionResult.sidedSuccess(this.level().isClientSide());
+
+            }
+            if (itemstack.is(ModItems.YARROW.get()) && this.hasEffect(ModEffects.DEATHBERRIES.get())) {
+                if (!this.level().isClientSide()) {
+                    ServerLevel level = ((ServerLevel) this.level());
+                    this.removeEffect(ModEffects.DEATHBERRIES.get());
+                    this.level().playSound(null, this.blockPosition(), SoundEvents.CAT_EAT, SoundSource.AMBIENT, 0.8f, 1f);
+                    level.sendParticles(
+                            ParticleTypes.HAPPY_VILLAGER,
+                            this.getX(),
+                            this.getY(),
+                            this.getZ(),
+                            10,
+                            0.2, 0.2, 0.2, 0.1
+                    );
+                    this.gameEvent(GameEvent.EAT);
+                    return InteractionResult.sidedSuccess(this.level().isClientSide());
+                }
+            }
+        }
+
+
+
+
+
         return super.mobInteract(pPlayer, pHand);
     }
 
@@ -708,10 +937,41 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
                 int otherParentGender = partner.getGender();
                 if (otherParentGender == 0) {
                     this.setExpectingKits(true);
+
+                    Entity owner = this.getOwner();
+                    if (owner instanceof ServerPlayer serverPlayer) {
+                        MinecraftServer server = serverPlayer.getServer();
+                        if (server != null) {
+
+                            Advancement adv = server.getAdvancements()
+                                    .getAdvancement(new ResourceLocation("warriorcats_events:bred_wildcat"));
+
+                            if (adv != null) {
+                                serverPlayer.getAdvancements().award(adv, "bred_wildcat");
+                            }
+                        }
+                    }
                 }
 
                 this.resetLove();
             }
+
+            if (this.getGender() == partner.getGender()) {
+                Entity owner = this.getOwner();
+                if (owner instanceof ServerPlayer serverPlayer) {
+                    MinecraftServer server = serverPlayer.getServer();
+                    if (server != null) {
+
+                        Advancement adv = server.getAdvancements()
+                                .getAdvancement(new ResourceLocation("warriorcats_events:homo_bred"));
+
+                        if (adv != null) {
+                            serverPlayer.getAdvancements().award(adv, "homo_bred");
+                        }
+                    }
+                }
+            }
+
             Component MateName = otherParent.getCustomName();
             this.setMate(MateName);
 
@@ -734,7 +994,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
         if (!this.level().isClientSide && this.isExpectingKits()) {
             this.setKittingTicks(this.getKittingTicks() + 1);
 
-            if (this.getKittingTicks() >= KITTINGTIME) {
+            if (this.getKittingTicks() >= getKittingTime()) {
                 this.setExpectingKits(false);
                 this.setKittingTicks(0);
 
@@ -747,6 +1007,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
         if (!this.level().isClientSide()) {
             if (this.wasBaby && !this.isBaby()) {
                 this.onGrewUp();
+                this.setRank(Rank.WARRIOR);
             }
             this.wasBaby = this.isBaby();
         }
@@ -844,6 +1105,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
         tag.putInt("KittingTicks", this.getKittingTicks());
         tag.putInt("Rank", this.getRank().ordinal());
         tag.putBoolean("kitBorn", kitBorn);
+        tag.putBoolean("AppScale", this.isAppScale());
 
         if (this.getMate() != null) {
             tag.putString("Mate", Component.Serializer.toJson(this.getMate()));
@@ -876,6 +1138,9 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
         }
         if (tag.contains("kitBorn")) {
             kitBorn = tag.getBoolean("kitBorn");
+        }
+        if (tag.contains("AppScale")) {
+            this.setAppScale(tag.getBoolean("AppScale"));
         }
         if (tag.contains("KittingTicks")) {
             this.setKittingTicks(tag.getInt("KittingTicks"));
@@ -1025,6 +1290,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
         animSpeed = Mth.clamp(animSpeed*animSpeed, 0.2f, 1.5f);
 
 
+
         if (!this.onGround() && !this.isInWater()) {
            tAnimationState.getController().setAnimation(RawAnimation.begin().
                    then("animation.wcat.falling", Animation.LoopType.LOOP));
@@ -1033,9 +1299,16 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
        }
 
        if (tAnimationState.isMoving() && !this.isCrouching()) {
-           tAnimationState.getController().setAnimation(RawAnimation.begin().
-                   then("animation.wcat.walk", Animation.LoopType.LOOP));
-           tAnimationState.getController().setAnimationSpeed(animSpeed);
+           if (speed > 0.2039 && !this.isInWater()) {
+               tAnimationState.getController().setAnimation(RawAnimation.begin().
+                       then("animation.wcat.sprint", Animation.LoopType.LOOP));
+               tAnimationState.getController().setAnimationSpeed(0.185 * Math.exp(9.91 * speed));
+           } else {
+               tAnimationState.getController().setAnimation(RawAnimation.begin().
+                       then("animation.wcat.walk", Animation.LoopType.LOOP));
+               tAnimationState.getController().setAnimationSpeed(animSpeed);
+           }
+
            animPlayed = false;
            return PlayState.CONTINUE;
        }
@@ -1155,7 +1428,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
 
             if (kit != null) {
                 kit.setPos(this.getX(), this.getY(), this.getZ());
-                int minutes = 90;
+                int minutes = WCEConfig.COMMON.KIT_GROWTH_MINUTES.get();
                 int growingTicks = minutes * 20 * 60;
                 kit.setAge(-growingTicks);
                 kit.setTame(true);
@@ -1212,6 +1485,8 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
             this.setCustomNameVisible(true);
             this.setAppScale(false);
             this.level().broadcastEntityEvent(this, (byte) 6);
+            this.level().playSound(null, this.blockPosition(), SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.AMBIENT, 0.8f, 1.2f);
+
 
 
         }
@@ -1356,7 +1631,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
 
 
         if (!this.level().isClientSide()) {
-            if (!apprenticeAge && this.getAge() >= -54000 && kitBorn) {
+            if (!apprenticeAge && this.getAge() >= -((getKitGrowthTimeMinutes()*60*20)/2) && this.kitBorn) {
                 apprenticeAge = true;
 
                 String genderS;
@@ -1373,9 +1648,10 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
                 this.setAppScale(true);
 
 
-                this.setRank(Rank.APPRENTICE);
+                this.setRank(APPRENTICE);
                 this.level().broadcastEntityEvent(this, (byte) 6);
-                kitBorn=false;
+                this.level().playSound(null, this.blockPosition(), SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.AMBIENT, 0.8f, 1.6f);
+                this.kitBorn=false;
             }
         }
         if (this.level().isClientSide) {

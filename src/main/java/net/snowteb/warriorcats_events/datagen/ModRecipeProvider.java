@@ -89,24 +89,31 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .save(pWriter);
 
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.LEAF_DOOR.get(), 2)
-                .pattern("AAB")
-                .pattern("AAB")
-                .pattern("AAB")
+                .pattern("AA")
+                .pattern("AA")
+                .pattern("AA")
                 .define('A', ItemTags.LEAVES)
-                .define('B', Ingredient.EMPTY)
                 .unlockedBy("has_item", has(Items.AIR))
                 .save(pWriter);
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.MOSSBED.get(), 2)
-                .pattern("AAA")
+                .pattern("   ")
                 .pattern("BDB")
                 .pattern("CBC")
-                .define('A', Ingredient.EMPTY)
                 .define('B', ItemTags.LEAVES)
                 .define('C', Items.FEATHER)
                 .define('D', Items.GRASS)
                 .unlockedBy("has_item", has(Items.AIR))
                 .save(pWriter);
 
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.WARRIORS_GUIDE.get(), 1)
+                .pattern(" A ")
+                .pattern("CBC")
+                .pattern(" A ")
+                .define('A', ModTags.Items.HERBS)
+                .define('B', Items.LEATHER)
+                .define('C', ItemTags.LEAVES)
+                .unlockedBy("has_item", has(Items.AIR))
+                .save(pWriter);
 
 
     }

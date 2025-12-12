@@ -15,6 +15,7 @@ import net.snowteb.warriorcats_events.block.entity.StoneCleftBlockEntity;
 public class StoneCleftMenu extends AbstractContainerMenu {
     public final StoneCleftBlockEntity blockEntity;
     private final Level level;
+    private int ofs = 9;
 
 
     public StoneCleftMenu(int pContainerId, Inventory inv, FriendlyByteBuf extraData) {
@@ -33,15 +34,33 @@ public class StoneCleftMenu extends AbstractContainerMenu {
         addDataSlots(data);
 
         this.blockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER).ifPresent(itemHandler -> {
-            this.addSlot(new SlotItemHandler(itemHandler, 0, 8, 32));
-            this.addSlot(new SlotItemHandler(itemHandler, 1, 26, 32));
-            this.addSlot(new SlotItemHandler(itemHandler, 2, 44, 32));
-            this.addSlot(new SlotItemHandler(itemHandler, 3, 62, 32));
-            this.addSlot(new SlotItemHandler(itemHandler, 4, 80, 32));
-            this.addSlot(new SlotItemHandler(itemHandler, 5, 98 , 32));
-            this.addSlot(new SlotItemHandler(itemHandler, 6, 116, 32));
-            this.addSlot(new SlotItemHandler(itemHandler, 7, 134, 32));
-            this.addSlot(new SlotItemHandler(itemHandler, 8, 152, 32));
+            this.addSlot(new SlotItemHandler(itemHandler, 0, 8+ofs, 13));
+            this.addSlot(new SlotItemHandler(itemHandler, 1, 26+ofs, 13));
+            this.addSlot(new SlotItemHandler(itemHandler, 2, 44+ofs, 13));
+            this.addSlot(new SlotItemHandler(itemHandler, 3, 62+ofs, 13));
+            this.addSlot(new SlotItemHandler(itemHandler, 4, 80+ofs, 13));
+            this.addSlot(new SlotItemHandler(itemHandler, 5, 98+ofs, 13));
+            this.addSlot(new SlotItemHandler(itemHandler, 6, 116+ofs, 13));
+            this.addSlot(new SlotItemHandler(itemHandler, 7, 134+ofs, 13));
+
+            this.addSlot(new SlotItemHandler(itemHandler, 8, 8+ofs, 31));
+            this.addSlot(new SlotItemHandler(itemHandler, 9, 26+ofs, 31));
+            this.addSlot(new SlotItemHandler(itemHandler, 10, 44+ofs, 31));
+            this.addSlot(new SlotItemHandler(itemHandler, 11, 62+ofs, 31));
+            this.addSlot(new SlotItemHandler(itemHandler, 12, 80+ofs, 31));
+            this.addSlot(new SlotItemHandler(itemHandler, 13, 98+ofs, 31));
+            this.addSlot(new SlotItemHandler(itemHandler, 14, 116+ofs, 31));
+            this.addSlot(new SlotItemHandler(itemHandler, 15, 134+ofs, 31));
+
+            this.addSlot(new SlotItemHandler(itemHandler, 16, 8+ofs, 49));
+            this.addSlot(new SlotItemHandler(itemHandler, 17, 26+ofs, 49));
+            this.addSlot(new SlotItemHandler(itemHandler, 18, 44+ofs, 49));
+            this.addSlot(new SlotItemHandler(itemHandler, 19, 62+ofs, 49));
+            this.addSlot(new SlotItemHandler(itemHandler, 20, 80+ofs, 49));
+            this.addSlot(new SlotItemHandler(itemHandler, 21, 98+ofs, 49));
+            this.addSlot(new SlotItemHandler(itemHandler, 22, 116+ofs, 49));
+            this.addSlot(new SlotItemHandler(itemHandler, 23, 134+ofs, 49));
+
         });
     }
 
@@ -62,7 +81,7 @@ public class StoneCleftMenu extends AbstractContainerMenu {
     private static final int TE_INVENTORY_FIRST_SLOT_INDEX = VANILLA_FIRST_SLOT_INDEX + VANILLA_SLOT_COUNT;
 
     // THIS YOU HAVE TO DEFINE!
-    private static final int TE_INVENTORY_SLOT_COUNT = 9;  // must be the number of slots you have!
+    private static final int TE_INVENTORY_SLOT_COUNT = 24;  // must be the number of slots you have!
     @Override
     public ItemStack quickMoveStack(Player playerIn, int pIndex) {
         Slot sourceSlot = slots.get(pIndex);
@@ -105,14 +124,14 @@ public class StoneCleftMenu extends AbstractContainerMenu {
     private void addPlayerInventory(Inventory pPlayerInventory) {
         for (int i = 0; i < 3; ++i) {
             for (int j = 0; j < 9; ++j) {
-                this.addSlot(new Slot(pPlayerInventory, j + i * 9 + 9, 8 + j * 18, 84 + i * 18));
+                this.addSlot(new Slot(pPlayerInventory, j + i * 9 + 9, 8 + j * 18, 101 + i * 18));
             }
         }
     }
 
     private void addPlayerHotbar(Inventory pPlayerInventory) {
         for (int i = 0; i < 9; ++i) {
-            this.addSlot(new Slot(pPlayerInventory, i, 8 + i * 18, 142));
+            this.addSlot(new Slot(pPlayerInventory, i, 8 + i * 18, 159));
         }
     }
 

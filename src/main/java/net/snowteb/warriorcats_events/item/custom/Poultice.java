@@ -1,9 +1,12 @@
 package net.snowteb.warriorcats_events.item.custom;
 
+import net.minecraft.advancements.Advancement;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.TagKey;
@@ -47,6 +50,20 @@ public class Poultice extends Item {
 
 
                 pStack.shrink(1);
+
+                if (pPlayer instanceof ServerPlayer pPlayer2) {
+
+                    MinecraftServer server = pPlayer2.getServer();
+                    if (server != null) {
+
+                        Advancement adv = server.getAdvancements()
+                                .getAdvancement(new ResourceLocation("warriorcats_events:healed_warrior"));
+
+                        if (adv != null) {
+                            pPlayer2.getAdvancements().award(adv, "healed_warrior");
+                        }
+                    }
+                }
 
                 return InteractionResult.CONSUME;
             }

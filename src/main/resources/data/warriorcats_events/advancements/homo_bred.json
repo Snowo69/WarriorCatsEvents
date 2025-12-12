@@ -1,0 +1,22 @@
+{
+  "display": {
+    "icon": {
+      "item": "minecraft:large_amethyst_bud"
+    },
+    "title": "In this clan, everyone is valid!",
+    "description": "You used catmint to bring two same-gender cats together.",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "homo_bred": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "rewards": {
+    "loot": [],
+    "experience": 120
+  },
+  "sends_telemetry_event": false
+}

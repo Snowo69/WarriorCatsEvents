@@ -48,6 +48,7 @@ public class PigeonEntity extends Parrot implements GeoEntity {
         private final double speed;
         private final double range = 10;
         private LivingEntity nearestThreat;
+        private int checkCooldown = 0;
 
         public FlyAway(Mob mob, double speed) {
             this.mob = mob;
@@ -57,6 +58,12 @@ public class PigeonEntity extends Parrot implements GeoEntity {
 
         @Override
         public boolean canUse() {
+
+            if (checkCooldown > 0) {
+                checkCooldown--;
+                return false;
+            }
+            checkCooldown = 5 + mob.getRandom().nextInt(5);
 
             TargetingConditions conditions = TargetingConditions.forNonCombat()
                     .selector(e -> !e.isInvisible())

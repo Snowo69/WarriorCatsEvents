@@ -1,11 +1,11 @@
 package net.snowteb.warriorcats_events;
 
 import com.mojang.logging.LogUtils;
-import net.minecraft.world.entity.SpawnPlacements;
 import net.minecraft.world.item.CreativeModeTabs;
-import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -33,6 +33,12 @@ public class WarriorCatsEvents {
     public WarriorCatsEvents() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         GeckoLib.initialize();
+        
+        ModLoadingContext.get().registerConfig(
+                ModConfig.Type.COMMON,
+                WCEConfig.COMMON_SPEC,
+                MODID + "-common.toml"
+        );
 
         Integrations.register(WCatIntegration.MODID, WCatIntegration::new);
         ModSounds.register(modEventBus);
@@ -79,6 +85,7 @@ public class WarriorCatsEvents {
             event.accept(ModItems.CHAMOMILE);
             event.accept(ModItems.YARROW);
             event.accept(ModItems.CATMINT);
+            event.accept(ModItems.DEATHBERRIES);
 
             event.accept(ModItems.MOUSE_FOOD);
             event.accept(ModItems.SQUIRREL_FOOD);

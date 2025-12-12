@@ -1,8 +1,11 @@
 package net.snowteb.warriorcats_events.skills;
 
+import net.snowteb.warriorcats_events.WCEConfig;
+
 import java.util.UUID;
 
 public class PlayerSkill implements ISkillData {
+    /*
     public static int defaultSpeedCost = 30;
     public static int defaultHPcost = 160;
     public static int defaultDMGcost = 40;
@@ -10,6 +13,28 @@ public class PlayerSkill implements ISkillData {
     public static int defaultArmorcost = 420;
 
     public static int defaultStealthcost = 2921;
+
+     */
+
+public static int getDefaultSpeedCost() {
+    return (int) (30 * WCEConfig.COMMON.SKILL_COST_MULTIPLIER.get());
+}
+public static int getDefaultHPcost() {
+    return (int) (160 * WCEConfig.COMMON.SKILL_COST_MULTIPLIER.get());
+}
+public static int getDefaultDMGcost() {
+    return (int) (40 * WCEConfig.COMMON.SKILL_COST_MULTIPLIER.get());
+}
+public static int getDefaultJumpcost() {
+    return (int) (420 * WCEConfig.COMMON.SKILL_COST_MULTIPLIER.get());
+}
+public static int getDefaultArmorcost() {
+    return (int) (420 * WCEConfig.COMMON.SKILL_COST_MULTIPLIER.get());
+}
+public static int getDefaultStealthcost() {
+    return (int) (2921 * WCEConfig.COMMON.SKILL_COST_MULTIPLIER.get());
+}
+
 
     public static int maxSpeedLevel = 10;
     public static int maxHPLevel = 5;

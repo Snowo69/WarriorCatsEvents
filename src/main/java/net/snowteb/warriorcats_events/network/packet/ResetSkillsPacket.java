@@ -41,11 +41,11 @@ public class ResetSkillsPacket {
                     .map(ISkillData::getArmorLevel)
                     .orElse(player.getPersistentData().getInt("skill_armor_level"));
 
-            player.giveExperiencePoints((int) ((PlayerSkill.defaultSpeedCost* speedLevel)/ 0.32));
-            player.giveExperiencePoints((int) ((PlayerSkill.defaultHPcost* hpLevel)/ 0.32));
-            player.giveExperiencePoints((int) ((PlayerSkill.defaultDMGcost* dmgLevel)/ 0.32));
-            player.giveExperiencePoints((int) ((PlayerSkill.defaultJumpcost* jumpLevel)/ 0.32));
-            player.giveExperiencePoints((int) ((PlayerSkill.defaultArmorcost* armorLevel)/ 0.32));
+            player.giveExperiencePoints((int) ((PlayerSkill.getDefaultSpeedCost()* speedLevel)/ 0.32));
+            player.giveExperiencePoints((int) ((PlayerSkill.getDefaultHPcost()* hpLevel)/ 0.32));
+            player.giveExperiencePoints((int) ((PlayerSkill.getDefaultDMGcost()* dmgLevel)/ 0.32));
+            player.giveExperiencePoints((int) ((PlayerSkill.getDefaultJumpcost()* jumpLevel)/ 0.32));
+            player.giveExperiencePoints((int) ((PlayerSkill.getDefaultArmorcost()* armorLevel)/ 0.32));
 
             player.getCapability(PlayerSkillProvider.SKILL_DATA).ifPresent(data -> data.setSpeedLevel(0));
             player.getCapability(PlayerSkillProvider.SKILL_DATA).ifPresent(data -> data.setHPLevel(0));

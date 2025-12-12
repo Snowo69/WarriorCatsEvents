@@ -11,7 +11,7 @@ import net.snowteb.warriorcats_events.WarriorCatsEvents;
 
 public class StoneCleftScreen extends AbstractContainerScreen<StoneCleftMenu>  {
     private static final ResourceLocation TEXTURE =
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/stonecleft_gui.png");
+            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/stonecleft_gui_2.png");
 
     public StoneCleftScreen(StoneCleftMenu pMenu, Inventory pPlayerInventory, Component pTitle) {
         super(pMenu, pPlayerInventory, pTitle);
@@ -22,9 +22,9 @@ public class StoneCleftScreen extends AbstractContainerScreen<StoneCleftMenu>  {
     protected void init() {
         super.init();
         this.imageWidth = 176;
-        this.imageHeight = 166;
-        this.inventoryLabelY = 72;
-        this.titleLabelY = 10;
+        this.imageHeight = 200;
+        this.inventoryLabelY = 89;
+        this.titleLabelY = -2;
     }
 
     @Override
@@ -35,7 +35,7 @@ public class StoneCleftScreen extends AbstractContainerScreen<StoneCleftMenu>  {
         int x = (width - imageWidth) / 2;
         int y = (height - imageHeight) / 2;
 
-        guiGraphics.blit(TEXTURE, x, y, 0, 0, imageWidth, imageHeight, 176, 166);
+        guiGraphics.blit(TEXTURE, x, y, 0, 0, imageWidth, imageHeight, 176, 200);
 
     }
 

@@ -50,7 +50,7 @@ public class CtSMoreArmorPacket {
                     .map(ISkillData::getHPLevel)
                     .orElse(player.getPersistentData().getInt("skill_hp_level"));
 
-            int cost = PlayerSkill.defaultArmorcost * (currentLevel + 1);
+            int cost = PlayerSkill.getDefaultArmorcost() * (currentLevel + 1);
             int remaining = cost - player.totalExperience;
 
 

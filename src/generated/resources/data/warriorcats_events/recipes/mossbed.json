@@ -2,7 +2,6 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "A": [],
     "B": {
       "tag": "minecraft:leaves"
     },
@@ -14,7 +13,7 @@
     }
   },
   "pattern": [
-    "AAA",
+    "   ",
     "BDB",
     "CBC"
   ],

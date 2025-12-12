@@ -28,7 +28,7 @@ public class CtSUnlockStealthPacket {
 
             if (player == null) return;
 
-            int cost = PlayerSkill.defaultStealthcost;
+            int cost = PlayerSkill.getDefaultStealthcost();
             int remaining = cost - player.totalExperience;
 
             int currentArmorLevel = player.getCapability(PlayerSkillProvider.SKILL_DATA)

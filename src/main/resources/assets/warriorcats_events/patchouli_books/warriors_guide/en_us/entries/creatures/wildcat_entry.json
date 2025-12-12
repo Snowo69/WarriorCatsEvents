@@ -44,7 +44,7 @@
     {
       "type": "patchouli:text",
       "title": "Following Orders",
-      "text": "An already recruited Wild Cat, can receive orders from their leader. Which means that they can follow you, stay, or you can just tell them to do whatever they want and wander around. Wild Cats wont wander too far, they are smart! They know there might always be danger if they go further than fifteen fox-lengths. $(br2)$(7)$(o)Change a Wild Cat's state by right-clicking on them."
+      "text": "An already recruited Wild Cat, can receive orders from their leader. Which means that they can follow you, stay, or you can just tell them to do whatever they want and wander around. Wild Cats wont wander too far, they are smart! They know there might always be danger if they go further than fifteen fox-lengths. $(br2)$(7)$(o)Change a Wild Cat's state by holding shift + right-clicking on them."
     },
     {
       "type": "patchouli:text",

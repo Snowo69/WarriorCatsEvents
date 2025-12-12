@@ -49,7 +49,7 @@ public class CtSMoreJumpPacket {
                     .map(ISkillData::getHPLevel)
                     .orElse(player.getPersistentData().getInt("skill_hp_level"));
 
-            int cost = PlayerSkill.defaultJumpcost * (currentLevel + 1);
+            int cost = PlayerSkill.getDefaultJumpcost() * (currentLevel + 1);
             int remaining = cost - player.totalExperience;
 
             if (currentSpeedLevel == PlayerSkill.maxSpeedLevel && currentHPLevel == PlayerSkill.maxHPLevel) {

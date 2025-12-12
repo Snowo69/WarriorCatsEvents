@@ -1,12 +1,15 @@
 package net.snowteb.warriorcats_events.event;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.advancements.Advancement;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -242,7 +245,7 @@ public class ModEvents2 {
                     if (cap.isStealthOn() && cap.isUnlocked() && cap.isOn()) {
                         ServerLevel level = (ServerLevel) event.player.level();
 
-                        if (event.player.tickCount % 2 == 0) {
+                        if (event.player.tickCount % 3 == 0) {
                             if (event.player.onGround()) {
                                 level.sendParticles(
                                         ParticleTypes.CAMPFIRE_COSY_SMOKE,
@@ -265,6 +268,16 @@ public class ModEvents2 {
 
 
         }
+
+/*
+        if (event.player.tickCount % 20 == 0) {
+            if (event.player.level().isClientSide()) {
+                double speed = event.player.getDeltaMovement().length();
+                event.player.sendSystemMessage(Component.literal("Speed Client: " + speed));
+            }
+        */
+
+
     }
 
 
@@ -345,6 +358,19 @@ public class ModEvents2 {
                                 .withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://discord.gg/SkYvZr9DBb"))
                         )
         ));
+
+        if (player instanceof ServerPlayer serverPlayer) {
+            MinecraftServer server = serverPlayer.getServer();
+            if (server != null) {
+
+                Advancement adv = server.getAdvancements()
+                        .getAdvancement(new ResourceLocation("warriorcats_events:into_the_wild"));
+
+                if (adv != null) {
+                    serverPlayer.getAdvancements().award(adv, "login");
+                }
+            }
+        }
 
 
     }

@@ -3,17 +3,22 @@
   "category": "misc",
   "key": {
     "A": {
+      "tag": "warriorcats_events:herbs"
+    },
+    "B": {
+      "item": "minecraft:leather"
+    },
+    "C": {
       "tag": "minecraft:leaves"
     }
   },
   "pattern": [
-    "AA",
-    "AA",
-    "AA"
+    " A ",
+    "CBC",
+    " A "
   ],
   "result": {
-    "count": 2,
-    "item": "warriorcats_events:leaf_door"
+    "item": "warriorcats_events:warriors_guide"
   },
   "show_notification": true
 }

@@ -107,11 +107,11 @@ public class SkillScreen extends Screen {
             LazyOptional<ISkillData> cap = player.getCapability(PlayerSkillProvider.SKILL_DATA);
             cap.ifPresent(data -> {
 
-                nextSpeedLevelCost = getNextLevelCost(data.getSpeedLevel(), PlayerSkill.maxSpeedLevel, PlayerSkill.defaultSpeedCost);
-                nextHPLevelCost = getNextLevelCost(data.getHPLevel(), PlayerSkill.maxHPLevel, PlayerSkill.defaultHPcost);
-                nextDMGLevelCost = getNextLevelCost(data.getDMGLevel(), PlayerSkill.maxDMGLevel, PlayerSkill.defaultDMGcost);
-                nextJumpLevelCost = getNextLevelCost(data.getJumpLevel(), PlayerSkill.maxJumpLevel, PlayerSkill.defaultJumpcost);
-                nextToughnessLevel = getNextLevelCost(data.getArmorLevel(), PlayerSkill.maxArmorLevel, PlayerSkill.defaultArmorcost);
+                nextSpeedLevelCost = getNextLevelCost(data.getSpeedLevel(), PlayerSkill.maxSpeedLevel, PlayerSkill.getDefaultSpeedCost());
+                nextHPLevelCost = getNextLevelCost(data.getHPLevel(), PlayerSkill.maxHPLevel, PlayerSkill.getDefaultHPcost());
+                nextDMGLevelCost = getNextLevelCost(data.getDMGLevel(), PlayerSkill.maxDMGLevel, PlayerSkill.getDefaultDMGcost());
+                nextJumpLevelCost = getNextLevelCost(data.getJumpLevel(), PlayerSkill.maxJumpLevel, PlayerSkill.getDefaultJumpcost());
+                nextToughnessLevel = getNextLevelCost(data.getArmorLevel(), PlayerSkill.maxArmorLevel, PlayerSkill.getDefaultArmorcost());
 
                 player.getCapability(PlayerStealthProvider.STEALTH_MODE).ifPresent(stealth -> {
 
@@ -119,7 +119,7 @@ public class SkillScreen extends Screen {
                         stealthCost = "MAX";
                      } else {
                          stealthSwitchText = Component.literal("--");
-                         stealthCost = PlayerSkill.defaultStealthcost + "xp";
+                         stealthCost = PlayerSkill.getDefaultStealthcost() + "xp";
                      }
 
                      if (stealth.isOn()) {
@@ -165,7 +165,7 @@ public class SkillScreen extends Screen {
                 this.width / 2 + 45,
                 this.height / 2 - 97,
                 80, 20,
-                Component.literal("+1 Damage | " + nextDMGLevelCost ),
+                Component.literal("+1 Claws | " + nextDMGLevelCost ),
                 b ->  {
                     ModPackets.sendToServer(new CtSMoreDMGPacket());
                     ModPackets.sendToServer(new ReqSkillDataPacket());},

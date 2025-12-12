@@ -39,7 +39,7 @@ public class CtSMoreHPPacket {
             int currentLevel = player.getCapability(PlayerSkillProvider.SKILL_DATA)
                     .map(ISkillData::getHPLevel)
                     .orElse(player.getPersistentData().getInt("skill_hp_level"));
-            int cost = PlayerSkill.defaultHPcost * (currentLevel + 1);
+            int cost = PlayerSkill.getDefaultHPcost() * (currentLevel + 1);
             int remaining = cost - player.totalExperience;
 
 

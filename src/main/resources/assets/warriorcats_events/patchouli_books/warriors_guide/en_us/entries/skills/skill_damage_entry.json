@@ -1,7 +1,7 @@
 {
 
 
-  "name": "- Damage",
+  "name": "- Claws",
   "icon": "warriorcats_events:claws",
   "category": "warriorcats_events:skills_category",
   "pages": [
@@ -14,7 +14,7 @@
     {
       "type": "patchouli:text",
       "text": "After sinking your claws in countless pelts and tree logs, you will notice your claws become sharper! Sharper claws means you will deal more damage in battles, you will be fiercer and fearsome.",
-      "title": "Damage"
+      "title": "Claws"
     }
   ]
 

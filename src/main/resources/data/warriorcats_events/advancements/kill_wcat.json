@@ -1,0 +1,27 @@
+{
+  "display": {
+    "icon": {
+      "item": "minecraft:barrier"
+    },
+    "title": "A broken code",
+    "description": "You unnecessarily murdered a cat.",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "kill_wcat": {
+      "trigger": "minecraft:player_killed_entity",
+      "conditions": {
+        "entity": {
+          "type": "warriorcats_events:warrior_cat"
+        }
+      }
+    }
+  },
+  "rewards": {
+    "loot": [],
+    "experience": 150
+  },
+  "sends_telemetry_event": false
+}

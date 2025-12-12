@@ -40,7 +40,7 @@ public class CtSMoreDMGPacket {
                     .map(ISkillData::getDMGLevel)
                     .orElse(player.getPersistentData().getInt("skill_dmg_level"));
 
-            int cost = PlayerSkill.defaultDMGcost * (currentLevel + 1);
+            int cost = PlayerSkill.getDefaultDMGcost() * (currentLevel + 1);
             int remaining = cost - player.totalExperience;
 
 
@@ -70,10 +70,10 @@ public class CtSMoreDMGPacket {
 
                 player.getPersistentData().putInt("skill_dmg_level", currentLevel + 1);
 
-                player.sendSystemMessage(Component.literal("Damage level increased to: " + (currentLevel + 1)));
+                player.sendSystemMessage(Component.literal("Claws level increased to: " + (currentLevel + 1)));
             }
             else {
-                player.sendSystemMessage(Component.literal("Damage skill is maxed! : Level " + (currentLevel)).withStyle(ChatFormatting.YELLOW));
+                player.sendSystemMessage(Component.literal("Claws skill is maxed! : Level " + (currentLevel)).withStyle(ChatFormatting.YELLOW));
             }
 
         });

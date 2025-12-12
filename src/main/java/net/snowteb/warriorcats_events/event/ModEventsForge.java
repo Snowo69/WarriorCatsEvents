@@ -80,10 +80,9 @@ public class ModEventsForge {
             }
 
 
-            ModPackets.sendToPlayer(
-                    new ThirstDataSyncStCPacket(thirst.getThirst()),
-                    (ServerPlayer) player
-            );
+            if (player instanceof ServerPlayer serverPlayer) {
+                ModPackets.sendToPlayer(new ThirstDataSyncStCPacket(thirst.getThirst()), serverPlayer);
+            }
         });
 
         if (stack.getItem() == ModItems.YARROW.get()) {

@@ -27,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class StoneCleftBlockEntity extends BlockEntity implements MenuProvider {
-    private final ItemStackHandler itemHandler = new ItemStackHandler(9) {
+    private final ItemStackHandler itemHandler = new ItemStackHandler(24) {
         @Override
         protected void onContentsChanged(int slot) {
             setChanged();
@@ -44,6 +44,21 @@ public class StoneCleftBlockEntity extends BlockEntity implements MenuProvider {
     private static final int INPUT7 = 6;
     private static final int INPUT8 = 7;
     private static final int INPUT9 = 8;
+    private static final int INPUT10 = 9;
+    private static final int INPUT11 = 10;
+    private static final int INPUT12 = 11;
+    private static final int INPUT13 = 12;
+    private static final int INPUT14 = 13;
+    private static final int INPUT15 = 14;
+    private static final int INPUT16 = 15;
+    private static final int INPUT17 = 16;
+    private static final int INPUT18 = 17;
+    private static final int INPUT19 = 18;
+    private static final int INPUT20 = 19;
+    private static final int INPUT21 = 20;
+    private static final int INPUT22 = 21;
+    private static final int INPUT23 = 22;
+    private static final int INPUT24 = 23;
 
     private LazyOptional<IItemHandler> LazyItemHandler = LazyOptional.empty();
 

@@ -4,7 +4,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
-import net.snowteb.warriorcats_events.entity.custom.VanillaWCatEntity;
+//import net.snowteb.warriorcats_events.entity.custom.VanillaWCatEntity;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import tocraft.walkers.api.variant.TypeProvider;
 /*

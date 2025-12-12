@@ -39,7 +39,7 @@ public class CtSMoreSpeedPacket {
             int currentLevel = player.getCapability(PlayerSkillProvider.SKILL_DATA)
                     .map(ISkillData::getSpeedLevel)
                     .orElse(player.getPersistentData().getInt("skill_speed_level"));
-            int cost = PlayerSkill.defaultSpeedCost * (currentLevel + 1);
+            int cost = PlayerSkill.getDefaultSpeedCost() * (currentLevel + 1);
             int remaining = cost - player.totalExperience;
 
 

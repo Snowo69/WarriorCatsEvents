@@ -1,0 +1,22 @@
+{
+  "display": {
+    "icon": {
+      "item": "minecraft:tall_grass"
+    },
+    "title": "Into the wild",
+    "description": "Welcome to Warrior Cats Events!",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "login": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "rewards": {
+    "loot": [],
+    "experience": 0
+  },
+  "sends_telemetry_event": false
+}
