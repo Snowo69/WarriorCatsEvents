@@ -1,8 +1,11 @@
 package net.snowteb.warriorcats_events.network.packet;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.advancements.Advancement;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -69,6 +72,20 @@ public class CtSMoreSpeedPacket {
                 player.getPersistentData().putInt("skill_speed_level", currentLevel + 1);
 
                 player.sendSystemMessage(Component.literal("Speed level increased to: " + (currentLevel + 1)));
+
+                if (currentLevel + 1 == PlayerSkill.maxSpeedLevel) {
+                    MinecraftServer server = player.getServer();
+                    if (server != null) {
+
+                        Advancement adv = server.getAdvancements()
+                                .getAdvancement(new ResourceLocation("warriorcats_events:skill_speed_advancement"));
+
+                        if (adv != null) {
+                            player.getAdvancements().award(adv, "unlock_skill");
+                        }
+                    }
+                }
+
             }
             else {
                 player.sendSystemMessage(Component.literal("Speed skill is maxed! : Level " + (currentLevel)).withStyle(ChatFormatting.YELLOW));

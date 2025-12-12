@@ -1,8 +1,11 @@
 package net.snowteb.warriorcats_events.network.packet;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.advancements.Advancement;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.NetworkEvent;
 import net.snowteb.warriorcats_events.skills.ISkillData;
@@ -58,9 +61,23 @@ public class CtSUnlockStealthPacket {
                     cap.setUnlocked(true);
                     cap.sync(player);
 
+                    MinecraftServer server = player.getServer();
+                    if (server != null) {
+
+                        Advancement adv = server.getAdvancements()
+                                .getAdvancement(new ResourceLocation("warriorcats_events:skill_stealth_advancement"));
+
+                        if (adv != null) {
+                            player.getAdvancements().award(adv, "unlock_skill");
+                        }
+                    }
+
 
                     player.sendSystemMessage(Component.literal("Stealth ability unlocked!")
                             .withStyle(ChatFormatting.GREEN));
+
+
+
                 });
             }
 
