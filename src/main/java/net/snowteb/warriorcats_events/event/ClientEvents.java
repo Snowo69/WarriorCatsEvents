@@ -26,10 +26,7 @@ import net.snowteb.warriorcats_events.network.ModPackets;
 import net.snowteb.warriorcats_events.network.packet.CtSHissPacket;
 import net.snowteb.warriorcats_events.network.packet.ReqSkillDataPacket;
 import net.snowteb.warriorcats_events.network.packet.WaterPacket;
-import net.snowteb.warriorcats_events.screen.EmoteWheelScreen;
-import net.snowteb.warriorcats_events.screen.ModMenuTypes;
-import net.snowteb.warriorcats_events.screen.SkillScreen;
-import net.snowteb.warriorcats_events.screen.StoneCleftScreen;
+import net.snowteb.warriorcats_events.screen.*;
 import net.snowteb.warriorcats_events.skills.StealthClientState;
 import net.snowteb.warriorcats_events.sound.ModSounds;
 import net.snowteb.warriorcats_events.stealth.PlayerStealthProvider;
@@ -162,6 +159,7 @@ public class ClientEvents {
         @SubscribeEvent
         public static void clientSetup(FMLClientSetupEvent event) {
             MenuScreens.register(ModMenuTypes.STONECLEFT_MENU.get(), StoneCleftScreen::new);
+            MenuScreens.register(ModMenuTypes.WCAT_INVENTORY.get(), WCatScreen::new);
             UpdateCheck.checkForUpdates();
         }
 

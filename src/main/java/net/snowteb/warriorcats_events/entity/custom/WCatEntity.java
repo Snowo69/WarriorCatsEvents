@@ -7,6 +7,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
@@ -22,9 +23,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
-import net.minecraft.world.DifficultyInstance;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.*;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.*;
@@ -36,8 +35,10 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.OwnerHurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.OwnerHurtTargetGoal;
 import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Block;
@@ -54,8 +55,9 @@ import net.snowteb.warriorcats_events.client.AnimationClientData;
 import net.snowteb.warriorcats_events.effect.ModEffects;
 import net.snowteb.warriorcats_events.entity.ModEntities;
 import net.snowteb.warriorcats_events.item.ModItems;
+import net.snowteb.warriorcats_events.screen.WCatMenu;
 import net.snowteb.warriorcats_events.sound.ModSounds;
-import org.apache.logging.log4j.core.jmx.Server;
+import net.snowteb.warriorcats_events.util.ModTags;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
@@ -110,8 +112,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
     int maxVariants = 20;
     private boolean wasBaby = this.isBaby();
 
-    private boolean babyAttributesApplied = false;
-    private boolean appAttributesApplied = false;
+    private final SimpleContainer inventory = new SimpleContainer(3);
 
 
 
@@ -429,6 +430,9 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
     }
 
 
+    public SimpleContainer getInventory() {
+        return inventory;
+    }
 
     private class BoundedWanderGoal extends WaterAvoidingRandomStrollGoal {
 
@@ -527,8 +531,172 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
     }
 
 
+    public class WCatPickupItemGoal extends Goal {
+
+        private final WCatEntity cat;
+        private ItemEntity target;
+        private int cooldown = 0;
+        private final int BASE_COOLDOWN = 30;
+
+        public WCatPickupItemGoal(WCatEntity cat) {
+            this.cat = cat;
+            this.setFlags(EnumSet.of(Goal.Flag.MOVE));
+        }
+
+        @Override
+        public boolean canUse() {
+            if (cat.isOrderedToSit()) return false;
+
+            if (cooldown > 0) {
+                cooldown--;
+                return false;
+            }
+
+            target = findNearestItem();
+
+            if (target != null) {
+                cooldown = BASE_COOLDOWN + cat.getRandom().nextInt(10);
+                return true;
+            }
+
+            cooldown = 10;
+            return false;
+        }
 
 
+
+        @Override
+        public boolean canContinueToUse() {
+            return target != null
+                    && target.isAlive()
+                    && !cat.isOrderedToSit();
+        }
+
+        @Override
+        public void start() {
+            if (target != null) {
+                cat.getNavigation().moveTo(target, 1.1D);
+            }
+        }
+
+        @Override
+        public void stop() {
+            target = null;
+            cat.getNavigation().stop();
+        }
+
+        @Override
+        public void tick() {
+            if (target == null || !target.isAlive()) {
+                stop();
+                return;
+            }
+
+            cat.getNavigation().moveTo(target, 1.1D);
+
+            if (cat.distanceTo(target) < 1.3D) {
+                if (cat.tryInsert(target.getItem())) {
+                    target.discard();
+                    cat.level().playSound(
+                            null, cat.getX(), cat.getY(), cat.getZ(),
+                            SoundEvents.ITEM_PICKUP, SoundSource.NEUTRAL,
+                            0.6F, 0.9F + cat.getRandom().nextFloat() * 0.2F
+                    );
+                    cat.level().playSound(
+                            null, cat.getX(), cat.getY(), cat.getZ(),
+                            SoundEvents.CAT_EAT, SoundSource.NEUTRAL,
+                            0.6F, 0.9F + cat.getRandom().nextFloat() * 0.2F
+                    );
+
+                }
+                stop();
+            }
+        }
+
+
+
+        private ItemEntity findNearestItem() {
+            AABB box = cat.getBoundingBox().inflate(16);
+
+            List<ItemEntity> items = cat.level().getEntitiesOfClass(
+                    ItemEntity.class,
+                    box,
+                    item -> cat.canAccept(item.getItem())
+            );
+
+            double closestDist = Double.MAX_VALUE;
+            ItemEntity closest = null;
+
+            for (ItemEntity item : items) {
+                double dist = cat.distanceToSqr(item);
+                if (dist < closestDist) {
+                    closestDist = dist;
+                    closest = item;
+                }
+            }
+
+            return closest;
+        }
+
+    }
+
+    public boolean canAccept(ItemStack stack) {
+
+        if (this.getRank() == Rank.MEDICINE) {
+            if (!stack.is(ModTags.Items.HERBS)) return false;
+        } else if (this.isBaby() && this.getRank() == Rank.KIT) {
+            if (!(stack.is(Items.STICK) || stack.is(Items.MOSS_BLOCK) || stack.is(Items.SLIME_BALL))) return false;
+        } else {
+            if (!stack.is(ModTags.Items.PREY)) return false;
+        }
+
+        for (int i = 0; i < inventory.getContainerSize(); i++) {
+            ItemStack slot = inventory.getItem(i);
+
+            if (!slot.isEmpty()
+                    && ItemStack.isSameItemSameTags(slot, stack)
+                    && slot.getCount() < 32) {
+                return true;
+            }
+
+            if (slot.isEmpty()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+
+    private boolean tryInsert(ItemStack stack) {
+       for (int i = 0; i < inventory.getContainerSize(); i++) {
+           ItemStack slot = inventory.getItem(i); if (slot.isEmpty()) {
+               inventory.setItem(i, stack.copyWithCount(1)); return true;
+           }
+           if (ItemStack.isSameItemSameTags(slot, stack) && slot.getCount() < slot.getMaxStackSize()) {
+               slot.grow(1); return true;
+           }
+       } return false;
+    }
+
+
+    @Override
+    protected void dropCustomDeathLoot(DamageSource source, int looting, boolean recentlyHit) {
+        super.dropCustomDeathLoot(source, looting, recentlyHit);
+
+        if (this.level().isClientSide) return;
+        if (this.isRemoved() && !this.dead) return;
+        if (this.isBaby()) return;
+
+        for (int i = 0; i < inventory.getContainerSize(); i++) {
+            ItemStack stack = inventory.getItem(i);
+
+            if (!stack.isEmpty()) {
+                this.spawnAtLocation(stack.copy());
+                inventory.setItem(i, ItemStack.EMPTY);
+            }
+        }
+    }
 
 
     @Override
@@ -543,14 +711,15 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
         this.targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
         this.targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
         this.goalSelector.addGoal(3, new BreedGoal(this, 1.0D));
-        this.goalSelector.addGoal(4, new CatFollowOwnerGoal(this, 1.2D, 1.0F, 7.0F)); // prioridad alta para seguir si toca
-        this.targetSelector.addGoal(5, new HurtByTargetGoal(this));
-        this.targetSelector.addGoal(6, this.preyTarget);
-        this.goalSelector.addGoal(7, new WCAttackGoal(this, 1.2D, true));
-        this.goalSelector.addGoal(8, new BoundedWanderGoal(this, 1.0D));
-        this.goalSelector.addGoal(9, new RandomLookAroundGoal(this));
-        this.goalSelector.addGoal(10, new LookAtPlayerGoal(this, Player.class, 8.0F));
-        this.goalSelector.addGoal(11, new CasualBlockSeekGoal(this,1.0D,15,0.10D));
+        this.goalSelector.addGoal(4, new WCatPickupItemGoal(this));
+        this.goalSelector.addGoal(5, new CatFollowOwnerGoal(this, 1.2D, 1.0F, 7.0F)); // prioridad alta para seguir si toca
+        this.targetSelector.addGoal(6, new HurtByTargetGoal(this));
+        this.targetSelector.addGoal(7, this.preyTarget);
+        this.goalSelector.addGoal(8, new WCAttackGoal(this, 1.2D, true));
+        this.goalSelector.addGoal(9, new BoundedWanderGoal(this, 1.0D));
+        this.goalSelector.addGoal(10, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(11, new LookAtPlayerGoal(this, Player.class, 8.0F));
+        this.goalSelector.addGoal(12, new CasualBlockSeekGoal(this,1.0D,15,0.10D));
 
     }
 
@@ -582,6 +751,21 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
     @Override
     public InteractionResult mobInteract(Player pPlayer, InteractionHand pHand) {
         ItemStack itemstack = pPlayer.getItemInHand(pHand);
+
+        if (itemstack.is(Items.CHEST) && this.isTame() && (this.getOwner() == pPlayer) && !this.isBaby()) {
+
+            if (!level().isClientSide && pPlayer instanceof ServerPlayer sPlayer) {
+                Component catInvName = this.getCustomName();
+                NetworkHooks.openScreen(
+                        sPlayer,
+                        new SimpleMenuProvider(
+                                (id, inv, p) -> new WCatMenu(id, inv, this.inventory),
+                                Component.literal(catInvName.getString())));
+            }
+
+            return InteractionResult.sidedSuccess(level().isClientSide);
+        }
+
         if (!this.isTame() && itemstack.is(ModItems.FRESHKILL_AND_HERBS_BUNDLE.get())) {
 
             if (!this.level().isClientSide()) {
@@ -1135,6 +1319,8 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
         tag.putInt("Rank", this.getRank().ordinal());
         tag.putBoolean("kitBorn", kitBorn);
         tag.putBoolean("AppScale", this.isAppScale());
+        tag.put("Inventory", inventory.createTag());
+
 
         if (this.getMate() != null) {
             tag.putString("Mate", Component.Serializer.toJson(this.getMate()));
@@ -1165,6 +1351,10 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
             int value = tag.getInt("Rank");
             this.setRank(Rank.values()[value]);
         }
+
+        inventory.fromTag(tag.getList("Inventory", Tag.TAG_COMPOUND));
+
+
         if (tag.contains("kitBorn")) {
             kitBorn = tag.getBoolean("kitBorn");
         }
