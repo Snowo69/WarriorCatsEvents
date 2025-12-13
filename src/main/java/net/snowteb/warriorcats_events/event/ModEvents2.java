@@ -213,7 +213,7 @@ public class ModEvents2 {
 
             event.player.getCapability(PlayerThirstProvider.PLAYER_THIRST).ifPresent(thirst -> {
 
-                if (thirst.getThirst() > 0 && event.player.getRandom().nextFloat() < 0.00032 && !(event.player.isCreative() || event.player.isSpectator())) {
+                if (thirst.getThirst() > 0 && event.player.getRandom().nextFloat() < 0.00036 && !(event.player.isCreative() || event.player.isSpectator())) {
                     int oldThirst = thirst.getThirst();
                     thirst.subThirst(1);
                     if (oldThirst != thirst.getThirst()) {
@@ -359,18 +359,7 @@ public class ModEvents2 {
                         )
         ));
 
-        if (player instanceof ServerPlayer serverPlayer) {
-            MinecraftServer server = serverPlayer.getServer();
-            if (server != null) {
 
-                Advancement adv = server.getAdvancements()
-                        .getAdvancement(new ResourceLocation("warriorcats_events:into_the_wild"));
-
-                if (adv != null) {
-                    serverPlayer.getAdvancements().award(adv, "login");
-                }
-            }
-        }
 
 
     }

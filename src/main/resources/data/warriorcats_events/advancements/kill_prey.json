@@ -1,4 +1,5 @@
 {
+  "parent": "warriorcats_events:creatures_advancement",
   "display": {
     "icon": {
       "item": "warriorcats_events:squirrel"

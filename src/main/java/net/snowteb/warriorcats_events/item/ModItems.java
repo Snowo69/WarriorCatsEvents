@@ -27,6 +27,7 @@ import vazkii.patchouli.api.PatchouliAPI;
 import javax.annotation.Nullable;
 import java.util.List;
 
+
 public class ModItems {
     public static final DeferredRegister<Item> ITEMS =
             DeferredRegister.create(ForgeRegistries.ITEMS, WarriorCatsEvents.MODID);
@@ -150,8 +151,6 @@ public class ModItems {
 
     public static final RegistryObject<Item> MOSS_BED = ITEMS.register("mossbed",
             () -> new BlockItem(ModBlocks.MOSSBED.get(), new Item.Properties().stacksTo(16)));
-
-
 
 
 

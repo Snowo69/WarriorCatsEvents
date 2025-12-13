@@ -1,4 +1,5 @@
 {
+  "parent": "warriorcats_events:into_the_wild",
   "display": {
     "icon": {
       "item": "warriorcats_events:catmint_leaves"

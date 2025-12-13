@@ -135,7 +135,7 @@ public class ClawsTooltip extends ShearsItem {
     }
 
     public boolean hurtEnemy(ItemStack pStack, LivingEntity pTarget, LivingEntity pAttacker) {
-        pStack.hurtAndBreak(2, pAttacker, (p_43296_) -> {
+        pStack.hurtAndBreak(1, pAttacker, (p_43296_) -> {
             p_43296_.broadcastBreakEvent(EquipmentSlot.MAINHAND);
         });
 

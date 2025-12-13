@@ -26,10 +26,10 @@ public static int getDefaultDMGcost() {
     return (int) (40 * WCEConfig.COMMON.SKILL_COST_MULTIPLIER.get());
 }
 public static int getDefaultJumpcost() {
-    return (int) (420 * WCEConfig.COMMON.SKILL_COST_MULTIPLIER.get());
+    return (int) (300 * WCEConfig.COMMON.SKILL_COST_MULTIPLIER.get());
 }
 public static int getDefaultArmorcost() {
-    return (int) (420 * WCEConfig.COMMON.SKILL_COST_MULTIPLIER.get());
+    return (int) (300 * WCEConfig.COMMON.SKILL_COST_MULTIPLIER.get());
 }
 public static int getDefaultStealthcost() {
     return (int) (2921 * WCEConfig.COMMON.SKILL_COST_MULTIPLIER.get());

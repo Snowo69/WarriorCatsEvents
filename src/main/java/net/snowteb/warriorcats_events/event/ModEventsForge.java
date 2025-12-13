@@ -6,6 +6,7 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
 import net.minecraft.world.entity.monster.Creeper;
@@ -16,6 +17,7 @@ import net.minecraftforge.client.event.RenderGuiOverlayEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
+import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -76,7 +78,9 @@ public class ModEventsForge {
                     || stack.is(Items.SWEET_BERRIES)) {
                 int randomThirst = 1;
                 thirst.addThirst(randomThirst);
-                player.getFoodData().eat(4, 0.75f);
+                if (!stack.is(Items.SWEET_BERRIES)){
+                    player.getFoodData().eat(3, 0.75f);
+                }
             }
 
 
@@ -125,9 +129,15 @@ public class ModEventsForge {
         }
         owner.getCapability(PlayerSkillProvider.SKILL_DATA).ifPresent(cap -> {
             if (cap.getJumpLevel() > 2) {
-                event.setDistance(event.getDistance() - 3f);
+                event.setDistance(Math.max(0f, event.getDistance() - 3f));
             }
         });
+
+
+        if (entity instanceof WCatEntity) {
+            event.setDistance(Math.max(0f, event.getDistance() - 4f));
+        }
+
     }
 
     @SubscribeEvent
@@ -137,13 +147,47 @@ public class ModEventsForge {
                     new AvoidEntityGoal<>(
                             creeper,
                             WCatEntity.class,
-                            8.0F,
-                            1.0D,
+                            11.0F,
+                            1.3D,
                             1.2D
                     )
             );
+
         }
 
     }
+
+
+    @SubscribeEvent
+    public static void onAttackEntity(AttackEntityEvent event) {
+        Player player = event.getEntity();
+        Entity target = event.getTarget();
+
+        if (!(target instanceof WCatEntity wcat)) {
+            return;
+        }
+
+        if (player.level().isClientSide()) {
+            return;
+        }
+
+        if (!wcat.isTame()) {
+            return;
+        }
+
+        LivingEntity owner = wcat.getOwner();
+        if (owner == null) {
+            return;
+        }
+
+        if (!owner.getUUID().equals(player.getUUID())) {
+            return;
+        }
+
+        if (!player.isShiftKeyDown()) {
+            event.setCanceled(true);
+        }
+    }
+
 
 }

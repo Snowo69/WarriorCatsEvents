@@ -1,4 +1,5 @@
 {
+  "parent": "warriorcats_events:wildcat_recruit_advancement",
   "display": {
     "icon": {
       "item": "warriorcats_events:dock_poultice"

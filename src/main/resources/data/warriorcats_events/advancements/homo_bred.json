@@ -1,4 +1,5 @@
 {
+  "parent": "warriorcats_events:wildcat_recruit_advancement",
   "display": {
     "icon": {
       "item": "minecraft:large_amethyst_bud"
@@ -7,7 +8,7 @@
     "description": "You used catmint to bring two same-gender cats together.",
     "show_toast": true,
     "announce_to_chat": true,
-    "hidden": false
+    "hidden": true
   },
   "criteria": {
     "homo_bred": {

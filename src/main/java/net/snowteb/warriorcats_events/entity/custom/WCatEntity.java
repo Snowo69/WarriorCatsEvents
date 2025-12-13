@@ -110,6 +110,9 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
     int maxVariants = 20;
     private boolean wasBaby = this.isBaby();
 
+    private boolean babyAttributesApplied = false;
+    private boolean appAttributesApplied = false;
+
 
 
 
@@ -1008,6 +1011,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
             if (this.wasBaby && !this.isBaby()) {
                 this.onGrewUp();
                 this.setRank(Rank.WARRIOR);
+                this.applyAdultAttributes();
             }
             this.wasBaby = this.isBaby();
         }
@@ -1060,6 +1064,31 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
         }
 
     }
+
+    private void applyBabyAttributes() {
+        this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(10.0);
+        this.getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(2.0);
+        this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(0.25);
+
+        this.setHealth(this.getMaxHealth());
+    }
+
+    private void applyAppAttributes() {
+        this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(18.0);
+        this.getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(3.0);
+        this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(0.3);
+
+        this.setHealth(this.getMaxHealth());
+    }
+
+    private void applyAdultAttributes() {
+        this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(30.0);
+        this.getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(4.0);
+        this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(0.33);
+
+        this.setHealth(this.getMaxHealth());
+    }
+
 
 
 
@@ -1289,16 +1318,27 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
         float animSpeed = (float)(speed * 6.0f);
         animSpeed = Mth.clamp(animSpeed*animSpeed, 0.2f, 1.5f);
 
-
+        if (this.isInWater()){
+            if (this.isSwimming()){
+                tAnimationState.getController().setAnimation(RawAnimation.begin().
+                        then("animation.wcat.swim", Animation.LoopType.LOOP));
+                tAnimationState.getController().setAnimationSpeed(1f);
+            } else {
+                tAnimationState.getController().setAnimation(RawAnimation.begin().
+                        then("animation.wcat.inwater", Animation.LoopType.LOOP));
+                tAnimationState.getController().setAnimationSpeed(1.4f);
+            }
+            return PlayState.CONTINUE;
+        }
 
         if (!this.onGround() && !this.isInWater()) {
            tAnimationState.getController().setAnimation(RawAnimation.begin().
                    then("animation.wcat.falling", Animation.LoopType.LOOP));
            animPlayed = false;
            return PlayState.CONTINUE;
-       }
+        }
 
-       if (tAnimationState.isMoving() && !this.isCrouching()) {
+        if (tAnimationState.isMoving() && !this.isCrouching()) {
            if (speed > 0.2039 && !this.isInWater()) {
                tAnimationState.getController().setAnimation(RawAnimation.begin().
                        then("animation.wcat.sprint", Animation.LoopType.LOOP));
@@ -1434,7 +1474,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
                 kit.setTame(true);
                 kit.setRank(Rank.KIT);
                 kit.kitBorn = true;
-
+                String finalName = "";
 
                 if (!kit.hasCustomName()) {
                     int variant = kit.getVariant();
@@ -1449,7 +1489,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
 
                     int k = kit.random.nextInt(prefixSet.length);
 
-                    String finalName = prefixSet[k] + "kit" + genderS;
+                    finalName = prefixSet[k] + "kit" + genderS;
                     kit.setCustomName(Component.literal(finalName));
                     kit.setCustomNameVisible(true);
 
@@ -1459,12 +1499,16 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
 
 
                 if (owner instanceof Player player) {
+                    String kitName = finalName;
+
                     kit.setOwnerUUID(player.getUUID());
+                    owner.sendSystemMessage(Component.literal(kitName + " has been born!"));
                 }
 
                 int randomVariant = this.random.nextInt(maxVariants);
                 kit.setVariant(randomVariant);
                 kit.wanderCenter = this.blockPosition();
+                kit.applyBabyAttributes();
 
 
                 server.addFreshEntity(kit);
@@ -1493,9 +1537,16 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
     }
 
 
-
-
-
+    @Override
+    public float getVoicePitch() {
+        return this.isBaby() ?
+                (this.getRank() == Rank.APPRENTICE ?
+                        (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.3F
+                        :
+                        (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.5F)
+                :
+                (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F;
+    }
 
     private boolean hasValidMateNearby() {
         if (!this.isTame()) return false;
@@ -1652,6 +1703,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity{
                 this.level().broadcastEntityEvent(this, (byte) 6);
                 this.level().playSound(null, this.blockPosition(), SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.AMBIENT, 0.8f, 1.6f);
                 this.kitBorn=false;
+                this.applyAppAttributes();
             }
         }
         if (this.level().isClientSide) {

@@ -35,7 +35,7 @@ public class ModPlacedFeatures {
         HolderGetter<ConfiguredFeature<?, ?>> configuredFeatures = context.lookup(Registries.CONFIGURED_FEATURE);
 
         register(context, DOCK_PLACED_KEY, configuredFeatures.getOrThrow(ModConfiguredFeatures.DOCK_KEY),
-                List.of(RarityFilter.onAverageOnceEvery(60), InSquarePlacement.spread(),
+                List.of(RarityFilter.onAverageOnceEvery(55), InSquarePlacement.spread(),
                         PlacementUtils.HEIGHTMAP_WORLD_SURFACE, BiomeFilter.biome()));
 
         register(context, SORREL_PLACED_KEY, configuredFeatures.getOrThrow(ModConfiguredFeatures.SORREL_KEY),

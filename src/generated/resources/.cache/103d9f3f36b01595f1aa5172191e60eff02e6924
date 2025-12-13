@@ -1,4 +1,4 @@
-// 1.20.1	2025-12-08T18:35:11.7825049	Registries
+// 1.20.1	2025-12-12T23:20:06.3687555	Registries
 4cb4ef82850885f30468d00ef01064029c4d1e90 data/warriorcats_events/forge/biome_modifier/add_burnet.json
 528ff641416457c1e1bf13322bea3e8cbb2c5a15 data/warriorcats_events/forge/biome_modifier/add_catmint.json
 ff4b75bb4be27f6951da41a578edf6e803bb8ec3 data/warriorcats_events/forge/biome_modifier/add_chamomile.json
@@ -24,7 +24,7 @@ a66ef3d2910da93ee25b879a1df3da5ef2397223 data/warriorcats_events/worldgen/placed
 99cde61488a95425bc3d04f730a1633fc83d8bce data/warriorcats_events/worldgen/placed_feature/chamomile_placed.json
 b23c6427ce3c8e0a28f813d50dda14b249958511 data/warriorcats_events/worldgen/placed_feature/daisy_placed.json
 62162ec4cccced7b33e845832890ffcb4bdd0755 data/warriorcats_events/worldgen/placed_feature/deathberries_placed.json
-be9f9e45f060bf230649673a31f8d3b451d2da51 data/warriorcats_events/worldgen/placed_feature/dock_placed.json
+7454a35fa646b32cf8dfbcafbe8551e1fdfd9347 data/warriorcats_events/worldgen/placed_feature/dock_placed.json
 f06bf26460e43c6b2d8f472eb2744986a7db52fe data/warriorcats_events/worldgen/placed_feature/glowshroom_placed.json
 0c6b55f2e444e3bf3f46c78e1d21c166f1cdc6c5 data/warriorcats_events/worldgen/placed_feature/sorrel_placed.json
 72d0a874c71d896a7d4859c767fbef2e8c2996e9 data/warriorcats_events/worldgen/placed_feature/starrytree_placed.json

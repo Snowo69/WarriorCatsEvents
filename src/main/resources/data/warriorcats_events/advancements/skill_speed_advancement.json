@@ -1,4 +1,5 @@
 {
+  "parent": "warriorcats_events:skill_tree_advancement",
   "display": {
     "icon": {
       "item": "minecraft:sugar"

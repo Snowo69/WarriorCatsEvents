@@ -1,4 +1,5 @@
 {
+  "parent": "warriorcats_events:skill_hp_advancement",
   "display": {
     "icon": {
       "item": "minecraft:slime_ball"

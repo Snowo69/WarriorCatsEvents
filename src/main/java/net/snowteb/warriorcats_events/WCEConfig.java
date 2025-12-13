@@ -30,7 +30,7 @@ public class WCEConfig {
 
             KITTING_MINUTES = builder
                     .comment("The time in minutes it takes until she-cats give birth (min: 1, max: 120)")
-                    .defineInRange("kittingMinutes", 8, 1, 120);
+                    .defineInRange("kittingMinutes", 10, 1, 120);
 
             KIT_GROWTH_MINUTES = builder
                     .comment("The time in minutes it takes for a kit to grow from kit to warrior (min: 10, max: 180)")
