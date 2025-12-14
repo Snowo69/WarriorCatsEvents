@@ -214,6 +214,11 @@ public class PigeonEntity extends Parrot implements GeoEntity {
 
     }
 
+    @Override
+    public int getExperienceReward() {
+        return 30 + 5*this.random.nextInt(4);
+    }
+
 
     private <T extends GeoAnimatable> PlayState predicate(AnimationState<T> tAnimationState) {
         if (this.isFlying()) {

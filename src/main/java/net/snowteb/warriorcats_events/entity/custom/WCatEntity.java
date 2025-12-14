@@ -1804,32 +1804,6 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
     public void setVariant(int variant) {
         this.entityData.set(VARIANT, variant);
-    /*
-        float scale = switch (variant) {
-            case 0 -> 0.6f;
-            case 1 -> 0.6f;
-            case 2 -> 0.6f;
-            case 3 -> 0.6f;
-            case 4 -> 0.5f;
-            case 5 -> 0.6f;
-            case 6 -> 0.7f;
-            case 7 -> 0.7f;
-            case 8 -> 0.5f;
-            case 9 -> 0.7f;
-            case 10 -> 0.6f;
-            case 11 -> 0.6f;
-            case 12 -> 0.6f; //chestnutpatch
-            case 13 -> 0.6f; //ratstar
-            case 14 -> 0.5f; //twitchstream
-            case 15 -> 0.7f; //blazepit
-            case 16 -> 0.6f; //bengalpelt
-            case 17 -> 0.7f; //sparrowstar
-            case 18 -> 0.5f; //foxeater
-            case 19 -> 0.6f; //willowsong
-            default -> 0.6f;
-        };
-
-     */
         float scale = switch (variant) {
             case 0 -> 1f;
             case 1 -> 1.2f;
@@ -1856,6 +1830,12 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
 
         this.entityData.set(SCALE, scale);
+    }
+
+
+    @Override
+    public int getExperienceReward() {
+        return 25 + 5*this.random.nextInt(3);
     }
 
     private boolean apprenticeAge = false;
