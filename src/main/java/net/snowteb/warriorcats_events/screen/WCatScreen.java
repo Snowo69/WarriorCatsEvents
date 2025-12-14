@@ -11,7 +11,7 @@ import net.snowteb.warriorcats_events.WarriorCatsEvents;
 
 public class WCatScreen extends AbstractContainerScreen<WCatMenu>  {
     private static final ResourceLocation TEXTURE =
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/stonecleft_gui.png");
+            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/catinv_gui.png");
 
     public WCatScreen(WCatMenu pMenu, Inventory pPlayerInventory, Component pTitle) {
         super(pMenu, pPlayerInventory, pTitle);
@@ -21,9 +21,10 @@ public class WCatScreen extends AbstractContainerScreen<WCatMenu>  {
     protected void init() {
         super.init();
         this.imageWidth = 176;
-        this.imageHeight = 166;
-        this.inventoryLabelY = 71;
-        this.titleLabelY = 11;
+        this.imageHeight = 210;
+        this.inventoryLabelY = 74;
+        this.titleLabelY = 23;
+        this.titleLabelX = 3;
     }
 
     @Override
@@ -34,7 +35,7 @@ public class WCatScreen extends AbstractContainerScreen<WCatMenu>  {
         int x = (width - imageWidth) / 2;
         int y = (height - imageHeight) / 2;
 
-        guiGraphics.blit(TEXTURE, x, y, 0, 0, imageWidth, imageHeight, 176, 166);
+        guiGraphics.blit(TEXTURE, x, y - 20, 0, 0, imageWidth, imageHeight, 176, 210);
 
     }
 

@@ -33,18 +33,27 @@ import net.snowteb.warriorcats_events.stealth.PlayerStealthProvider;
 import net.snowteb.warriorcats_events.util.ModKeybinds;
 
 public class ClientEvents {
+    private static boolean hissPressed;
+    private static boolean waterPressed;
+    private static int hissCooldown = 0;
+    private static int waterCooldown = 0;
+
+
     @Mod.EventBusSubscriber(modid = WarriorCatsEvents.MODID, value = Dist.CLIENT)
     public static class ClientForgeEvents {
 
         @SubscribeEvent
         public static void onKeyInput(InputEvent.Key event) {
+            /*
             if (ModKeybinds.HISSING_KEY.consumeClick()) {
                 ModPackets.sendToServer(new CtSHissPacket());
-              }
+            }
 
             if (ModKeybinds.WATERDRINK_KEY.consumeClick()) {
                 ModPackets.sendToServer(new WaterPacket());
             }
+
+             */
 
             if (ModKeybinds.SKILLMENU_KEY.consumeClick()) {
                 Minecraft.getInstance().setScreen(new SkillScreen());
@@ -71,6 +80,7 @@ public class ClientEvents {
 
         @SubscribeEvent
         public static void onClientTick(TickEvent.ClientTickEvent event) {
+            if (event.phase != TickEvent.Phase.END) return;
             Minecraft mc = Minecraft.getInstance();
             LocalPlayer player = mc.player;
             if (mc.player == null) return;
@@ -82,7 +92,28 @@ public class ClientEvents {
                 StealthClientState.tick(shifting);
             });
 
+            if (hissCooldown > 0) hissCooldown--;
+            if (waterCooldown > 0) waterCooldown--;
 
+            if (ModKeybinds.HISSING_KEY.isDown() && hissCooldown == 0) {
+                if (!hissPressed) {
+                    ModPackets.sendToServer(new CtSHissPacket());
+                    hissPressed = true;
+                    hissCooldown = 30;
+                }
+            } else {
+                hissPressed = false;
+            }
+
+            if (ModKeybinds.WATERDRINK_KEY.isDown() && waterCooldown == 0) {
+                if (!waterPressed) {
+                    ModPackets.sendToServer(new WaterPacket());
+                    waterPressed = true;
+                    waterCooldown = 7;
+                }
+            } else {
+                waterPressed = false;
+            }
 
 
         }

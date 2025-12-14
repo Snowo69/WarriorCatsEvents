@@ -65,6 +65,21 @@
     },
 
     {
+      "type": "patchouli:image",
+      "images": [
+        "warriorcats_events:textures/book/features/cat_inv.png"
+      ],
+      "title": "Carrying Items",
+      "text": "One day you will probably be stuck with so many herbs in your paws that you wont be able to carry any more. Don't worry! Your clanmates can help you carry anything you want!$(br)"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "warriorcats_events:claws",
+      "title": "Carrying Items",
+      "text": "Wild Cats can carry up to 3 different type of items in their jaws and paws. You can fill these slots with any item you want. Every cat has their very own inventory. $(br2)Wild Cats will also pick up items on their own! Warriors, apprentices, and loners will pick up prey. Medicine cats will pick up herbs, and kits will pick up sticks and anything they find funny!$(br2)$(7)$(o)Hold 'Shift' and 'Right-click' with your claws to open a tamed Wild Cat's inventory$(br)"
+    },
+
+    {
       "type": "patchouli:text",
       "title": "Breeding",
       "text": "Have you heard about catmint? They say that if two cats eat enough of it, they will fall in love with each other, as if catmint magically showed where their feelings truly lie!"

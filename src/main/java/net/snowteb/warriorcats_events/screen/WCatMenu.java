@@ -26,7 +26,7 @@ public class WCatMenu extends AbstractContainerMenu {
         addPlayerHotbar(inv);
 
         for (int i = 0; i < 3; i++) {
-            addSlot(new Slot(catInventory, i, 8 + i * 18, 32));
+            addSlot(new Slot(catInventory, i, 62 + i * 18, 32));
         }
     }
 
@@ -89,14 +89,14 @@ public class WCatMenu extends AbstractContainerMenu {
     private void addPlayerInventory(Inventory pPlayerInventory) {
         for (int i = 0; i < 3; ++i) {
             for (int j = 0; j < 9; ++j) {
-                this.addSlot(new Slot(pPlayerInventory, j + i * 9 + 9, 8 + j * 18, 84 + i * 18));
+                this.addSlot(new Slot(pPlayerInventory, j + i * 9 + 9, 8 + j * 18, 86 + i * 18));
             }
         }
     }
 
     private void addPlayerHotbar(Inventory pPlayerInventory) {
         for (int i = 0; i < 9; ++i) {
-            this.addSlot(new Slot(pPlayerInventory, i, 8 + i * 18, 142));
+            this.addSlot(new Slot(pPlayerInventory, i, 8 + i * 18, 144));
         }
     }
 
