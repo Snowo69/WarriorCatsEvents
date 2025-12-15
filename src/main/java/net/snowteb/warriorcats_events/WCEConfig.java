@@ -2,6 +2,9 @@ package net.snowteb.warriorcats_events;
 
 import net.minecraftforge.common.ForgeConfigSpec;
 
+/**
+ * This creates a .toml file that allows to change different values.
+ */
 public class WCEConfig {
 
     public static final ForgeConfigSpec COMMON_SPEC;

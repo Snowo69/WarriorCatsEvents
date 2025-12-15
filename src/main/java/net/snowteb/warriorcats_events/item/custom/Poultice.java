@@ -27,6 +27,11 @@ public class Poultice extends Item {
         super(pProperties);
     }
 
+    /**
+     * If right click with this item on a player or a "Healable" (tag), and its health is less than its max health:
+     * Then heal it and consume 1 item,
+     * Then unlock the advancement.
+     */
     @Override
     public InteractionResult interactLivingEntity(ItemStack pStack, Player pPlayer,
                                                   LivingEntity pTarget, InteractionHand pHand) {

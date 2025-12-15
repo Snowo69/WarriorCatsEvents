@@ -11,7 +11,7 @@ import net.minecraft.world.level.Level;
 
 public class ModBookItem extends Item {
     public ModBookItem(Properties properties) {
-        super(properties.durability(1)); // Durabilidad de 1 uso
+        super(properties.durability(1));
     }
 
     @Override

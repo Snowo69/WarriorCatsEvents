@@ -70,6 +70,9 @@ public class ClawsTooltip extends ShearsItem {
 
     }
 
+    /**
+     * Allows performing axe actions and shield actions.
+     */
     @Override
     public boolean canPerformAction(ItemStack stack, ToolAction action) {
         return ToolActions.DEFAULT_AXE_ACTIONS.contains(action)
@@ -88,6 +91,10 @@ public class ClawsTooltip extends ShearsItem {
         return false;
     }
 
+    /**
+     * Too hard to explain
+     * It is basically the same thing axes do with logs, but instead of damaging the tool, this will repair the claws.
+     */
     public InteractionResult useOn(UseOnContext pContext) {
 
         Level level = pContext.getLevel();
@@ -134,6 +141,9 @@ public class ClawsTooltip extends ShearsItem {
 
     }
 
+    /**
+     * Every time you hurt an entity, damage the tool.
+     */
     public boolean hurtEnemy(ItemStack pStack, LivingEntity pTarget, LivingEntity pAttacker) {
         pStack.hurtAndBreak(1, pAttacker, (p_43296_) -> {
             p_43296_.broadcastBreakEvent(EquipmentSlot.MAINHAND);
@@ -142,7 +152,10 @@ public class ClawsTooltip extends ShearsItem {
         return true;
     }
 
-
+    /**
+     * If you use right click, then start using the item.
+     * And since we previously defined the item can perform shield actions, then it will perform the shield action.
+     */
     public InteractionResultHolder<ItemStack> use(Level pLevel, Player pPlayer, InteractionHand pHand) {
         ItemStack itemstack = pPlayer.getItemInHand(pHand);
         pPlayer.startUsingItem(pHand);

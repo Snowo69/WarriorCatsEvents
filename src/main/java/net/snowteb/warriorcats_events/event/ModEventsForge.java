@@ -38,6 +38,10 @@ import tocraft.walkers.api.PlayerShape;
 
 @Mod.EventBusSubscriber(modid = WarriorCatsEvents.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ModEventsForge {
+
+    /**
+     * This modifies some foods so that some will fill thirsts, and some other will fill more hunger.
+     */
     @SubscribeEvent
     public static void onFoodEaten(LivingEntityUseItemEvent.Finish event) {
         if (!(event.getEntity() instanceof Player player)) return;
@@ -102,7 +106,15 @@ public class ModEventsForge {
     }
 
 
-
+    /**
+     * Every time an entity falls:
+     * Check if it is a player, if it is not:
+     * Then make a list of all the players in the server, and for every player verify if their UUID is the same as the shape that fell.
+     * If it is, then choose it as the owner of the shape.
+     * Then check if the owner has Jump level greater than 2. If it does, reduce it's fall distance.
+     *
+     * If the entity is a Wild cat, reduce its fall distance too.
+     */
     @SubscribeEvent
     public static void onFall(LivingFallEvent event) {
         LivingEntity entity = event.getEntity();
@@ -140,6 +152,10 @@ public class ModEventsForge {
 
     }
 
+    /**
+     * Every time a creeper spawns, add this goal to it.
+     * This so that creepers run away from Wild Cats.
+     */
     @SubscribeEvent
     public static void onEntityJoinWorld(EntityJoinLevelEvent event) {
         if (event.getEntity() instanceof Creeper creeper) {
@@ -157,7 +173,9 @@ public class ModEventsForge {
 
     }
 
-
+    /**
+     * Every time a player wants to attack a wild cat, check certain conditions, and under that criteria decide whether to let the player attack it or not.
+     */
     @SubscribeEvent
     public static void onAttackEntity(AttackEntityEvent event) {
         Player player = event.getEntity();

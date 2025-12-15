@@ -8,6 +8,9 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 
+/**
+ * Same as MoveToGrassGoal but with logs
+ */
 public class MoveToLogsGoal extends MoveToBlockGoal {
 
     private static final Block[] TARGET_BLOCKS = {

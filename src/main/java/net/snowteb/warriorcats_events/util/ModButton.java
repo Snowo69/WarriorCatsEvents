@@ -8,7 +8,9 @@ import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
-
+/**
+ * A custom button that allows to have a custom texture and other aesthetic settings.
+ */
 public class ModButton extends AbstractButton {
 
     public interface PressAction {

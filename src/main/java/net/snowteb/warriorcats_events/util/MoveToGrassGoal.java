@@ -7,7 +7,9 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-
+/**
+ * A goal that makes an entity find and move to certain blocks.
+ */
 public class MoveToGrassGoal extends MoveToBlockGoal {
 
     private static final Block[] TARGET_BLOCKS = {

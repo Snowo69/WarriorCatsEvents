@@ -8,6 +8,10 @@ import net.snowteb.warriorcats_events.network.packet.CtSToggleStealthPacket;
 public class StealthClientState {
     private static boolean lastState = false;
 
+    /**
+     * If the state changes, then toggle the stealth mode and play 2 cute sounds.
+     * Then update the current state.
+     */
     public static void tick(boolean currentState) {
         if (currentState != lastState) {
             ModPackets.sendToServer(new CtSToggleStealthPacket(currentState));

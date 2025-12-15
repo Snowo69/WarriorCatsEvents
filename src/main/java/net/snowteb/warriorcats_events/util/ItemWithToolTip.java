@@ -10,6 +10,9 @@ import net.minecraft.world.item.TooltipFlag;
 import javax.annotation.Nullable;
 import java.util.List;
 
+/**
+ * Helper method to add tooltips to items
+ */
 public class ItemWithToolTip extends Item {
 
     private String tooltipKey = "";

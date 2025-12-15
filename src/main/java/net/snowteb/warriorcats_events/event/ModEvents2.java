@@ -70,6 +70,9 @@ public class ModEvents2 {
     @SubscribeEvent
     public static void onPlayerDead(PlayerEvent.Clone event) {
 
+        /**
+         * When the player dies, reset the thirst back to max and sync it.
+         */
         event.getEntity().getCapability(PlayerThirstProvider.PLAYER_THIRST).ifPresent(newStore -> {
             if (event.isWasDeath()) {
                 newStore.reset();
@@ -85,7 +88,9 @@ public class ModEvents2 {
         });
 
 
-
+        /**
+         * If the player dies, keep the stealth data as it was. Unlocked if it was unlocked, on if it was on, etc.
+         */
         if (event.isWasDeath()) {
             event.getOriginal().reviveCaps();
             event.getEntity().getCapability(PlayerStealthProvider.STEALTH_MODE).ifPresent(newStore -> {
@@ -99,6 +104,11 @@ public class ModEvents2 {
             });
         }
 
+        /**
+         * If the player dies, keep the skill data as it was.
+         * Then manually apply every attribute again. 1 by 1.
+         * Then sync it.
+         */
         if (event.isWasDeath()) {
             event.getOriginal().reviveCaps();
             event.getEntity().getCapability(PlayerSkillProvider.SKILL_DATA).ifPresent(newStore -> {
@@ -213,6 +223,11 @@ public class ModEvents2 {
 
             event.player.getCapability(PlayerThirstProvider.PLAYER_THIRST).ifPresent(thirst -> {
 
+                /**
+                 * Every tick, a 0.000357 chance of decreasing thirst.
+                 * Which means, on average every 2-3 minutes
+                 * Then sync it.
+                 */
                 if (thirst.getThirst() > 0 && event.player.getRandom().nextFloat() < 0.000357 && !(event.player.isCreative() || event.player.isSpectator())) {
                     int oldThirst = thirst.getThirst();
                     thirst.subThirst(1);
@@ -221,12 +236,15 @@ public class ModEvents2 {
                     }
                 }
 
+                /**
+                 * If the thirst reaches zero, then hurt the player every 80 ticks, and set saturation to zero.
+                 */
                 if (thirst.getThirst() <= 0) {
                     thirst.tick();
 
-                    if (thirst.getThirstDamageTimer() >= 80) {
+                    if (thirst.getThirstDamageTimer() >= 60) {
                         event.player.getFoodData().setSaturation(0);
-                        event.player.hurt(event.player.damageSources().starve(), 2.0f);
+                        event.player.hurt(event.player.damageSources().starve(), 3.0f);
                         event.player.displayClientMessage(Component.literal("You are dehydrated!" ).withStyle(ChatFormatting.RED), true);
 
                         thirst.resetThirstDamageTimer();
@@ -241,7 +259,10 @@ public class ModEvents2 {
 
             event.player.getCapability(PlayerStealthProvider.STEALTH_MODE).ifPresent(cap -> {
 
-
+                /**
+                 * If Stealth is active, and its unlocked, and its on:
+                 * Then send a particle every 3 ticks.
+                 */
                     if (cap.isStealthOn() && cap.isUnlocked() && cap.isOn()) {
                         ServerLevel level = (ServerLevel) event.player.level();
 
@@ -281,7 +302,9 @@ public class ModEvents2 {
     }
 
 
-
+    /**
+     * When the player joins, sync its thirst data and its stealth data.
+     */
     @SubscribeEvent
     public static void onPlayerJoinWorld(EntityJoinLevelEvent event) {
         if(!event.getLevel().isClientSide()) {
@@ -297,6 +320,9 @@ public class ModEvents2 {
         }
     }
 
+    /**
+     * This is useless and i should remove it but i might need it one day
+     */
     @SubscribeEvent
     public static void onWorldLoad(LevelEvent.Load event) {
         if (!event.getLevel().isClientSide() && event.getLevel() instanceof ServerLevel serverWorld) {
@@ -312,7 +338,9 @@ public class ModEvents2 {
         }
     }
 
-
+    /**
+     * Every time and entity jumps, if it is a player, then modify its jump depending on the custom Attribute.
+     */
     @SubscribeEvent
     public static void onJump(LivingEvent.LivingJumpEvent event) {
         if (!(event.getEntity() instanceof Player player)) return;
@@ -328,6 +356,10 @@ public class ModEvents2 {
         }
     }
 
+
+    /**
+     * When the player joins for the first time. Give it items and send a message.
+     */
     @SubscribeEvent
     public static void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
         Player player = event.getEntity();
