@@ -43,9 +43,9 @@ public class BadgerEntity extends Animal implements GeoEntity {
 
     public static AttributeSupplier.Builder setAttributes() {
         return Animal.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 35D)
-                .add(Attributes.ATTACK_SPEED, 1.0f)
-                .add(Attributes.ATTACK_DAMAGE, 4.5f)
+                .add(Attributes.MAX_HEALTH, 38D)
+                .add(Attributes.ATTACK_SPEED, 1.2f)
+                .add(Attributes.ATTACK_DAMAGE, 5.0f)
                 .add(Attributes.MOVEMENT_SPEED, 0.30f);
     }
 
@@ -80,6 +80,10 @@ public class BadgerEntity extends Animal implements GeoEntity {
         return ModEntities.BADGER.get().create(pLevel);
     }
 
+
+    /**
+     * This is in charge of the animations
+     */
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllerRegistrar) {
         controllerRegistrar.add(new AnimationController<>
@@ -141,7 +145,9 @@ public class BadgerEntity extends Animal implements GeoEntity {
     }
 
 
-
+    /**
+     * Indicators that allow the entity to perform the attack animation
+     */
     public void setAttacking(boolean attacking) {
         this.entityData.set(ATTACKING, attacking);
     }

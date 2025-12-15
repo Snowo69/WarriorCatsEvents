@@ -16,6 +16,9 @@ import software.bernie.geckolib.model.data.EntityModelData;
 
 public class WCModel extends GeoModel<WCatEntity> {
 
+    /**
+     * An array list of all the textures available.
+     */
     public static final ResourceLocation[] TEXTURES = {
             new ResourceLocation("warriorcats_events:textures/entity/wcat/wcskin1.png"),
             new ResourceLocation("warriorcats_events:textures/entity/wcat/wcskin2.png"),
@@ -44,6 +47,9 @@ public class WCModel extends GeoModel<WCatEntity> {
         return new ResourceLocation(WarriorCatsEvents.MODID, "geo/wcat.geo.json");
     }
 
+    /**
+     * Depending on the variant, grab a texture from the list.
+     */
     @Override
     public ResourceLocation getTextureResource(WCatEntity object) {
         return TEXTURES[object.getVariant()];

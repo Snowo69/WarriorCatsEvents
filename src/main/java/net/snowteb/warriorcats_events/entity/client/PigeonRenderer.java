@@ -15,6 +15,9 @@ public class PigeonRenderer extends GeoEntityRenderer<PigeonEntity> {
         this.shadowRadius = 0.4F;
     }
 
+    /**
+     * Depending on the variant chosen, make sure it loads does load a different Texture
+     */
     @Override
     public ResourceLocation getTextureLocation(PigeonEntity entity) {
         return switch (entity.getPigeonVariant()) {

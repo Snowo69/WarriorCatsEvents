@@ -44,16 +44,6 @@ public class ClientEvents {
 
         @SubscribeEvent
         public static void onKeyInput(InputEvent.Key event) {
-            /*
-            if (ModKeybinds.HISSING_KEY.consumeClick()) {
-                ModPackets.sendToServer(new CtSHissPacket());
-            }
-
-            if (ModKeybinds.WATERDRINK_KEY.consumeClick()) {
-                ModPackets.sendToServer(new WaterPacket());
-            }
-
-             */
 
             if (ModKeybinds.SKILLMENU_KEY.consumeClick()) {
                 Minecraft.getInstance().setScreen(new SkillScreen());
@@ -85,6 +75,9 @@ public class ClientEvents {
             LocalPlayer player = mc.player;
             if (mc.player == null) return;
 
+            /**
+             * If the skill is unlocked and on, and the player is shifting, send the info to the StealthClientState.
+             */
             player.getCapability(PlayerStealthProvider.STEALTH_MODE).ifPresent(cap -> {
                 if (!cap.isUnlocked() || !cap.isOn()) return;
 
@@ -92,6 +85,10 @@ public class ClientEvents {
                 StealthClientState.tick(shifting);
             });
 
+            /**
+             * Keybinds with cooldowns.
+             * This is so holding down the key doesn't send 20 packets per second and breaks the whole game.
+             */
             if (hissCooldown > 0) hissCooldown--;
             if (waterCooldown > 0) waterCooldown--;
 
@@ -118,7 +115,9 @@ public class ClientEvents {
 
         }
 
-
+        /**
+         * Part of the Update checker
+         */
         @SubscribeEvent
         public static void onClientLogin(ClientPlayerNetworkEvent.LoggingIn event) {
             if (event.getPlayer().level().isClientSide()) {
@@ -173,7 +172,9 @@ public class ClientEvents {
 
         }
 
-
+        /**
+         * This allows the leaf door to change colors depending on the biome.
+         */
         @SubscribeEvent
         public static void registerBlockColors(RegisterColorHandlersEvent.Block event) {
             event.register(

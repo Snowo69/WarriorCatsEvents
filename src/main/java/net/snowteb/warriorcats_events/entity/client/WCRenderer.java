@@ -20,13 +20,19 @@ public class WCRenderer extends GeoEntityRenderer<WCatEntity> {
         this.shadowRadius = 0.4F;
     }
 
+    /**
+     * Fallback.
+     * This also sets a texture for each variant.
+     */
     @Override
     public ResourceLocation getTextureLocation(WCatEntity entity) {
         int variant = entity.getVariant();
         return WCModel.TEXTURES[Math.max(0, Math.min(variant, WCModel.TEXTURES.length - 1))];
     }
 
-
+    /**
+     * Depending on the variant, set a different visual size.
+     */
     @Override
     public void preRender(PoseStack poseStack, WCatEntity animatable, BakedGeoModel model, MultiBufferSource bufferSource, VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
         float scale = switch (animatable.getVariant()) {
@@ -61,6 +67,11 @@ public class WCRenderer extends GeoEntityRenderer<WCatEntity> {
     @Override
     public void render(WCatEntity entity, float entityYaw, float partialTick,
                        PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
+
+
+        /**
+         * If the entity is the entity the player is playing as (The one the player is morphed into), then set isPlayerShape.
+         */
 
         if (entity == PlayerShape.getCurrentShape(Minecraft.getInstance().player)) {
             AnimationClientData.isPlayerShape = true;

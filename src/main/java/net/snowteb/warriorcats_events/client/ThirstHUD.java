@@ -21,13 +21,22 @@ public class ThirstHUD {
 
         int x = screenWidth / 2 + 7;
         int y = screenHeight - 53;
+
+        /**
+         * If the player has an air supply lower than the max, then move the HUD 9 pixels above.
+         * This since the air supply bar only shows when the air is lower than 10.
+         */
+
         if (player.getAirSupply() < player.getMaxAirSupply()) {y -= 9;}
 
         int thirst = ClientThirstData.getPlayerThirst();
         int iconCount = 10;
 
+
+
         boolean lowThirst = thirst <= 5;
         boolean extraLowThirst = thirst <= 3;
+
         int tickCount = net.minecraft.client.Minecraft.getInstance().player.tickCount;
 
         for (int i = 0; i < iconCount; i++) {
@@ -39,6 +48,10 @@ public class ThirstHUD {
             else if (thirstRemaining == 1) texture = HALF_THIRST;
             else texture = EMPTY_THIRST;
 
+            /**
+            * Different offsets depending on the thirst remaining.
+            * This is what makes the bar shake.
+            */
             int yOffset = 0;
             if (lowThirst) {
                 yOffset = (int)(Math.sin((tickCount + i) * 1.0) * 2);

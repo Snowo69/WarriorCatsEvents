@@ -43,6 +43,10 @@ public class StoneCleftBlock extends BaseEntityBlock {
         return RenderShape.MODEL;
     }
 
+    /**
+     * If the block is removed, drop its inventory.
+     */
+
     @Override
     public void onRemove(BlockState pState, Level pLevel, BlockPos pPos, BlockState pNewState, boolean pIsMoving) {
 
@@ -55,6 +59,12 @@ public class StoneCleftBlock extends BaseEntityBlock {
 
         super.onRemove(pState, pLevel, pPos, pNewState, pIsMoving);
     }
+
+    /**
+     * Level: server
+     * If the entity is a Stone cleft Block entity, then open its menu and play a sound.
+     * Otherwise, throw an error
+     */
 
     @Override
     public InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {

@@ -73,6 +73,10 @@ import java.util.function.Predicate;
 
 import static net.snowteb.warriorcats_events.entity.custom.WCatEntity.Rank.APPRENTICE;
 
+/**
+ * Welcome to by far the most complicated shi to understand.
+ */
+
 public class WCatEntity extends TamableAnimal implements GeoEntity {
 
     public enum CatMode {
@@ -176,7 +180,10 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
             "pit", "stream", "patch"
     };
 
-    private String[] getPrefixSetForVariant(int variant) {
+    /**
+     * Depending on the variant, pick a set of prefixes
+     */
+    private String[] getPrefixForVariant(int variant) {
         return switch (variant) {
             case 0 -> PREFIX_1;
             case 1 -> PREFIX_2;
@@ -225,12 +232,15 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
     }
 
 
+
     @Override
     public Packet<ClientGamePacketListener> getAddEntityPacket() {
         return NetworkHooks.getEntitySpawningPacket(this);
     }
 
-
+    /**
+     * Under certain conditions, proceed to follow the owner.
+     */
     private static class CatFollowOwnerGoal extends Goal {
 
         private final TamableAnimal cat;
@@ -281,6 +291,12 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
             return cat.distanceTo(owner) > stopDistance;
         }
 
+        /**
+         * Calculates the distance to the owner, then looks at the owner.
+         * If the distance is greater than 25, teleport to the owner
+         * If the distance is less or equals than the max distance it can approach, then stop.
+         * If none of the other conditions are true, then move to where the owner is.
+         */
         @Override
         public void tick() {
             if (owner == null) return;
@@ -317,7 +333,11 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
     }
 
-
+    /**
+     * Under certain chance and conditions, find a target block in certain range. This depends on the cat's rank.
+     * When it starts, move to the block.
+     * When it stops, set a cooldown so it doesn't constantly move from block to block.
+     */
     public class CasualBlockSeekGoal extends Goal {
 
         private final WCatEntity cat;
@@ -394,6 +414,11 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
             return state -> state.is(targetBlock);
         }
 
+        /**
+         * In certain radious, make a list of available blocks.
+         * For every block found, verify if it could be a target.
+         * If it is, then set it as the target block.
+         */
         private BlockPos findTargetBlock() {
             Level level = cat.level();
             BlockPos origin = cat.blockPosition();
@@ -419,7 +444,10 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         }
     }
 
-
+    /**
+     * Under Certain conditions, the cat will pick a position withing the radius and will move to it.
+     * When it stops, set a cooldown so it doesn't constantly wander around.
+     */
     private class BoundedWanderGoal extends WaterAvoidingRandomStrollGoal {
 
         private final TamableAnimal cat;
@@ -516,7 +544,11 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         }
     }
 
-
+    /**
+     * Under certain conditions, find the nearest valid item it can pick up.
+     * When it starts, move to the target.
+     * When it stops, set the target as null, and the security counter is set to zero, and stop moving.
+     */
     public class WCatPickupItemGoal extends Goal {
 
         private final WCatEntity cat;
@@ -581,21 +613,34 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                 return;
             }
 
+            /**
+             * If it is not moving, then move to the target.
+             */
             if (!cat.getNavigation().isInProgress()) {
                 cat.getNavigation().moveTo(target, 1.1D);
             }
 
+            /**
+             * If it still is not moving, start counting.
+             */
             if (cat.getNavigation().isInProgress()) {
                 keepTicks = 0;
             } else {
                 keepTicks++;
             }
 
+            /**
+             * In case it gets stuck without being able to pick up the item or move, then stop.
+             */
             if (keepTicks > 60) {
                 stop();
                 return;
             }
 
+            /**
+             * Withing certain distance of the target, try to insert it into the inventory.
+             * Then remove 1 from the stack on the ground.
+             */
             ItemStack groundItems = target.getItem();
             if (cat.distanceTo(target) < 1.2D) {
                 if (cat.tryInsert(groundItems)) {
@@ -620,6 +665,10 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                 }
                 stop();
             } else {
+
+                /**
+                 * If the distance to the item is not enough and this is not moving, then move around the item.
+                 */
                 if (!cat.getNavigation().isInProgress()) {
                     List<BlockPos> positions = List.of(
                             target.blockPosition().offset(2, 1, 2),
@@ -638,6 +687,11 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         }
 
 
+        /**
+         * In certain are, make a list of droped items.
+         * Then for every item in the list, verify if the cat can accept it.
+         * If the distance to the item is less than the one from the last item, then set that item as the closest.
+         */
         private ItemEntity findNearestItem() {
             AABB box = cat.getBoundingBox().inflate(16);
 
@@ -665,7 +719,13 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         }
 
     }
-
+    /**
+     * Depending on the rank, different conditions.
+     * Then for every slot in the cat's inventory, verify that:
+     * 1) If the slot is not empty, the item in the slot is the same as the target item, and the item count is less than 32, return true.
+     * 2) If the slot is empty, return true as well.
+     * If the for naturally ends, return false.
+     */
     public boolean canAccept(ItemStack stack) {
 
         if (this.getRank() == Rank.MEDICINE) {
@@ -693,7 +753,12 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         return false;
     }
 
-
+    /**
+     * For every slot in the inventory:
+     * If the slot is empty, then copy the item from the dropped item and return true.
+     * If the item in the slot is the same as the item on the ground, then increment its ammount by 1 and return true.
+     * Otherwise return false.
+     */
     private boolean tryInsert(ItemStack stack) {
         for (int i = 0; i < inventory.getContainerSize(); i++) {
             ItemStack slot = inventory.getItem(i);
@@ -709,15 +774,35 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         return false;
     }
 
-
+    /**
+     * Called when the entity dies.
+     */
     @Override
     protected void dropCustomDeathLoot(DamageSource source, int looting, boolean recentlyHit) {
         super.dropCustomDeathLoot(source, looting, recentlyHit);
 
+        /**
+         * If these conditions are true, then return.
+         */
         if (this.level().isClientSide) return;
         if (this.isRemoved() && !this.dead) return;
         if (this.isBaby()) return;
 
+        /**
+         * If it has an owner, then send the owner a message with the coordinates where the cat died.
+         */
+        if (this.getOwner() != null) {
+            ServerPlayer owner = (ServerPlayer) this.getOwner();
+            owner.sendSystemMessage(Component.literal(
+                    String.format("At: X=%.1f, Y=%.1f, Z=%.1f",
+                            this.getX(), this.getY(), this.getZ())
+            ).withStyle(ChatFormatting.GRAY));
+        }
+
+        /**
+         * For every slot in the cats inventory, get the item that's in the slot.
+         * If the slot is not empty, then spawn a dropped item at the position and set the slot in the inventory empty.
+         */
         for (int i = 0; i < inventory.getContainerSize(); i++) {
             ItemStack stack = inventory.getItem(i);
 
@@ -726,6 +811,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                 inventory.setItem(i, ItemStack.EMPTY);
             }
         }
+
     }
 
 
@@ -774,7 +860,9 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         );
     }
 
-
+    /**
+     * This is just too much, if you have any questions about the mobinteract just ask me, i aint writing all this :sob:
+     */
     @Override
     public InteractionResult mobInteract(Player pPlayer, InteractionHand pHand) {
         ItemStack itemstack = pPlayer.getItemInHand(pHand);
@@ -810,7 +898,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
                     if (!this.hasCustomName()) {
                         int variant = this.getVariant();
-                        String[] prefixSet = getPrefixSetForVariant(variant);
+                        String[] prefixSet = getPrefixForVariant(variant);
 
                         String genderS;
                         if (this.getGender() == 0) {
@@ -975,7 +1063,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
 
                 int variantS = this.getVariant();
-                String[] prefixSet = getPrefixSetForVariant(variantS);
+                String[] prefixSet = getPrefixForVariant(variantS);
 
                 String genderV;
                 if (this.getGender() == 0) {
@@ -1140,7 +1228,15 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         return super.mobInteract(pPlayer, pHand);
     }
 
-
+    /**
+     * Called when two entities are set in love.
+     *
+     * If the other parent is a Wild cat, and this car is tamed, and the other one is tamed:
+     * Then if this cats gender is 1, and if the other cats gender is zero, then set this cat to expect kits and send the advancement.
+     * Then reset the love counter, this so the she cat doesn't spawn infinite kits for no reason.
+     *
+     * This method is called in both cats, so its not necessary to make two logics.
+     */
     @Override
     public AgeableMob getBreedOffspring(ServerLevel level, AgeableMob otherParent) {
 
@@ -1170,6 +1266,9 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                 this.resetLove();
             }
 
+            /**
+             * If the cats are the same gender, unlock the advancement.
+             */
             if (this.getGender() == partner.getGender()) {
                 Entity owner = this.getOwner();
                 if (owner instanceof ServerPlayer serverPlayer) {
@@ -1186,9 +1285,18 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                 }
             }
 
+            /**
+             * After all is done, set this cats mate info to the other cats name.
+             */
             Component MateName = otherParent.getCustomName();
             this.setMate(MateName);
 
+            /**
+             * If for any reason, bug, glitch, the other partner's mate info doesn't change, then try to change it again.
+             */
+            if (Objects.equals(partner.getMate(), Component.literal("None"))) {
+                partner.setMate(this.getCustomName());
+            }
         }
 
         return null;
@@ -1200,11 +1308,16 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         super.handleEntityEvent(pId);
     }
 
-
+    /**
+     * Called every tick.
+     */
     @Override
     public void aiStep() {
         super.aiStep();
 
+        /**
+         * If this cat is expecting kits, then set a counter until the kits are born.
+         */
         if (!this.level().isClientSide && this.isExpectingKits()) {
             this.setKittingTicks(this.getKittingTicks() + 1);
 
@@ -1217,7 +1330,9 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
             }
         }
 
-
+        /**
+         * If the kit grew from baby to adult, then perform onGrewUp, change its rank and attributes.
+         */
         if (!this.level().isClientSide()) {
             if (this.wasBaby && !this.isBaby()) {
                 this.onGrewUp();
@@ -1227,7 +1342,13 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
             this.wasBaby = this.isBaby();
         }
 
-
+        /**
+         * If the cats mode is sit:
+         * if it isn't ordered to sit, order it to sit, then stop all navigations.
+         *
+         * Otherwise:
+         * If it is ordered to sit, then set it to false.
+         */
         if (mode == CatMode.SIT) {
             if (!this.isOrderedToSit()) this.setOrderedToSit(true);
             this.getNavigation().stop();
@@ -1235,6 +1356,9 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
             if (this.isOrderedToSit()) this.setOrderedToSit(false);
         }
 
+        /**
+         * If a cat is following ant its distance to the owner is bigger than 25, then find a valid position under certain conditions, and teleport to it.
+         */
         if (this.tickCount % 10 != 0) return;
         if (mode == CatMode.FOLLOW && this.isTame()) {
             LivingEntity owner = this.getOwner();
@@ -1300,7 +1424,9 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         this.setHealth(this.getMaxHealth());
     }
 
-
+    /**
+     * It can't attack other animals tamed by their own owner
+     */
     @Override
     public boolean canAttack(LivingEntity target) {
         if (target instanceof TamableAnimal tam && tam.isTame()) {
@@ -1316,6 +1442,9 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         return super.canAttack(target);
     }
 
+    /**
+     * It is allied to any other animals tamed by their own owner
+     */
     @Override
     public boolean isAlliedTo(Entity other) {
         if (other instanceof TamableAnimal tam && tam.isTame()) {
@@ -1427,7 +1556,10 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         }
     }
 
-
+    /**
+     * This is in charge of animations.
+     * Again, any questions about this just ask me personally
+     */
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         controllers.add(new AnimationController<>
@@ -1631,7 +1763,9 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         return cache;
     }
 
-
+    /**
+     * Sends a different message depending on the cat's mode.
+     */
     private void sendModeMessage(Player player) {
         String name = this.getName().getString();
         switch (mode) {
@@ -1647,6 +1781,9 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         }
     }
 
+    /**
+     * Sends a different message depending on the cat's rank
+     */
     private void sendRankMessage(Player player) {
         Rank r = this.getRank();
         String name = this.getName().getString();
@@ -1660,7 +1797,20 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         }
     }
 
+    /**
+     * This is called when the she-cat is kitting.
+     * First, set a random number which will be the ammount of kits, then for every kit that will be born:
+     * Reset love so it doesn't spawn kits infinitely.
+     * Create a Wild Cat instance.
+     * Set its position, age, set it tamed, set its rank, etc etc.
+     * Then set its name.
+     * If the owner is a player, send a message announcing that the kit was born.
+     * Then set its variant, wander center, attributes
+     * And finally: Spawn the kit
+     * Tadaaaaa
+     */
     private void Kitting() {
+        String lastPrefix = "";
         if (!(this.level() instanceof ServerLevel server)) return;
         this.setExpectingKits(false);
         LivingEntity owner = this.getOwner();
@@ -1683,7 +1833,9 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
                 if (!kit.hasCustomName()) {
                     int variant = kit.getVariant();
-                    String[] prefixSet = getPrefixSetForVariant(variant);
+                    String[] prefixSet = getPrefixForVariant(variant);
+
+
 
                     String genderS;
                     if (kit.getGender() == 0) {
@@ -1693,6 +1845,16 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                     }
 
                     int k = kit.random.nextInt(prefixSet.length);
+
+                    /**
+                     * This is so that kits born in the same litter dont have the same prefix when they are born.
+                     * Since all this can happen in the same tick, then they all might share the same name, that's why this exists.
+                     */
+                    if (lastPrefix.equals(prefixSet[k])) {
+                        k = kit.random.nextInt(prefixSet.length);
+                    }
+
+                    lastPrefix = prefixSet[k];
 
                     finalName = prefixSet[k] + "kit" + genderS;
                     kit.setCustomName(Component.literal(finalName));
@@ -1722,9 +1884,12 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
     }
 
+    /**
+     * Called when the age is zero (when the cat grows from baby to adult)
+     */
     private void onGrewUp() {
         Component prefix = this.getPrefix();
-        if (prefix != null) {
+        if (prefix != null && this.isTame()) {
             String genderV = this.getGender() == 0 ? " ♂" : " ♀";
             int i = this.random.nextInt(SUFIX.length);
 
@@ -1740,7 +1905,9 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         }
     }
 
-
+    /**
+     * Different voice pitch depending on a cat's age and rank
+     */
     @Override
     public float getVoicePitch() {
         return this.isBaby() ?
@@ -1752,6 +1919,11 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                 (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F;
     }
 
+    /**
+     * Makes a list of Wild Cats around certain area.
+     * If there is a cat in the area of different gender than this cats gender, then return true.
+     * Otherwise return false
+     */
     private boolean hasValidMateNearby() {
         if (!this.isTame()) return false;
 
@@ -1788,11 +1960,15 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
     }
 
-
+    /**
+     * Indicator to allow the cat to perform the attack animation
+     */
     public void setAttacking(boolean attacking) {
         this.entityData.set(ATTACKING, attacking);
     }
-
+    /**
+     * Indicator to allow the cat to perform attack animation
+     */
     public boolean isAttacking() {
         return this.entityData.get(ATTACKING);
     }
@@ -1802,6 +1978,11 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         return this.entityData.get(VARIANT);
     }
 
+    /**
+     * Sets the variant and stores it in NBT.
+     * Then change the functional size of the cat depending on the variant.
+     * This is the collision box size, not the visual size.
+     */
     public void setVariant(int variant) {
         this.entityData.set(VARIANT, variant);
         float scale = switch (variant) {
@@ -1848,9 +2029,13 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
     public void tick() {
         super.tick();
 
-
+        /**
+         * If the cat is not apprentice, and the age is bigger than half of the total time until fully grown, and this cat is tamed and it was born as a kit:
+         * Then set apprenticeAge to true. This enables the dynamic visual size.
+         * then change its name and apply the new attributes.
+         */
         if (!this.level().isClientSide()) {
-            if (!apprenticeAge && this.getAge() >= -((getKitGrowthTimeMinutes() * 60 * 20) / 2) && this.kitBorn) {
+            if (!apprenticeAge && this.getAge() >= -((getKitGrowthTimeMinutes() * 60 * 20) / 2) && this.kitBorn && this.isTame()) {
                 apprenticeAge = true;
 
                 String genderS;
@@ -1943,7 +2128,9 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         this.entityData.set(APP_SCALE, value);
     }
 
-
+    /**
+     * When a Wild Cat spawns, set a random gender and a random variant.
+     */
     @Override
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor pLevel, DifficultyInstance pDifficulty, MobSpawnType pReason, @Nullable SpawnGroupData pSpawnData, @Nullable CompoundTag pDataTag) {
         SpawnGroupData data = super.finalizeSpawn(pLevel, pDifficulty, pReason, pSpawnData, pDataTag);
@@ -1958,6 +2145,9 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         return data;
     }
 
+    /**
+     * If the cat is crouching, change its collision box.
+     */
     @Override
     public EntityDimensions getDimensions(Pose pose) {
         float scale = this.entityData.get(SCALE);
@@ -1999,6 +2189,9 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         return ModSounds.WILDCAT_SCREAM.get();
     }
 
+    /**
+     * When the pose changes, refresh dimensions. This is what allows you to not glitch into walls and stuff if you are a Wild Cat
+     */
     @Override
     public void setPose(Pose pose) {
         super.setPose(pose);

@@ -11,6 +11,9 @@ import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.level.block.Blocks;
 
+/**
+ * This is the same as BadgerAttackGoal, read that one to understand.
+ */
 public class WCAttackGoal extends MeleeAttackGoal {
     private final WCatEntity entity;
     private int attackDelay = 10;

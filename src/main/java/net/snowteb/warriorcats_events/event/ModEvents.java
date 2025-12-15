@@ -32,6 +32,9 @@ import static net.minecraft.world.flag.FeatureFlags.VANILLA;
 @Mod.EventBusSubscriber(modid = WarriorCatsEvents.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ModEvents {
 
+    /**
+     * Valid spawns registry
+     */
     private void commonSetup(final FMLCommonSetupEvent event) {
         event.enqueueWork(() -> {
             SpawnPlacements.register(
@@ -75,7 +78,9 @@ public class ModEvents {
 
     }
 
-
+    /**
+     * Adds the custom font.
+     */
     @SubscribeEvent
     public static void addPackFinder(AddPackFindersEvent event) {
         if (event.getPackType() != PackType.CLIENT_RESOURCES) return;
@@ -120,6 +125,9 @@ public class ModEvents {
 
     }
 
+    /**
+     * This adds the custom attribute to the player.
+     */
     @SubscribeEvent
     public static void onEntityAttributeModification(EntityAttributeModificationEvent event) {
         event.add(EntityType.PLAYER, ModAttributes.PLAYER_JUMP.get());

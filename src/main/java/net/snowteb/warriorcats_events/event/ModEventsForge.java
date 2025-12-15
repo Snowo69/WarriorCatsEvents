@@ -76,10 +76,10 @@ public class ModEventsForge {
                     || stack.is(Items.RABBIT) || stack.is(Items.SALMON)
                     || stack.is(Items.COD) || stack.is(Items.TROPICAL_FISH)
                     || stack.is(Items.SWEET_BERRIES)) {
-                int randomThirst = 1;
+                int randomThirst = 1 + player.getRandom().nextInt(1);
                 thirst.addThirst(randomThirst);
                 if (!stack.is(Items.SWEET_BERRIES)){
-                    player.getFoodData().eat(3, 0.75f);
+                    player.getFoodData().eat(2, 0.75f);
                 }
             }
 

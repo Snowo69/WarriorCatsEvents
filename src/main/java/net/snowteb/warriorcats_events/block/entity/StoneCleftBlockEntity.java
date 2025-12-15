@@ -26,6 +26,10 @@ import net.snowteb.warriorcats_events.screen.StoneCleftMenu;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * On content changes, calls setChanged(), this to avoid items from disappearing after leaving the world.
+ */
+
 public class StoneCleftBlockEntity extends BlockEntity implements MenuProvider {
     private final ItemStackHandler itemHandler = new ItemStackHandler(24) {
         @Override
@@ -87,6 +91,10 @@ public class StoneCleftBlockEntity extends BlockEntity implements MenuProvider {
         super.invalidateCaps();
         LazyItemHandler.invalidate();
     }
+
+    /**
+     * For every slot in the container, add that item to an inventory, and then after its done, drop the inventory.
+     */
 
     public void drops() {
         SimpleContainer inventory = new SimpleContainer(itemHandler.getSlots());

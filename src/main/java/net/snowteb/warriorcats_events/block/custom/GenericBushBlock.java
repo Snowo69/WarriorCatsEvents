@@ -46,6 +46,14 @@ public class GenericBushBlock extends SweetBerryBushBlock {
         return new ItemStack(dropItem.get());
     }
 
+
+    /**
+     * If the block age is not 3 and the item in hand is Bone Meal, Interaction result is PASS,
+     * Another method will handle it, the super in this case.
+     *
+     * If the age is bigger than stage 1, harvest the items, and replace the block.
+     */
+
     @Override
     public InteractionResult use(BlockState state, Level level, BlockPos pos,
                                  Player player, InteractionHand hand, BlockHitResult hit) {
@@ -74,12 +82,21 @@ public class GenericBushBlock extends SweetBerryBushBlock {
         return super.use(state, level, pos, player, hand, hit);
     }
 
+    /**
+     * If an entity is inside the bush, make it get stuck (Overrides so it doesn't hurt as the berry bush does)
+     */
+
     @Override
     public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
         if (entity instanceof LivingEntity && entity.getType() != EntityType.FOX && entity.getType() != EntityType.BEE) {
             entity.makeStuckInBlock(state, new Vec3(1D, 1D, 1D));
         }
     }
+
+    /**
+     * If the age is not at its max, the light level is 9 or greater,
+     * and a random generated number is correct, then grow the plant.
+     */
 
     @Override
     public void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {

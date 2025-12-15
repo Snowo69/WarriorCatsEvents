@@ -28,6 +28,9 @@ public class ClientEventsForge {
             ResourceLocation screen = new ResourceLocation(WarriorCatsEvents.MODID,
                     "textures/hud/stealth_overlay_4.png");
 
+            /**
+             * If the stealth is on, render an overlay.
+             */
             if (cap.isStealthOn()) {
 
                 GuiGraphics gui = event.getGuiGraphics();

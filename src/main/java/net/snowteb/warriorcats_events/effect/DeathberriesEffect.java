@@ -17,7 +17,10 @@ public class DeathberriesEffect extends MobEffect {
 
     }
 
-
+    /**
+     * Hurt the entity every time this is called.
+     * And if it's a player, then remove its saturation as well
+     */
     public void applyEffectTick(LivingEntity entity, int amplifier) {
             entity.hurt(entity.damageSources().magic(), 1.2F + amplifier);
         if (entity instanceof Player player) {
@@ -25,6 +28,9 @@ public class DeathberriesEffect extends MobEffect {
         }
     }
 
+    /**
+     * Whatever the applyEfectTick does, it will do it every 40 ticks instead of every tick.
+     */
     @Override
     public boolean isDurationEffectTick(int duration, int amplifier) {
         return duration % 40 == 0;
