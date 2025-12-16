@@ -30,6 +30,7 @@ public class ModItemModelProvider extends ItemModelProvider {
         simpleItem(ModItems.FRESHKILL_AND_HERBS_BUNDLE);
         simpleItem(ModItems.TRAVELING_HERBS);
         simpleItem(ModItems.WARRIORS_GUIDE);
+        simpleItem(ModItems.FLOWER_CROWN);
 
 
         simpleBlockItem(ModBlocks.LEAF_DOOR);

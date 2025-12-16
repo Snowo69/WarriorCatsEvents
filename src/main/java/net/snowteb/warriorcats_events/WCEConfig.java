@@ -37,7 +37,7 @@ public class WCEConfig {
 
             KIT_GROWTH_MINUTES = builder
                     .comment("The time in minutes it takes for a kit to grow from kit to warrior (min: 10, max: 180)")
-                    .defineInRange("kitGrowthMinutes", 90, 10, 180);
+                    .defineInRange("kitGrowthMinutes", 120, 10, 960);
 
             SKILL_COST_MULTIPLIER = builder
                     .comment("The cost multiplier that will define the skill's cost (min: 0.2, max: 3)")

@@ -104,7 +104,7 @@ public class GenericBushBlock extends SweetBerryBushBlock {
 
         if (age < 3 &&
                 level.getRawBrightness(pos.above(), 0) >= 9 &&
-                net.minecraftforge.common.ForgeHooks.onCropsGrowPre(level, pos, state, random.nextInt(10) == 0)) {
+                net.minecraftforge.common.ForgeHooks.onCropsGrowPre(level, pos, state, random.nextInt(15) == 0)) {
 
             BlockState newState = state.setValue(AGE, age + 1);
             level.setBlock(pos, newState, 2);

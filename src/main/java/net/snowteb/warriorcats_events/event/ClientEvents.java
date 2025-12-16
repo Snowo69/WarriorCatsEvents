@@ -115,6 +115,7 @@ public class ClientEvents {
 
         }
 
+
         /**
          * Part of the Update checker
          */

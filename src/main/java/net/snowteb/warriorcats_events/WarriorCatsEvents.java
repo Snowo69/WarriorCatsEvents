@@ -151,6 +151,10 @@ public class WarriorCatsEvents {
             event.accept(ModItems.BADGER_SPAWN_EGG);
         }
 
+        if (event.getTabKey() == CreativeModeTabs.COMBAT) {
+            event.accept(ModItems.FLOWER_CROWN);
+        }
+
 
 
 

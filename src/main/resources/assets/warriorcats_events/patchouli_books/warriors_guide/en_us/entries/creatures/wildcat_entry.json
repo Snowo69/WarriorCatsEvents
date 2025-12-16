@@ -112,8 +112,14 @@
       "item": "warriorcats_events:warrior_name_randomizer",
       "title": "Changing Names",
       "text": "The Name Randomizer has limited use, so if you are really indecisive, you might want to make a few of these."
-    }
+    },
 
+    {
+      "type": "patchouli:spotlight",
+      "item": "warriorcats_events:catmint",
+      "title": "Scenting",
+      "text": "Medicine cats can help you find herbs! $(br2)If you interact with a Medicine cat with an herb in hand, it will scent the air and tell you if they can scent anything nearby.$(br)"
+    }
   ]
 
 
