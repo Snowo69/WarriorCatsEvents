@@ -3,6 +3,7 @@ package net.snowteb.warriorcats_events.entity.custom;
 import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
@@ -119,6 +120,15 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
     private boolean wasBaby = this.isBaby();
     int catSniffTickCooldown = 0;
     public boolean isAShape = false;
+
+    private int scentTick = 0;
+    private Vec3 scentDirection = null;
+    private Vec3 scentStartPos = null;
+    private double scentDistance = 0;
+    private double scentMaxDistance = 5;
+    private double scentStep = 0.2;
+
+
 
     private final SimpleContainer inventory = new SimpleContainer(3);
 
@@ -1429,6 +1439,30 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
         catSniffTickCooldown = 400;
 
+        Vec3 catVec = this.position().add(0, 0.6, 0);
+        Vec3 targetVec = Vec3.atCenterOf(closest[0]);
+
+        Vec3 direction = targetVec.subtract(catVec).normalize();
+
+        double maxDistance = 10.0;
+
+        double step = 0.2;
+
+        for (double d = 0; d < maxDistance; d += step) {
+            Vec3 particlePos = catVec.add(direction.scale(d));
+
+            double pOffset = 0.1 + (1/3)*d + (0.05 * (Math.exp(0.5 * d) - 1));
+            ((ServerLevel) this.level()).sendParticles(
+                    ParticleTypes.END_ROD,
+                    particlePos.x,
+                    particlePos.y,
+                    particlePos.z,
+                    1,
+                    pOffset, pOffset, pOffset,
+                    0.0
+            );
+        }
+
     }
 
 
@@ -2358,6 +2392,31 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
          */
         if (!this.level().isClientSide()) {
             if (catSniffTickCooldown > 0) catSniffTickCooldown--;
+
+            if (scentDirection != null && scentDistance < scentMaxDistance) {
+                scentTick++;
+
+                if (scentTick % 2 == 0) {
+                    Vec3 particlePos = scentStartPos.add(scentDirection.scale(scentDistance));
+
+                    ((ServerLevel)this.level()).sendParticles(
+                            ParticleTypes.HAPPY_VILLAGER,
+                            particlePos.x, particlePos.y, particlePos.z,
+                            1,
+                            particlePos.x * scentDistance,
+                            particlePos.y * scentDistance,
+                            particlePos.z * scentDistance,
+                            0.0
+                    );
+
+
+                    scentDistance += scentStep;
+                }
+            }
+
+            if (scentDistance > scentMaxDistance) {
+                scentDirection = null;
+            }
 
             if (!apprenticeAge && this.getAge() >= -((getKitGrowthTimeMinutes() * 60 * 20) / 2) && this.kitBorn && this.isTame()) {
                 apprenticeAge = true;
