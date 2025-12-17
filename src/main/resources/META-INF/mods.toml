@@ -4,9 +4,9 @@ license="All Rights Reserved"
 
 [[mods]]
 modId="warriorcats_events"
-displayName="WarriorCats Events (Beta)"
+displayName="Warrior Cats Events"
 description="Turn your world into a Warrior Cats survival experience!"
-version="4.4.2 beta"
+version="1.0.1"
 authors="Klyonstar / Snowstar"
 credits="""
 Sharon Hurvitz (Author of "Generations")
