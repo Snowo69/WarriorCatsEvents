@@ -7,6 +7,9 @@ import net.minecraft.world.level.Level;
 import tocraft.walkers.api.variant.TypeProvider;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 
+/**
+ * Provides all the available variants of the wild cat.
+ */
 public class WCatTypeProvider extends TypeProvider<WCatEntity> {
 
     @Override

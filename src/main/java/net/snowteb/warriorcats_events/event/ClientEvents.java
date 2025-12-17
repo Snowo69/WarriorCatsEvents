@@ -26,28 +26,24 @@ import net.snowteb.warriorcats_events.network.ModPackets;
 import net.snowteb.warriorcats_events.network.packet.CtSHissPacket;
 import net.snowteb.warriorcats_events.network.packet.ReqSkillDataPacket;
 import net.snowteb.warriorcats_events.network.packet.WaterPacket;
-import net.snowteb.warriorcats_events.screen.EmoteWheelScreen;
-import net.snowteb.warriorcats_events.screen.ModMenuTypes;
-import net.snowteb.warriorcats_events.screen.SkillScreen;
-import net.snowteb.warriorcats_events.screen.StoneCleftScreen;
+import net.snowteb.warriorcats_events.screen.*;
 import net.snowteb.warriorcats_events.skills.StealthClientState;
 import net.snowteb.warriorcats_events.sound.ModSounds;
 import net.snowteb.warriorcats_events.stealth.PlayerStealthProvider;
 import net.snowteb.warriorcats_events.util.ModKeybinds;
 
 public class ClientEvents {
+    private static boolean hissPressed;
+    private static boolean waterPressed;
+    private static int hissCooldown = 0;
+    private static int waterCooldown = 0;
+
+
     @Mod.EventBusSubscriber(modid = WarriorCatsEvents.MODID, value = Dist.CLIENT)
     public static class ClientForgeEvents {
 
         @SubscribeEvent
         public static void onKeyInput(InputEvent.Key event) {
-            if (ModKeybinds.HISSING_KEY.consumeClick()) {
-                ModPackets.sendToServer(new CtSHissPacket());
-              }
-
-            if (ModKeybinds.WATERDRINK_KEY.consumeClick()) {
-                ModPackets.sendToServer(new WaterPacket());
-            }
 
             if (ModKeybinds.SKILLMENU_KEY.consumeClick()) {
                 Minecraft.getInstance().setScreen(new SkillScreen());
@@ -74,10 +70,16 @@ public class ClientEvents {
 
         @SubscribeEvent
         public static void onClientTick(TickEvent.ClientTickEvent event) {
+            if (event.phase != TickEvent.Phase.END) return;
             Minecraft mc = Minecraft.getInstance();
             LocalPlayer player = mc.player;
             if (mc.player == null) return;
-
+            if (mc.level == null) return;
+            if (mc.screen != null) return;
+            if (!mc.isWindowActive()) return;
+            /**
+             * If the skill is unlocked and on, and the player is shifting, send the info to the StealthClientState.
+             */
             player.getCapability(PlayerStealthProvider.STEALTH_MODE).ifPresent(cap -> {
                 if (!cap.isUnlocked() || !cap.isOn()) return;
 
@@ -85,12 +87,40 @@ public class ClientEvents {
                 StealthClientState.tick(shifting);
             });
 
+            /**
+             * Keybinds with cooldowns.
+             * This is so holding down the key doesn't send 20 packets per second and breaks the whole game.
+             */
+            if (hissCooldown > 0) hissCooldown--;
+            if (waterCooldown > 0) waterCooldown--;
 
+            if (ModKeybinds.HISSING_KEY.isDown() && hissCooldown == 0) {
+                if (!hissPressed) {
+                    ModPackets.sendToServer(new CtSHissPacket());
+                    hissPressed = true;
+                    hissCooldown = 30;
+                }
+            } else {
+                hissPressed = false;
+            }
+
+            if (ModKeybinds.WATERDRINK_KEY.isDown() && waterCooldown == 0) {
+                if (!waterPressed) {
+                    ModPackets.sendToServer(new WaterPacket());
+                    waterPressed = true;
+                    waterCooldown = 7;
+                }
+            } else {
+                waterPressed = false;
+            }
 
 
         }
 
 
+        /**
+         * Part of the Update checker
+         */
         @SubscribeEvent
         public static void onClientLogin(ClientPlayerNetworkEvent.LoggingIn event) {
             if (event.getPlayer().level().isClientSide()) {
@@ -145,7 +175,9 @@ public class ClientEvents {
 
         }
 
-
+        /**
+         * This allows the leaf door to change colors depending on the biome.
+         */
         @SubscribeEvent
         public static void registerBlockColors(RegisterColorHandlersEvent.Block event) {
             event.register(
@@ -162,6 +194,7 @@ public class ClientEvents {
         @SubscribeEvent
         public static void clientSetup(FMLClientSetupEvent event) {
             MenuScreens.register(ModMenuTypes.STONECLEFT_MENU.get(), StoneCleftScreen::new);
+            MenuScreens.register(ModMenuTypes.WCAT_INVENTORY.get(), WCatScreen::new);
             UpdateCheck.checkForUpdates();
         }
 

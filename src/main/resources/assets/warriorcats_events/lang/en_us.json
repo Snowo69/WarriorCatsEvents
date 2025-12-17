@@ -42,7 +42,7 @@
   "item.warriorcats_events.freshkill_and_herbs.tooltip": "Give this to a Wild Cat to recruit it! Sure they will love it.",
 
   "item.warriorcats_events.claws": "Claws",
-  "item.warriorcats_events.claws.tooltip": "Designed by nature to hunt and fight.\\nThese will also help gathering plants and leaves without breaking them.",
+  "item.warriorcats_events.claws.tooltip": "Designed by nature to hunt and fight.\\nThese will also help gathering plants and leaves without breaking them.\\nShift + Right-Click on a Wild Cat to open it's inventory.",
 
   "item.warriorcats_events.catmint_leaves": "Catmint",
   "item.warriorcats_events.catmint.tooltip": "The best remedy for greencough so far.\\nVery tasty, it would make you touch the sky!\\nGive this to tamed Wild Cats to make them be mates.",
@@ -97,6 +97,8 @@
   "item.warriorcats_events.mouse": "Mouse",
   "item.warriorcats_events.squirrel": "Squirrel",
   "item.warriorcats_events.pigeon": "Pigeon",
+
+  "item.warriorcats_events.flower_crown": "Flower Crown",
 
   "item.warriorcats_events.warriors_guide": "A Warrior's Guide",
   "item.warriorcats_events.warriors_guide.tooltip": "Every warrior needs guidance at some point!"

@@ -100,7 +100,10 @@ public class SquirrelEntity extends Animal implements GeoEntity {
     }
 
 
-
+    @Override
+    public int getExperienceReward() {
+        return 20 + 3*this.random.nextInt(5);
+    }
 
     @Override
     protected SoundEvent getAmbientSound() {

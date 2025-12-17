@@ -9,6 +9,9 @@ import net.minecraftforge.network.simple.SimpleChannel;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.network.packet.*;
 
+/**
+ * All about this or any packets, just ask me personally, i aint explaining all that
+ */
 public class ModPackets {
     private static SimpleChannel INSTANCE;
     private static int packetID = 0;

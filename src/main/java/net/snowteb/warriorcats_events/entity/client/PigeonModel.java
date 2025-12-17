@@ -18,6 +18,9 @@ public class PigeonModel extends GeoModel<PigeonEntity> {
         return new ResourceLocation(WarriorCatsEvents.MODID, "geo/pigeon.geo.json");
     }
 
+    /**
+     * Depending on the variant chosen, then render a different texture
+     */
     @Override
     public ResourceLocation getTextureResource(PigeonEntity entity) {
         return switch (entity.getPigeonVariant()) {

@@ -1,6 +1,7 @@
 package net.snowteb.warriorcats_events.client;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.gui.overlay.IGuiOverlay;
@@ -18,16 +19,30 @@ public class ThirstHUD {
     public static final IGuiOverlay HUD_THIRST = ((gui, guiGraphics, partialTick, screenWidth, screenHeight) -> {
         var player = net.minecraft.client.Minecraft.getInstance().player;
         if (player == null || player.isCreative()) return;
+        Minecraft mc = Minecraft.getInstance();
+        if (!mc.isWindowActive()) return;
+        if (mc.level == null) return;
+        if (mc.screen != null) return;
+
 
         int x = screenWidth / 2 + 7;
         int y = screenHeight - 53;
+
+        /**
+         * If the player has an air supply lower than the max, then move the HUD 9 pixels above.
+         * This since the air supply bar only shows when the air is lower than 10.
+         */
+
         if (player.getAirSupply() < player.getMaxAirSupply()) {y -= 9;}
 
         int thirst = ClientThirstData.getPlayerThirst();
         int iconCount = 10;
 
+
+
         boolean lowThirst = thirst <= 5;
         boolean extraLowThirst = thirst <= 3;
+
         int tickCount = net.minecraft.client.Minecraft.getInstance().player.tickCount;
 
         for (int i = 0; i < iconCount; i++) {
@@ -39,6 +54,10 @@ public class ThirstHUD {
             else if (thirstRemaining == 1) texture = HALF_THIRST;
             else texture = EMPTY_THIRST;
 
+            /**
+            * Different offsets depending on the thirst remaining.
+            * This is what makes the bar shake.
+            */
             int yOffset = 0;
             if (lowThirst) {
                 yOffset = (int)(Math.sin((tickCount + i) * 1.0) * 2);

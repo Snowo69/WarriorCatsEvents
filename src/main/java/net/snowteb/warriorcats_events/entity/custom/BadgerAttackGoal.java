@@ -28,6 +28,10 @@ public class BadgerAttackGoal extends MeleeAttackGoal {
         entity = ((BadgerEntity)pMob);
     }
 
+    /**
+     * These values were carefully changed for hours until it properly worked.
+     * I can't really explain this, i just know it works somehow
+     */
 
     @Override
     public void start() {
@@ -36,6 +40,10 @@ public class BadgerAttackGoal extends MeleeAttackGoal {
         ticksUntilNextAttack = 17;
     }
 
+    /**
+     * If it should count until next attack, then decrease the counter.
+     * But makes sure it doesn't turn into negatives.
+     */
     @Override
     public void tick() {
         super.tick();
@@ -44,6 +52,15 @@ public class BadgerAttackGoal extends MeleeAttackGoal {
         }
     }
 
+    /**
+     * If the distance is less than the acceptable distance, then:
+     * It should count until next attack and the ticks until next attack is the default delay.
+     * If the ticks until next attack equals the default delay, then setAttacking is true, which will allow to perfomr the attack animation.
+     * If the counter is less or equals to zero, then perform the attack and reset the counter.
+     *
+     * Otherwise
+     * It should not count, and reset the counter, and this is not attacking, and the timeout is zero.
+     */
     @Override
     protected void checkAndPerformAttack(LivingEntity enemy, double distToEnemySqr) {
 
@@ -74,7 +91,9 @@ public class BadgerAttackGoal extends MeleeAttackGoal {
         }
     }
 
-
+    /**
+     * The acceptable distance to attack
+     */
     @Override
     protected double getAttackReachSqr(LivingEntity target) {
         return 8.0;

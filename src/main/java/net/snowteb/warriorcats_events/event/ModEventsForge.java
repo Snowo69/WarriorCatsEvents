@@ -7,6 +7,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
 import net.minecraft.world.entity.monster.Creeper;
@@ -17,6 +18,7 @@ import net.minecraftforge.client.event.RenderGuiOverlayEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
+import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -27,6 +29,7 @@ import net.snowteb.warriorcats_events.entity.ModEntities;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.item.ModFoodHerbs;
 import net.snowteb.warriorcats_events.item.ModItems;
+import net.snowteb.warriorcats_events.item.custom.FlowerCrownItem;
 import net.snowteb.warriorcats_events.network.ModPackets;
 import net.snowteb.warriorcats_events.network.packet.SyncSkillDataPacket;
 import net.snowteb.warriorcats_events.network.packet.ThirstDataSyncStCPacket;
@@ -38,6 +41,10 @@ import tocraft.walkers.api.PlayerShape;
 
 @Mod.EventBusSubscriber(modid = WarriorCatsEvents.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ModEventsForge {
+
+    /**
+     * This modifies some foods so that some will fill thirsts, and some other will fill more hunger.
+     */
     @SubscribeEvent
     public static void onFoodEaten(LivingEntityUseItemEvent.Finish event) {
         if (!(event.getEntity() instanceof Player player)) return;
@@ -76,10 +83,10 @@ public class ModEventsForge {
                     || stack.is(Items.RABBIT) || stack.is(Items.SALMON)
                     || stack.is(Items.COD) || stack.is(Items.TROPICAL_FISH)
                     || stack.is(Items.SWEET_BERRIES)) {
-                int randomThirst = 1;
+                int randomThirst = 1 + player.getRandom().nextInt(1);
                 thirst.addThirst(randomThirst);
                 if (!stack.is(Items.SWEET_BERRIES)){
-                    player.getFoodData().eat(3, 0.75f);
+                    player.getFoodData().eat(3, 0.84f);
                 }
             }
 
@@ -102,7 +109,15 @@ public class ModEventsForge {
     }
 
 
-
+    /**
+     * Every time an entity falls:
+     * Check if it is a player, if it is not:
+     * Then make a list of all the players in the server, and for every player verify if their UUID is the same as the shape that fell.
+     * If it is, then choose it as the owner of the shape.
+     * Then check if the owner has Jump level greater than 2. If it does, reduce it's fall distance.
+     *
+     * If the entity is a Wild cat, reduce its fall distance too.
+     */
     @SubscribeEvent
     public static void onFall(LivingFallEvent event) {
         LivingEntity entity = event.getEntity();
@@ -140,6 +155,10 @@ public class ModEventsForge {
 
     }
 
+    /**
+     * Every time a creeper spawns, add this goal to it.
+     * This so that creepers run away from Wild Cats.
+     */
     @SubscribeEvent
     public static void onEntityJoinWorld(EntityJoinLevelEvent event) {
         if (event.getEntity() instanceof Creeper creeper) {
@@ -147,7 +166,7 @@ public class ModEventsForge {
                     new AvoidEntityGoal<>(
                             creeper,
                             WCatEntity.class,
-                            11.0F,
+                            12.0F,
                             1.3D,
                             1.2D
                     )
@@ -157,7 +176,9 @@ public class ModEventsForge {
 
     }
 
-
+    /**
+     * Every time a player wants to attack a wild cat, check certain conditions, and under that criteria decide whether to let the player attack it or not.
+     */
     @SubscribeEvent
     public static void onAttackEntity(AttackEntityEvent event) {
         Player player = event.getEntity();
@@ -186,6 +207,18 @@ public class ModEventsForge {
 
         if (!player.isShiftKeyDown()) {
             event.setCanceled(true);
+        }
+    }
+
+
+    @SubscribeEvent
+    public static void onPlayerHurt(LivingHurtEvent event) {
+        if (!(event.getEntity() instanceof Player player)) return;
+
+        ItemStack head = player.getItemBySlot(EquipmentSlot.HEAD);
+
+        if (head.getItem() instanceof FlowerCrownItem) {
+            head.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(EquipmentSlot.HEAD));
         }
     }
 

@@ -34,6 +34,11 @@ public class ModDoorBlock extends DoorBlock {
         super(properties, type);
     }
 
+    /**
+     * The blockstate collision boxes change depending on the direction
+     * the block is facing.
+     */
+
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         Direction direction = state.getValue(FACING);

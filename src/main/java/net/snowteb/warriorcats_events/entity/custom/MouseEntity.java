@@ -97,6 +97,10 @@ public class MouseEntity extends Animal implements GeoEntity {
         return new ResourceLocation("warriorcats_events", "entities/mouse");
     }
 
+    @Override
+    public int getExperienceReward() {
+        return 15 + 2*this.random.nextInt(6);
+    }
 
 
     @Override

@@ -2,6 +2,10 @@ package net.snowteb.warriorcats_events.client;
 
 public class AnimationClientData {
 
+    /**
+     * Each of these variables and get methods, represent a different animation that will play for the client.
+     */
+
     public static int anim1 = 0;
     public static int anim2 = 0;
     public static int anim3 = 0;

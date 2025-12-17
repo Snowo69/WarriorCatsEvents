@@ -65,10 +65,16 @@ public class PigeonEntity extends Parrot implements GeoEntity {
             }
             checkCooldown = 5 + mob.getRandom().nextInt(5);
 
+            /**
+             * Only if the entity is not invisible.
+             */
             TargetingConditions conditions = TargetingConditions.forNonCombat()
                     .selector(e -> !e.isInvisible())
                     .range(range);
 
+            /**
+             * Finds the nearest player that succeeds the conditions and the nearest Wild Cat in certain range
+             */
             Player nearestPlayer = mob.level().getNearestPlayer(conditions, mob);
 
             WCatEntity nearestWCat = mob.level().getNearestEntity(
@@ -83,6 +89,9 @@ public class PigeonEntity extends Parrot implements GeoEntity {
                 nearestWCat = null;
             }
 
+            /**
+             * Decides whether the nearest threat is the player or the wild cat
+             */
             nearestThreat = pickNearest(nearestPlayer, nearestWCat);
 
             return nearestThreat != null;
@@ -97,6 +106,9 @@ public class PigeonEntity extends Parrot implements GeoEntity {
             return d1 < d2 ? e1 : e2;
         }
 
+        /**
+         * Once it starts to fly away, it picks a position in the air and moves to it.
+         */
         @Override
         public void start() {
             Vec3 escapePos = getEscapePos();
@@ -114,12 +126,18 @@ public class PigeonEntity extends Parrot implements GeoEntity {
         }
     }
 
+    /**
+     * An indicator that makes sure the cat it should fly away from is in Wander mode.
+     */
     private boolean shouldScareFrom(WCatEntity cat) {
         return cat.mode == WCatEntity.CatMode.WANDER;
     }
 
 
-
+    /**
+     * Every 4 seconds in average (80 ticks), it performs the goal.
+     * Picks a random position in the air and moves to it.
+     */
     public class RandomFlyingGoal extends Goal {
         private final Mob mob;
         private final double speed;
@@ -212,6 +230,11 @@ public class PigeonEntity extends Parrot implements GeoEntity {
         controllers.add(new AnimationController<>
                 (this, "controller", 0, this::predicate));
 
+    }
+
+    @Override
+    public int getExperienceReward() {
+        return 30 + 5*this.random.nextInt(4);
     }
 
 

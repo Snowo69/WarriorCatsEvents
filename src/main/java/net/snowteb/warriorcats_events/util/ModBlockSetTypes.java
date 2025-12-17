@@ -4,6 +4,9 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.level.block.state.properties.BlockSetType;
 import net.minecraft.world.level.block.SoundType;
 
+/**
+ * This is just a set of sounds.
+ */
 public class ModBlockSetTypes {
     public static final BlockSetType LEAF = registerLeafType();
 

@@ -5,8 +5,12 @@ import net.minecraft.client.animation.AnimationDefinition;
 import net.minecraft.client.animation.Keyframe;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.Items;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
+import net.snowteb.warriorcats_events.item.ModItems;
+import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.core.animatable.model.CoreGeoBone;
 import software.bernie.geckolib.core.animation.AnimationState;
@@ -16,6 +20,9 @@ import software.bernie.geckolib.model.data.EntityModelData;
 
 public class WCModel extends GeoModel<WCatEntity> {
 
+    /**
+     * An array list of all the textures available.
+     */
     public static final ResourceLocation[] TEXTURES = {
             new ResourceLocation("warriorcats_events:textures/entity/wcat/wcskin1.png"),
             new ResourceLocation("warriorcats_events:textures/entity/wcat/wcskin2.png"),
@@ -44,6 +51,9 @@ public class WCModel extends GeoModel<WCatEntity> {
         return new ResourceLocation(WarriorCatsEvents.MODID, "geo/wcat.geo.json");
     }
 
+    /**
+     * Depending on the variant, grab a texture from the list.
+     */
     @Override
     public ResourceLocation getTextureResource(WCatEntity object) {
         return TEXTURES[object.getVariant()];
@@ -58,6 +68,15 @@ public class WCModel extends GeoModel<WCatEntity> {
     @Override
     public void setCustomAnimations(WCatEntity animatable, long instanceId, AnimationState<WCatEntity> animationState) {
         CoreGeoBone head = getAnimationProcessor().getBone("mainHead");
+
+
+        getBone("crown").ifPresent(bone -> {
+            boolean hasCrown = animatable
+                    .getItemBySlot(EquipmentSlot.HEAD)
+                    .is(ModItems.FLOWER_CROWN.get());
+            bone.setHidden(!hasCrown);
+        });
+
 
 
         if (head != null) {

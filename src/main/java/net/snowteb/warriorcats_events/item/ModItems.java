@@ -18,6 +18,8 @@ import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.block.ModBlocks;
 import net.snowteb.warriorcats_events.entity.ModEntities;
 import net.snowteb.warriorcats_events.item.custom.ClawsTooltip;
+import net.snowteb.warriorcats_events.item.custom.FlowerCrownItem;
+//import net.snowteb.warriorcats_events.item.custom.LeaderCallItem;
 import net.snowteb.warriorcats_events.sound.ModSounds;
 import net.snowteb.warriorcats_events.util.ItemWithToolTip;
 import net.snowteb.warriorcats_events.util.ModBookItemToolTip;
@@ -67,9 +69,10 @@ public class ModItems {
 
 
 
-
-
-
+public static final RegistryObject<Item> FLOWER_CROWN = ITEMS.register("flower_crown",
+        () -> new FlowerCrownItem());
+//public static final RegistryObject<Item> LEADER_CALL = ITEMS.register("leader_call",
+//        () -> new LeaderCallItem(new Item.Properties().stacksTo(1).durability(300)));
 
 
 

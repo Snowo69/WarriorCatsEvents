@@ -19,7 +19,11 @@ public class ClientEventsForge {
     public static void onOverlayRender(RenderGuiOverlayEvent.Pre event) {
 
         LocalPlayer player = Minecraft.getInstance().player;
+        Minecraft mc = Minecraft.getInstance();
         if (player == null) return;
+        if (!mc.isWindowActive()) return;
+        if (mc.screen != null) return;
+        if (mc.level == null) return;
 
         player.getCapability(PlayerStealthProvider.STEALTH_MODE).ifPresent(cap -> {
 
@@ -28,6 +32,9 @@ public class ClientEventsForge {
             ResourceLocation screen = new ResourceLocation(WarriorCatsEvents.MODID,
                     "textures/hud/stealth_overlay_4.png");
 
+            /**
+             * If the stealth is on, render an overlay.
+             */
             if (cap.isStealthOn()) {
 
                 GuiGraphics gui = event.getGuiGraphics();
@@ -44,6 +51,7 @@ public class ClientEventsForge {
                         w, h
                 );
 
+                RenderSystem.disableBlend();
             }
         });
     }
