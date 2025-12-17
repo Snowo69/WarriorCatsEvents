@@ -25,7 +25,9 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.*;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -237,7 +239,6 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
     private int getKitGrowthTimeMinutes() {
         return WCEConfig.COMMON.KIT_GROWTH_MINUTES.get();
     }
-
 
 
     @Override
@@ -623,7 +624,6 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 //    }
 
 
-
     /**
      * Under certain conditions, find the nearest valid item it can pick up.
      * When it starts, move to the target.
@@ -807,6 +807,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         }
 
     }
+
     /**
      * Depending on the rank, different conditions.
      * Then for every slot in the cat's inventory, verify that:
@@ -962,25 +963,32 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                 if (pPlayer.getItemInHand(pHand).is(ModItems.DOCK_LEAVES.get())) {
                     medicineCatScentsBlock(pPlayer, ModBlocks.DOCK.get(), 40);
                     return InteractionResult.SUCCESS;
-                } if (pPlayer.getItemInHand(pHand).is(ModItems.SORREL.get())) {
+                }
+                if (pPlayer.getItemInHand(pHand).is(ModItems.SORREL.get())) {
                     medicineCatScentsBlock(pPlayer, ModBlocks.SORRELPLANT.get(), 40);
                     return InteractionResult.SUCCESS;
-                } if (pPlayer.getItemInHand(pHand).is(ModItems.BURNET.get())) {
+                }
+                if (pPlayer.getItemInHand(pHand).is(ModItems.BURNET.get())) {
                     medicineCatScentsBlock(pPlayer, ModBlocks.BURNETPLANT.get(), 40);
                     return InteractionResult.SUCCESS;
-                } if (pPlayer.getItemInHand(pHand).is(ModItems.CHAMOMILE.get())) {
+                }
+                if (pPlayer.getItemInHand(pHand).is(ModItems.CHAMOMILE.get())) {
                     medicineCatScentsBlock(pPlayer, ModBlocks.CHAMOMILEPLANT.get(), 40);
                     return InteractionResult.SUCCESS;
-                } if (pPlayer.getItemInHand(pHand).is(ModItems.DAISY.get())) {
+                }
+                if (pPlayer.getItemInHand(pHand).is(ModItems.DAISY.get())) {
                     medicineCatScentsBlock(pPlayer, ModBlocks.DAISYPLANT.get(), 40);
                     return InteractionResult.SUCCESS;
-                } if (pPlayer.getItemInHand(pHand).is(ModItems.CATMINT.get())) {
+                }
+                if (pPlayer.getItemInHand(pHand).is(ModItems.CATMINT.get())) {
                     medicineCatScentsBlock(pPlayer, ModBlocks.CATMINTPLANT.get(), 40);
                     return InteractionResult.SUCCESS;
-                } if (pPlayer.getItemInHand(pHand).is(ModItems.YARROW.get())) {
+                }
+                if (pPlayer.getItemInHand(pHand).is(ModItems.YARROW.get())) {
                     medicineCatScentsBlock(pPlayer, ModBlocks.YARROWPLANT.get(), 40);
                     return InteractionResult.SUCCESS;
-                } if (pPlayer.getItemInHand(pHand).is(ModItems.GLOW_SHROOM.get())) {
+                }
+                if (pPlayer.getItemInHand(pHand).is(ModItems.GLOW_SHROOM.get())) {
                     medicineCatScentsBlock(pPlayer, ModBlocks.GLOWSHROOM.get(), 40);
                     return InteractionResult.SUCCESS;
                 }
@@ -1074,7 +1082,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
             return InteractionResult.SUCCESS;
         }
 
-        if (this.isTame() && pPlayer.isShiftKeyDown() && pPlayer.getUUID().equals(this.getOwnerUUID()) && itemstack.is(ModItems.WHISKERS.get())) {
+        if (this.isTame() && pPlayer.isShiftKeyDown() && pPlayer.getUUID().equals(this.getOwnerUUID()) && itemstack.is(ModItems.WHISKERS.get()) && (this.getRank() != KIT)) {
             Rank current = this.getRank();
 
             switch (current) {
@@ -1288,7 +1296,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
             return InteractionResult.SUCCESS;
         }
 
-        if (this.isBaby()) {
+        if (this.isBaby() && this.getRank() == KIT) {
             if (itemstack.is(ModItems.DEATHBERRIES.get())) {
                 if (!this.level().isClientSide()) {
                     ServerLevel level = ((ServerLevel) this.level());
@@ -1326,10 +1334,17 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                 return InteractionResult.sidedSuccess(this.level().isClientSide());
 
             }
-            if (itemstack.is(ModItems.YARROW.get()) && this.hasEffect(ModEffects.DEATHBERRIES.get())) {
+            if (itemstack.is(ModItems.YARROW.get()) && (this.hasEffect(ModEffects.DEATHBERRIES.get()) || this.hasEffect(MobEffects.POISON))) {
                 if (!this.level().isClientSide()) {
                     ServerLevel level = ((ServerLevel) this.level());
-                    this.removeEffect(ModEffects.DEATHBERRIES.get());
+
+                    if (this.hasEffect(ModEffects.DEATHBERRIES.get())) {
+                        this.removeEffect(ModEffects.DEATHBERRIES.get());
+                    }
+                    if (this.hasEffect(MobEffects.POISON)) {
+                        this.removeEffect(MobEffects.POISON);
+                    }
+
                     this.level().playSound(null, this.blockPosition(), SoundEvents.CAT_EAT, SoundSource.AMBIENT, 0.8f, 1f);
                     level.sendParticles(
                             ParticleTypes.HAPPY_VILLAGER,
@@ -1352,7 +1367,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
     /**
      * If the cooldown is not ready, send message and return.
-     *
+     * <p>
      * Scan all the blocks in certain radius. If it finds the desired block, check if the last block or this one was nearest.
      * After that, if the block was null (couldn't find a block), send a message, set cooldown, and return.
      * Otherwise, send a message and set cooldown.
@@ -1366,7 +1381,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
             player.sendSystemMessage(
                     Component.literal("")
                             .append(name).withStyle(ChatFormatting.GRAY)
-                            .append( " can't scent that fast!").withStyle(ChatFormatting.GRAY)
+                            .append(" can't scent that fast!").withStyle(ChatFormatting.GRAY)
             );
             return;
         }
@@ -1419,11 +1434,11 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
     /**
      * Called when two entities are set in love.
-     *
+     * <p>
      * If the other parent is a Wild cat, and this cat is tamed, and the other one is tamed:
      * Then if this cats gender is 1, and if the other cats gender is 0, then set this cat to expect kits and send the advancement.
      * Then reset the love counter, this so the she cat doesn't spawn infinite kits for no reason.
-     *
+     * <p>
      * This method is called in both cats, so its not necessary to make two logics.
      */
     @Override
@@ -1867,7 +1882,6 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         //boolean moving = walkSpeed > 0.01F;
 
 
-
         if (this.isInWater()) {
             if (this.isSwimming()) {
                 tAnimationState.getController().setAnimation(RawAnimation.begin().
@@ -2086,7 +2100,6 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                     String[] prefixSet = getPrefixForVariant(variant);
 
 
-
                     String genderS;
                     if (kit.getGender() == 0) {
                         genderS = " ♂";
@@ -2121,7 +2134,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                     kit.setOwnerUUID(player.getUUID());
 
                     owner.sendSystemMessage(Component.literal(kitName).withStyle(ChatFormatting.GREEN)
-                            .append(Component.literal( " has been born!").withStyle(ChatFormatting.WHITE))
+                            .append(Component.literal(" has been born!").withStyle(ChatFormatting.WHITE))
                     );
 
 
@@ -2240,6 +2253,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
     public void setAttacking(boolean attacking) {
         this.entityData.set(ATTACKING, attacking);
     }
+
     /**
      * Indicator to allow the cat to perform attack animation
      */
@@ -2308,7 +2322,6 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         };
 
 
-
         this.entityData.set(SCALE, scale);
     }
 
@@ -2324,7 +2337,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
     @Override
     public int getExperienceReward() {
-        return 25 + 5*this.random.nextInt(3);
+        return 25 + 5 * this.random.nextInt(3);
     }
 
     private boolean apprenticeAge = false;
@@ -2502,11 +2515,10 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
     @Override
     public boolean isFood(ItemStack stack) {
         if (stack.is(ModItems.CATMINT.get())) {
-            return !this.isExpectingKits();
+            return !this.isExpectingKits() && this.isTame();
         }
         return false;
     }
-
 
 
     @Override
