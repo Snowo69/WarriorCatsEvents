@@ -29,14 +29,14 @@ public class WCEConfig {
 
             WILDCAT_WANDER_RADIUS = builder
                     .comment("The radius in which the Wild Cats will wander (min: 8, max: 100)")
-                    .defineInRange("wanderRadius", 15, 8, 100);
+                    .defineInRange("wanderRadius", 16, 8, 100);
 
             KITTING_MINUTES = builder
                     .comment("The time in minutes it takes until she-cats give birth (min: 1, max: 120)")
                     .defineInRange("kittingMinutes", 10, 1, 120);
 
             KIT_GROWTH_MINUTES = builder
-                    .comment("The time in minutes it takes for a kit to grow from kit to warrior (min: 10, max: 180)")
+                    .comment("The time in minutes it takes for a kit to grow from kit to warrior (min: 10, max: 960)")
                     .defineInRange("kitGrowthMinutes", 120, 10, 960);
 
             SKILL_COST_MULTIPLIER = builder
