@@ -73,8 +73,7 @@ public class WCRenderer extends GeoEntityRenderer<WCatEntity> {
          * If the entity is the entity the player is playing as (The one the player is morphed into), then set isPlayerShape.
          */
 
-        if (entity == PlayerShape.getCurrentShape(Minecraft.getInstance().player) && !entity.isAShape) {
-
+        if (entity == PlayerShape.getCurrentShape(Minecraft.getInstance().player)) {
             AnimationClientData.isPlayerShape = true;
             entity.isAShape = true;
         } else {

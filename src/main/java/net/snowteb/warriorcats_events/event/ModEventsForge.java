@@ -86,7 +86,7 @@ public class ModEventsForge {
                 int randomThirst = 1 + player.getRandom().nextInt(1);
                 thirst.addThirst(randomThirst);
                 if (!stack.is(Items.SWEET_BERRIES)){
-                    player.getFoodData().eat(2, 0.75f);
+                    player.getFoodData().eat(3, 0.84f);
                 }
             }
 
@@ -166,7 +166,7 @@ public class ModEventsForge {
                     new AvoidEntityGoal<>(
                             creeper,
                             WCatEntity.class,
-                            11.0F,
+                            12.0F,
                             1.3D,
                             1.2D
                     )

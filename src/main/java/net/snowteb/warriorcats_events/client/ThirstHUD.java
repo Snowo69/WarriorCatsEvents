@@ -1,6 +1,7 @@
 package net.snowteb.warriorcats_events.client;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.gui.overlay.IGuiOverlay;
@@ -18,6 +19,11 @@ public class ThirstHUD {
     public static final IGuiOverlay HUD_THIRST = ((gui, guiGraphics, partialTick, screenWidth, screenHeight) -> {
         var player = net.minecraft.client.Minecraft.getInstance().player;
         if (player == null || player.isCreative()) return;
+        Minecraft mc = Minecraft.getInstance();
+        if (!mc.isWindowActive()) return;
+        if (mc.level == null) return;
+        if (mc.screen != null) return;
+
 
         int x = screenWidth / 2 + 7;
         int y = screenHeight - 53;
