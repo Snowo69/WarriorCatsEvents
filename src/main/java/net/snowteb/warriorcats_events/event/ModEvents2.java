@@ -259,6 +259,10 @@ public class ModEvents2 {
 
             event.player.getCapability(PlayerStealthProvider.STEALTH_MODE).ifPresent(cap -> {
 
+                if (cap.isStealthOn() && event.player.tickCount % 2 == 0) {
+                    event.player.setInvisible(true);
+                }
+
                 /**
                  * If Stealth is active, and its unlocked, and its on:
                  * Then send a particle every 3 ticks.

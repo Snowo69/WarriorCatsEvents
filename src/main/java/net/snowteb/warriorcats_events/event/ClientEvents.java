@@ -75,8 +75,6 @@ public class ClientEvents {
             LocalPlayer player = mc.player;
             if (mc.player == null) return;
             if (mc.level == null) return;
-            if (mc.screen != null) return;
-            if (!mc.isWindowActive()) return;
             /**
              * If the skill is unlocked and on, and the player is shifting, send the info to the StealthClientState.
              */

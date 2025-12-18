@@ -35,8 +35,6 @@ public class CtSToggleStealthPacket {
             player.getCapability(PlayerStealthProvider.STEALTH_MODE).ifPresent(cap -> {
 
                 if (!cap.isUnlocked() || !cap.isOn()) {
-                    cap.setStealthOn(false);
-                    player.setInvisible(false);
                     return;
                 }
                 cap.setStealthOn(state);
