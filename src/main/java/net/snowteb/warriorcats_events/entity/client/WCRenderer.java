@@ -6,7 +6,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.Pose;
 import net.snowteb.warriorcats_events.client.AnimationClientData;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import software.bernie.geckolib.cache.object.BakedGeoModel;

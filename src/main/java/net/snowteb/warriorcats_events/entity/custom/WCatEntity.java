@@ -942,7 +942,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
     public static AttributeSupplier.Builder setAttributes() {
         return Mob.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 30.0D)
+                .add(Attributes.MAX_HEALTH, 20.0D)
                 .add(Attributes.MOVEMENT_SPEED, 0.33D)
                 .add(Attributes.ATTACK_DAMAGE, 4.0D)
                 .add(Attributes.FOLLOW_RANGE, 16.0D)
@@ -1641,7 +1641,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
     }
 
-    private void applyBabyAttributes() {
+    public void applyBabyAttributes() {
         this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(10.0);
         this.getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(2.0);
         this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(0.25);
@@ -1649,7 +1649,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         this.setHealth(this.getMaxHealth());
     }
 
-    private void applyAppAttributes() {
+    public void applyAppAttributes() {
         this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(18.0);
         this.getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(3.0);
         this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(0.3);
@@ -1657,7 +1657,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         this.setHealth(this.getMaxHealth());
     }
 
-    private void applyAdultAttributes() {
+    public void applyAdultAttributes() {
         this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(30.0);
         this.getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(4.0);
         this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(0.33);

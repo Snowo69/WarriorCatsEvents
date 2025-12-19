@@ -1,4 +1,4 @@
-// 1.20.1	2025-12-15T14:20:25.6457158	Item Models: warriorcats_events
+// 1.20.1	2025-12-19T00:10:06.0903285	Item Models: warriorcats_events
 63ec6c618a3a23eab4cab9c52d7d3250de9b516e assets/warriorcats_events/models/item/badger_spawn_egg.json
 ac6ef1131c3d0211651143fd58654b7ad438be75 assets/warriorcats_events/models/item/burnet.json
 1641592b389b1e3113457621f11710d7c7e3b760 assets/warriorcats_events/models/item/burnet_leaves.json
@@ -14,6 +14,7 @@ b8a8be94fe48fe4bdebf158925ca347cc2eb2b05 assets/warriorcats_events/models/item/d
 10b7508d19198e79d3ee7a3216b7c4d8445b1271 assets/warriorcats_events/models/item/deathberries_bush.json
 bcd29f46e9088bfca6615f472d9811c980fa55b8 assets/warriorcats_events/models/item/dock.json
 de1313697eb51f034e453ec57311ce5c905469d8 assets/warriorcats_events/models/item/dock_leaves.json
+564c104d2c18d09bf336b374d6f54db0354f16a6 assets/warriorcats_events/models/item/flower_armor.json
 01a51a9f409164e05d2c47cb55dd510a224149eb assets/warriorcats_events/models/item/flower_crown.json
 992f8db2076b4fc2a610f7a427d8aaf2a55116ec assets/warriorcats_events/models/item/freshkill_and_herbs.json
 26df1c4b4f82c9d1eeff2a209a29d2faa64177e7 assets/warriorcats_events/models/item/generations_music_disc.json

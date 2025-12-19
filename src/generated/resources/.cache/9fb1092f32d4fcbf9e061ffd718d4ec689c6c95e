@@ -1,6 +1,7 @@
-// 1.20.1	2025-12-15T14:32:49.3728432	Recipes
+// 1.20.1	2025-12-19T00:10:06.0872996	Recipes
 c69ff27690c47e62c2153410b60c6debaac351b7 data/warriorcats_events/advancements/recipes/misc/claws.json
 1e88faa812fbb6d9f60dae956cf2accfb9e6a6b0 data/warriorcats_events/advancements/recipes/misc/dock_poultice.json
+766550ff2a3719cdc87d2e005b264a76b993fd02 data/warriorcats_events/advancements/recipes/misc/flower_armor.json
 92b7d62b974a0ae1fb96427884d04149cbe1111f data/warriorcats_events/advancements/recipes/misc/flower_crown.json
 c6932e4818c218f5a3694a9bb62b390002ae3580 data/warriorcats_events/advancements/recipes/misc/freshkill_and_herbs.json
 282f3708810d15f140908a7390436aa5405ea757 data/warriorcats_events/advancements/recipes/misc/leaf_door.json
@@ -13,6 +14,7 @@ f27b71d87445ec9f3c29e6377b373848d5211982 data/warriorcats_events/advancements/re
 5748b1cbd46f9a257085fe564ee1c105b0c2d77b data/warriorcats_events/advancements/recipes/misc/whiskers.json
 49db0f628f0e3a63b9f39d31040071ccdd8efeb3 data/warriorcats_events/recipes/claws.json
 281c6418d2a2863bad4f6941586e3253fbac3e1f data/warriorcats_events/recipes/dock_poultice.json
+d4ed64124144cc323d09aeba1d96795b44f15b3d data/warriorcats_events/recipes/flower_armor.json
 e7df384f0dde5a01df341345a4817eafe1e54046 data/warriorcats_events/recipes/flower_crown.json
 dcd21347f1690bed66677f0877a8992dffee855d data/warriorcats_events/recipes/freshkill_and_herbs.json
 c806cb5426c237c699715181ee12871a3917785d data/warriorcats_events/recipes/leaf_door.json

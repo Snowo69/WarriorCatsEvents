@@ -45,6 +45,16 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .unlockedBy("has_item", has(ModTags.Items.HERBS))
                 .save(pWriter);
 
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.FLOWER_ARMOR.get())
+                .pattern("ACA")
+                .pattern("BCB")
+                .pattern("ACA")
+                .define('B', ModTags.Items.HERBS)
+                .define('A', ItemTags.FLOWERS)
+                .define('C', Items.VINE)
+                .unlockedBy("has_item", has(ModTags.Items.HERBS))
+                .save(pWriter);
+
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.TRAVELING_HERBS.get(), 1)
                 .requires(ModItems.SORREL.get())
                 .requires(ModItems.BURNET.get())

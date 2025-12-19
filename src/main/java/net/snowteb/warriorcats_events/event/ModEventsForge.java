@@ -29,6 +29,7 @@ import net.snowteb.warriorcats_events.entity.ModEntities;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.item.ModFoodHerbs;
 import net.snowteb.warriorcats_events.item.ModItems;
+import net.snowteb.warriorcats_events.item.custom.FlowerArmorItem;
 import net.snowteb.warriorcats_events.item.custom.FlowerCrownItem;
 import net.snowteb.warriorcats_events.network.ModPackets;
 import net.snowteb.warriorcats_events.network.packet.SyncSkillDataPacket;
@@ -173,6 +174,13 @@ public class ModEventsForge {
             );
 
         }
+        if (event.getEntity() instanceof WCatEntity wCat) {
+            if (wCat.isBaby()) {
+                wCat.applyBabyAttributes();
+            } else {
+                wCat.applyAdultAttributes();
+            }
+        }
 
     }
 
@@ -219,6 +227,9 @@ public class ModEventsForge {
 
         if (head.getItem() instanceof FlowerCrownItem) {
             head.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(EquipmentSlot.HEAD));
+        }
+        if (head.getItem() instanceof FlowerArmorItem) {
+            head.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(EquipmentSlot.CHEST));
         }
     }
 

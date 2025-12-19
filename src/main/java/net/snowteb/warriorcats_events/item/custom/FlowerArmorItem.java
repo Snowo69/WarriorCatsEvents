@@ -10,35 +10,37 @@ import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.ArmorMaterials;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 import java.util.UUID;
 
-public class FlowerCrownItem extends ArmorItem {
+public class FlowerArmorItem extends ArmorItem {
 
     private static final UUID ARMOR_UUID =
-            UUID.fromString("a1b2c3d4-aaaa-cccc-eeee-1a1b1c123456");
+            UUID.fromString("a1b2c3d4-abbb-cccc-eeee-1a1b1c123456");
 
-    public FlowerCrownItem() {
-        super(ArmorMaterials.IRON, Type.HELMET, new Item.Properties().stacksTo(1).durability(120));
+    public FlowerArmorItem() {
+        super(ArmorMaterials.IRON, Type.CHESTPLATE, new Properties().stacksTo(1).durability(220));
     }
 
 
     @Override
     public EquipmentSlot getEquipmentSlot(ItemStack stack) {
-        return EquipmentSlot.HEAD;
+        return EquipmentSlot.CHEST;
     }
 
     @Override
     public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot slot) {
-        if (slot == EquipmentSlot.HEAD) {
+        if (slot == EquipmentSlot.CHEST) {
             ImmutableMultimap.Builder<Attribute, AttributeModifier> builder =
                     ImmutableMultimap.builder();
 
             builder.put(
                     Attributes.ARMOR,
-                    new AttributeModifier(ARMOR_UUID, "flower_crown_armor", 2.0, AttributeModifier.Operation.ADDITION)
+                    new AttributeModifier(ARMOR_UUID, "flower_armor_armor", 6.0, AttributeModifier.Operation.ADDITION)
             );
 
             return builder.build();

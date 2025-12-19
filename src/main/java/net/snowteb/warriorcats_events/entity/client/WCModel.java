@@ -77,6 +77,14 @@ public class WCModel extends GeoModel<WCatEntity> {
             bone.setHidden(!hasCrown);
         });
 
+        {
+            boolean hasFlowerArmor = animatable.getItemBySlot(EquipmentSlot.CHEST).is(ModItems.FLOWER_ARMOR.get());
+
+            getBone("flower_upper_armor").ifPresent(bone -> bone.setHidden(!hasFlowerArmor));
+            getBone("layer_2").ifPresent(bone -> bone.setHidden(!hasFlowerArmor));
+            getBone("layer_3").ifPresent(bone -> bone.setHidden(!hasFlowerArmor));
+        }
+
 
 
         if (head != null) {
