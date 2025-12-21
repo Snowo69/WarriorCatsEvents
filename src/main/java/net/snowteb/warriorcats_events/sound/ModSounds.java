@@ -43,6 +43,15 @@ public class ModSounds {
             registerSoundEvents("entity.wildcat.scream");
 
 
+    public static final RegistryObject<SoundEvent> SCRAPING_WOOD =
+            registerSoundEvents("ambient.scraping_wood");
+    public static final RegistryObject<SoundEvent> SHORT_WOOSH =
+            registerSoundEvents("ambient.short_woosh");
+    public static final RegistryObject<SoundEvent> LONG_WOOSH =
+            registerSoundEvents("ambient.long_woosh");
+    public static final RegistryObject<SoundEvent> STEALTH_WOOSH =
+            registerSoundEvents("ambient.stealth_woosh");
+
 
 
     private static RegistryObject<SoundEvent> registerSoundEvents(String name) {

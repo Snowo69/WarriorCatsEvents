@@ -82,5 +82,40 @@
       { "name": "warriorcats_events:entity/squirrel/squirrel_death_1", "volume": 0.7, "pitch": 1.0 },
       { "name": "warriorcats_events:entity/squirrel/squirrel_death_2", "volume": 0.7, "pitch": 1.0 }
     ]
+  },
+
+  "ambient.scraping_wood": {
+    "sounds": [
+      { "name": "warriorcats_events:mod_ambient/scraping_wood_1", "volume": 0.8, "pitch": 1.0 },
+      { "name": "warriorcats_events:mod_ambient/scraping_wood_2", "volume": 0.8, "pitch": 1.0 },
+      { "name": "warriorcats_events:mod_ambient/scraping_wood_3", "volume": 0.8, "pitch": 1.0 },
+      { "name": "warriorcats_events:mod_ambient/scraping_wood_4", "volume": 0.8, "pitch": 1.0 },
+      { "name": "warriorcats_events:mod_ambient/scraping_wood_5", "volume": 0.8, "pitch": 1.0 },
+      { "name": "warriorcats_events:mod_ambient/scraping_wood_6", "volume": 0.8, "pitch": 1.0 },
+      { "name": "warriorcats_events:mod_ambient/scraping_wood_7", "volume": 0.8, "pitch": 1.0 }
+    ]
+  },
+  "ambient.short_woosh": {
+    "sounds": [
+      { "name": "warriorcats_events:mod_ambient/short_woosh_1", "volume": 0.8, "pitch": 1.0 },
+      { "name": "warriorcats_events:mod_ambient/short_woosh_2", "volume": 0.8, "pitch": 1.0 }
+    ]
+  },
+
+  "ambient.long_woosh": {
+    "sounds": [
+      { "name": "warriorcats_events:mod_ambient/long_woosh_1", "volume": 0.8, "pitch": 1.0 }
+    ]
+  },
+
+  "ambient.stealth_woosh": {
+    "sounds": [
+      { "name": "warriorcats_events:mod_ambient/stealth_woosh_1", "volume": 0.8, "pitch": 1.0 },
+      { "name": "warriorcats_events:mod_ambient/stealth_woosh_2", "volume": 0.8, "pitch": 1.0 },
+      { "name": "warriorcats_events:mod_ambient/stealth_woosh_3", "volume": 0.8, "pitch": 1.0 },
+      { "name": "warriorcats_events:mod_ambient/stealth_woosh_4", "volume": 0.8, "pitch": 1.0 }
+    ]
   }
+
+
 }

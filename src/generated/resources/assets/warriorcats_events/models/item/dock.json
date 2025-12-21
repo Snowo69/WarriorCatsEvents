@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "warriorcats_events:block/dock_stage3"
+    "layer0": "warriorcats_events:block/dock_stage0"
   }
 }

@@ -13,7 +13,7 @@ import net.snowteb.warriorcats_events.network.packet.*;
  * All about this or any packets, just ask me personally, i aint explaining all that
  */
 public class ModPackets {
-    private static SimpleChannel INSTANCE;
+    public static SimpleChannel INSTANCE;
     private static int packetID = 0;
     private static int id() {
         return packetID++;
@@ -100,10 +100,28 @@ public class ModPackets {
                 .consumerMainThread(StCStealthSyncPacket::handle)
                 .add();
 
+        net.messageBuilder(StCFishingScreenPacket.class, id(), NetworkDirection.PLAY_TO_CLIENT)
+                .decoder(StCFishingScreenPacket::new)
+                .encoder(StCFishingScreenPacket::toBytes)
+                .consumerMainThread(StCFishingScreenPacket::handle)
+                .add();
+
         net.messageBuilder(CtSUnlockStealthPacket.class, id(), NetworkDirection.PLAY_TO_SERVER)
                 .encoder(CtSUnlockStealthPacket::encode)
                 .decoder(CtSUnlockStealthPacket::decode)
                 .consumerMainThread(CtSUnlockStealthPacket::handle)
+                .add();
+
+        net.messageBuilder(CtSFishSuccesful.class, id(), NetworkDirection.PLAY_TO_SERVER)
+                .encoder(CtSFishSuccesful::encode)
+                .decoder(CtSFishSuccesful::decode)
+                .consumerMainThread(CtSFishSuccesful::handle)
+                .add();
+
+        net.messageBuilder(CtSFishFailed.class, id(), NetworkDirection.PLAY_TO_SERVER)
+                .encoder(CtSFishFailed::encode)
+                .decoder(CtSFishFailed::decode)
+                .consumerMainThread(CtSFishFailed::handle)
                 .add();
 
         net.messageBuilder(CtSSwitchShape.class, id(), NetworkDirection.PLAY_TO_SERVER)

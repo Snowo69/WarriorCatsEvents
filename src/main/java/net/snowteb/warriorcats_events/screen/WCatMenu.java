@@ -3,31 +3,43 @@ package net.snowteb.warriorcats_events.screen;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 
 public class WCatMenu extends AbstractContainerMenu {
     private final Level level;
     private int ofs = 9;
+    private final WCatEntity cat;
 
     public WCatMenu(int id, Inventory playerInv, FriendlyByteBuf buf) {
-        this(id, playerInv, new SimpleContainer(3));
+        this(id, playerInv, new SimpleContainer(3), (WCatEntity) playerInv.player.level().getEntity(buf.readInt()));
     }
 
 
-    public WCatMenu(int id, Inventory inv, Container catInventory) {
+    public WCatMenu(int id, Inventory inv, Container catInventory, WCatEntity cat) {
         super(ModMenuTypes.WCAT_INVENTORY.get(), id);
         checkContainerSize(inv, 3);
         this.level = inv.player.level();
+        this.cat = cat;
+
         addPlayerInventory(inv);
         addPlayerHotbar(inv);
 
         for (int i = 0; i < 3; i++) {
             addSlot(new Slot(catInventory, i, 62 + i * 18, 32));
         }
+
+        this.addSlot(new WCatArmorSlots(cat, EquipmentSlot.HEAD, -23, 1));
+        this.addSlot(new WCatArmorSlots(cat, EquipmentSlot.CHEST, -23, 19));
+        this.addSlot(new WCatArmorSlots(cat, EquipmentSlot.LEGS, -23, 37));
+        this.addSlot(new WCatArmorSlots(cat, EquipmentSlot.FEET, -23, 55));
+
+
     }
 
 

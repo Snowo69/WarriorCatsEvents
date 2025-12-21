@@ -202,7 +202,7 @@ public class PigeonEntity extends Parrot implements GeoEntity {
 
     public static AttributeSupplier.Builder setAttributes() {
         return Animal.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 1D)
+                .add(Attributes.MAX_HEALTH, 2D)
                 .add(Attributes.ATTACK_SPEED, 1.0f)
                 .add(Attributes.ATTACK_DAMAGE, 1f)
                 .add(Attributes.MOVEMENT_SPEED, 0.2f)

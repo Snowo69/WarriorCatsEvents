@@ -100,6 +100,15 @@
 
   "item.warriorcats_events.flower_crown": "Flower Crown",
   "item.warriorcats_events.flower_armor": "Flower Armor",
+  "item.warriorcats_events.leaf_mane": "Leaf Mane",
+  "item.warriorcats_events.teeth_claws": "Teeth Claws",
+
+  "item.warriorcats_events.animal_tooth": "Animal Tooth",
+  "item.warriorcats_events.animal_teeth": "Animal Teeth",
+
+  "item.warriorcats_events.warrior_nametag": "Warrior Nametag",
+  "item.warriorcats_events.warrior_nametag.tooltip": "Give any name you like to any of your clanmates!.\\nFormat: '<prefix> <sufix>' or  '<name>' ",
+
 
   "item.warriorcats_events.warriors_guide": "A Warrior's Guide",
   "item.warriorcats_events.warriors_guide.tooltip": "Every warrior needs guidance at some point!"

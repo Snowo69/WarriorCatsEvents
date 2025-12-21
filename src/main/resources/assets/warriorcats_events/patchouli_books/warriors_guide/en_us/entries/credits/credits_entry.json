@@ -79,8 +79,7 @@
       "type": "patchouli:spotlight",
       "item": "minecraft:nether_star",
       "title": "Collaborators",
-      "default_rotation": -30,
-      "text": "$(8)Thanks to 'Boxfish' for being an exceptional tester and key piece in the making of this mod.$(br2)Thanks to 'The Artificer's Throne' for their brilliant ideas and opinions that helped improve this mod. $(br2)Thanks to everyone who followed this project from the beginning.$(br)"
+      "text": "$(8)Thanks to 'Boxfish' for being a good tester and key piece in the making of this mod.$(br2)Thanks to 'The Artificer's Throne' for their brilliant ideas and opinions that helped improve this mod. $(br2)Thanks to everyone who followed this project from the beginning.$(br)"
     }
   ]
 

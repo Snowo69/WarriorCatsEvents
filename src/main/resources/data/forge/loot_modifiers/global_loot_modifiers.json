@@ -1,0 +1,17 @@
+{
+  "replace": false,
+  "entries": [
+    "warriorcats_events:tooth_from_wolf",
+    "warriorcats_events:tooth_from_fox",
+    "warriorcats_events:tooth_from_badger",
+
+    "warriorcats_events:burnet_from_burnet",
+    "warriorcats_events:catmint_from_catmint",
+    "warriorcats_events:chamomile_from_chamomile",
+    "warriorcats_events:daisy_from_daisy",
+    "warriorcats_events:deathberries_from_deathberries",
+    "warriorcats_events:dock_from_dock",
+    "warriorcats_events:sorrel_from_sorrel",
+    "warriorcats_events:yarrow_from_yarrow"
+  ]
+}

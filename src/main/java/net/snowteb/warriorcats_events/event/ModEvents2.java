@@ -18,6 +18,8 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.scores.Objective;
 import net.minecraft.world.scores.Scoreboard;
 import net.minecraft.world.scores.criteria.ObjectiveCriteria;
@@ -327,20 +329,20 @@ public class ModEvents2 {
     /**
      * This is useless and i should remove it but i might need it one day
      */
-    @SubscribeEvent
-    public static void onWorldLoad(LevelEvent.Load event) {
-        if (!event.getLevel().isClientSide() && event.getLevel() instanceof ServerLevel serverWorld) {
-            Scoreboard scoreboard = serverWorld.getServer().getScoreboard();
-
-            Objective objective = scoreboard.getObjective("Lives");
-            if (objective == null) {
-                scoreboard.addObjective("Lives", ObjectiveCriteria.DUMMY,
-                        net.minecraft.network.chat.Component.literal("Leader's Lives"),
-                        ObjectiveCriteria.RenderType.INTEGER
-                );
-            }
-        }
-    }
+//    @SubscribeEvent
+//    public static void onWorldLoad(LevelEvent.Load event) {
+//        if (!event.getLevel().isClientSide() && event.getLevel() instanceof ServerLevel serverWorld) {
+//            Scoreboard scoreboard = serverWorld.getServer().getScoreboard();
+//
+//            Objective objective = scoreboard.getObjective("Lives");
+//            if (objective == null) {
+//                scoreboard.addObjective("Lives", ObjectiveCriteria.DUMMY,
+//                        net.minecraft.network.chat.Component.literal("Leader's Lives"),
+//                        ObjectiveCriteria.RenderType.INTEGER
+//                );
+//            }
+//        }
+//    }
 
     /**
      * Every time and entity jumps, if it is a player, then modify its jump depending on the custom Attribute.

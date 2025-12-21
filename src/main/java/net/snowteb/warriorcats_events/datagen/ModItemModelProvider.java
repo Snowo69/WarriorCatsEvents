@@ -32,6 +32,11 @@ public class ModItemModelProvider extends ItemModelProvider {
         simpleItem(ModItems.WARRIORS_GUIDE);
         simpleItem(ModItems.FLOWER_CROWN);
         simpleItem(ModItems.FLOWER_ARMOR);
+        simpleItem(ModItems.LEAF_MANE);
+        simpleItem(ModItems.TEETH_CLAWS);
+        simpleItem(ModItems.ANIMAL_TOOTH);
+        simpleItem(ModItems.ANIMAL_TEETH);
+        simpleItem(ModItems.WARRIOR_NAMETAG);
 
 
         simpleBlockItem(ModBlocks.LEAF_DOOR);
@@ -59,49 +64,49 @@ public class ModItemModelProvider extends ItemModelProvider {
                     ModBlocks.DOCK.getId().getPath(),
                     new ResourceLocation("item/generated")
             ).texture("layer0",
-                    new ResourceLocation(WarriorCatsEvents.MODID, "block/dock_stage3")
+                    new ResourceLocation(WarriorCatsEvents.MODID, "block/dock_stage0")
             );
             withExistingParent(
                     ModBlocks.SORRELPLANT.getId().getPath(),
                     new ResourceLocation("item/generated")
             ).texture("layer0",
-                    new ResourceLocation(WarriorCatsEvents.MODID, "block/sorrel_stage3")
+                    new ResourceLocation(WarriorCatsEvents.MODID, "block/sorrel_stage0")
             );
             withExistingParent(
                     ModBlocks.BURNETPLANT.getId().getPath(),
                     new ResourceLocation("item/generated")
             ).texture("layer0",
-                    new ResourceLocation(WarriorCatsEvents.MODID, "block/burnet_stage3")
+                    new ResourceLocation(WarriorCatsEvents.MODID, "block/burnet_stage0")
             );
             withExistingParent(
                     ModBlocks.CHAMOMILEPLANT.getId().getPath(),
                     new ResourceLocation("item/generated")
             ).texture("layer0",
-                    new ResourceLocation(WarriorCatsEvents.MODID, "block/chamomile_stage3")
+                    new ResourceLocation(WarriorCatsEvents.MODID, "block/chamomile_stage0")
             );
             withExistingParent(
                     ModBlocks.DAISYPLANT.getId().getPath(),
                     new ResourceLocation("item/generated")
             ).texture("layer0",
-                    new ResourceLocation(WarriorCatsEvents.MODID, "block/daisy_stage3")
+                    new ResourceLocation(WarriorCatsEvents.MODID, "block/daisy_stage0")
             );
             withExistingParent(
                     ModBlocks.DEATHBERRIESBUSH.getId().getPath(),
                     new ResourceLocation("item/generated")
             ).texture("layer0",
-                    new ResourceLocation(WarriorCatsEvents.MODID, "block/deathberries_stage3")
+                    new ResourceLocation(WarriorCatsEvents.MODID, "block/deathberries_stage0")
             );
             withExistingParent(
                     ModBlocks.CATMINTPLANT.getId().getPath(),
                     new ResourceLocation("item/generated")
             ).texture("layer0",
-                    new ResourceLocation(WarriorCatsEvents.MODID, "block/catmint_stage3")
+                    new ResourceLocation(WarriorCatsEvents.MODID, "block/catmint_stage0")
             );
             withExistingParent(
                     ModBlocks.YARROWPLANT.getId().getPath(),
                     new ResourceLocation("item/generated")
             ).texture("layer0",
-                    new ResourceLocation(WarriorCatsEvents.MODID, "block/yarrow_stage3")
+                    new ResourceLocation(WarriorCatsEvents.MODID, "block/yarrow_stage0")
             );
 
         }

@@ -4,6 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.sounds.SoundEvents;
 import net.snowteb.warriorcats_events.network.ModPackets;
 import net.snowteb.warriorcats_events.network.packet.CtSToggleStealthPacket;
+import net.snowteb.warriorcats_events.sound.ModSounds;
 
 public class StealthClientState {
     private static boolean lastState = false;
@@ -19,8 +20,11 @@ public class StealthClientState {
             if (mc.player != null) {
                 if (currentState) {
                     mc.player.playSound(SoundEvents.GRASS_HIT, 0.7f, 0.8f);
+                    mc.player.playSound(ModSounds.STEALTH_WOOSH.get(), 0.9f, 1f);
                 } else {
                     mc.player.playSound(SoundEvents.CAT_PURREOW, 0.7f, 1.2f);
+                    mc.player.playSound(ModSounds.STEALTH_WOOSH.get(), 0.9f, 1.2f);
+
                 }
             }
 

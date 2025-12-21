@@ -45,6 +45,43 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .unlockedBy("has_item", has(ModTags.Items.HERBS))
                 .save(pWriter);
 
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.LEAF_MANE.get())
+                .pattern("AAA")
+                .pattern("ACA")
+                .pattern("AAA")
+                .define('A', ItemTags.LEAVES)
+                .define('C', Items.VINE)
+                .unlockedBy("has_item", has(ItemTags.LEAVES))
+                .save(pWriter);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.WARRIOR_NAMETAG.get())
+                .pattern("  A")
+                .pattern("CB ")
+                .pattern("BC ")
+                .define('A', Items.STRING)
+                .define('B', Items.SUGAR_CANE)
+                .define('C', ModTags.Items.HERBS)
+                .unlockedBy("has_item", has(Items.SUGAR_CANE))
+                .save(pWriter);
+
+
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.ANIMAL_TEETH.get(), 1)
+                .requires(ModItems.ANIMAL_TOOTH.get())
+                .requires(ModItems.ANIMAL_TOOTH.get())
+                .requires(ModItems.ANIMAL_TOOTH.get())
+                .requires(ModItems.ANIMAL_TOOTH.get())
+                .requires(Items.VINE)
+                .unlockedBy("has_item", has(ModItems.ANIMAL_TOOTH.get()))
+                .save(pWriter);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.TEETH_CLAWS.get())
+                .pattern("   ")
+                .pattern("A A")
+                .pattern("A A")
+                .define('A', ModItems.ANIMAL_TEETH.get())
+                .unlockedBy("has_item", has(ModItems.ANIMAL_TEETH.get()))
+                .save(pWriter);
+
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.FLOWER_ARMOR.get())
                 .pattern("ACA")
                 .pattern("BCB")

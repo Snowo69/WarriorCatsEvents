@@ -16,6 +16,7 @@ import net.snowteb.warriorcats_events.effect.ModEffects;
 import net.snowteb.warriorcats_events.entity.ModEntities;
 import net.snowteb.warriorcats_events.integration.WCatIntegration;
 import net.snowteb.warriorcats_events.item.ModItems;
+import net.snowteb.warriorcats_events.loot.ModLootModifiers;
 import net.snowteb.warriorcats_events.network.ModPackets;
 import net.snowteb.warriorcats_events.screen.ModMenuTypes;
 import net.snowteb.warriorcats_events.sound.ModSounds;
@@ -27,7 +28,7 @@ import tocraft.walkers.integrations.Integrations;
 @Mod(WarriorCatsEvents.MODID)
 public class WarriorCatsEvents {
     public static final String MODID = "warriorcats_events";
-    public static final String MOD_VERSION = "1.0.2";
+    public static final String MOD_VERSION = "1.1.0";
     public static final Logger LOGGER = LogUtils.getLogger();
 
     public WarriorCatsEvents() {
@@ -40,7 +41,6 @@ public class WarriorCatsEvents {
                 MODID + "-common.toml"
         );
 
-        Integrations.register(WCatIntegration.MODID, WCatIntegration::new);
         ModSounds.register(modEventBus);
         ModItems.register(modEventBus);
         ModBlocks.register(modEventBus);
@@ -49,6 +49,7 @@ public class WarriorCatsEvents {
         ModMenuTypes.register(modEventBus);
         ModEffects.register(modEventBus);
         ModAttributes.ATTRIBUTES.register(modEventBus);
+        ModLootModifiers.register(modEventBus);
 
 
 
@@ -68,6 +69,8 @@ public class WarriorCatsEvents {
     private void commonSetup(final FMLCommonSetupEvent event) {
         event.enqueueWork(() -> {
             ModPackets.register();
+
+            Integrations.register(WCatIntegration.MODID, WCatIntegration::new);
 
         });
 
@@ -104,6 +107,7 @@ public class WarriorCatsEvents {
             event.accept(ModItems.WARRIORNAMERANDOMIZER);
             event.accept(ModItems.FRESHKILL_AND_HERBS_BUNDLE);
             event.accept(ModItems.DOCK_POULTICE);
+            event.accept(ModItems.WARRIOR_NAMETAG);
 
         }
 
@@ -115,6 +119,8 @@ public class WarriorCatsEvents {
             event.accept(ModItems.CHAMOMILE);
             event.accept(ModItems.YARROW);
             event.accept(ModItems.CATMINT);
+            event.accept(ModItems.ANIMAL_TOOTH);
+            event.accept(ModItems.ANIMAL_TEETH);
 
         }
 
@@ -154,6 +160,8 @@ public class WarriorCatsEvents {
         if (event.getTabKey() == CreativeModeTabs.COMBAT) {
             event.accept(ModItems.FLOWER_CROWN);
             event.accept(ModItems.FLOWER_ARMOR);
+            event.accept(ModItems.LEAF_MANE);
+            event.accept(ModItems.TEETH_CLAWS);
         }
 
 

@@ -9,6 +9,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
@@ -34,6 +35,7 @@ public class BadgerEntity extends Animal implements GeoEntity {
             SynchedEntityData.defineId(BadgerEntity.class, EntityDataSerializers.BOOLEAN);
     public int attackAnimationTimeout = 0;
     private Goal preyTarget;
+    private Goal enemyTarget;
 
     private AnimatableInstanceCache cache = new SingletonAnimatableInstanceCache(this);
 
@@ -46,23 +48,28 @@ public class BadgerEntity extends Animal implements GeoEntity {
                 .add(Attributes.MAX_HEALTH, 38D)
                 .add(Attributes.ATTACK_SPEED, 1.2f)
                 .add(Attributes.ATTACK_DAMAGE, 5.0f)
-                .add(Attributes.MOVEMENT_SPEED, 0.30f);
+                .add(Attributes.MOVEMENT_SPEED, 0.30f)
+                .add(Attributes.ARMOR, 13.0f);
     }
 
     @Override
     protected void registerGoals() {
         this.preyTarget = new NearestAttackableTargetGoal<>(this, Animal.class, 10, false, false, (target) -> {
-            return (target instanceof WCatEntity || target instanceof MouseEntity || target instanceof SquirrelEntity);
+            return (target instanceof MouseEntity || target instanceof SquirrelEntity);
+        });
+        this.enemyTarget = new NearestAttackableTargetGoal<>(this, LivingEntity.class, 10, false, false, (target) -> {
+            return (target instanceof WCatEntity || target instanceof Player);
         });
 
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1, new BadgerAttackGoal(this, 1.2D, true));
         this.goalSelector.addGoal(2, new WaterAvoidingRandomStrollGoal(this, 0.6D));
         this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 8.0F));
-        this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(3, new RandomLookAroundGoal(this));
 
         this.targetSelector.addGoal(0, new HurtByTargetGoal(this));
-        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Player.class, true));
+//        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Player.class, true));
+        this.targetSelector.addGoal(1, this.enemyTarget);
         this.targetSelector.addGoal(2, this.preyTarget);
     }
 

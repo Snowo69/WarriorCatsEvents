@@ -4,8 +4,11 @@ import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.CriteriaTriggers;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -20,11 +23,21 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.common.ToolAction;
 import net.minecraftforge.common.ToolActions;
+import net.minecraftforge.network.PacketDistributor;
+import net.snowteb.warriorcats_events.network.ModPackets;
+import net.snowteb.warriorcats_events.network.packet.StCFishingScreenPacket;
+import net.snowteb.warriorcats_events.network.packet.ThirstDataSyncStCPacket;
+import net.snowteb.warriorcats_events.screen.FishingScreen;
+import net.snowteb.warriorcats_events.screen.SkillScreen;
+import net.snowteb.warriorcats_events.sound.ModSounds;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -107,7 +120,7 @@ public class ClawsTooltip extends ShearsItem {
 
             if (optional.isPresent()) {
                 level.playSound(player, blockpos, SoundEvents.CROSSBOW_QUICK_CHARGE_3, SoundSource.BLOCKS, 0.7F, 1.2F);
-                level.playSound(player, blockpos, SoundEvents.CROSSBOW_LOADING_END, SoundSource.BLOCKS, 0.7F, 0.5F);
+                level.playSound(player, blockpos, ModSounds.SCRAPING_WOOD.get(), SoundSource.BLOCKS, 0.5F, 1F);
                 optional3 = optional;
             }
 
@@ -152,12 +165,103 @@ public class ClawsTooltip extends ShearsItem {
         return true;
     }
 
+    private boolean isRiverOrOcean(Level level, BlockPos origin) {
+
+        int radius = 10;
+        int depth = 5;
+
+        int waterCount = 0;
+        int total = 0;
+
+        for (int x = -radius; x <= radius; x++) {
+            for (int z = -radius; z <= radius; z++) {
+                for (int y = 0; y > -depth; y--) {
+
+                    BlockPos check = origin.offset(x, y, z);
+                    total++;
+
+                    if (level.getBlockState(check).getFluidState().isSource()) {
+                        waterCount++;
+                    }
+                }
+            }
+        }
+
+        float ratio = (float) waterCount / total;
+
+        return ratio > 0.356f;
+    }
+
+
     /**
      * If you use right click, then start using the item.
      * And since we previously defined the item can perform shield actions, then it will perform the shield action.
      */
     public InteractionResultHolder<ItemStack> use(Level pLevel, Player pPlayer, InteractionHand pHand) {
         ItemStack itemstack = pPlayer.getItemInHand(pHand);
+
+        BlockHitResult hit = Item.getPlayerPOVHitResult(
+                pLevel,
+                pPlayer,
+                ClipContext.Fluid.SOURCE_ONLY
+        );
+
+        if (hit.getType() == HitResult.Type.BLOCK) {
+            BlockPos pos = hit.getBlockPos();
+            BlockState state = pLevel.getBlockState(pos);
+
+            if (state.getFluidState().isSource() && pPlayer.isShiftKeyDown()) {
+
+                if (!pLevel.isClientSide) {
+
+                    boolean canFish = isRiverOrOcean(pLevel, pos);
+
+                    if (canFish) {
+                        pPlayer.getCooldowns().addCooldown(this, 20 * 8);
+                        if (!pLevel.isClientSide && pPlayer instanceof ServerPlayer sPlayer) {
+                            ModPackets.sendToPlayer(new StCFishingScreenPacket(), sPlayer);
+                            pLevel.playSound(
+                                    null,
+                                    sPlayer.blockPosition(),
+                                    SoundEvents.AMBIENT_UNDERWATER_ENTER,
+                                    SoundSource.PLAYERS,
+                                    0.8F,
+                                    1.0F
+                            );
+                            pLevel.playSound(
+                                    null,
+                                    sPlayer.blockPosition(),
+                                    SoundEvents.CAT_EAT,
+                                    SoundSource.PLAYERS,
+                                    0.8F,
+                                    1.0F
+                            );
+
+                            ((ServerLevel) pLevel).sendParticles(
+                                    ParticleTypes.SPLASH,
+                                    sPlayer.getX(),
+                                    sPlayer.getY() + 0.5,
+                                    sPlayer.getZ(),
+                                    30,
+                                    0.4, 0.2, 0.4,
+                                    0.02
+                            );
+                        }
+
+
+                    } else {
+                        pPlayer.displayClientMessage(
+                                Component.literal("There is no fish here...")
+                                        .withStyle(ChatFormatting.YELLOW),
+                                true
+                        );
+                    }
+                }
+
+                return InteractionResultHolder.success(itemstack);
+            }
+        }
+
         pPlayer.startUsingItem(pHand);
         pLevel.playSound(pPlayer, pPlayer.blockPosition(), SoundEvents.MOSS_STEP, SoundSource.PLAYERS, 0.7F, 0.6F);
 

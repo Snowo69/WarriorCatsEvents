@@ -1,24 +1,21 @@
 package net.snowteb.warriorcats_events.entity.client;
 
-import net.minecraft.client.animation.AnimationChannel;
-import net.minecraft.client.animation.AnimationDefinition;
-import net.minecraft.client.animation.Keyframe;
+import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.item.Items;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.item.ModItems;
-import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.core.animatable.model.CoreGeoBone;
 import software.bernie.geckolib.core.animation.AnimationState;
-import software.bernie.geckolib.loading.json.raw.Bone;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.model.data.EntityModelData;
 
 public class WCModel extends GeoModel<WCatEntity> {
+
+    ModelPart rightPaw;
 
     /**
      * An array list of all the textures available.
@@ -77,12 +74,28 @@ public class WCModel extends GeoModel<WCatEntity> {
             bone.setHidden(!hasCrown);
         });
 
+        getBone("mane").ifPresent(bone -> {
+            boolean hasMane = animatable
+                    .getItemBySlot(EquipmentSlot.HEAD)
+                    .is(ModItems.LEAF_MANE.get());
+            bone.setHidden(!hasMane);
+        });
+
         {
             boolean hasFlowerArmor = animatable.getItemBySlot(EquipmentSlot.CHEST).is(ModItems.FLOWER_ARMOR.get());
 
             getBone("flower_upper_armor").ifPresent(bone -> bone.setHidden(!hasFlowerArmor));
             getBone("layer_2").ifPresent(bone -> bone.setHidden(!hasFlowerArmor));
             getBone("layer_3").ifPresent(bone -> bone.setHidden(!hasFlowerArmor));
+        }
+
+        {
+            boolean hasTeethClaws = animatable.getItemBySlot(EquipmentSlot.FEET).is(ModItems.TEETH_CLAWS.get());
+
+            getBone("teethclaws1").ifPresent(bone -> bone.setHidden(!hasTeethClaws));
+            getBone("teethclaws2").ifPresent(bone -> bone.setHidden(!hasTeethClaws));
+            getBone("teethclaws3").ifPresent(bone -> bone.setHidden(!hasTeethClaws));
+            getBone("teethclaws4").ifPresent(bone -> bone.setHidden(!hasTeethClaws));
         }
 
 

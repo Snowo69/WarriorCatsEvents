@@ -21,7 +21,7 @@ public class FlowerCrownItem extends ArmorItem {
             UUID.fromString("a1b2c3d4-aaaa-cccc-eeee-1a1b1c123456");
 
     public FlowerCrownItem() {
-        super(ArmorMaterials.IRON, Type.HELMET, new Item.Properties().stacksTo(1).durability(120));
+        super(ArmorMaterials.IRON, Type.HELMET, new Item.Properties().stacksTo(1).durability(150));
     }
 
 
@@ -38,7 +38,7 @@ public class FlowerCrownItem extends ArmorItem {
 
             builder.put(
                     Attributes.ARMOR,
-                    new AttributeModifier(ARMOR_UUID, "flower_crown_armor", 2.0, AttributeModifier.Operation.ADDITION)
+                    new AttributeModifier(ARMOR_UUID, "flower_crown_armor", 4.0, AttributeModifier.Operation.ADDITION)
             );
 
             return builder.build();

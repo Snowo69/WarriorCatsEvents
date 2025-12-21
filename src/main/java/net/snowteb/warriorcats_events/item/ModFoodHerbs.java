@@ -40,7 +40,8 @@ public class ModFoodHerbs {
             .effect(() -> new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE,6000,0),1f)
             .effect(() -> new MobEffectInstance(MobEffects.MOVEMENT_SPEED,6000,0),1f)
             .effect(() -> new MobEffectInstance(MobEffects.DAMAGE_BOOST,6000,0),1f)
-            .effect(() -> new MobEffectInstance(MobEffects.CONFUSION,140,0),1f)
+            .effect(() -> new MobEffectInstance(MobEffects.CONFUSION,160,0),1f)
+            .effect(() -> new MobEffectInstance(MobEffects.REGENERATION,160,0),1f)
             .build();
 
     // Deathberries

@@ -1,6 +1,7 @@
 package net.snowteb.warriorcats_events.event;
 
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.packs.FilePackResources;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.repository.Pack;
 import net.minecraft.server.packs.repository.PackCompatibility;
@@ -25,6 +26,7 @@ import net.snowteb.warriorcats_events.entity.ModEntities;
 import net.snowteb.warriorcats_events.entity.custom.*;
 import net.snowteb.warriorcats_events.util.ModAttributes;
 
+import java.io.File;
 import java.nio.file.Path;
 
 import static net.minecraft.world.flag.FeatureFlags.VANILLA;
@@ -78,40 +80,48 @@ public class ModEvents {
 
     }
 
-    /**
-     * Adds the custom font.
-     */
-    @SubscribeEvent
-    public static void addPackFinder(AddPackFindersEvent event) {
-        if (event.getPackType() != PackType.CLIENT_RESOURCES) return;
+//    /**
+//     * Adds the custom font.
+//     */
+//    @SubscribeEvent
+//    public static void addPackFinder(AddPackFindersEvent event) {
+//        if (event.getPackType() != PackType.CLIENT_RESOURCES) return;
+//
+//        var modFileInfo = ModList.get().getModFileById("warriorcats_events");
+//        if (modFileInfo == null) return;
+//
+//        var modFile = modFileInfo.getFile();
+//
+//        Path packPath = modFile.getFilePath()
+//                .resolve("resourcepacks/requiem_text_roman_font");
+//
+//        event.addRepositorySource(consumer -> {
+//            consumer.accept(Pack.create(
+//                    "requiem_text_roman_font",
+//                    Component.literal("Requiem Roman Font"),
+//                    false,
+//                    id -> new PathPackResources(
+//                            id,
+//                            true,
+//                            packPath
+//                    ),
+//                    new Pack.Info(
+//                            Component.literal("Optional Requiem Roman Font"),
+//                            15,
+//                            15,
+//                            FeatureFlagSet.of(),
+//                            false
+//                    ),
+//                    PackType.CLIENT_RESOURCES,
+//                    Pack.Position.TOP,
+//                    false,
+//                    PackSource.BUILT_IN
+//            ));
+//        });
+//    }
 
-        var modFileInfo = ModList.get().getModFileById("warriorcats_events");
-        if (modFileInfo == null) return;
-        var modFile = modFileInfo.getFile();
-        Path root = modFile.getFilePath();
 
-        Path packPath = root.resolve("resourcepacks").resolve("Requiem Text Roman font");
 
-        event.addRepositorySource(sink -> {
-            sink.accept(Pack.create(
-                    "requiem_text_roman_font",
-                    Component.literal("Requiem Text Roman font"),
-                    false,
-                    (profile) -> new PathPackResources("Requiem Text Roman font", true, packPath),       // <--- Carga del pack
-                    new Pack.Info(
-                            Component.literal("Optional Requiem Roman Font"),
-                            15,
-                            15,
-                            FeatureFlagSet.of(),
-                            false
-                    ),
-                    PackType.CLIENT_RESOURCES,
-                    Pack.Position.TOP,
-                    false,
-                    PackSource.BUILT_IN
-            ));
-        });
-    }
 
 
     @SubscribeEvent

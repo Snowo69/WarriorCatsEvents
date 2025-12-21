@@ -1,42 +1,40 @@
 package net.snowteb.warriorcats_events.event;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.network.chat.Component;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
+import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.animal.*;
+import net.minecraft.world.entity.monster.AbstractSkeleton;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraftforge.client.event.RenderGuiOverlayEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
-import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.snowteb.warriorcats_events.WCEConfig;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.effect.ModEffects;
-import net.snowteb.warriorcats_events.entity.ModEntities;
+import net.snowteb.warriorcats_events.entity.custom.WCatAvoidGoal;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.item.ModFoodHerbs;
 import net.snowteb.warriorcats_events.item.ModItems;
 import net.snowteb.warriorcats_events.item.custom.FlowerArmorItem;
 import net.snowteb.warriorcats_events.item.custom.FlowerCrownItem;
 import net.snowteb.warriorcats_events.network.ModPackets;
-import net.snowteb.warriorcats_events.network.packet.SyncSkillDataPacket;
 import net.snowteb.warriorcats_events.network.packet.ThirstDataSyncStCPacket;
-import net.snowteb.warriorcats_events.skills.ISkillData;
 import net.snowteb.warriorcats_events.skills.PlayerSkillProvider;
-import net.snowteb.warriorcats_events.stealth.PlayerStealthProvider;
 import net.snowteb.warriorcats_events.thirst.PlayerThirstProvider;
 import tocraft.walkers.api.PlayerShape;
 
@@ -86,7 +84,7 @@ public class ModEventsForge {
                     || stack.is(Items.SWEET_BERRIES)) {
                 int randomThirst = 1 + player.getRandom().nextInt(1);
                 thirst.addThirst(randomThirst);
-                if (!stack.is(Items.SWEET_BERRIES)){
+                if (!stack.is(Items.SWEET_BERRIES)) {
                     player.getFoodData().eat(3, 0.84f);
                 }
             }
@@ -116,7 +114,7 @@ public class ModEventsForge {
      * Then make a list of all the players in the server, and for every player verify if their UUID is the same as the shape that fell.
      * If it is, then choose it as the owner of the shape.
      * Then check if the owner has Jump level greater than 2. If it does, reduce it's fall distance.
-     *
+     * <p>
      * If the entity is a Wild cat, reduce its fall distance too.
      */
     @SubscribeEvent
@@ -162,23 +160,96 @@ public class ModEventsForge {
      */
     @SubscribeEvent
     public static void onEntityJoinWorld(EntityJoinLevelEvent event) {
+        if (event.getLevel().isClientSide()) return;
+
         if (event.getEntity() instanceof Creeper creeper) {
-            creeper.goalSelector.addGoal(3,
-                    new AvoidEntityGoal<>(
-                            creeper,
-                            WCatEntity.class,
-                            12.0F,
-                            1.3D,
-                            1.2D
-                    )
-            );
+//
+//            creeper.goalSelector.getAvailableGoals().removeIf(g
+//                    -> g.getGoal() instanceof AvoidEntityGoal<?>);
+//
+            boolean alreadyHasAvoid = creeper.goalSelector.getAvailableGoals().stream()
+                    .anyMatch(g -> g.getGoal() instanceof WCatAvoidGoal);
+
+            if (!alreadyHasAvoid) {
+                creeper.goalSelector.addGoal(3, new WCatAvoidGoal(creeper, 12.0F, 1.3D, 1.2D));
+            }
+
+//            creeper.goalSelector.addGoal(3,
+//                    new AvoidEntityGoal<>(
+//                            creeper,
+//                            WCatEntity.class,
+//                            12.0F,
+//                            1.3D,
+//                            1.2D
+//                    )
+//            );
 
         }
+
+        if (WCEConfig.COMMON.ENHANCED_ANIMALS.get()) {
+            if (event.getEntity() instanceof Fox fox) {
+                CompoundTag tag = fox.getPersistentData();
+
+                fox.goalSelector.getAvailableGoals().removeIf(g
+                        -> g.getGoal() instanceof NearestAttackableTargetGoal<?>);
+                fox.goalSelector.getAvailableGoals().removeIf(g
+                        -> g.getGoal() instanceof MeleeAttackGoal);
+                fox.goalSelector.getAvailableGoals().removeIf(g
+                        -> g.getGoal() instanceof AvoidEntityGoal<?>);
+
+
+                fox.goalSelector.addGoal(2,
+                        new NearestAttackableTargetGoal<>(fox, LivingEntity.class, 10, false, false,
+                                (animal) -> animal instanceof Player || animal instanceof WCatEntity
+                                        || animal instanceof Chicken || animal instanceof Rabbit || animal instanceof AbstractSchoolingFish));
+                fox.goalSelector.addGoal(2, new MeleeAttackGoal(fox, 1.2D, true));
+
+                if (!tag.getBoolean("fox_enhanced")) {
+                    tag.putBoolean("fox_enhanced", true);
+                    fox.getAttribute(Attributes.MAX_HEALTH).setBaseValue(30.0D);
+                    fox.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(0.35D);
+                    fox.getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(5.2D);
+                    fox.getAttribute(Attributes.ARMOR).setBaseValue(12D);
+                    fox.setHealth(fox.getMaxHealth());
+                }
+
+            }
+
+            if (event.getEntity() instanceof Wolf wolf) {
+                CompoundTag tag = wolf.getPersistentData();
+
+                wolf.goalSelector.getAvailableGoals().removeIf(g
+                        -> g.getGoal() instanceof NearestAttackableTargetGoal<?>);
+
+                wolf.goalSelector.addGoal(4,
+                        new NearestAttackableTargetGoal<>(wolf, LivingEntity.class, 10, false, false,
+                                (animal) -> animal instanceof Player || animal instanceof WCatEntity || animal instanceof AbstractSkeleton));
+
+                if (!tag.getBoolean("wolf_enhanced")) {
+                    tag.putBoolean("wolf_enhanced", true);
+                    wolf.getAttribute(Attributes.MAX_HEALTH).setBaseValue(30.0D);
+                    wolf.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(0.35D);
+                    wolf.getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(5.2D);
+                    wolf.getAttribute(Attributes.ARMOR).setBaseValue(12D);
+                    wolf.setHealth(wolf.getMaxHealth());
+                }
+
+            }
+        }
+
         if (event.getEntity() instanceof WCatEntity wCat) {
-            if (wCat.isBaby()) {
-                wCat.applyBabyAttributes();
-            } else {
-                wCat.applyAdultAttributes();
+            CompoundTag tag = wCat.getPersistentData();
+
+            if (!tag.getBoolean("spawn_att_applied")) {
+                tag.putBoolean("spawn_att_applied", true);
+
+                if (wCat.isBaby()) {
+                    wCat.applyBabyAttributes();
+                } else {
+                    wCat.applyAdultAttributes();
+                }
+
+                wCat.setHealth(wCat.getMaxHealth());
             }
         }
 
@@ -219,19 +290,19 @@ public class ModEventsForge {
     }
 
 
-    @SubscribeEvent
-    public static void onPlayerHurt(LivingHurtEvent event) {
-        if (!(event.getEntity() instanceof Player player)) return;
-
-        ItemStack head = player.getItemBySlot(EquipmentSlot.HEAD);
-
-        if (head.getItem() instanceof FlowerCrownItem) {
-            head.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(EquipmentSlot.HEAD));
-        }
-        if (head.getItem() instanceof FlowerArmorItem) {
-            head.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(EquipmentSlot.CHEST));
-        }
-    }
+//    @SubscribeEvent
+//    public static void onPlayerHurt(LivingHurtEvent event) {
+//        if (!(event.getEntity() instanceof Player player)) return;
+//
+//        ItemStack head = player.getItemBySlot(EquipmentSlot.HEAD);
+//
+//        if (head.getItem() instanceof FlowerCrownItem) {
+//            head.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(EquipmentSlot.HEAD));
+//        }
+//        if (head.getItem() instanceof FlowerArmorItem) {
+//            head.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(EquipmentSlot.CHEST));
+//        }
+//    }
 
 
 }

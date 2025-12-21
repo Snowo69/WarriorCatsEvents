@@ -74,7 +74,6 @@ public class WCRenderer extends GeoEntityRenderer<WCatEntity> {
 
         if (entity == PlayerShape.getCurrentShape(Minecraft.getInstance().player)) {
             AnimationClientData.isPlayerShape = true;
-            entity.isAShape = true;
         } else {
             AnimationClientData.isPlayerShape = false;
         }

@@ -25,6 +25,7 @@ import net.snowteb.warriorcats_events.entity.client.*;
 import net.snowteb.warriorcats_events.network.ModPackets;
 import net.snowteb.warriorcats_events.network.packet.CtSHissPacket;
 import net.snowteb.warriorcats_events.network.packet.ReqSkillDataPacket;
+import net.snowteb.warriorcats_events.network.packet.StCFishingScreenPacket;
 import net.snowteb.warriorcats_events.network.packet.WaterPacket;
 import net.snowteb.warriorcats_events.screen.*;
 import net.snowteb.warriorcats_events.skills.StealthClientState;
@@ -194,6 +195,19 @@ public class ClientEvents {
             MenuScreens.register(ModMenuTypes.STONECLEFT_MENU.get(), StoneCleftScreen::new);
             MenuScreens.register(ModMenuTypes.WCAT_INVENTORY.get(), WCatScreen::new);
             UpdateCheck.checkForUpdates();
+
+            ModPackets.INSTANCE.registerMessage(
+                    13,
+                    StCFishingScreenPacket.class,
+                    (pkt, buf) -> pkt.toBytes(buf),
+                    StCFishingScreenPacket::new,
+                    (pkt, ctxSupplier) -> {
+                        ctxSupplier.get().enqueueWork(() -> {
+                            Minecraft.getInstance().setScreen(new FishingScreen());
+                        });
+                        ctxSupplier.get().setPacketHandled(true);
+                    }
+            );
         }
 
     }

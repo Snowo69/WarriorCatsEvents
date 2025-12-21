@@ -17,9 +17,7 @@ import net.minecraftforge.registries.RegistryObject;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.block.ModBlocks;
 import net.snowteb.warriorcats_events.entity.ModEntities;
-import net.snowteb.warriorcats_events.item.custom.ClawsTooltip;
-import net.snowteb.warriorcats_events.item.custom.FlowerArmorItem;
-import net.snowteb.warriorcats_events.item.custom.FlowerCrownItem;
+import net.snowteb.warriorcats_events.item.custom.*;
 //import net.snowteb.warriorcats_events.item.custom.LeaderCallItem;
 import net.snowteb.warriorcats_events.sound.ModSounds;
 import net.snowteb.warriorcats_events.util.ItemWithToolTip;
@@ -72,12 +70,23 @@ public class ModItems {
 
 public static final RegistryObject<Item> FLOWER_CROWN = ITEMS.register("flower_crown",
         () -> new FlowerCrownItem());
+    public static final RegistryObject<Item> LEAF_MANE = ITEMS.register("leaf_mane",
+            () -> new LeafManeItem());
     public static final RegistryObject<Item> FLOWER_ARMOR = ITEMS.register("flower_armor",
             () -> new FlowerArmorItem());
+    public static final RegistryObject<Item> TEETH_CLAWS = ITEMS.register("teeth_claws",
+            () -> new TeethClawsItem());
 //public static final RegistryObject<Item> LEADER_CALL = ITEMS.register("leader_call",
 //        () -> new LeaderCallItem(new Item.Properties().stacksTo(1).durability(300)));
 
+    public static final RegistryObject<Item> ANIMAL_TOOTH = ITEMS.register("animal_tooth",
+            () -> new Item(new Item.Properties().stacksTo(16)));
+    public static final RegistryObject<Item> ANIMAL_TEETH = ITEMS.register("animal_teeth",
+            () -> new Item(new Item.Properties().stacksTo(16)));
 
+    public static final RegistryObject<Item> WARRIOR_NAMETAG = ITEMS.register("warrior_nametag",
+            () -> new ItemWithToolTip(new Item.Properties().stacksTo(8),
+                    "item.warriorcats_events.warrior_nametag.tooltip"));
 
 
     public static final RegistryObject<Item> DOCK_LEAVES = ITEMS.register("dock_leaves",
