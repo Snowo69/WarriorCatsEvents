@@ -289,7 +289,6 @@ public class ModEventsForge {
         }
     }
 
-
 //    @SubscribeEvent
 //    public static void onPlayerHurt(LivingHurtEvent event) {
 //        if (!(event.getEntity() instanceof Player player)) return;

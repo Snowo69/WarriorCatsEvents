@@ -18,6 +18,20 @@ public class WCatIntegration extends AbstractIntegration {
     @Override
     public void initialize() {
 
+//        WalkersTickHandlers.register(ModEntities.WCAT.get(), new WalkersTickHandler<WCatEntity>() {
+//            @Override
+//            public void tick(Player player, WCatEntity entity) {
+//
+//            }
+//        });
+
+//        EntityUpdaters.register(ModEntities.WCAT.get(), new EntityUpdater<WCatEntity>() {
+//            @Override
+//            public void update(Player from, WCatEntity to) {
+//
+//            }
+//        });
+
     }
 
     @Override

@@ -290,7 +290,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
             if (wcat.mode != CatMode.FOLLOW) return false;
             if (cat.isOrderedToSit()) return false;
 
-            if (cat.getTarget() != null) return false;
+            if (cat.getTarget() != null && cat.getTarget().isAlive()) return false;
 
             LivingEntity ownerEntity = cat.getOwner();
             if (ownerEntity == null) return false;
@@ -308,7 +308,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
             if (wcat.mode != CatMode.FOLLOW) return false;
             if (cat.isOrderedToSit()) return false;
 
-            if (cat.getTarget() != null) return false;
+            if (cat.getTarget() != null && cat.getTarget().isAlive()) return false;
 
             if (owner == null || !owner.isAlive()) return false;
 
@@ -332,7 +332,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
             if (dist > 25 && (cat.getOwner() != null && cat.getOwner().onGround())) {
                 cat.teleportTo(owner.getX(), owner.getY(), owner.getZ());
                 cat.getNavigation().stop();
-                return;
+//                return;
             }
 
             if (dist <= stopDistance) {
@@ -969,7 +969,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         //this.goalSelector.addGoal(4, new LeaderCallsGoal(this));
         this.goalSelector.addGoal(3, new WCatPickupItemGoal(this));
         this.goalSelector.addGoal(5, new BreedGoal(this, 1.0D));
-        this.goalSelector.addGoal(6, new CatFollowOwnerGoal(this, 1.2D, 1.0F, 7.0F)); // prioridad alta para seguir si toca
+        this.goalSelector.addGoal(6, new CatFollowOwnerGoal(this, 1.2D, 1.2F, 7.0F));
         this.targetSelector.addGoal(7, new HurtByTargetGoal(this));
         this.targetSelector.addGoal(8, this.preyTarget);
         this.goalSelector.addGoal(9, new WCAttackGoal(this, 1.2D, true));

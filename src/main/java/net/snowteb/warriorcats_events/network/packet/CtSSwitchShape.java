@@ -1,6 +1,8 @@
 package net.snowteb.warriorcats_events.network.packet;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -11,9 +13,12 @@ import net.minecraft.world.entity.Pose;
 import net.minecraftforge.network.NetworkEvent;
 import net.snowteb.warriorcats_events.entity.ModEntities;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
+import net.snowteb.warriorcats_events.integration.WCatTypeProvider;
 import net.snowteb.warriorcats_events.network.ModPackets;
 import net.snowteb.warriorcats_events.stealth.PlayerStealthProvider;
 import tocraft.walkers.api.PlayerShape;
+import tocraft.walkers.api.PlayerShapeChanger;
+import tocraft.walkers.api.variant.TypeProvider;
 
 import java.util.function.Supplier;
 
@@ -40,12 +45,16 @@ public class CtSSwitchShape {
 
                 LivingEntity current = PlayerShape.getCurrentShape(player);
                 ServerLevel level = (ServerLevel) player.level();
-
+//                ((WCatEntity) current).getVariant();
                 if (!(current instanceof WCatEntity)) {
-
                     LivingEntity wcat = (LivingEntity) WCAT.create(level);
                     if (wcat instanceof WCatEntity wcEntity) {
                         wcEntity.setVariant(0);
+//                        wcEntity.setBaby(true);
+//                        wcEntity.setCustomName(Component.empty().append(player.getName()).withStyle(ChatFormatting.AQUA));
+//                        wcEntity.setCustomNameVisible(true);
+//                        wcEntity.setAppScale(true);
+//                        WCatEntity WildCat = new WCatTypeProvider().create(ModEntities.WCAT.get(), level, 0);
                     }
                     PlayerShape.updateShapes(player, wcat);
                 } else {
