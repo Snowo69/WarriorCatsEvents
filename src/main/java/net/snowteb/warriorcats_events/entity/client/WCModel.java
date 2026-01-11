@@ -40,7 +40,17 @@ public class WCModel extends GeoModel<WCatEntity> {
             new ResourceLocation("warriorcats_events:textures/entity/wcat/bengalpelt.png"),
             new ResourceLocation("warriorcats_events:textures/entity/wcat/sparrowstar.png"),
             new ResourceLocation("warriorcats_events:textures/entity/wcat/foxeater.png"),
-            new ResourceLocation("warriorcats_events:textures/entity/wcat/willowsong.png")
+            new ResourceLocation("warriorcats_events:textures/entity/wcat/willowsong.png"),
+            new ResourceLocation("warriorcats_events:textures/entity/wcat/wcskin13.png"),
+            new ResourceLocation("warriorcats_events:textures/entity/wcat/wcskin14.png"),
+            new ResourceLocation("warriorcats_events:textures/entity/wcat/wcskin15.png"),
+            new ResourceLocation("warriorcats_events:textures/entity/wcat/wcskin16.png"),
+            new ResourceLocation("warriorcats_events:textures/entity/wcat/wcskin17.png"),
+            new ResourceLocation("warriorcats_events:textures/entity/wcat/wcskin18.png"),
+            new ResourceLocation("warriorcats_events:textures/entity/wcat/wcskin19.png"),
+            new ResourceLocation("warriorcats_events:textures/entity/wcat/wcskin20.png"),
+            new ResourceLocation("warriorcats_events:textures/entity/wcat/wcskin21.png"),
+            new ResourceLocation("warriorcats_events:textures/entity/wcat/wcskin22.png")
     };
 
     @Override

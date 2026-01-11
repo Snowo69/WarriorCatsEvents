@@ -11,8 +11,8 @@ import net.minecraft.world.entity.player.Player;
 import net.snowteb.warriorcats_events.WCEConfig;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.network.ModPackets;
-import net.snowteb.warriorcats_events.network.packet.CtSFishFailed;
-import net.snowteb.warriorcats_events.network.packet.CtSFishSuccesful;
+import net.snowteb.warriorcats_events.network.packet.c2s.CtSFishFailed;
+import net.snowteb.warriorcats_events.network.packet.c2s.CtSFishSuccesful;
 
 public class FishingScreen extends Screen {
     private static final ResourceLocation TEXTUREBACKGROUND =

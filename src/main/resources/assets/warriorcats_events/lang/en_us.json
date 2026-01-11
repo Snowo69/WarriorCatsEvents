@@ -1,5 +1,7 @@
 {
-  "block.warriorcats_events.mossbed": "Moss Nest",
+  "tab.warriorcats_events": "Warrior Cats Events",
+
+"block.warriorcats_events.mossbed": "Moss Nest",
   "block.warriorcats_events.mossbed.tooltip": "A comfortable moss nest, lined with feathers and ferns",
 
   "item.warriorcats_events.dock_leaves": "Dock Leaves",
@@ -36,7 +38,7 @@
   "item.warriorcats_events.whiskers.tooltip": "Whiskers allow you to know things about your clanmates!\\n\\nRight Click: Display Wild Cat's information.\\nRight Click + Shift: Change a Wild Cat's role.",
 
   "item.warriorcats_events.warrior_name_randomizer": "Name randomizer",
-  "item.warriorcats_events.warrior_name_randomizer.tooltip": "Right click: Randomize a Wild Cat's name depending on their role!",
+  "item.warriorcats_events.warrior_name_randomizer.tooltip": "Right click: Randomize a Wild Cat's name depending on their age!",
 
   "item.warriorcats_events.freshkill_and_herbs": "Freshkill And Herbs",
   "item.warriorcats_events.freshkill_and_herbs.tooltip": "Give this to a Wild Cat to recruit it! Sure they will love it.",
@@ -44,10 +46,10 @@
   "item.warriorcats_events.claws": "Claws",
   "item.warriorcats_events.claws.tooltip": "Designed by nature to hunt and fight.\\nThese will also help gathering plants and leaves without breaking them.\\nShift + Right-Click on a Wild Cat to open it's inventory.",
 
-  "item.warriorcats_events.catmint_leaves": "Catmint",
+  "item.warriorcats_events.catmint_leaves": "Catmint Leaves",
   "item.warriorcats_events.catmint.tooltip": "The best remedy for greencough so far.\\nVery tasty, it would make you touch the sky!\\nGive this to tamed Wild Cats to make them be mates.",
 
-  "item.warriorcats_events.yarrow_leaves": "Yarrow",
+  "item.warriorcats_events.yarrow_leaves": "Yarrow Leaves",
   "item.warriorcats_events.yarrow.tooltip": "A not so very good tasting herb. These could make any cat vomit.",
 
 
@@ -105,9 +107,17 @@
 
   "item.warriorcats_events.animal_tooth": "Animal Tooth",
   "item.warriorcats_events.animal_teeth": "Animal Teeth",
+  "item.warriorcats_events.ancient_stick": "Ancient Stick",
+  "item.warriorcats_events.kit": "Kitten",
 
   "item.warriorcats_events.warrior_nametag": "Warrior Nametag",
-  "item.warriorcats_events.warrior_nametag.tooltip": "Give any name you like to any of your clanmates!.\\nFormat: '<prefix> <sufix>' or  '<name>' ",
+  "item.warriorcats_events.warrior_nametag.tooltip": "Give any name you like to any of your clanmates!\\nFormat: '<prefix> <sufix>' or  '<name>' ",
+
+  "item.warriorcats_events.rare_flowers_bouquet": "Rare Flowers Bouquet",
+  "item.warriorcats_events.rare_flowers_bouquet.tooltip": "If a cat truly loves you... This offer will definitely turn a friendship into something else.",
+
+  "item.warriorcats_events.strange_shiny_stone": "Strange Shiny Stone",
+  "item.warriorcats_events.strange_shiny_stone.tooltip": "A rare shiny gem obtained by dropping a diamond and an emerald together at night.",
 
 
   "item.warriorcats_events.warriors_guide": "A Warrior's Guide",

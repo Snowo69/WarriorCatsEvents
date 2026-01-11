@@ -21,7 +21,6 @@ import net.snowteb.warriorcats_events.item.custom.*;
 //import net.snowteb.warriorcats_events.item.custom.LeaderCallItem;
 import net.snowteb.warriorcats_events.sound.ModSounds;
 import net.snowteb.warriorcats_events.util.ItemWithToolTip;
-import net.snowteb.warriorcats_events.util.ModBookItemToolTip;
 import net.snowteb.warriorcats_events.util.PoulticeTooltip;
 import vazkii.patchouli.api.PatchouliAPI;
 
@@ -76,8 +75,19 @@ public static final RegistryObject<Item> FLOWER_CROWN = ITEMS.register("flower_c
             () -> new FlowerArmorItem());
     public static final RegistryObject<Item> TEETH_CLAWS = ITEMS.register("teeth_claws",
             () -> new TeethClawsItem());
-//public static final RegistryObject<Item> LEADER_CALL = ITEMS.register("leader_call",
-//        () -> new LeaderCallItem(new Item.Properties().stacksTo(1).durability(300)));
+
+    public static final RegistryObject<Item> ANCIENT_STICK = ITEMS.register("ancient_stick",
+        () -> new AncientStickItem(new Item.Properties().stacksTo(1).durability(550)));
+
+    public static final RegistryObject<Item> KIT_ITEM = ITEMS.register("kit",
+            () -> new KitItem(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> MYSTIC_FLOWERS_BOUQUET = ITEMS.register("rare_flowers_bouquet",
+            () -> new ItemWithToolTip(new Item.Properties().stacksTo(1),
+                    "item.warriorcats_events.rare_flowers_bouquet.tooltip"));
+    public static final RegistryObject<Item> STRANGE_SHINY_STONE = ITEMS.register("strange_shiny_stone",
+            () -> new ItemWithToolTip(new Item.Properties().stacksTo(16),
+                    "item.warriorcats_events.strange_shiny_stone.tooltip"));
+
 
     public static final RegistryObject<Item> ANIMAL_TOOTH = ITEMS.register("animal_tooth",
             () -> new Item(new Item.Properties().stacksTo(16)));
@@ -130,7 +140,7 @@ public static final RegistryObject<Item> FLOWER_CROWN = ITEMS.register("flower_c
 
 
     public static final RegistryObject<Item> WHISKERS = ITEMS.register("whiskers",
-            () -> new ItemWithToolTip(new Item.Properties().stacksTo(1).durability(100),
+            () -> new ItemWithToolTip(new Item.Properties().stacksTo(1).durability(400),
                     "item.warriorcats_events.whiskers.tooltip"));
 
     public static final RegistryObject<Item> CLAWS = ITEMS.register("claws",
@@ -171,9 +181,9 @@ public static final RegistryObject<Item> FLOWER_CROWN = ITEMS.register("flower_c
 
     public static final RegistryObject<Item> GENERATIONS_MUSIC_DISC = ITEMS.register("generations_music_disc",
             () -> new RecordItem(6, ModSounds.GENERATIONS, new Item.Properties().stacksTo(1), 2650));
-
-    public static final RegistryObject<Item> STARCLAN_KNOWLEDGE = ITEMS.register("starclan_knowledge",
-            () -> new ModBookItemToolTip(new Item.Properties().stacksTo(1)));
+//
+//    public static final RegistryObject<Item> STARCLAN_KNOWLEDGE = ITEMS.register("starclan_knowledge",
+//            () -> new ModBookItemToolTip(new Item.Properties().stacksTo(1)));
 
     public static final RegistryObject<Item> GLOW_SHROOM = ITEMS.register("glowshroom",
             () -> new BlockItem(ModBlocks.GLOWSHROOM.get(), new Item.Properties().stacksTo(16)));

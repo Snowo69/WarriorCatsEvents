@@ -3,7 +3,7 @@ package net.snowteb.warriorcats_events.stealth;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.snowteb.warriorcats_events.network.ModPackets;
-import net.snowteb.warriorcats_events.network.packet.StCStealthSyncPacket;
+import net.snowteb.warriorcats_events.network.packet.s2c.StCStealthSyncPacket;
 
 public class PlayerStealth implements IStealthData {
     private boolean on = false;

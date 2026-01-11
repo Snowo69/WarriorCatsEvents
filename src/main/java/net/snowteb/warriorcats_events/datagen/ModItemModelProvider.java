@@ -37,6 +37,8 @@ public class ModItemModelProvider extends ItemModelProvider {
         simpleItem(ModItems.ANIMAL_TOOTH);
         simpleItem(ModItems.ANIMAL_TEETH);
         simpleItem(ModItems.WARRIOR_NAMETAG);
+        simpleItem(ModItems.KIT_ITEM);
+
 
 
         simpleBlockItem(ModBlocks.LEAF_DOOR);
@@ -57,6 +59,8 @@ public class ModItemModelProvider extends ItemModelProvider {
         basicItem(ModItems.CATMINT.get());
         basicItem(ModItems.YARROW.get());
         basicItem(ModItems.GLOW_SHROOM.get());
+        basicItem(ModItems.MYSTIC_FLOWERS_BOUQUET.get());
+        basicItem(ModItems.STRANGE_SHINY_STONE.get());
 
 
         {
@@ -111,9 +115,9 @@ public class ModItemModelProvider extends ItemModelProvider {
 
         }
 
-
-        saplingItem(ModBlocks.STARRYTREE_SAPLING);
-        saplingItem(ModBlocks.DARKTREE_SAPLING);
+//
+//        saplingItem(ModBlocks.STARRYTREE_SAPLING);
+//        saplingItem(ModBlocks.DARKTREE_SAPLING);
 
 
 

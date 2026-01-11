@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.CriteriaTriggers;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
@@ -20,6 +19,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.context.UseOnContext;
@@ -31,14 +31,11 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.common.ToolAction;
 import net.minecraftforge.common.ToolActions;
-import net.minecraftforge.network.PacketDistributor;
 import net.snowteb.warriorcats_events.network.ModPackets;
-import net.snowteb.warriorcats_events.network.packet.StCFishingScreenPacket;
-import net.snowteb.warriorcats_events.network.packet.ThirstDataSyncStCPacket;
-import net.snowteb.warriorcats_events.screen.FishingScreen;
-import net.snowteb.warriorcats_events.screen.SkillScreen;
+import net.snowteb.warriorcats_events.network.packet.s2c.StCFishingScreenPacket;
 import net.snowteb.warriorcats_events.sound.ModSounds;
 import org.jetbrains.annotations.Nullable;
+import tocraft.walkers.api.PlayerShape;
 
 import java.util.List;
 import java.util.Optional;
@@ -213,48 +210,49 @@ public class ClawsTooltip extends ShearsItem {
             if (state.getFluidState().isSource() && pPlayer.isShiftKeyDown()) {
 
                 if (!pLevel.isClientSide) {
+                    if (PlayerShape.getCurrentShape(pPlayer) instanceof Animal) {
+                        boolean canFish = isRiverOrOcean(pLevel, pos);
 
-                    boolean canFish = isRiverOrOcean(pLevel, pos);
+                        if (canFish) {
+                            pPlayer.getCooldowns().addCooldown(this, 20 * 8);
+                            if (!pLevel.isClientSide && pPlayer instanceof ServerPlayer sPlayer) {
+                                ModPackets.sendToPlayer(new StCFishingScreenPacket(), sPlayer);
+                                pLevel.playSound(
+                                        null,
+                                        sPlayer.blockPosition(),
+                                        SoundEvents.AMBIENT_UNDERWATER_ENTER,
+                                        SoundSource.PLAYERS,
+                                        0.8F,
+                                        1.0F
+                                );
+                                pLevel.playSound(
+                                        null,
+                                        sPlayer.blockPosition(),
+                                        SoundEvents.CAT_EAT,
+                                        SoundSource.PLAYERS,
+                                        0.8F,
+                                        1.0F
+                                );
 
-                    if (canFish) {
-                        pPlayer.getCooldowns().addCooldown(this, 20 * 8);
-                        if (!pLevel.isClientSide && pPlayer instanceof ServerPlayer sPlayer) {
-                            ModPackets.sendToPlayer(new StCFishingScreenPacket(), sPlayer);
-                            pLevel.playSound(
-                                    null,
-                                    sPlayer.blockPosition(),
-                                    SoundEvents.AMBIENT_UNDERWATER_ENTER,
-                                    SoundSource.PLAYERS,
-                                    0.8F,
-                                    1.0F
-                            );
-                            pLevel.playSound(
-                                    null,
-                                    sPlayer.blockPosition(),
-                                    SoundEvents.CAT_EAT,
-                                    SoundSource.PLAYERS,
-                                    0.8F,
-                                    1.0F
-                            );
+                                ((ServerLevel) pLevel).sendParticles(
+                                        ParticleTypes.SPLASH,
+                                        sPlayer.getX(),
+                                        sPlayer.getY() + 0.5,
+                                        sPlayer.getZ(),
+                                        30,
+                                        0.4, 0.2, 0.4,
+                                        0.02
+                                );
+                            }
 
-                            ((ServerLevel) pLevel).sendParticles(
-                                    ParticleTypes.SPLASH,
-                                    sPlayer.getX(),
-                                    sPlayer.getY() + 0.5,
-                                    sPlayer.getZ(),
-                                    30,
-                                    0.4, 0.2, 0.4,
-                                    0.02
+
+                        } else {
+                            pPlayer.displayClientMessage(
+                                    Component.literal("There is no fish here...")
+                                            .withStyle(ChatFormatting.YELLOW),
+                                    true
                             );
                         }
-
-
-                    } else {
-                        pPlayer.displayClientMessage(
-                                Component.literal("There is no fish here...")
-                                        .withStyle(ChatFormatting.YELLOW),
-                                true
-                        );
                     }
                 }
 

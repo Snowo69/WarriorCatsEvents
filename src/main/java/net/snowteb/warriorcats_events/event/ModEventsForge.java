@@ -4,22 +4,24 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.animal.*;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.AbstractSkeleton;
 import net.minecraft.world.entity.monster.Creeper;
+import net.minecraft.world.entity.monster.Phantom;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
+import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
-import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -30,10 +32,9 @@ import net.snowteb.warriorcats_events.entity.custom.WCatAvoidGoal;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.item.ModFoodHerbs;
 import net.snowteb.warriorcats_events.item.ModItems;
-import net.snowteb.warriorcats_events.item.custom.FlowerArmorItem;
-import net.snowteb.warriorcats_events.item.custom.FlowerCrownItem;
+import net.snowteb.warriorcats_events.item.custom.AncientStickItem;
 import net.snowteb.warriorcats_events.network.ModPackets;
-import net.snowteb.warriorcats_events.network.packet.ThirstDataSyncStCPacket;
+import net.snowteb.warriorcats_events.network.packet.s2c.ThirstDataSyncStCPacket;
 import net.snowteb.warriorcats_events.skills.PlayerSkillProvider;
 import net.snowteb.warriorcats_events.thirst.PlayerThirstProvider;
 import tocraft.walkers.api.PlayerShape;
@@ -148,8 +149,12 @@ public class ModEventsForge {
         });
 
 
-        if (entity instanceof WCatEntity) {
-            event.setDistance(Math.max(0f, event.getDistance() - 4f));
+        if (entity instanceof WCatEntity wCat) {
+            if (wCat.returnHomeFlag) {
+                event.setDistance(Math.max(0f, event.getDistance() - 8f));
+            } else {
+                event.setDistance(Math.max(0f, event.getDistance() - 4f));
+            }
         }
 
     }
@@ -161,6 +166,10 @@ public class ModEventsForge {
     @SubscribeEvent
     public static void onEntityJoinWorld(EntityJoinLevelEvent event) {
         if (event.getLevel().isClientSide()) return;
+
+        if (event.getEntity() instanceof Phantom) {
+            event.setCanceled(WCEConfig.COMMON.REMOVE_PHANTOMS.get());
+        }
 
         if (event.getEntity() instanceof Creeper creeper) {
 //
@@ -288,7 +297,6 @@ public class ModEventsForge {
             event.setCanceled(true);
         }
     }
-
 
 //    @SubscribeEvent
 //    public static void onPlayerHurt(LivingHurtEvent event) {

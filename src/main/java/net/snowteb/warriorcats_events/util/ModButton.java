@@ -21,6 +21,7 @@ public class ModButton extends AbstractButton {
     private final int texWidth;
     private final int texHeight;
     private final PressAction onPress;
+    private float textScale = 0.82f;
 
     public ModButton(int x, int y, int width, int height,
                      Component text,
@@ -33,6 +34,20 @@ public class ModButton extends AbstractButton {
         this.texture = texture;
         this.texWidth = texWidth;
         this.texHeight = texHeight;
+    }
+
+    public ModButton(int x, int y, int width, int height,
+                     Component text,
+                     PressAction onPress,
+                     ResourceLocation texture,
+                     int texWidth, int texHeight, float textScale) {
+
+        super(x, y, width, height, text);
+        this.onPress = onPress;
+        this.texture = texture;
+        this.texWidth = texWidth;
+        this.texHeight = texHeight;
+        this.textScale = textScale;
     }
 
     @Override
@@ -61,7 +76,7 @@ public class ModButton extends AbstractButton {
         }
 
 
-        float scale = 0.82f;
+        float scale = this.textScale;
 
         gui.pose().pushPose();
         gui.pose().scale(scale, scale, 1.0f);

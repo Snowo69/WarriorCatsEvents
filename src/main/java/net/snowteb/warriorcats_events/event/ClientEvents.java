@@ -5,8 +5,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.BiomeColors;
+import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.FoliageColor;
 import net.minecraftforge.api.distmarker.Dist;
@@ -18,16 +20,25 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.block.ModBlocks;
+import net.snowteb.warriorcats_events.client.LeapClientState;
 import net.snowteb.warriorcats_events.client.ThirstHUD;
 import net.snowteb.warriorcats_events.entity.ModEntities;
 import net.snowteb.warriorcats_events.entity.client.*;
 //import net.snowteb.warriorcats_events.entity.custom.ModModelLayers;
+import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
+import net.snowteb.warriorcats_events.item.ModItems;
 import net.snowteb.warriorcats_events.network.ModPackets;
-import net.snowteb.warriorcats_events.network.packet.CtSHissPacket;
-import net.snowteb.warriorcats_events.network.packet.ReqSkillDataPacket;
-import net.snowteb.warriorcats_events.network.packet.StCFishingScreenPacket;
-import net.snowteb.warriorcats_events.network.packet.WaterPacket;
+import net.snowteb.warriorcats_events.network.packet.OpenCatDataScreenPacket;
+import net.snowteb.warriorcats_events.network.packet.OpenClanSetupScreenPacket;
+import net.snowteb.warriorcats_events.network.packet.c2s.CtSHissPacket;
+import net.snowteb.warriorcats_events.network.packet.c2s.ReqSkillDataPacket;
+import net.snowteb.warriorcats_events.network.packet.s2c.StCFishingScreenPacket;
+import net.snowteb.warriorcats_events.network.packet.c2s.WaterPacket;
+import net.snowteb.warriorcats_events.network.packet.zcatmodifiers.SyncMorphStatsPacket;
 import net.snowteb.warriorcats_events.screen.*;
+import net.snowteb.warriorcats_events.screen.clandata.CatDataScreen;
+import net.snowteb.warriorcats_events.screen.clandata.ClanSetupScreen;
+import net.snowteb.warriorcats_events.screen.clandata.MorphGrowthScreen;
 import net.snowteb.warriorcats_events.skills.StealthClientState;
 import net.snowteb.warriorcats_events.sound.ModSounds;
 import net.snowteb.warriorcats_events.stealth.PlayerStealthProvider;
@@ -38,10 +49,11 @@ public class ClientEvents {
     private static boolean waterPressed;
     private static int hissCooldown = 0;
     private static int waterCooldown = 0;
-
+    public int shiftKeyDownCount = 0;
 
     @Mod.EventBusSubscriber(modid = WarriorCatsEvents.MODID, value = Dist.CLIENT)
     public static class ClientForgeEvents {
+
 
         @SubscribeEvent
         public static void onKeyInput(InputEvent.Key event) {
@@ -85,6 +97,11 @@ public class ClientEvents {
                 boolean shifting = mc.options.keyShift.isDown();
                 StealthClientState.tick(shifting);
             });
+
+
+            boolean shifting = mc.options.keyShift.isDown();
+            LeapClientState.tick(shifting);
+
 
             /**
              * Keybinds with cooldowns.
@@ -196,6 +213,17 @@ public class ClientEvents {
             MenuScreens.register(ModMenuTypes.WCAT_INVENTORY.get(), WCatScreen::new);
             UpdateCheck.checkForUpdates();
 
+            ItemProperties.register(ModItems.ANCIENT_STICK.get(),
+                    new ResourceLocation(WarriorCatsEvents.MODID,"dismiss_active"),
+                    (stack, level, entity, seed) -> {
+                        if (stack.hasTag() && stack.getTag().getBoolean("dismissClanSwitchActive")) {
+                            return 1.0F;
+                        }
+                        return 0.0F;
+                    }
+            );
+
+
             ModPackets.INSTANCE.registerMessage(
                     13,
                     StCFishingScreenPacket.class,
@@ -208,6 +236,41 @@ public class ClientEvents {
                         ctxSupplier.get().setPacketHandled(true);
                     }
             );
+
+            ModPackets.INSTANCE.registerMessage(
+                    20,
+                    OpenClanSetupScreenPacket.class,
+                    (pkt, buf) -> pkt.toBytes(buf),
+                    OpenClanSetupScreenPacket::new,
+                    (pkt, ctxSupplier) -> {
+                        ctxSupplier.get().enqueueWork(() -> {
+                            Minecraft.getInstance().setScreen(new ClanSetupScreen());
+                        });
+                        ctxSupplier.get().setPacketHandled(true);
+                    }
+            );
+
+            ModPackets.INSTANCE.registerMessage(
+                    32,
+                    OpenCatDataScreenPacket.class,
+                    (pkt, buf) -> pkt.toBytes(buf),
+                    OpenCatDataScreenPacket::new,
+                    (pkt, ctxSupplier) -> {
+                        ctxSupplier.get().enqueueWork(() -> {
+                            Minecraft mc = Minecraft.getInstance();
+                            if (mc.level == null) return;
+
+                            var entity = mc.level.getEntity(pkt.catId);
+                            if (entity instanceof WCatEntity cat) {
+                                mc.setScreen(new CatDataScreen(cat.getDisplayName(), cat));
+                            }
+                        });
+
+                        ctxSupplier.get().setPacketHandled(true);
+                    }
+            );
+
+
         }
 
     }

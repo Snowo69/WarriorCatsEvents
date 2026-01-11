@@ -269,24 +269,24 @@ public class ModConfiguredFeatures {
 
 
 
-        register(context, DARKTREE_KEY, Feature.TREE, new TreeConfiguration.TreeConfigurationBuilder(
-                BlockStateProvider.simple(ModBlocks.DARK_LOG.get()),
-                new ForkingTrunkPlacer(
-                        3,
-                        3,
-                        6
-                ),
-                BlockStateProvider.simple(Blocks.AIR),
-                new BlobFoliagePlacer(ConstantInt.of(3), ConstantInt.of(2), 3),
-                new TwoLayersFeatureSize(1,0,2)).build());
-
-    register(context, STARRYTREE_KEY, Feature.TREE, new TreeConfiguration.TreeConfigurationBuilder(
-            BlockStateProvider.simple(ModBlocks.STARRY_LOG.get()),
-            new FancyTrunkPlacer(13,2,4),
-            BlockStateProvider.simple(ModBlocks.STARRY_LEAVES.get()),
-            new PineFoliagePlacer(ConstantInt.of(4), ConstantInt.of(0), ConstantInt.of(4)),
-            new TwoLayersFeatureSize(1,0,2)).build());
-
+//        register(context, DARKTREE_KEY, Feature.TREE, new TreeConfiguration.TreeConfigurationBuilder(
+//                BlockStateProvider.simple(ModBlocks.DARK_LOG.get()),
+//                new ForkingTrunkPlacer(
+//                        3,
+//                        3,
+//                        6
+//                ),
+//                BlockStateProvider.simple(Blocks.AIR),
+//                new BlobFoliagePlacer(ConstantInt.of(3), ConstantInt.of(2), 3),
+//                new TwoLayersFeatureSize(1,0,2)).build());
+//
+//    register(context, STARRYTREE_KEY, Feature.TREE, new TreeConfiguration.TreeConfigurationBuilder(
+//            BlockStateProvider.simple(ModBlocks.STARRY_LOG.get()),
+//            new FancyTrunkPlacer(13,2,4),
+//            BlockStateProvider.simple(ModBlocks.STARRY_LEAVES.get()),
+//            new PineFoliagePlacer(ConstantInt.of(4), ConstantInt.of(0), ConstantInt.of(4)),
+//            new TwoLayersFeatureSize(1,0,2)).build());
+//
 
 
 

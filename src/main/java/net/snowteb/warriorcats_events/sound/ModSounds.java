@@ -16,6 +16,8 @@ public class ModSounds {
 
     public static final RegistryObject<SoundEvent> GENERATIONS =
             registerSoundEvents("generations");
+    public static final RegistryObject<SoundEvent> GENERATIONS_BG =
+            registerSoundEvents("generations_bg");
 
     public static final RegistryObject<SoundEvent> MOUSE_AMBIENT =
             registerSoundEvents("entity.mouse.ambient");
@@ -52,6 +54,9 @@ public class ModSounds {
     public static final RegistryObject<SoundEvent> STEALTH_WOOSH =
             registerSoundEvents("ambient.stealth_woosh");
 
+
+    public static final RegistryObject<SoundEvent> LEADER_CALL =
+            registerSoundEvents("leader.cat_call");
 
 
     private static RegistryObject<SoundEvent> registerSoundEvents(String name) {

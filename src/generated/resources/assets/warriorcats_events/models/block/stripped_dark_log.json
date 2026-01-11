@@ -1,7 +1,0 @@
-{
-  "parent": "minecraft:block/cube_column",
-  "textures": {
-    "end": "warriorcats_events:block/stripped_dark_log_top",
-    "side": "warriorcats_events:block/stripped_dark_log"
-  }
-}

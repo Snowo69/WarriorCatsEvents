@@ -1,6 +1,7 @@
 package net.snowteb.warriorcats_events.integration;
 
 import net.minecraft.world.entity.monster.Creeper;
+import net.minecraft.world.entity.monster.Phantom;
 import net.snowteb.warriorcats_events.entity.ModEntities;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import tocraft.walkers.ability.AbilityRegistry;
@@ -17,6 +18,20 @@ public class WCatIntegration extends AbstractIntegration {
 
     @Override
     public void initialize() {
+
+//        WalkersTickHandlers.register(ModEntities.WCAT.get(), new WalkersTickHandler<WCatEntity>() {
+//            @Override
+//            public void tick(Player player, WCatEntity entity) {
+//
+//            }
+//        });
+
+//        EntityUpdaters.register(ModEntities.WCAT.get(), new EntityUpdater<WCatEntity>() {
+//            @Override
+//            public void update(Player from, WCatEntity to) {
+//
+//            }
+//        });
 
     }
 
@@ -35,6 +50,7 @@ public class WCatIntegration extends AbstractIntegration {
     @Override
     public void registerTraits() {
         TraitRegistry.registerByClass(WCatEntity.class, (FearedTrait<WCatEntity>) FearedTrait.ofFearfulClass(Creeper.class));
+        TraitRegistry.registerByClass(WCatEntity.class, (FearedTrait<WCatEntity>) FearedTrait.ofFearfulClass(Phantom.class));
 
     }
 
