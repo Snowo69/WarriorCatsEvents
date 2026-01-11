@@ -55,11 +55,24 @@ public class WCRenderer extends GeoEntityRenderer<WCatEntity> {
             case 17 -> 1.1f; //sparrowstar
             case 18 -> 0.8f; //foxeater
             case 19 -> 1.0f; //willowsong
+            case 20 -> 0.9f; //13
+            case 21 -> 0.8f; //14
+            case 22 -> 1.0f; //15
+            case 23 -> 0.9f; //16
+            case 24 -> 0.9f; //17
+            case 25 -> 1.1f; //18
+            case 26 -> 0.8f; //19
+            case 27 -> 0.8f; //20
+            case 28 -> 1.2f; //21
+            case 29 -> 1.0f; //22
             default -> 0.8f;
         };
 
 
         poseStack.scale(scale, scale, scale);
+        if (animatable.hasCustomName() && animatable.getCustomName().getString().equals("squished")) {
+            poseStack.scale(scale, 0.1f, scale);
+        }
         super.preRender(poseStack, animatable, model, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
     }
 
@@ -85,7 +98,6 @@ public class WCRenderer extends GeoEntityRenderer<WCatEntity> {
         if (entity.isAppScale() && entity.isBaby()){
             poseStack.scale(1.75f, 1.75f, 1.75f);
         }
-
         super.render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
     }
 

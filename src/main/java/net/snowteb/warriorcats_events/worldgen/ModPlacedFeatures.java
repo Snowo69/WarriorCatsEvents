@@ -73,9 +73,9 @@ public class ModPlacedFeatures {
 
 
 
-                register(context, STARRYTREE_PLACED_KEY, configuredFeatures.getOrThrow(ModConfiguredFeatures.STARRYTREE_KEY),
-                VegetationPlacements.treePlacement(PlacementUtils.countExtra(3, 0.1f, 2),
-                        ModBlocks.STARRYTREE_SAPLING.get()));
+//                register(context, STARRYTREE_PLACED_KEY, configuredFeatures.getOrThrow(ModConfiguredFeatures.STARRYTREE_KEY),
+//                VegetationPlacements.treePlacement(PlacementUtils.countExtra(3, 0.1f, 2),
+//                        ModBlocks.STARRYTREE_SAPLING.get()));
 
 
     }

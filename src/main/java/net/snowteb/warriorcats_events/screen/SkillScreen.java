@@ -1,6 +1,7 @@
 package net.snowteb.warriorcats_events.screen;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
@@ -11,12 +12,12 @@ import net.minecraft.util.FormattedCharSequence;
 import net.minecraftforge.common.util.LazyOptional;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.network.ModPackets;
-import net.snowteb.warriorcats_events.network.packet.*;
+import net.snowteb.warriorcats_events.network.packet.c2s.*;
+import net.snowteb.warriorcats_events.network.packet.zcatmodifiers.ReqMorphStatsPacket;
+import net.snowteb.warriorcats_events.screen.clandata.MorphGrowthScreen;
 import net.snowteb.warriorcats_events.skills.ISkillData;
 import net.snowteb.warriorcats_events.skills.PlayerSkill;
 import net.snowteb.warriorcats_events.skills.PlayerSkillProvider;
-import net.snowteb.warriorcats_events.stealth.IStealthData;
-import net.snowteb.warriorcats_events.stealth.PlayerStealth;
 import net.snowteb.warriorcats_events.stealth.PlayerStealthProvider;
 import net.snowteb.warriorcats_events.util.ModButton;
 
@@ -42,6 +43,9 @@ public class SkillScreen extends Screen {
     int currentJumpLevel;
     int currentToughnessLevel;
 
+    private int waitTicksUntilScreen = 5;
+    private boolean statsScreenClicked = false;
+
 
     private int imageHeight;
     private int imageWidth;
@@ -53,6 +57,7 @@ public class SkillScreen extends Screen {
 
     @Override
     protected void init() {
+
         this.imageWidth = 256;
         this.imageHeight = 166;
 
@@ -138,6 +143,14 @@ public class SkillScreen extends Screen {
         }
 
         this.clearWidgets();
+
+        this.addRenderableWidget(Button.builder(
+                Component.literal("Morph Stats"),
+                btn -> {
+                    ModPackets.sendToServer(new ReqMorphStatsPacket());
+                    statsScreenClicked = true;
+                }
+        ).bounds(5, 5, 80, 20).build());
 
         this.addRenderableWidget(new ModButton(
                 this.width / 2 - 40,
@@ -360,6 +373,17 @@ public class SkillScreen extends Screen {
 
 
         super.render(guiGraphics, mouseX, mouseY, partialTick);
+    }
+
+    @Override
+    public void tick() {
+
+        if (waitTicksUntilScreen <= 0) {
+            Minecraft.getInstance().setScreen(new MorphGrowthScreen());
+        }
+        if (statsScreenClicked && waitTicksUntilScreen > 0) {
+            waitTicksUntilScreen--;
+        }
     }
 
     @Override

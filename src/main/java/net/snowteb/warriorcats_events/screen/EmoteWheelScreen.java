@@ -5,33 +5,19 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.util.FormattedCharSequence;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.entity.animal.Cat;
-import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.client.AnimationClientData;
+import net.snowteb.warriorcats_events.client.ClientClanData;
 import net.snowteb.warriorcats_events.entity.ModEntities;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
+import net.snowteb.warriorcats_events.integration.WCatTypeProvider;
 import net.snowteb.warriorcats_events.network.ModPackets;
-import net.snowteb.warriorcats_events.network.packet.*;
-import net.snowteb.warriorcats_events.skills.ISkillData;
-import net.snowteb.warriorcats_events.skills.PlayerSkill;
-import net.snowteb.warriorcats_events.skills.PlayerSkillProvider;
-import net.snowteb.warriorcats_events.stealth.PlayerStealthProvider;
+import net.snowteb.warriorcats_events.network.packet.c2s.CtSSwitchShape;
 import net.snowteb.warriorcats_events.util.ModButton;
-import org.jetbrains.annotations.Nullable;
-import tocraft.walkers.api.PlayerShape;
-import tocraft.walkers.api.PlayerShapeChanger;
-import tocraft.walkers.api.variant.ShapeType;
 
-import java.util.List;
-
+@OnlyIn(Dist.CLIENT)
 public class EmoteWheelScreen extends Screen {
     private static final ResourceLocation TEXTURE =
             new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/emote_wheel.png");

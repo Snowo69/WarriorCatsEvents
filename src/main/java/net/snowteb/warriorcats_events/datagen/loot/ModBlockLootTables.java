@@ -29,8 +29,8 @@ public class ModBlockLootTables extends BlockLootSubProvider {
     protected void generate() {
 
         this.dropSelf(ModBlocks.STONECLEFT.get());
-        this.dropSelf(ModBlocks.DARKTREE_SAPLING.get());
-        this.dropSelf(ModBlocks.STARRYTREE_SAPLING.get());
+//        this.dropSelf(ModBlocks.DARKTREE_SAPLING.get());
+//        this.dropSelf(ModBlocks.STARRYTREE_SAPLING.get());
         this.dropSelf(ModBlocks.GLOWSHROOM.get());
 
         //DOCK

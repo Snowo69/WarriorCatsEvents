@@ -35,6 +35,16 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .unlockedBy("has_item", has(Items.AIR))
                 .save(pWriter);
 
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.MYSTIC_FLOWERS_BOUQUET.get())
+                .pattern("CAC")
+                .pattern(" BA")
+                .pattern("B C")
+                .define('A', ModItems.STRANGE_SHINY_STONE.get())
+                .define('B', ModItems.ANCIENT_STICK.get())
+                .define('C', ItemTags.FLOWERS)
+                .unlockedBy("has_item", has(ItemTags.FLOWERS))
+                .save(pWriter);
+
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.FLOWER_CROWN.get())
                 .pattern("A A")
                 .pattern("BCB")
@@ -121,14 +131,16 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .requires(Items.LEATHER)
                 .unlockedBy("has_item", has(Items.AIR))
                 .save(pWriter);
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.STARCLAN_KNOWLEDGE.get())
-                .pattern("ABA")
-                .pattern("BCB")
-                .pattern("ABA")
-                .define('A', ModItems.TRAVELING_HERBS.get())
-                .define('B', Items.SUGAR_CANE)
-                .define('C', ModItems.WHISKERS.get())
-                .unlockedBy(getHasName(Items.SUGAR_CANE), has(Items.SUGAR_CANE))
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.ANCIENT_STICK.get())
+                .pattern("CDB")
+                .pattern(" AE")
+                .pattern("A C")
+                .define('A', Items.STICK)
+                .define('B', ModItems.ANIMAL_TOOTH.get())
+                .define('C', ModTags.Items.HERBS)
+                .define('D', ModItems.STRANGE_SHINY_STONE.get())
+                .define('E', Items.EMERALD)
+                .unlockedBy("has_item", has(Items.STICK))
                 .save(pWriter);
 
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.FRESHKILL_AND_HERBS_BUNDLE.get(), 2)

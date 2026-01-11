@@ -1,7 +1,7 @@
 {
   "name": "A Warrior's Guide",
   "landing_text": "Let me guess. You found yourself in the middle of nowhere. The strange scents fill up your nostrils, you can't make out anything. $(br2)Your destiny is here, somewhere. The stars know that you are meant for great things. $(br2)This is your journey, your own story, $(playername).$(br)",
-  "version": 2,
+  "version": 3,
   "creative_tab": "minecraft:tools_and_utilities",
   "use_resource_pack": true,
 

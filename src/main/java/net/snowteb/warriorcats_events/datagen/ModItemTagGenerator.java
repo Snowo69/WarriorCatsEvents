@@ -25,11 +25,11 @@ public class ModItemTagGenerator extends ItemTagsProvider {
         this.tag(ItemTags.MUSIC_DISCS).add(ModItems.GENERATIONS_MUSIC_DISC.get());
         this.tag(ItemTags.CREEPER_DROP_MUSIC_DISCS).add(ModItems.GENERATIONS_MUSIC_DISC.get());
 
-        this.tag(ItemTags.LOGS_THAT_BURN)
-                .add(ModBlocks.DARK_LOG.get().asItem())
-                .add(ModBlocks.STRIPPED_DARK_LOG.get().asItem())
-                .add(ModBlocks.STARRY_LOG.get().asItem())
-                .add(ModBlocks.STRIPPED_STARRY_LOG.get().asItem());
+//        this.tag(ItemTags.LOGS_THAT_BURN)
+//                .add(ModBlocks.DARK_LOG.get().asItem())
+//                .add(ModBlocks.STRIPPED_DARK_LOG.get().asItem())
+//                .add(ModBlocks.STARRY_LOG.get().asItem())
+//                .add(ModBlocks.STRIPPED_STARRY_LOG.get().asItem());
 
 
     }

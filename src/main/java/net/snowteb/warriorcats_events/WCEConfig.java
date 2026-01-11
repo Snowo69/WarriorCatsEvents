@@ -25,6 +25,8 @@ public class WCEConfig {
         public final ForgeConfigSpec.BooleanValue ENHANCED_ANIMALS;
         public final ForgeConfigSpec.IntValue FISHING_SCREEN_Y_OFFSET;
         public final ForgeConfigSpec.BooleanValue COLORED_NAMES;
+        public final ForgeConfigSpec.BooleanValue VISIBLE_MORPH_NAME;
+        public final ForgeConfigSpec.BooleanValue REMOVE_PHANTOMS;
 
 
 
@@ -48,6 +50,10 @@ public class WCEConfig {
                     .comment("Whether Wild Cats' names have a different color depending on their rank")
                     .define("coloredNames", true);
 
+            VISIBLE_MORPH_NAME = builder
+                    .comment("Whether your own morph's name should be visible")
+                    .define("visibleMorphName", true);
+
             SKILL_COST_MULTIPLIER = builder
                     .comment("The cost multiplier that will define the skill's cost (min: 0.2, max: 3)")
                     .defineInRange("skillCostValue", 1.0, 0.2, 3.0);
@@ -60,6 +66,9 @@ public class WCEConfig {
                     .comment("If your fishing GUI covers anything, use this to vertically move it (min: -500, max: 500)")
                     .defineInRange("fishingScreenYOffset", 0, -500, 500);
 
+            REMOVE_PHANTOMS = builder
+                    .comment("If you hate Phantoms as much as me, you might want to turn this on.")
+                    .define("removePhantoms", false);
             builder.pop();
         }
     }

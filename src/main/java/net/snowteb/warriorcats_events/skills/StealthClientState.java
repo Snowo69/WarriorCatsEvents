@@ -3,7 +3,7 @@ package net.snowteb.warriorcats_events.skills;
 import net.minecraft.client.Minecraft;
 import net.minecraft.sounds.SoundEvents;
 import net.snowteb.warriorcats_events.network.ModPackets;
-import net.snowteb.warriorcats_events.network.packet.CtSToggleStealthPacket;
+import net.snowteb.warriorcats_events.network.packet.c2s.CtSToggleStealthPacket;
 import net.snowteb.warriorcats_events.sound.ModSounds;
 
 public class StealthClientState {

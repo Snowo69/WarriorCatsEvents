@@ -1,43 +1,53 @@
 package net.snowteb.warriorcats_events.event;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.advancements.Advancement;
-import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.sounds.Sound;
+import net.minecraft.core.particles.BlockParticleOption;
+import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.scores.Objective;
-import net.minecraft.world.scores.Scoreboard;
-import net.minecraft.world.scores.criteria.ObjectiveCriteria;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
+import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.server.command.ConfigCommand;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
+import net.snowteb.warriorcats_events.clan.PlayerClanData;
+import net.snowteb.warriorcats_events.clan.PlayerClanDataProvider;
+import net.snowteb.warriorcats_events.commands.GetClanDataCommand;
+import net.snowteb.warriorcats_events.commands.OpenClanDataScreenCommand;
+import net.snowteb.warriorcats_events.commands.ResetClanDataCommand;
+import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.item.ModItems;
 import net.snowteb.warriorcats_events.network.ModPackets;
-import net.snowteb.warriorcats_events.network.packet.SyncSkillDataPacket;
-import net.snowteb.warriorcats_events.network.packet.ThirstDataSyncStCPacket;
+import net.snowteb.warriorcats_events.network.packet.OpenClanSetupScreenPacket;
+import net.snowteb.warriorcats_events.network.packet.S2CSyncClanDataPacket;
+import net.snowteb.warriorcats_events.network.packet.s2c.SyncSkillDataPacket;
+import net.snowteb.warriorcats_events.network.packet.s2c.ThirstDataSyncStCPacket;
 import net.snowteb.warriorcats_events.skills.PlayerSkill;
 import net.snowteb.warriorcats_events.skills.PlayerSkillProvider;
 import net.snowteb.warriorcats_events.stealth.PlayerStealth;
@@ -46,9 +56,122 @@ import net.snowteb.warriorcats_events.thirst.PlayerThirst;
 import net.snowteb.warriorcats_events.thirst.PlayerThirstProvider;
 import net.snowteb.warriorcats_events.util.ModAttributes;
 
+import java.util.*;
+
 @Mod.EventBusSubscriber(modid = WarriorCatsEvents.MODID)
 public class ModEvents2 {
+    private int conditionDropedItems = 0;
 
+    private static final List<Task> tasks = new ArrayList<>();
+
+    public static void schedule(int ticksDelay, Runnable action) {
+        tasks.add(new Task(ticksDelay, action));
+    }
+
+    @SubscribeEvent
+    public static void onServerTick(TickEvent.ServerTickEvent event) {
+        if (event.phase != TickEvent.Phase.END) return;
+
+        Iterator<Task> it = tasks.iterator();
+        while (it.hasNext()) {
+            Task task = it.next();
+            task.ticks--;
+
+            if (task.ticks <= 0) {
+                task.action.run();
+                it.remove();
+            }
+        }
+    }
+
+    private static boolean isDiamond(ItemStack stack) {
+        return stack.getItem() == Items.DIAMOND;
+    }
+    private static boolean isEmerald(ItemStack stack) {
+        return stack.getItem() == Items.EMERALD;
+    }
+
+
+    @SubscribeEvent
+    public static void worldTick(TickEvent.LevelTickEvent event) {
+        if (event.phase != TickEvent.Phase.END) return;
+        if (event.level.isClientSide) return;
+
+        boolean isNightTime = event.level.isNight();
+
+        if (isNightTime) {
+
+            if (event.level.getGameTime() % 200 == 0) {
+                List<ItemEntity> items = event.level.getEntitiesOfClass(
+                        ItemEntity.class,
+                        new AABB(
+                                -30000000, event.level.getMinBuildHeight(), -30000000,
+                                30000000, event.level.getMaxBuildHeight(), 30000000
+                        ),
+                        e -> !e.isRemoved() && !e.getItem().isEmpty()
+                );
+
+
+                for (ItemEntity item1 : items) {
+                    ItemStack potentialDiamond = item1.getItem();
+
+                    if (!isDiamond(potentialDiamond)) continue;
+
+                    for (ItemEntity item2 : items) {
+                        if (item1 == item2) continue;
+
+                        ItemStack potentialEmerald = item2.getItem();
+
+                        if (!isEmerald(potentialEmerald)) continue;
+
+                        double dist = item1.distanceTo(item2);
+
+                        if (dist >= 1.0) continue;
+
+                        if (potentialDiamond.getCount() <= 0 || potentialEmerald.getCount() <= 0) continue;
+
+                        potentialDiamond.shrink(1);
+                        potentialEmerald.shrink(1);
+
+                        ItemStack ritualStack = new ItemStack(ModItems.STRANGE_SHINY_STONE.get());
+                        ItemEntity ritualItem = new ItemEntity(event.level, item2.getX(), item2.getY(), item2.getZ(), ritualStack);
+
+                        event.level.addFreshEntity(ritualItem);
+
+                        ((ServerLevel) event.level).sendParticles(ParticleTypes.GLOW_SQUID_INK,
+                                ritualItem.getX(), ritualItem.getY(), ritualItem.getZ(),
+                                15, 0.2f, 0.2f, 0.2f, 0.2f);
+
+                        event.level.playSound(null, ritualItem.blockPosition(),
+                                SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.AMBIENT,
+                                1.0f, 1.3f);
+
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    private static class Task {
+        int ticks;
+        final Runnable action;
+
+        Task(int ticks, Runnable action) {
+            this.ticks = ticks;
+            this.action = action;
+        }
+    }
+
+
+    @SubscribeEvent
+    public static void onCommandsRegister(RegisterCommandsEvent event) {
+        OpenClanDataScreenCommand.register(event.getDispatcher());
+        GetClanDataCommand.register(event.getDispatcher());
+        ResetClanDataCommand.register(event.getDispatcher());
+
+        ConfigCommand.register(event.getDispatcher());
+    }
 
     @SubscribeEvent
     public static void onAttachCapabilitiesPlayer(AttachCapabilitiesEvent<Entity> event) {
@@ -66,6 +189,13 @@ public class ModEvents2 {
                         new PlayerStealthProvider());
 
             }
+
+            if (!event.getObject().getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA).isPresent()) {
+                PlayerClanDataProvider provider = new PlayerClanDataProvider();
+                provider.getOrCreateClanData();
+                event.addCapability(new ResourceLocation(WarriorCatsEvents.MODID, "clan_data"), provider);
+            }
+
         }
     }
 
@@ -101,6 +231,19 @@ public class ModEvents2 {
 
                     if (event.getEntity() instanceof ServerPlayer player) {
                         newStore.sync(player);
+                    }
+                });
+            });
+        }
+
+        if (event.isWasDeath()) {
+            event.getOriginal().reviveCaps();
+            event.getEntity().getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA).ifPresent(newStore -> {
+                event.getOriginal().getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA).ifPresent(oldStore -> {
+                    newStore.copyFrom(oldStore);
+
+                    if (event.getEntity() instanceof ServerPlayer player) {
+                        ModPackets.sendToPlayer(new S2CSyncClanDataPacket(newStore), player);
                     }
                 });
             });
@@ -230,7 +373,7 @@ public class ModEvents2 {
                  * Which means, on average every 2-3 minutes
                  * Then sync it.
                  */
-                if (thirst.getThirst() > 0 && event.player.getRandom().nextFloat() < 0.000357 && !(event.player.isCreative() || event.player.isSpectator())) {
+                if (thirst.getThirst() > 0 && event.player.getRandom().nextFloat() < 0.000359 && !(event.player.isCreative() || event.player.isSpectator())) {
                     int oldThirst = thirst.getThirst();
                     thirst.subThirst(1);
                     if (oldThirst != thirst.getThirst()) {
@@ -290,8 +433,89 @@ public class ModEvents2 {
 
             });
 
+            event.player.getCapability(PlayerSkillProvider.SKILL_DATA).ifPresent(cap -> {
+                if (!cap.isLeaping()) return;
+
+                if (event.player.tickCount % 2 == 0) {
+                    ((ServerLevel) event.player.level()).sendParticles(ParticleTypes.INSTANT_EFFECT,
+                            event.player.getX(), event.player.getY(), event.player.getZ(),
+                            1,
+                            0,0,0, 0);
+                }
+
+                int damagePowerMultiplier = cap.getLeapPower()/100;
+
+                AABB hitbox = event.player.getBoundingBox().inflate(0.6D);
+
+                List<LivingEntity> targets = event.player.level().getEntitiesOfClass(
+                        LivingEntity.class,
+                        hitbox,
+                        e -> e != event.player && e.isAlive()
+                );
+
+                if (!targets.isEmpty()) {
+                    LivingEntity target = targets.stream()
+                            .min(Comparator.comparingDouble(e ->
+                                    e.distanceToSqr(event.player)))
+                            .orElse(null);
+
+                    PlayerClanData.Age morphAge = event.player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
+                            .map(PlayerClanData::getMorphAge).orElse(PlayerClanData.Age.ADULT);
+
+                    float finalMultiplier = switch (morphAge) {
+                        case KIT -> 0.33f;
+                        case APPRENTICE -> 0.67f;
+                        case ADULT -> 1.0f;
+                    };
+
+                    float damage = ((float) (5.0F + ((float) cap.getDMGLevel() /1.25)*damagePowerMultiplier))*finalMultiplier;
+                    if (event.player.hasLineOfSight(target)) {
+                        if (!(target instanceof TamableAnimal cat && cat.isTame() && cat.getOwner() == event.player)) {
+                            BlockParticleOption particle = new BlockParticleOption(ParticleTypes.BLOCK,
+                                    Blocks.REDSTONE_BLOCK.defaultBlockState());
+
+                            if (event.player.getRandom().nextFloat() < 0.2 && damagePowerMultiplier > 0.7) {
+                                target.hurt(event.player.damageSources().playerAttack(event.player), damage * 1.5f);
+                                ((ServerLevel) event.player.level()).sendParticles(ParticleTypes.CRIT,
+                                        target.getX(), target.getY(), target.getZ(),
+                                        30,
+                                        0.2f,0.2f,0.2f, 0.2f);
+                                ((ServerLevel) event.player.level()).sendParticles(particle,
+                                        target.getX(), target.getY(), target.getZ(),
+                                        30,
+                                        0.1,0.2,0.1, 0.1);
+                                event.player.level().playSound(null, event.player.blockPosition(), SoundEvents.CAT_HISS, SoundSource.PLAYERS, 0.7f, 1f);
+                                event.player.displayClientMessage(Component.literal("Critical hit!").withStyle(ChatFormatting.GRAY), true);
+                            } else {
+                                target.hurt(event.player.damageSources().playerAttack(event.player), damage);
+                            }
+
+                            if (target.isAlive()) event.player.setLastHurtMob(target);
+
+                            event.player.level().playSound(null, event.player.blockPosition(),SoundEvents.PLAYER_ATTACK_CRIT, SoundSource.PLAYERS);
+
+                            ((ServerLevel) event.player.level()).sendParticles(particle,
+                                    target.getX(), target.getY(), target.getZ(),
+                                    10,
+                                    0.1,0.2,0.1, 0.1);
+                            ((ServerLevel) event.player.level()).sendParticles(ParticleTypes.CRIT,
+                                    target.getX(), target.getY(), target.getZ(),
+                                    10,
+                                    0.2f,0.2f,0.2f, 0.2f);
+                        }
+                    }
 
 
+                    cap.setLeaping(false);
+                    cap.setLeapPower(0);
+                    event.player.setDeltaMovement(Vec3.ZERO);
+                }
+
+                if (event.player.onGround()) {
+                    cap.setLeaping(false);
+                    cap.setLeapPower(0);
+                }
+            });
 
 
         }
@@ -322,6 +546,8 @@ public class ModEvents2 {
                 player.getCapability(PlayerStealthProvider.STEALTH_MODE).ifPresent(cap -> {
                     cap.sync(player);
                 });
+
+
             }
         }
     }
@@ -373,6 +599,15 @@ public class ModEvents2 {
         CompoundTag data = player.getPersistentData();
         CompoundTag persistent;
 
+
+
+        if (player instanceof ServerPlayer sPlayer) {
+            player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {
+                ModPackets.sendToPlayer(new S2CSyncClanDataPacket(cap), sPlayer);
+            });
+
+        }
+
         if (data.contains(Player.PERSISTED_NBT_TAG)) {
             persistent = data.getCompound(Player.PERSISTED_NBT_TAG);
         } else {
@@ -384,18 +619,25 @@ public class ModEvents2 {
             return;
         }
 
-        persistent.putBoolean("warriorcats_events.starting_items", true);
-        player.getInventory().add(new ItemStack(ModItems.WARRIORS_GUIDE.get()));
-        player.getInventory().add(new ItemStack(ModItems.CLAWS.get()));
-        player.sendSystemMessage(Component.literal("You have received your own [Claws] and [A Warrior's Guide]!").withStyle(ChatFormatting.YELLOW));
-        player.sendSystemMessage(Component.literal("Get support and stay tuned for mod updates: ").append(
-                Component.literal("[Discord]")
-                        .withStyle(style -> style
-                                .withColor(0x579dff)
-                                .withUnderlined(true)
-                                .withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://discord.gg/SkYvZr9DBb"))
-                        )
-        ));
+
+        if (player instanceof ServerPlayer sPlayer) {
+            player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {
+                    ModPackets.sendToPlayer(new S2CSyncClanDataPacket(cap), sPlayer);
+                    ModPackets.sendToPlayer(new OpenClanSetupScreenPacket(), sPlayer);
+                persistent.putBoolean("warriorcats_events.starting_items", true);
+            });
+        }
+//        player.getInventory().add(new ItemStack(ModItems.WARRIORS_GUIDE.get()));
+//        player.getInventory().add(new ItemStack(ModItems.CLAWS.get()));
+//        player.sendSystemMessage(Component.literal("You have received your own [Claws] and [A Warrior's Guide]!").withStyle(ChatFormatting.YELLOW));
+//        player.sendSystemMessage(Component.literal("Get support and stay tuned for mod updates: ").append(
+//                Component.literal("[Discord]")
+//                        .withStyle(style -> style
+//                                .withColor(0x579dff)
+//                                .withUnderlined(true)
+//                                .withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://discord.gg/SkYvZr9DBb"))
+//                        )
+//        ));
 
 
 

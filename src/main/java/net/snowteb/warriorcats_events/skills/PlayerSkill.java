@@ -48,6 +48,9 @@ public static int getDefaultStealthcost() {
     private int jumpLevel = 0;
     private int armorLevel = 0;
 
+    private boolean isLeaping = false;
+    private int leapPower = 0;
+
     public static final UUID SPEED_SKILL_UUID =
             UUID.fromString("a3d2c21a-9e65-4e8b-92b0-d9d239a5f6ac");
     public static final UUID HP_SKILL_UUID =
@@ -69,6 +72,23 @@ public static int getDefaultStealthcost() {
         this.speedLevel = level;
     }
 
+    @Override
+    public boolean isLeaping(){
+        return isLeaping;
+    }
+    @Override
+    public void setLeaping(boolean isLeaping){
+        this.isLeaping = isLeaping;
+    }
+
+    @Override
+    public int getLeapPower() {
+        return leapPower;
+    }
+    @Override
+    public void setLeapPower(int leapPower) {
+        this.leapPower = leapPower;
+    }
 
     @Override
     public int getHPLevel() {

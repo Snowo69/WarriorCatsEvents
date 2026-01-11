@@ -28,7 +28,7 @@ import tocraft.walkers.integrations.Integrations;
 @Mod(WarriorCatsEvents.MODID)
 public class WarriorCatsEvents {
     public static final String MODID = "warriorcats_events";
-    public static final String MOD_VERSION = "1.1.0";
+    public static final String MOD_VERSION = "1.2.0";
     public static final Logger LOGGER = LogUtils.getLogger();
 
     public WarriorCatsEvents() {
@@ -50,7 +50,7 @@ public class WarriorCatsEvents {
         ModEffects.register(modEventBus);
         ModAttributes.ATTRIBUTES.register(modEventBus);
         ModLootModifiers.register(modEventBus);
-
+        WCECreativeTab.CREATIVE_TABS.register(modEventBus);
 
 
 
@@ -108,6 +108,8 @@ public class WarriorCatsEvents {
             event.accept(ModItems.FRESHKILL_AND_HERBS_BUNDLE);
             event.accept(ModItems.DOCK_POULTICE);
             event.accept(ModItems.WARRIOR_NAMETAG);
+            event.accept(ModItems.ANCIENT_STICK);
+            event.accept(ModItems.MYSTIC_FLOWERS_BOUQUET);
 
         }
 
@@ -121,6 +123,7 @@ public class WarriorCatsEvents {
             event.accept(ModItems.CATMINT);
             event.accept(ModItems.ANIMAL_TOOTH);
             event.accept(ModItems.ANIMAL_TEETH);
+            event.accept(ModItems.STRANGE_SHINY_STONE);
 
         }
 
@@ -140,11 +143,11 @@ public class WarriorCatsEvents {
             event.accept(ModBlocks.LEAF_DOOR);
             event.accept(ModBlocks.MOSSBED);
 
-            event.accept(ModBlocks.STRIPPED_DARK_LOG);
-            event.accept(ModBlocks.DARK_LOG);
-            event.accept(ModBlocks.STARRY_LOG);
-            event.accept(ModBlocks.STRIPPED_STARRY_LOG);
-            event.accept(ModBlocks.STARRY_LEAVES);
+//            event.accept(ModBlocks.STRIPPED_DARK_LOG);
+//            event.accept(ModBlocks.DARK_LOG);
+//            event.accept(ModBlocks.STARRY_LOG);
+//            event.accept(ModBlocks.STRIPPED_STARRY_LOG);
+//            event.accept(ModBlocks.STARRY_LEAVES);
 
         }
 
@@ -155,6 +158,7 @@ public class WarriorCatsEvents {
             event.accept(ModItems.WILDCAT_SPAWN_EGG);
             event.accept(ModItems.PIGEON_SPAWN_EGG);
             event.accept(ModItems.BADGER_SPAWN_EGG);
+            event.accept(ModItems.KIT_ITEM);
         }
 
         if (event.getTabKey() == CreativeModeTabs.COMBAT) {

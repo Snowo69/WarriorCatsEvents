@@ -9,6 +9,12 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.snowteb.warriorcats_events.WCEConfig;
+import net.snowteb.warriorcats_events.clan.PlayerClanData;
+import net.snowteb.warriorcats_events.clan.PlayerClanDataProvider;
+import net.snowteb.warriorcats_events.client.ClientClanData;
+import net.snowteb.warriorcats_events.network.ModPackets;
+import net.snowteb.warriorcats_events.network.packet.C2SSetVariantPacket;
 import org.apache.logging.log4j.core.jmx.Server;
 import tocraft.walkers.api.PlayerShape;
 import tocraft.walkers.api.PlayerShapeChanger;
@@ -26,15 +32,70 @@ public class WCatTypeProvider extends TypeProvider<WCatEntity> {
     }
 
     @Override
-    public WCatEntity create(EntityType<WCatEntity> type, Level level, int data) {
+    public WCatEntity create(EntityType<WCatEntity> type, Level world, int data) {
+        return null;
+    }
+
+    @Override
+    public WCatEntity create(EntityType<WCatEntity> type, Level level, int data, Player player) {
         WCatEntity cat = new WCatEntity(type, level);
+
+//        ModPackets.sendToServer(new C2SSetVariantPacket(data));
+        player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {
+            cap.setVariantData(data);
+        });
+
+//        String shapeNameString = ClientClanData.get().getMorphName();
+        String shapeNameString = player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
+                .map(PlayerClanData::getMorphName)
+                .orElse("undefined");
+
+//        PlayerClanData.Age shapeAge = ClientClanData.get().getMorphAge();
+        PlayerClanData.Age shapeAge = player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
+                .map(PlayerClanData::getMorphAge)
+                .orElse(PlayerClanData.Age.ADULT);
+
+//        int genderValue = ClientClanData.get().getGenderData();
+        int genderValue = player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
+                .map(PlayerClanData::getGenderData)
+                .orElse(0);
+
+        String genderS;
+        if (genderValue == 0) {
+            genderS = " ♂";
+        } else {
+            genderS = " ♀";
+        }
+
+        int age = 0;
+        boolean isAppScale = false;
+        boolean isBaby = false;
+
+        if (shapeAge == PlayerClanData.Age.KIT) {
+            age = -1000;
+            isBaby = true;
+            isAppScale = false;
+        } else if (shapeAge == PlayerClanData.Age.APPRENTICE) {
+            age = -500;
+            isAppScale = true;
+            isBaby = true;
+        } else if (shapeAge == PlayerClanData.Age.ADULT) {
+            age = 0;
+            isAppScale = false;
+            isBaby = false;
+        }
+
+        Component name = Component.literal(shapeNameString + genderS);
+
         cat.setVariant(data);
-//        Player player = Minecraft.getInstance().player;
-//        cat.setBaby(true);
-//        cat.setCustomName(Component.empty().append(Minecraft.getInstance().player.getName()).withStyle(ChatFormatting.GRAY));
-//        cat.setCustomNameVisible(true);
-//        cat.setAge(-113);
-//        cat.setAppScale(true);
+
+        if (WCEConfig.COMMON.VISIBLE_MORPH_NAME.get()) cat.setCustomName(name);
+        cat.setCustomNameVisible(WCEConfig.COMMON.VISIBLE_MORPH_NAME.get());
+
+        cat.setAge(age);
+        cat.setBaby(isBaby);
+        cat.setAppScale(isAppScale);
+
         return cat;
     }
 
@@ -45,7 +106,7 @@ public class WCatTypeProvider extends TypeProvider<WCatEntity> {
 
     @Override
     public int getRange() {
-        return 19;
+        return 29;
     }
 
     @Override

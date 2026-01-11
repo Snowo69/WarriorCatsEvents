@@ -38,29 +38,29 @@ public class ModBlockStateProvider extends BlockStateProvider {
         makeBush(((SweetBerryBushBlock) ModBlocks.CATMINTPLANT.get()), "catmint_stage", "catmint_stage");
         makeBush(((SweetBerryBushBlock) ModBlocks.YARROWPLANT.get()), "yarrow_stage", "yarrow_stage");
 
-        saplingBlock(ModBlocks.STARRYTREE_SAPLING);
-        saplingBlock(ModBlocks.DARKTREE_SAPLING);
+//        saplingBlock(ModBlocks.STARRYTREE_SAPLING);
+//        saplingBlock(ModBlocks.DARKTREE_SAPLING);
 
         horizontalBlock(ModBlocks.STONECLEFT.get(),
                 new ModelFile.UncheckedModelFile(modLoc("block/stone_cleft")));
 
-        logBlock(((RotatedPillarBlock) ModBlocks.DARK_LOG.get()));
-        axisBlock(((RotatedPillarBlock) ModBlocks.STRIPPED_DARK_LOG.get()),
-                blockTexture(ModBlocks.STRIPPED_DARK_LOG.get()),
-                new ResourceLocation(MODID, "block/stripped_dark_log_top"));
-
-        logBlock(((RotatedPillarBlock) ModBlocks.STARRY_LOG.get()));
-        axisBlock(((RotatedPillarBlock) ModBlocks.STRIPPED_STARRY_LOG.get()),
-                blockTexture(ModBlocks.STRIPPED_STARRY_LOG.get()),
-                new ResourceLocation(MODID, "block/stripped_starry_log_top"));
-
-
-        blockItem(ModBlocks.DARK_LOG);
-        blockItem(ModBlocks.STRIPPED_DARK_LOG);
-        blockItem(ModBlocks.STARRY_LOG);
-        blockItem(ModBlocks.STRIPPED_STARRY_LOG);
-
-        leavesBlock(ModBlocks.STARRY_LEAVES);
+//        logBlock(((RotatedPillarBlock) ModBlocks.DARK_LOG.get()));
+//        axisBlock(((RotatedPillarBlock) ModBlocks.STRIPPED_DARK_LOG.get()),
+//                blockTexture(ModBlocks.STRIPPED_DARK_LOG.get()),
+//                new ResourceLocation(MODID, "block/stripped_dark_log_top"));
+//
+//        logBlock(((RotatedPillarBlock) ModBlocks.STARRY_LOG.get()));
+//        axisBlock(((RotatedPillarBlock) ModBlocks.STRIPPED_STARRY_LOG.get()),
+//                blockTexture(ModBlocks.STRIPPED_STARRY_LOG.get()),
+//                new ResourceLocation(MODID, "block/stripped_starry_log_top"));
+//
+//
+//        blockItem(ModBlocks.DARK_LOG);
+//        blockItem(ModBlocks.STRIPPED_DARK_LOG);
+//        blockItem(ModBlocks.STARRY_LOG);
+//        blockItem(ModBlocks.STRIPPED_STARRY_LOG);
+//
+//        leavesBlock(ModBlocks.STARRY_LEAVES);
 
     }
 

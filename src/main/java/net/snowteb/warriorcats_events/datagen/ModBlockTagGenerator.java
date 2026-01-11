@@ -21,11 +21,11 @@ public class ModBlockTagGenerator extends BlockTagsProvider {
     protected void addTags(HolderLookup.Provider pProvider) {
 
         this.tag(BlockTags.DOORS).add(ModBlocks.LEAF_DOOR.get());
-        this.tag(BlockTags.LOGS_THAT_BURN)
-                .add(ModBlocks.DARK_LOG.get())
-                .add(ModBlocks.STRIPPED_DARK_LOG.get())
-                .add(ModBlocks.STARRY_LOG.get())
-                .add(ModBlocks.STRIPPED_STARRY_LOG.get());
+//        this.tag(BlockTags.LOGS_THAT_BURN)
+//                .add(ModBlocks.DARK_LOG.get())
+//                .add(ModBlocks.STRIPPED_DARK_LOG.get())
+//                .add(ModBlocks.STARRY_LOG.get())
+//                .add(ModBlocks.STRIPPED_STARRY_LOG.get());
 
     }
 }

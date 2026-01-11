@@ -99,7 +99,7 @@
     {
       "type": "patchouli:text",
       "title": "Kits",
-      "text": "Kits are born with a default kit name and clan role, which will change as they grow. $(br2)A kit will automatically become an apprentice once they reach the age of 6 moons, and will become a full warrior once they reach the age of 12 moons. Their name prefix can always be changed as they grow."
+      "text": "Kits are born with a default kit name and clan role, which will change as they grow. $(br2)A kit will automatically become an apprentice once they reach the age of 6 moons, and will become a full warrior once they reach the age of 12 moons. Their name prefix can always be changed as they grow. $(br2)Kits can also be carried by right clicking with your claws.$(br)"
     },
 
     {
@@ -116,10 +116,46 @@
 
     {
       "type": "patchouli:spotlight",
-      "item": "warriorcats_events:catmint",
-      "title": "Scenting",
-      "text": "Medicine cats can help you find herbs! $(br2)If you interact with a Medicine cat with an herb in hand, it will scent the air and tell you if they can scent anything nearby.$(br)"
+      "item": "warriorcats_events:catmint_leaves",
+      "title": "Medicine Cats",
+      "text": "Medicine cats can help you find herbs! $(br2)If you interact with a Medicine cat with an herb in your paws, it will scent the air and tell you if they can scent anything nearby.$(br)"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "warriorcats_events:dock_poultice",
+      "title": "Medicine Cats",
+      "text": "As any cat worth at least two mouse tails, medicine cats will always heal their clanmates if they can! $(br2)Medicine Cats only need to have some dock poultice or dock leaves with them. Then, they will heal their clanmates using the poultice, or make some on their own using dock leaves.$(br)"
+    },
+
+    {
+      "type": "patchouli:text",
+      "title": "Moods & Personality",
+      "text": "Every cat is different... We already know that, but some might be... A little complicated, while some others might be really charming! $(br2)Befriending a cat is not an easy job, it will take a lot of trust and time to really gain their trust, but it is possible! $(br)"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Moods & Personality",
+      "text": "Cats can have many different moods through the day, and their mood will affect how they react to you and the environment. So just make sure you are not bothering one that is feeling sad, they might not like it... $(br2)But if you really put some effort, you might find a cat who might want to be more than friends!$(br)"
+    },
+
+    {
+      "type": "patchouli:text",
+      "title": "Finding Your Soulmate",
+      "text": "Cats are... Complicated sometimes, but when a cat truly loves you, they will do until their very last breath.$(br2)There isn't really a formula to find a mate, but we know for sure that it takes a lot of trust and love, so you both might want to become best friends first!$(br)"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "warriorcats_events:rare_flowers_bouquet",
+      "title": "Finding Your Soulmate",
+      "text": "Once you feel ready, and they feel ready too... The next step is to show them you would do anything for them. $(br2)Something pretty and meaningful might do it, something that shows you would give up all you have and all you value the most for them.$(br)"
     }
+
+
+
+
+
+
+
   ]
 
 

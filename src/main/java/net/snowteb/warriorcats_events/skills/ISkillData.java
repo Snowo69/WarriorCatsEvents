@@ -5,6 +5,12 @@ public interface ISkillData {
     int getSpeedLevel();
     void setSpeedLevel(int level);
 
+    boolean isLeaping();
+    void setLeaping(boolean isLeaping);
+
+    int getLeapPower();
+    void setLeapPower(int leapPower);
+
     int getHPLevel();
     void setHPLevel(int level);
 

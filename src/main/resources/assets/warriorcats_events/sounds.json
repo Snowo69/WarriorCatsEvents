@@ -7,6 +7,14 @@
       }
     ]
   },
+  "generations_bg": {
+    "sounds": [
+      {
+        "name": "warriorcats_events:generations_bg",
+        "stream": true
+      }
+    ]
+  },
 
   "entity.mouse.ambient": {
     "sounds": [
@@ -114,6 +122,13 @@
       { "name": "warriorcats_events:mod_ambient/stealth_woosh_2", "volume": 0.8, "pitch": 1.0 },
       { "name": "warriorcats_events:mod_ambient/stealth_woosh_3", "volume": 0.8, "pitch": 1.0 },
       { "name": "warriorcats_events:mod_ambient/stealth_woosh_4", "volume": 0.8, "pitch": 1.0 }
+    ]
+  },
+
+  "leader.cat_call": {
+    "sounds": [
+      { "name": "warriorcats_events:mod_ambient/cat_call_1", "volume": 0.9, "pitch": 1.0 },
+      { "name": "warriorcats_events:mod_ambient/cat_call_2", "volume": 0.9, "pitch": 1.0 }
     ]
   }
 

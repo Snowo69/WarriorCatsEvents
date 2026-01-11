@@ -6,6 +6,7 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -48,7 +49,7 @@ public class Poultice extends Item {
                 pPlayer.level().playSound(null, pTarget.blockPosition(),
                         SoundEvents.SLIME_JUMP, SoundSource.PLAYERS, 0.7F, 1.1F);
 
-                ((net.minecraft.server.level.ServerLevel) pPlayer.level()).sendParticles(
+                ((ServerLevel) pPlayer.level()).sendParticles(
                         ParticleTypes.HAPPY_VILLAGER,
                         pTarget.getX(), pTarget.getY() + pTarget.getBbHeight() * 0.6,
                         pTarget.getZ(), 30, 0.3, 0.3, 0.3, 1);

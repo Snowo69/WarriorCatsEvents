@@ -1,4 +1,4 @@
-package net.snowteb.warriorcats_events.client.network;
+package net.snowteb.warriorcats_events.client;
 
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.api.distmarker.Dist;
