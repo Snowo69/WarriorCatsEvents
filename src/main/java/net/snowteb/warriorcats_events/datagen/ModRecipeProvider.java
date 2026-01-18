@@ -8,6 +8,7 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.ShapelessRecipe;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.crafting.conditions.IConditionBuilder;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.block.ModBlocks;
@@ -164,14 +165,23 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .define('A', ItemTags.LEAVES)
                 .unlockedBy("has_item", has(Items.AIR))
                 .save(pWriter);
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.MOSSBED.get(), 2)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.MOSS_BED.get(), 2)
                 .pattern("   ")
                 .pattern("BDB")
                 .pattern("CBC")
                 .define('B', ItemTags.LEAVES)
                 .define('C', Items.FEATHER)
-                .define('D', Items.GRASS)
+                .define('D', Items.MOSS_BLOCK)
                 .unlockedBy("has_item", has(Items.AIR))
+                .save(pWriter);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.STONE_CRAFTING_TABLE.get(), 1)
+                .pattern("A  ")
+                .pattern("B  ")
+                .pattern("   ")
+                .define('B', Blocks.CRAFTING_TABLE)
+                .define('A', ModTags.Items.HERBS)
+                .unlockedBy("has_item", has(Items.CRAFTING_TABLE))
                 .save(pWriter);
 
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.WARRIORS_GUIDE.get(), 1)

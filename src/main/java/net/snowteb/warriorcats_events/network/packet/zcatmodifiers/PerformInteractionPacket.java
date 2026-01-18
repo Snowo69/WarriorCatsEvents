@@ -19,6 +19,7 @@ import net.minecraftforge.network.NetworkEvent;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.item.ModItems;
+import net.snowteb.warriorcats_events.util.ModTags;
 
 import java.util.function.Supplier;
 
@@ -125,7 +126,8 @@ public class PerformInteractionPacket {
             Item item = stack.getItem();
             if (item == ModItems.SQUIRREL_FOOD.get() ||
                     item == ModItems.MOUSE_FOOD.get() ||
-                    item == ModItems.PIGEON_FOOD.get()) {
+                    item == ModItems.PIGEON_FOOD.get() ||
+                    stack.is(ModTags.Items.PREY)) {
                 return stack;
             }
         }

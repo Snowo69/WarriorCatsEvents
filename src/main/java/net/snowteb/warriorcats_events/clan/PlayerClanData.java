@@ -21,6 +21,7 @@ public class PlayerClanData {
     private UUID mateUUID = UUID.fromString("00000000-0000-0000-0000-000000000000");
     private BlockPos tempClickedPosData;
     private Component mateName = Component.literal("Undefined");
+    private int sleepingCooldown = 0;
 
     public enum Age {
         KIT,
@@ -29,6 +30,13 @@ public class PlayerClanData {
     }
 
     private Age morphAge = Age.ADULT;
+
+    public int getSleepingCooldown() {
+        return sleepingCooldown;
+    }
+    public void setSleepingCooldown(int sleepingCooldown) {
+        this.sleepingCooldown = sleepingCooldown;
+    }
 
     public BlockPos getTempClickedPosData() {
         return tempClickedPosData;
@@ -144,6 +152,13 @@ public class PlayerClanData {
         this.mateUUID = UUID.fromString("00000000-0000-0000-0000-000000000000");
         this.mateName = Component.literal("Undefined");
         this.tempClickedPosData = null;
+        this.sleepingCooldown = 0;
+    }
+
+    public void tick() {
+        if (sleepingCooldown > 0) {
+            sleepingCooldown--;
+        }
     }
 
 //    public void tick() {

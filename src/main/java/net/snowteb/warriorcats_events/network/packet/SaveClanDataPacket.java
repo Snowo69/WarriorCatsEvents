@@ -3,8 +3,11 @@ package net.snowteb.warriorcats_events.network.packet;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.network.NetworkEvent;
@@ -92,6 +95,15 @@ public class SaveClanDataPacket {
 
             player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {
                 ModPackets.sendToPlayer(new S2CSyncClanDataPacket(cap), player);
+
+                if (cap.getMateUUID() != null) {
+                    if (!cap.getMateUUID().equals(WCatEntity.emptyUUID)) {
+                        Entity entity = ((ServerLevel) player.level()).getEntity(cap.getMateUUID());
+                        if (entity instanceof WCatEntity cat) {
+                            cat.setMate(Component.literal(cap.getMorphName()));
+                        }
+                    }
+                }
             });
 
         });

@@ -28,7 +28,7 @@ import tocraft.walkers.integrations.Integrations;
 @Mod(WarriorCatsEvents.MODID)
 public class WarriorCatsEvents {
     public static final String MODID = "warriorcats_events";
-    public static final String MOD_VERSION = "1.2.0";
+    public static final String MOD_VERSION = "1.2.2";
     public static final Logger LOGGER = LogUtils.getLogger();
 
     public WarriorCatsEvents() {
@@ -56,6 +56,7 @@ public class WarriorCatsEvents {
 
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(this::addCreative);
+
 
 
         MinecraftForge.EVENT_BUS.register(this);
@@ -141,7 +142,7 @@ public class WarriorCatsEvents {
             event.accept(ModBlocks.GLOWSHROOM);
 
             event.accept(ModBlocks.LEAF_DOOR);
-            event.accept(ModBlocks.MOSSBED);
+            event.accept(ModBlocks.MOSS_BED);
 
 //            event.accept(ModBlocks.STRIPPED_DARK_LOG);
 //            event.accept(ModBlocks.DARK_LOG);

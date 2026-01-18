@@ -5,9 +5,13 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.BiomeColors;
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.client.resources.sounds.SoundInstance;
+import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.FoliageColor;
@@ -141,10 +145,26 @@ public class ClientEvents {
         public static void onClientLogin(ClientPlayerNetworkEvent.LoggingIn event) {
             if (event.getPlayer().level().isClientSide()) {
                 if (UpdateCheck.updateAvailable) {
+//                    event.getPlayer().sendSystemMessage(
+//                            Component.literal("[Warrior Cats Events] New version available: "
+//                                    + UpdateCheck.latestVersion).withStyle(ChatFormatting.YELLOW)
+//                    );
+
                     event.getPlayer().sendSystemMessage(
-                            Component.literal("[Warrior Cats Events] New version available: "
-                                    + UpdateCheck.latestVersion).withStyle(ChatFormatting.YELLOW)
-                    );
+                            Component.literal("[Warrior Cats Events] New ")
+                                    .append(
+                                            Component.literal("version")
+                                                    .withStyle(style -> style.withColor(ChatFormatting.GREEN)
+                                                            .withUnderlined(true).withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL,
+                                                                    "https://modrinth.com/mod/warrior-cats-events"
+                                                            ))
+                                                    )
+                                    )
+                                    .append(" available: "
+                                    + UpdateCheck.latestVersion).withStyle(style -> style.withColor(TextColor.fromRgb(0xfffb00))
+                    ));
+
+
                 }
             }
         }

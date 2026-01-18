@@ -9,6 +9,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraftforge.network.NetworkEvent;
 import net.snowteb.warriorcats_events.clan.PlayerClanData;
 import net.snowteb.warriorcats_events.clan.PlayerClanDataProvider;
@@ -129,6 +130,18 @@ public class UpdateClanDataPacket {
                             , false
                     );
                 }
+
+                player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {
+                    if (cap.getMateUUID() != null) {
+                        if (!cap.getMateUUID().equals(WCatEntity.emptyUUID)) {
+                            Entity entity = ((ServerLevel) player.level()).getEntity(cap.getMateUUID());
+                            if (entity instanceof WCatEntity cat) {
+                                cat.setMate(Component.literal(cap.getMorphName()));
+                            }
+                        }
+                    }
+                });
+
             });
 
 

@@ -33,6 +33,8 @@ public class ModBlockLootTables extends BlockLootSubProvider {
 //        this.dropSelf(ModBlocks.STARRYTREE_SAPLING.get());
         this.dropSelf(ModBlocks.GLOWSHROOM.get());
 
+        this.dropSelf(ModBlocks.STONE_CRAFTING_TABLE.get());
+
         //DOCK
         {this.add(ModBlocks.DOCK.get(), block -> this.applyExplosionDecay(
                 block, LootTable.lootTable().withPool(LootPool.lootPool().when(
@@ -163,7 +165,7 @@ public class ModBlockLootTables extends BlockLootSubProvider {
 
 
 
-        this.add(ModBlocks.MOSSBED.get(),
+        this.add(ModBlocks.MOSS_BED.get(),
                 block -> createSingleItemTableWithSilkTouch(
                         block,
                         Items.FEATHER,

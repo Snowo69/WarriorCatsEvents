@@ -70,8 +70,12 @@ public class WCRenderer extends GeoEntityRenderer<WCatEntity> {
 
 
         poseStack.scale(scale, scale, scale);
-        if (animatable.hasCustomName() && animatable.getCustomName().getString().equals("squished")) {
+        if (animatable.hasCustomName() && animatable.getCustomName().getString().contains("squished")) {
             poseStack.scale(scale, 0.1f, scale);
+            this.shadowRadius = 0.0F;
+        } else {
+            this.shadowRadius = 0.4f;
+            this.shadowStrength = 0.6F;
         }
         super.preRender(poseStack, animatable, model, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
     }

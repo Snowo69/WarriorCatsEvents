@@ -1,35 +1,18 @@
 package net.snowteb.warriorcats_events.event;
 
-import net.minecraft.network.chat.Component;
-import net.minecraft.server.packs.FilePackResources;
-import net.minecraft.server.packs.PackType;
-import net.minecraft.server.packs.repository.Pack;
-import net.minecraft.server.packs.repository.PackCompatibility;
-import net.minecraft.server.packs.repository.PackSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.SpawnPlacements;
-import net.minecraft.world.flag.FeatureFlagSet;
-import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.level.levelgen.Heightmap;
-import net.minecraftforge.event.AddPackFindersEvent;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.ModContainer;
-import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.resource.PathPackResources;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.entity.ModEntities;
 //import net.snowteb.warriorcats_events.entity.client.VanillaWCatModel;
 import net.snowteb.warriorcats_events.entity.custom.*;
 import net.snowteb.warriorcats_events.util.ModAttributes;
-
-import java.io.File;
-import java.nio.file.Path;
-
-import static net.minecraft.world.flag.FeatureFlags.VANILLA;
 
 @Mod.EventBusSubscriber(modid = WarriorCatsEvents.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ModEvents {
@@ -37,7 +20,8 @@ public class ModEvents {
     /**
      * Valid spawns registry
      */
-    private void commonSetup(final FMLCommonSetupEvent event) {
+    @SubscribeEvent
+    public static void commonSetup(final FMLCommonSetupEvent event) {
         event.enqueueWork(() -> {
             SpawnPlacements.register(
                     ModEntities.WCAT.get(),
@@ -45,6 +29,9 @@ public class ModEvents {
                     Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                     (entityType, level, spawnReason, pos, random) ->
                             level.getBlockState(pos.below()).isSolid()
+                                    && level.getFluidState(pos).isEmpty()
+                                    && level.getFluidState(pos.below()).isEmpty()
+
             );
             SpawnPlacements.register(
                     ModEntities.SQUIRREL.get(),
@@ -52,6 +39,9 @@ public class ModEvents {
                     Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                     (entityType, level, spawnReason, pos, random) ->
                             level.getBlockState(pos.below()).isSolid()
+                                    && level.getFluidState(pos).isEmpty()
+                                    && level.getFluidState(pos.below()).isEmpty()
+
             );
             SpawnPlacements.register(
                     ModEntities.MOUSE.get(),
@@ -59,6 +49,9 @@ public class ModEvents {
                     Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                     (entityType, level, spawnReason, pos, random) ->
                             level.getBlockState(pos.below()).isSolid()
+                                    && level.getFluidState(pos).isEmpty()
+                                    && level.getFluidState(pos.below()).isEmpty()
+
             );
             SpawnPlacements.register(
                     ModEntities.PIGEON.get(),
@@ -66,6 +59,9 @@ public class ModEvents {
                     Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                     (entityType, level, spawnReason, pos, random) ->
                             level.getBlockState(pos.below()).isSolid()
+                                    && level.getFluidState(pos).isEmpty()
+                                    && level.getFluidState(pos.below()).isEmpty()
+
             );
             SpawnPlacements.register(
                     ModEntities.BADGER.get(),
@@ -73,6 +69,9 @@ public class ModEvents {
                     Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                     (entityType, level, spawnReason, pos, random) ->
                             level.getBlockState(pos.below()).isSolid()
+                                    && level.getFluidState(pos).isEmpty()
+                                    && level.getFluidState(pos.below()).isEmpty()
+
             );
 
         });

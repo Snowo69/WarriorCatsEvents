@@ -1,6 +1,5 @@
 package net.snowteb.warriorcats_events.block.entity;
 
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
@@ -18,6 +17,13 @@ public class ModBlockEntities {
             BLOCK_ENTITIES.register("stone_cleft_block", () ->
                     BlockEntityType.Builder.of(StoneCleftBlockEntity::new,
                             ModBlocks.STONECLEFT.get()).build(null));
+
+    public static final RegistryObject<BlockEntityType<MossBedBlockEntity>> MOSS_BED =
+            BLOCK_ENTITIES.register("moss_bed", () ->
+                    BlockEntityType.Builder.of(MossBedBlockEntity::new,
+                            ModBlocks.MOSS_BED.get()).build(null)
+            );
+
 
 
     public static void register(IEventBus eventBus) {

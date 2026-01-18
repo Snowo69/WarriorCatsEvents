@@ -1,7 +1,13 @@
 package net.snowteb.warriorcats_events.event;
 
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -10,29 +16,38 @@ import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.animal.*;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.AbstractSkeleton;
 import net.minecraft.world.entity.monster.Creeper;
-import net.minecraft.world.entity.monster.Phantom;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
+import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
-import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
+import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
+import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
+import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
+import net.minecraftforge.event.entity.player.SleepingTimeCheckEvent;
+import net.minecraftforge.event.level.SleepFinishedTimeEvent;
+import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.snowteb.warriorcats_events.WCEConfig;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
+import net.snowteb.warriorcats_events.block.custom.MossBedBlock;
+import net.snowteb.warriorcats_events.clan.PlayerClanData;
+import net.snowteb.warriorcats_events.clan.PlayerClanDataProvider;
 import net.snowteb.warriorcats_events.effect.ModEffects;
 import net.snowteb.warriorcats_events.entity.custom.WCatAvoidGoal;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.item.ModFoodHerbs;
 import net.snowteb.warriorcats_events.item.ModItems;
-import net.snowteb.warriorcats_events.item.custom.AncientStickItem;
 import net.snowteb.warriorcats_events.network.ModPackets;
 import net.snowteb.warriorcats_events.network.packet.s2c.ThirstDataSyncStCPacket;
 import net.snowteb.warriorcats_events.skills.PlayerSkillProvider;
@@ -41,6 +56,78 @@ import tocraft.walkers.api.PlayerShape;
 
 @Mod.EventBusSubscriber(modid = WarriorCatsEvents.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ModEventsForge {
+
+    @SubscribeEvent
+    public static void canPlayerSleep(SleepingTimeCheckEvent event) {
+        if (!(event.getEntity() instanceof ServerPlayer)) return;
+
+        if (event.getEntity().level().isDay()) {
+            event.setResult(Event.Result.ALLOW);
+        }
+    }
+
+
+    @SubscribeEvent
+    public static void onSleepAttempt(PlayerSleepInBedEvent event) {
+        if (!(event.getEntity() instanceof ServerPlayer player)) return;
+        if (!player.level().isDay()) return;
+
+        int sleepingCooldown = player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
+                .map(PlayerClanData::getSleepingCooldown)
+                .orElse(0);
+
+        if (sleepingCooldown > 0) {
+            player.displayClientMessage(
+                    Component.literal("You are not tired enough!")
+                            .withStyle(ChatFormatting.GRAY),
+                    true
+            );
+            event.setResult(Player.BedSleepingProblem.OTHER_PROBLEM);
+
+        }
+    }
+
+
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void onSleepFinished(SleepFinishedTimeEvent event) {
+        long quarterDay = 24000L / 4;
+        LevelAccessor level = event.getLevel();
+        if (level instanceof ServerLevel sLevel) {
+            if (sLevel.isDay()) {
+                long dayTime = sLevel.getDayTime();
+                event.setTimeAddition(dayTime + quarterDay);
+                WarriorCatsEvents.LOGGER.info("Time advanced for " + quarterDay + " ticks");
+            }
+
+            for (ServerPlayer player : sLevel.players()) {
+                if (player.isSleeping()) {
+                    player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
+                            .ifPresent(cap -> cap.setSleepingCooldown(12000));
+                }
+            }
+        }
+    }
+
+
+    @SubscribeEvent
+    public static void onPlayerWakeUp(PlayerWakeUpEvent event) {
+        Player player = event.getEntity();
+
+        BlockPos sleepingPos = player.getSleepingPos().orElse(null);
+        if (sleepingPos == null) return;
+
+        Level level = player.level();
+        BlockState state = level.getBlockState(sleepingPos);
+
+        if ((state.getBlock() instanceof MossBedBlock)) {
+            level.setBlock(
+                    sleepingPos,
+                    state.setValue(MossBedBlock.OCCUPIED, false),
+                    3
+            );
+        }
+    }
+
 
     /**
      * This modifies some foods so that some will fill thirsts, and some other will fill more hunger.
@@ -139,21 +226,19 @@ public class ModEventsForge {
                 }
             }
         }
-        if (owner == null) {
-            return;
+        if (owner != null) {
+            owner.getCapability(PlayerSkillProvider.SKILL_DATA).ifPresent(cap -> {
+                if (cap.getJumpLevel() > 2) {
+                    event.setDistance(Math.max(0f, event.getDistance() - 3f));
+                }
+            });
         }
-        owner.getCapability(PlayerSkillProvider.SKILL_DATA).ifPresent(cap -> {
-            if (cap.getJumpLevel() > 2) {
-                event.setDistance(Math.max(0f, event.getDistance() - 3f));
-            }
-        });
-
 
         if (entity instanceof WCatEntity wCat) {
             if (wCat.returnHomeFlag) {
-                event.setDistance(Math.max(0f, event.getDistance() - 8f));
+                event.setDistance(Math.max(0f, event.getDistance() - 10f));
             } else {
-                event.setDistance(Math.max(0f, event.getDistance() - 4f));
+                event.setDistance(Math.max(0f, event.getDistance() - 6f));
             }
         }
 
@@ -166,10 +251,6 @@ public class ModEventsForge {
     @SubscribeEvent
     public static void onEntityJoinWorld(EntityJoinLevelEvent event) {
         if (event.getLevel().isClientSide()) return;
-
-        if (event.getEntity() instanceof Phantom) {
-            event.setCanceled(WCEConfig.COMMON.REMOVE_PHANTOMS.get());
-        }
 
         if (event.getEntity() instanceof Creeper creeper) {
 //

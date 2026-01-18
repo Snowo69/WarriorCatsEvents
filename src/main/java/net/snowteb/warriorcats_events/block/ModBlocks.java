@@ -1,13 +1,10 @@
 package net.snowteb.warriorcats_events.block;
 
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.MapColor;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.registries.DeferredRegister;
@@ -17,21 +14,21 @@ import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.block.custom.*;
 import net.snowteb.warriorcats_events.util.ModBlockSetTypes;
 import net.snowteb.warriorcats_events.item.ModItems;
-import net.snowteb.warriorcats_events.worldgen.tree.DarkTreeGrower;
-import net.snowteb.warriorcats_events.worldgen.tree.StarryTreeGrower;
 
 import java.util.function.Supplier;
 
 public class ModBlocks {
-    public static final SoundType CUSTOMHERBS = new SoundType(
-            1.0f, 1.0f, SoundEvents.CHERRY_LEAVES_HIT, null,
-            SoundEvents.SWEET_BERRY_BUSH_PLACE, SoundEvents.CHERRY_LEAVES_HIT, null);
 
     public static final DeferredRegister<Block> BLOCKS =
             DeferredRegister.create(ForgeRegistries.BLOCKS, WarriorCatsEvents.MODID);
 
+    public static final RegistryObject<Block> MOSS_BED = BLOCKS.register("moss_bed",
+                    () -> new MossBedBlock(
+                            BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.MOSS).strength(0.2F).noOcclusion()
+                    ));
 
-
+    public static final RegistryObject<Block> STONE_CRAFTING_TABLE = BLOCKS.register("stone_crafting_table",
+            ()  -> new StoneCraftingTable(BlockBehaviour.Properties.copy(Blocks.STONE).strength(0.2F).noOcclusion()));
 
     public static final RegistryObject<Block> DOCK = BLOCKS.register("dock",
             () -> new GenericBushBlock(
@@ -105,7 +102,6 @@ public class ModBlocks {
             () -> new ModDoorBlock(BlockBehaviour.Properties.copy(Blocks.OAK_DOOR).sound(SoundType.CHERRY_LEAVES).noOcclusion(),
                     ModBlockSetTypes.LEAF));
 
-    public static final RegistryObject<Block> MOSSBED = BLOCKS.register("mossbed", MossbedBlock::new);
     public static final RegistryObject<Block> GLOWSHROOM = BLOCKS.register("glowshroom", GlowshroomBlock::new);
 
 

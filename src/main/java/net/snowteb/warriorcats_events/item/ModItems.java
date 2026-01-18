@@ -32,6 +32,23 @@ public class ModItems {
     public static final DeferredRegister<Item> ITEMS =
             DeferredRegister.create(ForgeRegistries.ITEMS, WarriorCatsEvents.MODID);
 
+    public static final RegistryObject<Item> MOSS_BED_ITEM =
+            ITEMS.register("moss_bed",
+                    () -> new BlockItem(ModBlocks.MOSS_BED.get(), new Item.Properties()) {
+                        @Override
+                        public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
+                            tooltip.add(Component.translatable("block.warriorcats_events.moss_bed.tooltip").withStyle(ChatFormatting.GRAY));
+                        }
+                    });
+
+    public static final RegistryObject<Item> STONE_CRAFTING_TABLE =
+            ITEMS.register("stone_crafting_table",
+                    () -> new BlockItem(ModBlocks.STONE_CRAFTING_TABLE.get(), new Item.Properties()) {
+                        @Override
+                        public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
+                            tooltip.add(Component.translatable("block.warriorcats_events.stone_crafting_table.tooltip").withStyle(ChatFormatting.GRAY));
+                        }
+                    });
 
     public static final RegistryObject<Item> MOUSE_SPAWN_EGG = ITEMS.register("mouse_spawn_egg",
             () -> new ForgeSpawnEggItem(ModEntities.MOUSE,0xAD8A6C, 0xE3AD7D,
@@ -174,8 +191,6 @@ public static final RegistryObject<Item> FLOWER_CROWN = ITEMS.register("flower_c
     public static final RegistryObject<Item> YARROWPLANT = ITEMS.register("yarrow",
             () -> new BlockItem(ModBlocks.YARROWPLANT.get(), new Item.Properties()));
 
-    public static final RegistryObject<Item> MOSS_BED = ITEMS.register("mossbed",
-            () -> new BlockItem(ModBlocks.MOSSBED.get(), new Item.Properties().stacksTo(16)));
 
 
 

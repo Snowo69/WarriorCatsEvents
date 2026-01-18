@@ -1,6 +1,6 @@
 {
   "type": "forge:add_spawns",
-  "biomes": "#warriorcats_events:vanilla_spawn_biomes",
+  "biomes": "#minecraft:is_overworld",
   "spawners": {
     "type": "warriorcats_events:badger",
     "weight": 15,

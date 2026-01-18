@@ -1,8 +1,10 @@
 {
   "tab.warriorcats_events": "Warrior Cats Events",
 
-"block.warriorcats_events.mossbed": "Moss Nest",
-  "block.warriorcats_events.mossbed.tooltip": "A comfortable moss nest, lined with feathers and ferns",
+  "block.warriorcats_events.stone_crafting_table": "Crafting Rock",
+
+  "block.warriorcats_events.moss_bed": "Moss Nest",
+  "block.warriorcats_events.moss_bed.tooltip": "A comfortable moss nest, lined with feathers, ferns, and flowers.",
 
   "item.warriorcats_events.dock_leaves": "Dock Leaves",
   "item.warriorcats_events.dock_leaves.tooltip": "Good for making poultices and wraping herbs",
@@ -121,6 +123,8 @@
 
 
   "item.warriorcats_events.warriors_guide": "A Warrior's Guide",
-  "item.warriorcats_events.warriors_guide.tooltip": "Every warrior needs guidance at some point!"
+  "item.warriorcats_events.warriors_guide.tooltip": "Every warrior needs guidance at some point!",
+  "container.stone_crafting_table.crafting": "Paw Crafting",
+  "block.warriorcats_events.stone_crafting_table.tooltip": "A rock specially designed to craft anything with your paws!"
 
 }

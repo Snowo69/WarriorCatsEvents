@@ -273,6 +273,19 @@ public class ModPackets {
                 .consumerMainThread(CtSPerformLeapPacket::handle)
                 .add();
 
+        net.messageBuilder(OpenAncientStickScreenPacket.class, 37, NetworkDirection.PLAY_TO_CLIENT)
+                .decoder(OpenAncientStickScreenPacket::decode)
+                .encoder(OpenAncientStickScreenPacket::encode)
+                .consumerMainThread(OpenAncientStickScreenPacket::handle)
+                .add();
+
+        net.messageBuilder(CommandCatsPacket.class, 38, NetworkDirection.PLAY_TO_SERVER)
+                .decoder(CommandCatsPacket::decode)
+                .encoder(CommandCatsPacket::encode)
+                .consumerMainThread(CommandCatsPacket::handle)
+                .add();
+
+
 
     }
 

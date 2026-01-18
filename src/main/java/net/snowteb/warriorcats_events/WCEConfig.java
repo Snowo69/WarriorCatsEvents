@@ -26,8 +26,6 @@ public class WCEConfig {
         public final ForgeConfigSpec.IntValue FISHING_SCREEN_Y_OFFSET;
         public final ForgeConfigSpec.BooleanValue COLORED_NAMES;
         public final ForgeConfigSpec.BooleanValue VISIBLE_MORPH_NAME;
-        public final ForgeConfigSpec.BooleanValue REMOVE_PHANTOMS;
-
 
 
         public Common(ForgeConfigSpec.Builder builder) {
@@ -66,9 +64,6 @@ public class WCEConfig {
                     .comment("If your fishing GUI covers anything, use this to vertically move it (min: -500, max: 500)")
                     .defineInRange("fishingScreenYOffset", 0, -500, 500);
 
-            REMOVE_PHANTOMS = builder
-                    .comment("If you hate Phantoms as much as me, you might want to turn this on.")
-                    .define("removePhantoms", false);
             builder.pop();
         }
     }

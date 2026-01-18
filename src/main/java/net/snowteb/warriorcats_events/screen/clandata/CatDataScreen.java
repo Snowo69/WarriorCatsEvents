@@ -24,21 +24,21 @@ public class CatDataScreen extends Screen {
 
     Component name = Component.literal("...");
     String nameToString = "...";
-    Component clanName;
+    Component clanName = Component.literal("...");
     Component genderText = Component.literal("...");
     Component ageText = Component.literal("...");
     Component personalityText = Component.literal("...");
     Component rankText = Component.literal("...");
-    Component catMate;
+    Component catMate = Component.literal("...");
     Component expectingText = Component.literal("...");
     Component KitTime = Component.literal("...");
     Component moodText = Component.literal("...");
     int friendshipLevel = 0;
-    Component friendshipLevelText;
-    Component helloSentence;
-    Component setModeSentence;
-    Component catMother;
-    Component catFather;
+    Component friendshipLevelText = Component.literal("...");
+    Component helloSentence = Component.literal("...");
+    Component setModeSentence = Component.literal("...");
+    Component catMother = Component.literal("...");
+    Component catFather = Component.literal("...");
     Component parentsText = Component.literal("...");
 
 
@@ -100,8 +100,10 @@ public class CatDataScreen extends Screen {
         pGuiGraphics.disableScissor();
 
 
-        if (interactionCooldownTooltip && wCatEntity.isTame()) {
-            pGuiGraphics.renderTooltip(Minecraft.getInstance().font, Component.empty().append(preText).append(name).append(" already interacted recently."), this.width, 30);
+        if (name != null){
+            if (interactionCooldownTooltip && wCatEntity.isTame()) {
+                pGuiGraphics.renderTooltip(Minecraft.getInstance().font, Component.empty().append(preText).append(name).append(" already interacted recently."), this.width, 30);
+            }
         }
 
 
@@ -117,46 +119,50 @@ public class CatDataScreen extends Screen {
             pGuiGraphics.renderOutline(boxLeft, boxTop, boxRight - boxLeft, boxBottom - boxTop, 0xFFFFFFFF);
 
             int textY = boxTop + 8;
-            pGuiGraphics.drawCenteredString(font, helloSentence, centerX, textY, 0xFFFFFFFF);
+            if (helloSentence != null) {
+                pGuiGraphics.drawCenteredString(font, helloSentence, centerX, textY, 0xFFFFFFFF);
+            }
             int lineY = textY + 14;
             pGuiGraphics.hLine(boxLeft + 8, boxRight - 8, lineY, 0xFFFFFFFF);
 
         }
 
         if (activeMenu.equals("mode")) {
-            int textWidth = Math.max(Minecraft.getInstance().font.width(setModeSentence), 85);
-            int boxTop = centerY - 50;
-            int boxBottom = boxTop + 90;
-            int boxLeft = centerX - (textWidth / 2) - 16;
-            int boxRight = centerX + (textWidth / 2) + 16;
+            if (setModeSentence != null) {
+                int textWidth = Math.max(Minecraft.getInstance().font.width(setModeSentence), 85);
+                int boxTop = centerY - 50;
+                int boxBottom = boxTop + 90;
+                int boxLeft = centerX - (textWidth / 2) - 16;
+                int boxRight = centerX + (textWidth / 2) + 16;
 
-            pGuiGraphics.fill(boxLeft, boxTop, boxRight, boxBottom, 0x50000000);
+                pGuiGraphics.fill(boxLeft, boxTop, boxRight, boxBottom, 0x50000000);
 
-            pGuiGraphics.renderOutline(boxLeft, boxTop, boxRight - boxLeft, boxBottom - boxTop, 0xFFFFFFFF);
+                pGuiGraphics.renderOutline(boxLeft, boxTop, boxRight - boxLeft, boxBottom - boxTop, 0xFFFFFFFF);
 
-            int textY = boxTop + 8;
-            pGuiGraphics.drawCenteredString(font, setModeSentence, centerX, textY, 0xFFFFFFFF);
-            int lineY = textY + 14;
-            pGuiGraphics.hLine(boxLeft + 8, boxRight - 8, lineY, 0xFFFFFFFF);
-
+                int textY = boxTop + 8;
+                pGuiGraphics.drawCenteredString(font, setModeSentence, centerX, textY, 0xFFFFFFFF);
+                int lineY = textY + 14;
+                pGuiGraphics.hLine(boxLeft + 8, boxRight - 8, lineY, 0xFFFFFFFF);
+            }
         }
 
         if (activeMenu.equals("home")) {
-            int textWidth = Math.max(Minecraft.getInstance().font.width(setModeSentence), 85);
-            int boxTop = centerY - 50;
-            int boxBottom = boxTop + 90;
-            int boxLeft = centerX - (textWidth / 2) - 16;
-            int boxRight = centerX + (textWidth / 2) + 16;
+            if (setModeSentence != null) {
+                int textWidth = Math.max(Minecraft.getInstance().font.width(setModeSentence), 85);
+                int boxTop = centerY - 50;
+                int boxBottom = boxTop + 90;
+                int boxLeft = centerX - (textWidth / 2) - 16;
+                int boxRight = centerX + (textWidth / 2) + 16;
 
-            pGuiGraphics.fill(boxLeft, boxTop, boxRight, boxBottom, 0x50000000);
+                pGuiGraphics.fill(boxLeft, boxTop, boxRight, boxBottom, 0x50000000);
 
-            pGuiGraphics.renderOutline(boxLeft, boxTop, boxRight - boxLeft, boxBottom - boxTop, 0xFFFFFFFF);
+                pGuiGraphics.renderOutline(boxLeft, boxTop, boxRight - boxLeft, boxBottom - boxTop, 0xFFFFFFFF);
 
-            int textY = boxTop + 8;
-            pGuiGraphics.drawCenteredString(font, setModeSentence, centerX, textY, 0xFFFFFFFF);
-            int lineY = textY + 14;
-            pGuiGraphics.hLine(boxLeft + 8, boxRight - 8, lineY, 0xFFFFFFFF);
-
+                int textY = boxTop + 8;
+                pGuiGraphics.drawCenteredString(font, setModeSentence, centerX, textY, 0xFFFFFFFF);
+                int lineY = textY + 14;
+                pGuiGraphics.hLine(boxLeft + 8, boxRight - 8, lineY, 0xFFFFFFFF);
+            }
         }
 
         float scale1 = 1.25f;
@@ -298,49 +304,52 @@ public class CatDataScreen extends Screen {
             catMate = Component.literal("Mate: ").append(wCatEntity.getMate().copy().withStyle(ChatFormatting.AQUA));
         }
 
-        if (wCatEntity.getClan().equals(Component.literal("None"))) {
+        if (wCatEntity.getClan().equals(Component.literal("None")) || wCatEntity.getClan() == null) {
             clanName = Component.literal("No clan");
         } else {
             clanName = Component.literal("From ").append(wCatEntity.getClan().copy());
         }
 
-        if (wCatEntity.getRank() == WCatEntity.Rank.KIT) {
-            switch (wCatEntity.getPersonality()) {
-                case CAUTIOUS -> helloSentence = Component.literal("Meow");
-                case CALM ->  helloSentence = Component.literal("Meow!");
-                case AMBITIOUS -> helloSentence = Component.literal("Meow!");
-                case RECKLESS -> helloSentence = Component.literal("Meow!");
-                case SHY ->  helloSentence = Component.literal("Mrrow");
-                case GRUMPY ->  helloSentence = Component.literal("...");
-                case HUMBLE ->   helloSentence = Component.literal("Meow");
-                case FRIENDLY ->   helloSentence = Component.literal("Meow!");
-                case INDEPENDENT ->   helloSentence = Component.literal("Meow");
-            }
-        } else if (wCatEntity.getRank() == WCatEntity.Rank.APPRENTICE) {
-            switch (wCatEntity.getPersonality()) {
-                case CAUTIOUS -> helloSentence = Component.literal("Hey ").append(ClientClanData.get().getMorphName());
-                case CALM ->  helloSentence = Component.literal("Hello, ").append(ClientClanData.get().getMorphName());
-                case AMBITIOUS -> helloSentence = Component.literal("Hello, ").append(ClientClanData.get().getMorphName());
-                case RECKLESS -> helloSentence = Component.literal("Hi ").append(ClientClanData.get().getMorphName()).append("!");
-                case SHY ->  helloSentence = Component.literal("Oh, h-hi ").append(ClientClanData.get().getMorphName()).append("!");
-                case GRUMPY ->  helloSentence = Component.literal("Huh, ").append(ClientClanData.get().getMorphName());
-                case HUMBLE ->   helloSentence = Component.literal("Hi ").append(ClientClanData.get().getMorphName()).append("!");
-                case FRIENDLY ->   helloSentence = Component.literal("").append(ClientClanData.get().getMorphName()).append("!");
-                case INDEPENDENT ->   helloSentence = Component.literal("Hi, ").append(ClientClanData.get().getMorphName());
-            }
-        } else {
-            switch (wCatEntity.getPersonality()) {
-                case CAUTIOUS -> helloSentence = Component.literal("Oh, hey ").append(ClientClanData.get().getMorphName());
-                case CALM ->  helloSentence = Component.literal("Hello, ").append(ClientClanData.get().getMorphName());
-                case AMBITIOUS -> helloSentence = Component.literal("Hello there, ").append(ClientClanData.get().getMorphName());
-                case RECKLESS -> helloSentence = Component.literal("Hi ").append(ClientClanData.get().getMorphName()).append("!");
-                case SHY ->  helloSentence = Component.literal("Oh, h-hi ").append(ClientClanData.get().getMorphName()).append("!");
-                case GRUMPY ->  helloSentence = Component.literal("Hello, any good news, ").append(ClientClanData.get().getMorphName()).append("?");
-                case HUMBLE ->   helloSentence = Component.literal("Hi ").append(ClientClanData.get().getMorphName()).append("!");
-                case FRIENDLY ->   helloSentence = Component.literal("").append(ClientClanData.get().getMorphName()).append("! So good to see you!");
-                case INDEPENDENT ->   helloSentence = Component.literal("Greetings, ").append(ClientClanData.get().getMorphName());
+        if (wCatEntity.getPersonality() != null) {
+            if (wCatEntity.getRank() == WCatEntity.Rank.KIT) {
+                switch (wCatEntity.getPersonality()) {
+                    case CAUTIOUS -> helloSentence = Component.literal("Meow");
+                    case CALM ->  helloSentence = Component.literal("Meow!");
+                    case AMBITIOUS -> helloSentence = Component.literal("Meow!");
+                    case RECKLESS -> helloSentence = Component.literal("Meow!");
+                    case SHY ->  helloSentence = Component.literal("Mrrow");
+                    case GRUMPY ->  helloSentence = Component.literal("...");
+                    case HUMBLE ->   helloSentence = Component.literal("Meow");
+                    case FRIENDLY ->   helloSentence = Component.literal("Meow!");
+                    case INDEPENDENT ->   helloSentence = Component.literal("Meow");
+                }
+            } else if (wCatEntity.getRank() == WCatEntity.Rank.APPRENTICE) {
+                switch (wCatEntity.getPersonality()) {
+                    case CAUTIOUS -> helloSentence = Component.literal("Hey ").append(ClientClanData.get().getMorphName());
+                    case CALM ->  helloSentence = Component.literal("Hello, ").append(ClientClanData.get().getMorphName());
+                    case AMBITIOUS -> helloSentence = Component.literal("Hello, ").append(ClientClanData.get().getMorphName());
+                    case RECKLESS -> helloSentence = Component.literal("Hi ").append(ClientClanData.get().getMorphName()).append("!");
+                    case SHY ->  helloSentence = Component.literal("Oh, h-hi ").append(ClientClanData.get().getMorphName()).append("!");
+                    case GRUMPY ->  helloSentence = Component.literal("Huh, ").append(ClientClanData.get().getMorphName());
+                    case HUMBLE ->   helloSentence = Component.literal("Hi ").append(ClientClanData.get().getMorphName()).append("!");
+                    case FRIENDLY ->   helloSentence = Component.literal("").append(ClientClanData.get().getMorphName()).append("!");
+                    case INDEPENDENT ->   helloSentence = Component.literal("Hi, ").append(ClientClanData.get().getMorphName());
+                }
+            } else {
+                switch (wCatEntity.getPersonality()) {
+                    case CAUTIOUS -> helloSentence = Component.literal("Oh, hey ").append(ClientClanData.get().getMorphName());
+                    case CALM ->  helloSentence = Component.literal("Hello, ").append(ClientClanData.get().getMorphName());
+                    case AMBITIOUS -> helloSentence = Component.literal("Hello there, ").append(ClientClanData.get().getMorphName());
+                    case RECKLESS -> helloSentence = Component.literal("Hi ").append(ClientClanData.get().getMorphName()).append("!");
+                    case SHY ->  helloSentence = Component.literal("Oh, h-hi ").append(ClientClanData.get().getMorphName()).append("!");
+                    case GRUMPY ->  helloSentence = Component.literal("Hello, any good news, ").append(ClientClanData.get().getMorphName()).append("?");
+                    case HUMBLE ->   helloSentence = Component.literal("Hi ").append(ClientClanData.get().getMorphName()).append("!");
+                    case FRIENDLY ->   helloSentence = Component.literal("").append(ClientClanData.get().getMorphName()).append("! So good to see you!");
+                    case INDEPENDENT ->   helloSentence = Component.literal("Greetings, ").append(ClientClanData.get().getMorphName());
+                }
             }
         }
+
 
         if (wCatEntity.getRank() == WCatEntity.Rank.KIT) {
             setModeSentence = switch (wCatEntity.getPersonality()) {

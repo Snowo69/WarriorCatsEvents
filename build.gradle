@@ -150,6 +150,8 @@ dependencies {
     // then special handling is done to allow a setup of a vanilla dependency without the use of an external repository.
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+
     implementation fg.deobf("software.bernie.geckolib:geckolib-forge-${minecraft_version}:${geckolib_version}")
     implementation ("com.eliotlash.mclib:mclib:20")
     implementation fg.deobf("dev.tocraft:walkers-forge:1.20.1-5.7")
@@ -234,3 +236,10 @@ publishing {
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
 }
+
+//mixin {
+//    add sourceSets.main, "mixins.warriorcats_events.refmap.json"
+//    config 'mixins.warriorcats_events.json'
+//    debug.verbose = true
+//    debug.export = true
+//}

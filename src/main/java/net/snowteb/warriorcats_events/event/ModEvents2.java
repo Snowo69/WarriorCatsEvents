@@ -366,6 +366,8 @@ public class ModEvents2 {
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
         if (event.side == LogicalSide.SERVER && event.phase == TickEvent.Phase.END) {
 
+            event.player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA).ifPresent(PlayerClanData::tick);
+
             event.player.getCapability(PlayerThirstProvider.PLAYER_THIRST).ifPresent(thirst -> {
 
                 /**

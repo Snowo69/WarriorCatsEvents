@@ -39,9 +39,9 @@ public class ModItemModelProvider extends ItemModelProvider {
         simpleItem(ModItems.WARRIOR_NAMETAG);
         simpleItem(ModItems.KIT_ITEM);
 
-
-
         simpleBlockItem(ModBlocks.LEAF_DOOR);
+
+//        withExistingParent(ModItems.STONE_CRAFTING_TABLE.getId().getPath(), modLoc("block/" + ModBlocks.STONE_CRAFTING_TABLE.getId().getPath()));
 
         withExistingParent(ModItems.MOUSE_SPAWN_EGG.getId().getPath(), mcLoc("item/template_spawn_egg"));
         withExistingParent(ModItems.SQUIRREL_SPAWN_EGG.getId().getPath(), mcLoc("item/template_spawn_egg"));

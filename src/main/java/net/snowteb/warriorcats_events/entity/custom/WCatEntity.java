@@ -31,6 +31,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.*;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageSources;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
@@ -303,6 +304,16 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
             SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.OPTIONAL_COMPONENT);
     private static final EntityDataAccessor<Optional<Component>> MOTHER =
             SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.OPTIONAL_COMPONENT);
+
+    private static final EntityDataAccessor<Boolean> IS_AN_IMAGE =
+            SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.BOOLEAN);
+
+    public void setAnImage(boolean isAnImage) {
+        this.entityData.set(IS_AN_IMAGE, isAnImage);
+    }
+    public boolean isAnImage() {
+        return this.entityData.get(IS_AN_IMAGE);
+    }
 
     public enum CatInteraction {
         GIVE_ITEM,
@@ -1939,17 +1950,21 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
     /**
      * Under certain conditions, proceed to follow the owner.
      */
-    private static class WCatFollowOwnerGoal extends Goal {
+    private class WCatFollowOwnerGoal extends Goal {
 
         private final TamableAnimal cat;
         private LivingEntity owner;
         private final double speed;
         private final float stopDistance;
         private final float startDistance;
+        private final double angleOffset;
+
 
         public WCatFollowOwnerGoal(TamableAnimal cat, double speed, float stopDistance, float startDistance) {
             this.cat = cat;
             this.speed = speed;
+            this.angleOffset = cat.getId() * 0.8;
+
 
             if (cat instanceof WCatEntity wCatEntity && (wCatEntity.getPersonality() == Personality.INDEPENDENT || wCatEntity.getPersonality() == Personality.SHY)) {
                 if (wCatEntity.getPersonality() == Personality.SHY) {
@@ -2016,6 +2031,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
             double dist = cat.distanceTo(owner);
 
             cat.getLookControl().setLookAt(owner, 10.0F, cat.getMaxHeadXRot());
+            applySeparation();
 
             if (dist > 25 && (cat.getOwner() != null && cat.getOwner().onGround())) {
                 cat.teleportTo(owner.getX(), owner.getY(), owner.getZ());
@@ -2040,7 +2056,100 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
             double targetZ = owner.getZ() + dz * ratio;
             double targetY = owner.getY();
 
-            cat.getNavigation().moveTo(targetX, targetY, targetZ, speed);
+            double offsetX = Math.cos(angleOffset) * 0.6;
+            double offsetZ = Math.sin(angleOffset) * 0.6;
+
+            if (!hasGroundAhead(targetX, targetZ) || pathHasVoidAhead(owner) ||
+                    (cat.distanceTo(owner) < 6.5D && isACatTooClose())) {
+                cat.getNavigation().stop();
+                return;
+            }
+
+            cat.getNavigation().moveTo(targetX + offsetX, targetY, targetZ + offsetZ, speed);
+        }
+
+        private boolean isACatTooClose() {
+            AABB box = this.cat.getBoundingBox().inflate(0.6);
+            List<WCatEntity> entities = cat.level().getEntitiesOfClass(
+                    WCatEntity.class,
+                    box,
+                    kitty -> kitty.isAlive() && kitty != this.cat && kitty.mode == CatMode.FOLLOW
+            );
+            return !entities.isEmpty();
+        }
+
+
+        private boolean pathHasVoidAhead(Entity owner) {
+            Vec3 catPos = cat.position();
+            Vec3 playerPos = owner.position();
+
+            Vec3 dir = playerPos.subtract(catPos);
+            double dist = dir.length();
+            dir = dir.normalize();
+
+            Level level = cat.level();
+
+            for (double d = 0; d < Math.min(dist, 6); d += 0.5) {
+                Vec3 sample = catPos.add(dir.scale(d));
+                BlockPos pos = BlockPos.containing(sample.x, cat.getY(), sample.z);
+
+                boolean hasGround = false;
+                for (int i = 1; i <= 4; i++) {
+                    if (!level.isEmptyBlock(pos.below(i))) {
+                        hasGround = true;
+                        break;
+                    }
+                }
+
+                if (!hasGround) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+
+        private boolean hasGroundAhead(double targetX, double targetZ) {
+            Level level = cat.level();
+
+            BlockPos pos = BlockPos.containing(targetX, cat.getY(), targetZ);
+
+            for (int i = 0; i < 4; i++) {
+                BlockPos check = pos.below(i + 1);
+                if (!level.isEmptyBlock(check)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+
+        private void applySeparation() {
+            AABB box = cat.getBoundingBox().inflate(0.3);
+            List<WCatEntity> others = cat.level().getEntitiesOfClass(
+                    WCatEntity.class,
+                    box,
+                    e -> e != cat
+            );
+
+            if (others.isEmpty()) return;
+
+            double pushX = 0;
+            double pushZ = 0;
+
+            for (WCatEntity other : others) {
+                double dx = cat.getX() - other.getX();
+                double dz = cat.getZ() - other.getZ();
+                double dist = Math.max(Math.sqrt(dx * dx + dz * dz), 0.001);
+
+                pushX += dx / dist;
+                pushZ += dz / dist;
+            }
+
+            cat.setDeltaMovement(
+                    cat.getDeltaMovement().add(pushX * 0.05, 0, pushZ * 0.05)
+            );
         }
 
     }
@@ -2139,11 +2248,11 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         private Predicate<BlockState> defineTargetPredicate() {
 
             Block targetBlock = switch (cat.getRank()) {
-                case KIT -> ModBlocks.MOSSBED.get();
-                case APPRENTICE -> ModBlocks.MOSSBED.get();
-                case WARRIOR -> ModBlocks.MOSSBED.get();
+                case KIT -> ModBlocks.MOSS_BED.get();
+                case APPRENTICE -> ModBlocks.MOSS_BED.get();
+                case WARRIOR -> ModBlocks.MOSS_BED.get();
                 case MEDICINE -> ModBlocks.STONECLEFT.get();
-                default -> ModBlocks.MOSSBED.get();
+                default -> ModBlocks.MOSS_BED.get();
             };
 
             return state -> state.is(targetBlock);
@@ -3861,7 +3970,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         }
 
 
-        if (this.isTame() && itemstack.is(ModItems.CATMINT.get()) && this.getRank() != MEDICINE && !this.isExpectingKits()) {
+        if (this.isTame() && itemstack.is(ModItems.CATMINT.get()) && this.getRank() != MEDICINE && !this.isExpectingKits() && !this.isBaby()) {
             if (!this.level().isClientSide()) {
                 if (((ServerLevel) this.level()).getEntity(this.getMateUUID()) instanceof Player) {
                     return InteractionResult.PASS;
@@ -3870,9 +3979,8 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
             if (!pPlayer.getAbilities().instabuild) itemstack.shrink(1);
 
-            if (hasValidMateNearby()) {
-                this.setInLove(pPlayer);
-            }
+            this.setInLove(pPlayer);
+
 
             return InteractionResult.SUCCESS;
         }
@@ -4713,6 +4821,8 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
         tag.putBoolean("ReturningHome", this.returnHomeFlag);
 
+        tag.putBoolean("IsAnImage", this.isAnImage());
+
 
         if (this.getMate() != null) {
             tag.putString("Mate", Component.Serializer.toJson(this.getMate()));
@@ -4898,6 +5008,10 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
             this.setForbiddenPlayer(tag.getUUID("ForbiddenP"));
         } else {
             this.setForbiddenPlayer(null);
+        }
+
+        if (tag.contains("IsAnImage")) {
+            this.setAnImage(tag.getBoolean("IsAnImage"));
         }
 
 
@@ -5101,7 +5215,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         }
 
 
-        if (this.random.nextInt(1200) == 0 && (!AnimationClientData.isPlayerShape) && !this.isBeingCarried) {
+        if (this.random.nextInt(1200) == 0 && (!AnimationClientData.isPlayerShape) && !this.isBeingCarried && !this.isAnImage()) {
 
             int rand = this.random.nextInt(4);
 
@@ -5248,6 +5362,21 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                 break;
             case FOLLOW:
                 player.displayClientMessage(Component.literal(name + " is following you."), true);
+                break;
+            case WANDER:
+                player.displayClientMessage(Component.literal(name + " is wandering."), true);
+                break;
+        }
+    }
+
+    public void sendModeMessage(Player player, CatMode cMode) {
+        String name = this.getName().getString();
+        switch (cMode) {
+            case SIT:
+                player.displayClientMessage(Component.literal(name + " will stay."), true);
+                break;
+            case FOLLOW:
+                player.displayClientMessage(Component.literal(name + " will follow you."), true);
                 break;
             case WANDER:
                 player.displayClientMessage(Component.literal(name + " is wandering."), true);
@@ -5517,6 +5646,8 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         this.entityData.define(MOTHER, Optional.empty());
         this.entityData.define(FATHER, Optional.empty());
 
+        this.entityData.define(IS_AN_IMAGE, false);
+
     }
 
     @Override
@@ -5778,6 +5909,38 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                 this.entityData.set(AGE_SYNC, moonsCalc);
             }
 
+            if (this.tickCount % 400 == 0 && this.level() instanceof ServerLevel serverLevel) {
+
+                UUID fatherUUID = this.getFatherUUID();
+                if (fatherUUID != null && !fatherUUID.equals(emptyUUID)) {
+                    Entity father = serverLevel.getEntity(fatherUUID);
+                    if (father instanceof Player player) {
+                        String morphName = player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
+                                .map(PlayerClanData::getMorphName)
+                                .orElse(player.getName().getString());
+
+                        if (!morphName.equals(this.getFather().getString())) {
+                            this.setFather(Component.literal(morphName));
+                        }
+                    }
+                }
+
+                UUID motherUUID = this.getMotherUUID();
+                if (motherUUID != null && !motherUUID.equals(emptyUUID)) {
+                    Entity mother = serverLevel.getEntity(motherUUID);
+                    if (mother instanceof Player player) {
+                        String morphName = player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
+                                .map(PlayerClanData::getMorphName)
+                                .orElse(player.getName().getString());
+
+                        if (!morphName.equals(this.getMother().getString())) {
+                            this.setMother(Component.literal(morphName));
+                        }
+                    }
+                }
+            }
+
+
             if (soundTick > 0) {
                 soundTick--;
             }
@@ -5965,6 +6128,12 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         this.setVariant(randomVariant);
         this.wanderCenter = this.blockPosition();
         this.assignRandomPersonality(this.random);
+        if (this.getAge() < 0 && this.getAge() > -25000) {
+            int minutes = WCEConfig.COMMON.KIT_GROWTH_MINUTES.get();
+            int growingTicks = minutes * 20 * 60;
+            this.setAge((growingTicks/2) + 100);
+            this.setAppScale(true);
+        }
 
         return data;
     }
@@ -6124,5 +6293,14 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         }
 
     }
+
+    @Override
+    public boolean isInvulnerableTo(DamageSource source) {
+        if (source.is(DamageTypes.IN_WALL) && this.isBaby() && this.isBeingCarried) {
+            return true;
+        }
+        return super.isInvulnerableTo(source);
+    }
+
 
 }

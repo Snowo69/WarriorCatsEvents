@@ -225,7 +225,7 @@ public class ClanSetupScreen extends Screen {
             }
         }
         if (morphSufix.isEmpty() && isUseSufixes) {
-            pGuiGraphics.drawString(Minecraft.getInstance().font, "<Sufix>", centerx-117, centery -34, 0xFF7d7d7d);
+            pGuiGraphics.drawString(Minecraft.getInstance().font, "<Suffix>", centerx-117, centery -34, 0xFF7d7d7d);
         }
 
         ResourceLocation currentVariant;
@@ -367,7 +367,7 @@ public class ClanSetupScreen extends Screen {
                 this.font,
                 centerX - 120, centerY - 40,
                 60, 20,
-                Component.literal("Sufix")
+                Component.literal("Suffix")
         );
         morphSufixBox.setMaxLength(12);
         this.addRenderableWidget(morphSufixBox);
@@ -375,7 +375,7 @@ public class ClanSetupScreen extends Screen {
         automaticSufix = new SwitchButton(
                 centerX - 50, centerY - 40,
                 50, 20,
-                "Random Sufix",
+                "Random Suffix",
                 false,
                 btn -> {
                     randomSufix = Minecraft.getInstance().player.getRandom().nextInt(SUFIX.length);
@@ -392,7 +392,7 @@ public class ClanSetupScreen extends Screen {
         useSufixes = new SwitchButton(
                 centerX + 30, centerY - 40,
                 50, 20,
-                "Use sufixes",
+                "Use suffixes",
                 true,
                 btn -> {
                 }

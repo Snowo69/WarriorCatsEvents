@@ -13,6 +13,7 @@ import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.network.ModPackets;
 import net.snowteb.warriorcats_events.network.packet.c2s.CtSFishFailed;
 import net.snowteb.warriorcats_events.network.packet.c2s.CtSFishSuccesful;
+import org.lwjgl.glfw.GLFW;
 
 public class FishingScreen extends Screen {
     private static final ResourceLocation TEXTUREBACKGROUND =
@@ -220,5 +221,12 @@ public class FishingScreen extends Screen {
         return super.mouseClicked(mouseX, mouseY, button);
     }
 
-
+    @Override
+    public boolean keyPressed(int pKeyCode, int pScanCode, int pModifiers) {
+        if (pKeyCode == GLFW.GLFW_KEY_E) {
+            this.onClose();
+            return true;
+        }
+        return super.keyPressed(pKeyCode, pScanCode, pModifiers);
+    }
 }

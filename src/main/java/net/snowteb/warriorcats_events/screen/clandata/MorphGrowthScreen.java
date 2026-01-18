@@ -111,10 +111,10 @@ public class MorphGrowthScreen extends Screen {
         pGuiGraphics.drawCenteredString(this.font, "Mice hunted: " + mouseKilled, centerX, 45, 0xDDDDFF);
         pGuiGraphics.drawCenteredString(this.font, "Pigeon hunted: " + pigeonKilled, centerX, 55, 0xDDDDFF);
         pGuiGraphics.drawCenteredString(this.font, "Badger killed: " + badgerKilled, centerX, 65, 0xDDDDFF);
-        pGuiGraphics.drawCenteredString(this.font, "Moss collected: " + mossCollected, centerX, 75, 0xDDDDFF);
-        pGuiGraphics.drawCenteredString(this.font, "Feathers collected: " + feathersCollected, centerX, 85, 0xDDDDFF);
-        pGuiGraphics.drawCenteredString(this.font, "Time played: " + minutesPlayed + " min", centerX, 95, 0xDDDDFF);
-        pGuiGraphics.drawCenteredString(this.font, "Time survived: " + hoursSurvived + " h", centerX, 105, 0xDDDDFF);
+//        pGuiGraphics.drawCenteredString(this.font, "Moss collected: " + mossCollected, centerX, 75, 0xDDDDFF);
+        pGuiGraphics.drawCenteredString(this.font, "Feathers collected: " + feathersCollected, centerX, 75, 0xDDDDFF);
+        pGuiGraphics.drawCenteredString(this.font, "Time played: " + minutesPlayed + " min", centerX, 85, 0xDDDDFF);
+        pGuiGraphics.drawCenteredString(this.font, "Time survived: " + hoursSurvived + " h", centerX, 95, 0xDDDDFF);
 
         pGuiGraphics.pose().pushPose();
         pGuiGraphics.pose().scale(0.8f,0.8f,0.8f);
@@ -157,7 +157,7 @@ public class MorphGrowthScreen extends Screen {
                 if (ClientClanData.get().getMorphAge() == PlayerClanData.Age.KIT) {
                     if (squirrelKilled >= 5
                             && mouseKilled >= 10
-                            && mossCollected >= 10
+//                            && mossCollected >= 10
                             && feathersCollected >= 5
                             && minutesPlayed >= 60
                             && hoursSurvived >= 1
@@ -170,7 +170,7 @@ public class MorphGrowthScreen extends Screen {
                             && mouseKilled >= 30
                             && pigeonKilled >= 1
                             && badgerKilled >= 1
-                            && mossCollected >= 20
+//                            && mossCollected >= 20
                             && minutesPlayed >= 120
                             && hoursSurvived >= 2
                     ) canGrow = true;
@@ -189,7 +189,7 @@ public class MorphGrowthScreen extends Screen {
         if (ClientClanData.get().getMorphAge() == PlayerClanData.Age.KIT) {
             if (squirrelKilled < 5) lines.add(Component.literal("Required to hunt 5 squirrels").withStyle(ChatFormatting.RED));
             if (mouseKilled < 10) lines.add(Component.literal("Required to hunt 10 mice").withStyle(ChatFormatting.RED));
-            if (mossCollected < 10) lines.add(Component.literal("Required to collect 10 moss").withStyle(ChatFormatting.RED));
+//            if (mossCollected < 10) lines.add(Component.literal("Required to collect 10 moss").withStyle(ChatFormatting.RED));
             if (feathersCollected < 5) lines.add(Component.literal("Required to collect 5 feathers").withStyle(ChatFormatting.RED));
             if (minutesPlayed < 60) lines.add(Component.literal("Required to have played for 60 minutes").withStyle(ChatFormatting.RED));
             if (hoursSurvived < 1) lines.add(Component.literal("Required to have survived for 60 minutes").withStyle(ChatFormatting.RED));
@@ -199,7 +199,7 @@ public class MorphGrowthScreen extends Screen {
             if (mouseKilled < 30) lines.add(Component.literal("Required to hunt 30 mice").withStyle(ChatFormatting.RED));
             if (pigeonKilled < 1) lines.add(Component.literal("Required to hunt 1 pigeon").withStyle(ChatFormatting.RED));
             if (badgerKilled < 1) lines.add(Component.literal("Required to hunt 1 badger").withStyle(ChatFormatting.RED));
-            if (mossCollected < 20) lines.add(Component.literal("Required to collect 20 moss").withStyle(ChatFormatting.RED));
+//            if (mossCollected < 20) lines.add(Component.literal("Required to collect 20 moss").withStyle(ChatFormatting.RED));
             if (minutesPlayed < 120) lines.add(Component.literal("Required to have played for 2 hours").withStyle(ChatFormatting.RED));
             if (hoursSurvived < 2) lines.add(Component.literal("Required to have survived for 2 hours").withStyle(ChatFormatting.RED));
         }
