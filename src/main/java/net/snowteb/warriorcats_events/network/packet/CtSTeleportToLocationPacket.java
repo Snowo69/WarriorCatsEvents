@@ -153,6 +153,7 @@ public class CtSTeleportToLocationPacket {
                                         .withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://discord.gg/SkYvZr9DBb"))
                                 )
                 ));
+                persistent.putBoolean("warriorcats_events.starting_items", true);
             }
 
             MinecraftServer server = level.getServer();

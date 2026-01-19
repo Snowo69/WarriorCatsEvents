@@ -621,12 +621,10 @@ public class ModEvents2 {
             return;
         }
 
-
         if (player instanceof ServerPlayer sPlayer) {
             player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {
                     ModPackets.sendToPlayer(new S2CSyncClanDataPacket(cap), sPlayer);
                     ModPackets.sendToPlayer(new OpenClanSetupScreenPacket(), sPlayer);
-                persistent.putBoolean("warriorcats_events.starting_items", true);
             });
         }
 //        player.getInventory().add(new ItemStack(ModItems.WARRIORS_GUIDE.get()));
