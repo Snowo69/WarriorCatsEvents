@@ -8,7 +8,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
-import net.snowteb.warriorcats_events.WCEConfig;
+import net.snowteb.warriorcats_events.zconfig.WCEClientConfig;
+import net.snowteb.warriorcats_events.zconfig.WCEConfig;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.network.ModPackets;
 import net.snowteb.warriorcats_events.network.packet.c2s.CtSFishFailed;
@@ -87,7 +88,7 @@ public class FishingScreen extends Screen {
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
 
         int guiX = ((width - imageWidth) / 2);
-        int guiY = ((height - imageHeight - 145 + WCEConfig.COMMON.FISHING_SCREEN_Y_OFFSET.get()) / 2);
+        int guiY = ((height - imageHeight - 145 + WCEClientConfig.CLIENT.FISHING_SCREEN_Y_OFFSET.get()) / 2);
 
         int scissorX = guiX + 2;
         int scissorY = guiY + 2;

@@ -14,7 +14,7 @@ public class OpenClanDataScreenCommand {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(
                 Commands.literal("wce")
-                        .then(Commands.literal("clan")
+                        .then(Commands.literal("info")
                                 .then(Commands.literal("setup")
                                         .executes((command)
                                                 -> openScreen(command.getSource()))

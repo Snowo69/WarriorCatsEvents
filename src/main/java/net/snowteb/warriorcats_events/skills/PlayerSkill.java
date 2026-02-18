@@ -1,6 +1,7 @@
 package net.snowteb.warriorcats_events.skills;
 
-import net.snowteb.warriorcats_events.WCEConfig;
+import net.snowteb.warriorcats_events.zconfig.WCEConfig;
+import net.snowteb.warriorcats_events.zconfig.WCEServerConfig;
 
 import java.util.UUID;
 
@@ -17,22 +18,22 @@ public class PlayerSkill implements ISkillData {
      */
 
 public static int getDefaultSpeedCost() {
-    return (int) (30 * WCEConfig.COMMON.SKILL_COST_MULTIPLIER.get());
+    return (int) (30 * WCEServerConfig.SERVER.SKILL_COST_MULTIPLIER.get());
 }
 public static int getDefaultHPcost() {
-    return (int) (160 * WCEConfig.COMMON.SKILL_COST_MULTIPLIER.get());
+    return (int) (160 * WCEServerConfig.SERVER.SKILL_COST_MULTIPLIER.get());
 }
 public static int getDefaultDMGcost() {
-    return (int) (40 * WCEConfig.COMMON.SKILL_COST_MULTIPLIER.get());
+    return (int) (40 * WCEServerConfig.SERVER.SKILL_COST_MULTIPLIER.get());
 }
 public static int getDefaultJumpcost() {
-    return (int) (300 * WCEConfig.COMMON.SKILL_COST_MULTIPLIER.get());
+    return (int) (300 * WCEServerConfig.SERVER.SKILL_COST_MULTIPLIER.get());
 }
 public static int getDefaultArmorcost() {
-    return (int) (300 * WCEConfig.COMMON.SKILL_COST_MULTIPLIER.get());
+    return (int) (300 * WCEServerConfig.SERVER.SKILL_COST_MULTIPLIER.get());
 }
 public static int getDefaultStealthcost() {
-    return (int) (2921 * WCEConfig.COMMON.SKILL_COST_MULTIPLIER.get());
+    return (int) (2921 * WCEServerConfig.SERVER.SKILL_COST_MULTIPLIER.get());
 }
 
 

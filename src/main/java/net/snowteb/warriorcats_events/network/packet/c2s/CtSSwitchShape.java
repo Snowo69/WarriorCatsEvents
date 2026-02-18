@@ -7,15 +7,12 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.network.NetworkEvent;
-import net.snowteb.warriorcats_events.WCEConfig;
+import net.snowteb.warriorcats_events.zconfig.WCEConfig;
 import net.snowteb.warriorcats_events.clan.PlayerClanData;
 import net.snowteb.warriorcats_events.clan.PlayerClanDataProvider;
-import net.snowteb.warriorcats_events.client.ClientClanData;
 import net.snowteb.warriorcats_events.entity.ModEntities;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
-import net.snowteb.warriorcats_events.integration.WCatTypeProvider;
-import net.snowteb.warriorcats_events.network.ModPackets;
-import net.snowteb.warriorcats_events.network.packet.C2SSetVariantPacket;
+import net.snowteb.warriorcats_events.zconfig.WCEServerConfig;
 import tocraft.walkers.api.PlayerShape;
 
 import java.util.function.Supplier;
@@ -74,10 +71,10 @@ public class CtSSwitchShape {
                 .map(PlayerClanData::getGenderData)
                 .orElse(0);
 
-        String genderS;
+        String genderS = "";
         if (genderValue == 0) {
             genderS = " ♂";
-        } else {
+        } else if (genderValue == 1) {
             genderS = " ♀";
         }
 
@@ -103,8 +100,8 @@ public class CtSSwitchShape {
 
         cat.setVariant(data);
 
-        if (WCEConfig.COMMON.VISIBLE_MORPH_NAME.get()) cat.setCustomName(name);
-        cat.setCustomNameVisible(WCEConfig.COMMON.VISIBLE_MORPH_NAME.get());
+        if (WCEServerConfig.SERVER.VISIBLE_MORPH_NAME.get()) cat.setCustomName(name);
+        cat.setCustomNameVisible(WCEServerConfig.SERVER.VISIBLE_MORPH_NAME.get());
 
         cat.setAge(age);
         cat.setBaby(isBaby);

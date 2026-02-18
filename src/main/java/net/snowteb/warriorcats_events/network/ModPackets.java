@@ -285,6 +285,50 @@ public class ModPackets {
                 .consumerMainThread(CommandCatsPacket::handle)
                 .add();
 
+        net.messageBuilder(S2CClanListPacket.class, 39, NetworkDirection.PLAY_TO_CLIENT)
+                .decoder(S2CClanListPacket::decode)
+                .encoder(S2CClanListPacket::encode)
+                .consumerMainThread(S2CClanListPacket::handle)
+                .add();
+
+        net.messageBuilder(C2SRegisterClanPacket.class, 40, NetworkDirection.PLAY_TO_SERVER)
+                .decoder(C2SRegisterClanPacket::decode)
+                .encoder(C2SRegisterClanPacket::encode)
+                .consumerMainThread(C2SRegisterClanPacket::handle)
+                .add();
+
+        net.messageBuilder(S2COpenRegisterClanScreenPacket.class, 41, NetworkDirection.PLAY_TO_CLIENT)
+                .decoder(S2COpenRegisterClanScreenPacket::decode)
+                .encoder(S2COpenRegisterClanScreenPacket::encode)
+                .consumerMainThread(S2COpenRegisterClanScreenPacket::handle)
+                .add();
+
+        net.messageBuilder(S2CManageClanPacket.class, 42, NetworkDirection.PLAY_TO_CLIENT)
+                .decoder(S2CManageClanPacket::decode)
+                .encoder(S2CManageClanPacket::encode)
+                .consumerMainThread(S2CManageClanPacket::handle)
+                .add();
+
+        net.messageBuilder(CtSManageClanMemberPacket.class, 43, NetworkDirection.PLAY_TO_SERVER)
+                .decoder(CtSManageClanMemberPacket::decode)
+                .encoder(CtSManageClanMemberPacket::encode)
+                .consumerMainThread(CtSManageClanMemberPacket::handle)
+                .add();
+
+        net.messageBuilder(CtSRegisterLogPacket.class, 44, NetworkDirection.PLAY_TO_SERVER)
+                .decoder(CtSRegisterLogPacket::decode)
+                .encoder(CtSRegisterLogPacket::encode)
+                .consumerMainThread(CtSRegisterLogPacket::handle)
+                .add();
+
+        net.messageBuilder(CtSRequestManageScreenPacket.class, 45, NetworkDirection.PLAY_TO_SERVER)
+                .decoder(CtSRequestManageScreenPacket::decode)
+                .encoder(CtSRequestManageScreenPacket::encode)
+                .consumerMainThread(CtSRequestManageScreenPacket::handle)
+                .add();
+
+
+
 
 
     }

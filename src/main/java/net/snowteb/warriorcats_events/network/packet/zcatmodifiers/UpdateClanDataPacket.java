@@ -11,6 +11,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraftforge.network.NetworkEvent;
+import net.snowteb.warriorcats_events.clan.ClanData;
 import net.snowteb.warriorcats_events.clan.PlayerClanData;
 import net.snowteb.warriorcats_events.clan.PlayerClanDataProvider;
 import net.snowteb.warriorcats_events.entity.ModEntities;
@@ -144,7 +145,13 @@ public class UpdateClanDataPacket {
 
             });
 
+            ClanData data = ClanData.get(player.serverLevel());
 
+            player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {
+                data.playerMorphNames.put(player.getUUID(), cap.getMorphName());
+                data.playerMorphData.put(player.getUUID(), cap.getVariantData());
+                data.setDirty();
+            });
 
         });
 

@@ -6,8 +6,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -25,10 +23,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
-import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
-import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
 import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
@@ -38,9 +34,10 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.snowteb.warriorcats_events.WCEConfig;
+import net.snowteb.warriorcats_events.zconfig.WCEConfig;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.block.custom.MossBedBlock;
+import net.snowteb.warriorcats_events.clan.ClanData;
 import net.snowteb.warriorcats_events.clan.PlayerClanData;
 import net.snowteb.warriorcats_events.clan.PlayerClanDataProvider;
 import net.snowteb.warriorcats_events.effect.ModEffects;
@@ -52,7 +49,11 @@ import net.snowteb.warriorcats_events.network.ModPackets;
 import net.snowteb.warriorcats_events.network.packet.s2c.ThirstDataSyncStCPacket;
 import net.snowteb.warriorcats_events.skills.PlayerSkillProvider;
 import net.snowteb.warriorcats_events.thirst.PlayerThirstProvider;
+import net.snowteb.warriorcats_events.zconfig.WCEServerConfig;
 import tocraft.walkers.api.PlayerShape;
+
+import java.util.Objects;
+import java.util.UUID;
 
 @Mod.EventBusSubscriber(modid = WarriorCatsEvents.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ModEventsForge {
@@ -276,7 +277,7 @@ public class ModEventsForge {
 
         }
 
-        if (WCEConfig.COMMON.ENHANCED_ANIMALS.get()) {
+        if (WCEServerConfig.SERVER.ENHANCED_ANIMALS.get()) {
             if (event.getEntity() instanceof Fox fox) {
                 CompoundTag tag = fox.getPersistentData();
 
@@ -330,6 +331,19 @@ public class ModEventsForge {
         if (event.getEntity() instanceof WCatEntity wCat) {
             CompoundTag tag = wCat.getPersistentData();
 
+            if (wCat.isTame()) {
+                LivingEntity owner = wCat.getOwner();
+                if (owner instanceof ServerPlayer serverPlayer) {
+                    UUID clanUUID = serverPlayer.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
+                            .map(PlayerClanData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID);
+
+                    if (!Objects.equals(clanUUID, wCat.getClanUUID())) {
+                        wCat.setClanUUID(clanUUID);
+                        wCat.updateClanCatData();
+                    }
+                }
+            }
+
             if (!tag.getBoolean("spawn_att_applied")) {
                 tag.putBoolean("spawn_att_applied", true);
 
@@ -372,6 +386,21 @@ public class ModEventsForge {
 
         if (!owner.getUUID().equals(player.getUUID())) {
             return;
+        }
+
+        if (player instanceof ServerPlayer serverPlayer) {
+            if (!wcat.getClanUUID().equals(ClanData.EMPTY_UUID)) {
+                UUID clanUUID = serverPlayer.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
+                        .map(PlayerClanData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID);
+
+                ClanData data = ClanData.get(serverPlayer.serverLevel());
+                ClanData.Clan clan = data.getClan(clanUUID);
+                if (clan != null) {
+                    if (!wcat.getClanUUID().equals(clanUUID)) {
+                        return;
+                    }
+                }
+            }
         }
 
         if (!player.isShiftKeyDown()) {

@@ -1,1 +1,0 @@
-give @p minecraft:written_book{title:"Data",author:"Me",pages:['{"text":"Data:\\n\\n","extra":[{"text":"Display","color":"gold","bold":true,"underlined":true,"clickEvent":{"action":"run_command","value":"/data get entity @e[type=warriorcats_events:warrior_cat,limit=1,sort=nearest]"}}]}']} 1

@@ -13,17 +13,16 @@ import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 
 public class WCatMenu extends AbstractContainerMenu {
     private final Level level;
-    private int ofs = 9;
     private final WCatEntity cat;
 
     public WCatMenu(int id, Inventory playerInv, FriendlyByteBuf buf) {
-        this(id, playerInv, new SimpleContainer(3), (WCatEntity) playerInv.player.level().getEntity(buf.readInt()));
+        this(id, playerInv, (WCatEntity) playerInv.player.level().getEntity(buf.readInt()));
     }
 
 
-    public WCatMenu(int id, Inventory inv, Container catInventory, WCatEntity cat) {
+    public WCatMenu(int id, Inventory inv, WCatEntity cat) {
         super(ModMenuTypes.WCAT_INVENTORY.get(), id);
-        checkContainerSize(inv, 3);
+        checkContainerSize(cat.getCatInventory(), 3);
         this.level = inv.player.level();
         this.cat = cat;
 
@@ -31,8 +30,15 @@ public class WCatMenu extends AbstractContainerMenu {
         addPlayerHotbar(inv);
 
         for (int i = 0; i < 3; i++) {
-            addSlot(new Slot(catInventory, i, 62 + i * 18, 32));
+            addSlot(new Slot(cat.getCatInventory(), i, 62 + i * 18, 32) {
+                @Override
+                public void setChanged() {
+                    super.setChanged();
+                    cat.updateMainHandFromInventory();
+                }
+            });
         }
+
 
         this.addSlot(new WCatArmorSlots(cat, EquipmentSlot.HEAD, -23, 1));
         this.addSlot(new WCatArmorSlots(cat, EquipmentSlot.CHEST, -23, 19));

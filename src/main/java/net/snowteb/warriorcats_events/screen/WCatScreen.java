@@ -8,8 +8,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
-import net.snowteb.warriorcats_events.network.ModPackets;
-import net.snowteb.warriorcats_events.network.packet.zcatmodifiers.RetrieveLastCatModePacket;
 
 public class WCatScreen extends AbstractContainerScreen<WCatMenu>  {
     private static final ResourceLocation TEXTURE =

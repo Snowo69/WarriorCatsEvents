@@ -477,13 +477,12 @@ public class ClanSetupScreen extends Screen {
         String morphPrefix = morphPrefixBox.getValue().trim();
         String morphSufix = morphSufixBox.getValue().trim();
         VariantScrollList.VariantEntry selectedVariant = variantScrollList.getSelectedEntry();
-        boolean isGenderSelected = (genderMale.isSelected() || genderFemale.isSelected());
         boolean isAgeSelected = (ageKit.isSelected() || ageApprentice.isSelected() || ageAdult.isSelected());
         boolean autoSufix = automaticSufix.getValue();
 
         if (clanName.isEmpty() || morphPrefix.isEmpty()
                 || selectedVariant == null || (useSufixes.getValue() && morphSufix.isEmpty())
-                || !isGenderSelected || !isAgeSelected) {
+                || !isAgeSelected) {
             textCooldown = 100;
             return;
         }
@@ -529,7 +528,7 @@ public class ClanSetupScreen extends Screen {
         } else if (genderMale.isSelected()) {
             data.setGenderData(0);
         } else {
-            data.setGenderData(1);
+            data.setGenderData(2);
         }
 
 

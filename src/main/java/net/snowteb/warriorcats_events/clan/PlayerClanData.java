@@ -10,7 +10,7 @@ import java.util.UUID;
 
 public class PlayerClanData {
 
-    private String morphName = "";
+    private String morphName = "None";
     private String clanName = "";
     private String sufix = "";
     private String prefix = "";
@@ -23,6 +23,9 @@ public class PlayerClanData {
     private Component mateName = Component.literal("Undefined");
     private int sleepingCooldown = 0;
 
+    private UUID currentClanUUID = UUID.fromString("00000000-0000-0000-0000-000000000000");
+
+
     public enum Age {
         KIT,
         APPRENTICE,
@@ -30,6 +33,13 @@ public class PlayerClanData {
     }
 
     private Age morphAge = Age.ADULT;
+
+    public UUID getCurrentClanUUID() {
+        return currentClanUUID;
+    }
+    public void setCurrentClanUUID(UUID currentClanUUID) {
+        this.currentClanUUID = currentClanUUID;
+    }
 
     public int getSleepingCooldown() {
         return sleepingCooldown;
@@ -122,8 +132,6 @@ public class PlayerClanData {
         this.useSufixes = useSufixes;
     }
 
-
-
     public void copyFrom(PlayerClanData source) {
         this.clanName = source.clanName;
         this.variantData = source.variantData;
@@ -137,6 +145,7 @@ public class PlayerClanData {
         this.mateUUID = source.mateUUID;
         this.mateName = source.mateName;
         this.tempClickedPosData = source.tempClickedPosData;
+        this.currentClanUUID = source.currentClanUUID;
     }
 
     public void reset() {
@@ -188,6 +197,9 @@ public class PlayerClanData {
         if (mateUUID != null) {
             nbt.putUUID("mateUUID", mateUUID);
         }
+        if (currentClanUUID != null) {
+            nbt.putUUID("clanUUID", currentClanUUID);
+        }
 
         nbt.putString("mateName", this.mateName != null ? this.mateName.getString() : "Undefined");
 
@@ -220,6 +232,17 @@ public class PlayerClanData {
         } else {
             mateUUID = UUID.fromString("00000000-0000-0000-0000-000000000000");
         }
+
+        if (nbt.contains("clanUUID")) {
+            try {
+                currentClanUUID = nbt.getUUID("clanUUID");
+            } catch (Exception e) {
+                currentClanUUID = UUID.fromString("00000000-0000-0000-0000-000000000000");
+            }
+        } else {
+            currentClanUUID = UUID.fromString("00000000-0000-0000-0000-000000000000");
+        }
+
 
         mateName = Component.literal(nbt.getString("mateName"));
 

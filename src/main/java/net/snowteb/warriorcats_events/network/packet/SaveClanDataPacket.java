@@ -1,5 +1,6 @@
 package net.snowteb.warriorcats_events.network.packet;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -7,20 +8,19 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.network.NetworkEvent;
-import net.snowteb.warriorcats_events.WCEConfig;
+import net.snowteb.warriorcats_events.zconfig.WCEConfig;
+import net.snowteb.warriorcats_events.clan.ClanData;
 import net.snowteb.warriorcats_events.clan.PlayerClanData;
 import net.snowteb.warriorcats_events.clan.PlayerClanDataProvider;
 import net.snowteb.warriorcats_events.entity.ModEntities;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
-import net.snowteb.warriorcats_events.integration.WCatTypeProvider;
 import net.snowteb.warriorcats_events.network.ModPackets;
-import net.snowteb.warriorcats_events.network.packet.c2s.CtSSwitchShape;
+import net.snowteb.warriorcats_events.zconfig.WCEServerConfig;
 import tocraft.walkers.api.PlayerShape;
 
+import java.util.UUID;
 import java.util.function.Supplier;
 
 public class SaveClanDataPacket {
@@ -51,8 +51,15 @@ public class SaveClanDataPacket {
             ServerPlayer player = ctx.get().getSender();
             if (player == null) return;
 
+            String oldMorphName = player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
+                            .map(PlayerClanData::getMorphName).orElse(player.getName().getString());
+
+            UUID currentClanUUID = player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
+                    .map(PlayerClanData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID);
+
             player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {
                 cap.copyFrom(packet.data);
+                cap.setCurrentClanUUID(currentClanUUID);
             });
 
 
@@ -72,10 +79,10 @@ public class SaveClanDataPacket {
             }
             int genderValue = packet.data.getGenderData();
 
-            String genderS;
+            String genderS = "";
             if (genderValue == 0) {
                 genderS = " ♂";
-            } else {
+            } else if (genderValue == 1) {
                 genderS = " ♀";
             }
 
@@ -105,6 +112,34 @@ public class SaveClanDataPacket {
                     }
                 }
             });
+
+            ClanData data = ClanData.get(player.serverLevel());
+
+            player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {
+                data.playerMorphNames.put(player.getUUID(), cap.getMorphName());
+                data.playerMorphData.put(player.getUUID(), cap.getVariantData());
+
+                ClanData.Clan clan = data.getClan(cap.getCurrentClanUUID());
+                if (clan != null) {
+
+                    Component message = Component.empty()
+                                    .append(Component.literal(oldMorphName).withStyle(ChatFormatting.AQUA))
+                                            .append(" has updated their profile. ")
+                                                    .append(" New name: ")
+                                                            .append(Component.literal(cap.getMorphName()).withStyle(ChatFormatting.AQUA));
+
+                    data.registerLog(player.serverLevel(), clan.clanUUID, message);
+
+                    if (clan.members.get(player.getUUID()) == ClanData.ClanPlayerRank.LEADER) {
+                        clan.leaderName = cap.getMorphName();
+                    }
+
+                    cap.setClanName(clan.name);
+                }
+
+                data.setDirty();
+            });
+
 
         });
 
@@ -155,8 +190,8 @@ public class SaveClanDataPacket {
 
         cat.setVariant(data);
 
-        if (WCEConfig.COMMON.VISIBLE_MORPH_NAME.get()) cat.setCustomName(name);
-        cat.setCustomNameVisible(WCEConfig.COMMON.VISIBLE_MORPH_NAME.get());
+        if (WCEServerConfig.SERVER.VISIBLE_MORPH_NAME.get()) cat.setCustomName(name);
+        cat.setCustomNameVisible(WCEServerConfig.SERVER.VISIBLE_MORPH_NAME.get());
 
         cat.setAge(age);
         cat.setBaby(isBaby);

@@ -6,6 +6,9 @@ import com.mojang.math.Axis;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -15,16 +18,56 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderGuiOverlayEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
+import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.block.custom.MossBedBlock;
 import net.snowteb.warriorcats_events.client.LeapClientState;
+import net.snowteb.warriorcats_events.network.ModPackets;
+import net.snowteb.warriorcats_events.network.packet.c2s.ReqSkillDataPacket;
+import net.snowteb.warriorcats_events.screen.SkillScreen;
 import net.snowteb.warriorcats_events.stealth.PlayerStealthProvider;
 import tocraft.walkers.api.PlayerShape;
 
 @Mod.EventBusSubscriber(modid = WarriorCatsEvents.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public class ClientEventsForge {
+
+    private static Button extraButton;
+
+    @SubscribeEvent
+    public static void onScreenInit(ScreenEvent.Init.Post event) {
+        if (!(event.getScreen() instanceof InventoryScreen screen)) return;
+
+        int x = screen.getGuiLeft() + screen.getXSize() - 155;
+        int y = screen.getGuiTop() - 22;
+
+        extraButton = Button.builder(
+                Component.literal("Skill tree"),
+                btn -> {
+                    Minecraft.getInstance().setScreen(new SkillScreen());
+                    ModPackets.sendToServer(new ReqSkillDataPacket());
+                }
+        ).bounds(x, y, 52, 16).build();
+
+        event.addListener(extraButton);
+    }
+
+    @SubscribeEvent
+    public static void onScreenRender(ScreenEvent.Render.Post event) {
+        if (!(event.getScreen() instanceof InventoryScreen)) return;
+        if (extraButton == null) return;
+
+        AbstractContainerScreen<?> container =
+                (AbstractContainerScreen<?>) event.getScreen();
+
+        int x = container.getGuiLeft() + container.getXSize() - 152;
+        int y = container.getGuiTop() - 18;
+
+        extraButton.setPosition(x, y);
+    }
+
+
 
     @SubscribeEvent
     public static void onRenderPlayerPre(RenderPlayerEvent.Pre event) {
@@ -129,6 +172,7 @@ public class ClientEventsForge {
         if (mcinstance.level == null) return;
 
         if (LeapClientState.getLeapPowerCounter() <= 0) return;
+        if (!LeapClientState.isLeapActive()) return;
 
         GuiGraphics guiGraphics = event.getGuiGraphics();
 

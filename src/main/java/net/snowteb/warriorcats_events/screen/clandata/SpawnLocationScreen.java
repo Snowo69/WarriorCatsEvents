@@ -75,8 +75,10 @@ public class SpawnLocationScreen extends Screen {
 
         if (genderValue == 0) {
             genderWord = "his";
-        } else {
+        } else if (genderValue == 1){
             genderWord = "her";
+        } else {
+            genderWord = "their";
         }
 
         pGuiGraphics.pose().pushPose();

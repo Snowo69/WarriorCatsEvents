@@ -15,7 +15,7 @@ public class GetClanDataCommand {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(
                 Commands.literal("wce")
-                        .then(Commands.literal("clan")
+                        .then(Commands.literal("info")
                                 .then(Commands.literal("get")
                                         .executes(ctx -> getData(ctx.getSource(), ctx.getSource().getPlayerOrException()))
                                         .then(Commands.argument("player", EntityArgument.player())
@@ -29,6 +29,8 @@ public class GetClanDataCommand {
 
         targetToShow.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {
 
+            String genderText = cap.getGenderData() == 0 ? "Male" : "Female";
+
             source.sendSuccess(
                     () -> Component.literal("Showing clan data from ").append(targetToShow.getName().copy()).append(Component.literal(
                                     "\n==================" +
@@ -38,11 +40,11 @@ public class GetClanDataCommand {
                                     "\nMateUUID: " + cap.getMateUUID() +
                                     "\nPrefix: " + cap.getPrefix() +
                                     "\nSuffix: " + cap.getSufix() +
-                                    "\nPrefered Variant: " + cap.getVariantData() +
-                                    "\nGender: " + cap.getGenderData() +
+                                    "\nPreferred Variant: " + cap.getVariantData() +
+                                    "\nGender: " + genderText +
                                     "\nAge: " + cap.getMorphAge() +
                                     "\nUses suffixes: " + cap.isUseSufixes() +
-                                    "\nFirst login Registered: " + cap.isFirstLoginHandled() +
+                                    "\nRegistered: " + cap.isFirstLoginHandled() +
                                             "\n=================="
 
                     ).withStyle(ChatFormatting.GRAY)),

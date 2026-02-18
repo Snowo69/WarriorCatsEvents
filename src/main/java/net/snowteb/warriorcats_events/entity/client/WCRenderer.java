@@ -16,7 +16,9 @@ public class WCRenderer extends GeoEntityRenderer<WCatEntity> {
 
     public WCRenderer(EntityRendererProvider.Context context) {
         super(context, new WCModel());
+        this.addRenderLayer(new WCHeldItemLayer(this));
         this.shadowRadius = 0.4F;
+        this.shadowStrength = 0.5F;
     }
 
     /**
@@ -75,7 +77,7 @@ public class WCRenderer extends GeoEntityRenderer<WCatEntity> {
             this.shadowRadius = 0.0F;
         } else {
             this.shadowRadius = 0.4f;
-            this.shadowStrength = 0.6F;
+            this.shadowStrength = 0.5F;
         }
         super.preRender(poseStack, animatable, model, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
     }
@@ -95,13 +97,27 @@ public class WCRenderer extends GeoEntityRenderer<WCatEntity> {
             AnimationClientData.isPlayerShape = false;
         }
 
+//        if (entity != PlayerShape.getCurrentShape(Minecraft.getInstance().player)) {
+//            float ageMoons = entity.getAgeInMoons();
+//            float percentage = ageMoons / 12.0F;
+//            float scale = (float) (0.4 + (percentage * 0.6));
+//            poseStack.scale(scale, scale, scale);
+//        } else {
+//            if (entity.isBaby()) {
+//                poseStack.scale(0.4f, 0.4f, 0.4f);
+//            }
+//            if (entity.isAppScale() && entity.isBaby()) {
+//                poseStack.scale(1.75f, 1.75f, 1.75f);
+//            }
+//        }
 
         if (entity.isBaby()) {
             poseStack.scale(0.4f, 0.4f, 0.4f);
         }
-        if (entity.isAppScale() && entity.isBaby()){
+        if (entity.isAppScale() && entity.isBaby()) {
             poseStack.scale(1.75f, 1.75f, 1.75f);
         }
+
         super.render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
     }
 

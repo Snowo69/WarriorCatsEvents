@@ -4,6 +4,7 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ItemStack;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.item.ModItems;
@@ -74,7 +75,7 @@ public class WCModel extends GeoModel<WCatEntity> {
 
     @Override
     public void setCustomAnimations(WCatEntity animatable, long instanceId, AnimationState<WCatEntity> animationState) {
-        CoreGeoBone head = getAnimationProcessor().getBone("mainHead");
+        CoreGeoBone head = animatable.isAnImage() ? null : getAnimationProcessor().getBone("mainHead");
 
 
         getBone("crown").ifPresent(bone -> {
@@ -100,6 +101,7 @@ public class WCModel extends GeoModel<WCatEntity> {
         }
 
         {
+
             boolean hasTeethClaws = animatable.getItemBySlot(EquipmentSlot.FEET).is(ModItems.TEETH_CLAWS.get());
 
             getBone("teethclaws1").ifPresent(bone -> bone.setHidden(!hasTeethClaws));
@@ -108,13 +110,18 @@ public class WCModel extends GeoModel<WCatEntity> {
             getBone("teethclaws4").ifPresent(bone -> bone.setHidden(!hasTeethClaws));
         }
 
-
-
         if (head != null) {
             EntityModelData entityModelData = animationState.getData(DataTickets.ENTITY_MODEL_DATA);
+            if (!animatable.isAnImage()) {
+                head.setRotX(entityModelData.headPitch() * Mth.DEG_TO_RAD);
+                head.setRotY(entityModelData.netHeadYaw() * Mth.DEG_TO_RAD);
+            }
+        }
 
-            head.setRotX(entityModelData.headPitch() * Mth.DEG_TO_RAD);
-            head.setRotY(entityModelData.netHeadYaw() * Mth.DEG_TO_RAD);
+        if (head != null && animatable.isAnImage()) {
+            head.setRotX(0);
+            head.setRotY(0);
+            head.setRotZ(0);
         }
     }
 

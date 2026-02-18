@@ -12,14 +12,14 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.network.NetworkEvent;
-import net.snowteb.warriorcats_events.WCEConfig;
+import net.snowteb.warriorcats_events.zconfig.WCEConfig;
+import net.snowteb.warriorcats_events.clan.ClanData;
 import net.snowteb.warriorcats_events.clan.PlayerClanData;
 import net.snowteb.warriorcats_events.clan.PlayerClanDataProvider;
-import net.snowteb.warriorcats_events.client.ClientPacketHandles;
 import net.snowteb.warriorcats_events.entity.ModEntities;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.item.ModItems;
-import org.jetbrains.annotations.Nullable;
+import net.snowteb.warriorcats_events.zconfig.WCEServerConfig;
 
 import java.util.UUID;
 import java.util.function.Supplier;
@@ -72,7 +72,7 @@ public class CtSCreateAndSpawnKitPacket {
                     kit.finalizeSpawn(server, server.getCurrentDifficultyAt(clickedPos),
                             MobSpawnType.MOB_SUMMONED, null, null);
 
-                    int minutes = WCEConfig.COMMON.KIT_GROWTH_MINUTES.get();
+                    int minutes = WCEServerConfig.SERVER.KIT_GROWTH_MINUTES.get();
                     int growingTicks = minutes * 20 * 60;
                     kit.setAge(-growingTicks);
 
@@ -116,10 +116,10 @@ public class CtSCreateAndSpawnKitPacket {
                     kit.setSpecificMood(WCatEntity.Mood.CALM);
 
 
-
-
                     kit.setHomePosition(clickedPos);
                     kit.setClan(Component.literal(clan));
+                    kit.setClanUUID(sPlayer.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
+                            .map(PlayerClanData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID));
 
                     UUID otherParentUUID = sPlayer.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
                             .map(PlayerClanData::getMateUUID).orElse(null);
@@ -164,7 +164,12 @@ public class CtSCreateAndSpawnKitPacket {
                     if (player.getItemInHand(InteractionHand.MAIN_HAND).is(ModItems.KIT_ITEM.get())) player.getItemInHand(InteractionHand.MAIN_HAND).shrink(1);
                     server.sendParticles(ParticleTypes.HAPPY_VILLAGER, clickedPos.getX(), clickedPos.getY() + 0.5, clickedPos.getZ(), 15,0.3f,0.3f, 0.3f,0.2f);
 
-
+                    Component messageLog = Component.literal(finalName).withStyle(ChatFormatting.GREEN)
+                            .append(Component.literal(" has been born! ").withStyle(ChatFormatting.WHITE))
+                            .append(Component.literal("(").withStyle(ChatFormatting.GRAY))
+                            .append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GRAY))
+                            .append(Component.literal(")").withStyle(ChatFormatting.GRAY));
+                    kit.registerClanLog(messageLog);
                 }
 
 

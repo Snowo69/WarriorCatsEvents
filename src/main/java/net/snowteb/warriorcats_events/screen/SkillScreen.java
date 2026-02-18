@@ -20,6 +20,7 @@ import net.snowteb.warriorcats_events.skills.PlayerSkill;
 import net.snowteb.warriorcats_events.skills.PlayerSkillProvider;
 import net.snowteb.warriorcats_events.stealth.PlayerStealthProvider;
 import net.snowteb.warriorcats_events.util.ModButton;
+import org.lwjgl.glfw.GLFW;
 
 import java.util.List;
 
@@ -366,13 +367,16 @@ public class SkillScreen extends Screen {
             guiGraphics.pose().popPose();
         }
 
-
-
-
-
-
-
         super.render(guiGraphics, mouseX, mouseY, partialTick);
+    }
+
+    @Override
+    public boolean keyPressed(int pKeyCode, int pScanCode, int pModifiers) {
+        if (pKeyCode == GLFW.GLFW_KEY_E) {
+            this.onClose();
+            return true;
+        }
+        return super.keyPressed(pKeyCode, pScanCode, pModifiers);
     }
 
     @Override

@@ -80,6 +80,21 @@
       "item": "minecraft:nether_star",
       "title": "Collaborators",
       "text": "$(8)Thanks to 'Boxfish' for being a good tester and key piece in the making of this mod.$(br2)Thanks to 'The Artificer's Throne' for their brilliant ideas and opinions that helped improve this mod. $(br2)Thanks to everyone who followed this project from the beginning.$(br)"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "minecraft:nether_star",
+      "title": "Collaborators",
+      "text": "$(8)Thanks to 'The Artificer's Throne' for their brilliant ideas and opinions that helped improve this mod. $(br2)Thanks to Whimsey for they brilliant ideas, support, help, and for being a key piece in the community. Which helped improve a lot this mod. $(br2)Thanks to everyone who followed this project from the beginning.$(br)"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Clan Symbols",
+      "text": "$(8)All clan symbols available were obtained from 'symbols.png' from the official Clangen project and belong to Clangen and their devs. All credit goes to them. All the resources are under CC BY-NC 4.0 license.$(br2) $(l:https://creativecommons.org/licenses/by-nc/4.0/)License link$(/l) $(br)"
+    },
+    {
+      "type": "patchouli:text",
+      "text": ""
     }
   ]
 

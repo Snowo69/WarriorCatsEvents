@@ -15,6 +15,11 @@ import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.snowteb.warriorcats_events.clan.ClanData;
+import net.snowteb.warriorcats_events.clan.PlayerClanData;
+import net.snowteb.warriorcats_events.clan.PlayerClanDataProvider;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.network.ModPackets;
 import net.snowteb.warriorcats_events.network.packet.c2s.CtSPerformLeapPacket;
@@ -22,11 +27,11 @@ import net.snowteb.warriorcats_events.sound.ModSounds;
 import tocraft.walkers.api.PlayerShape;
 
 import javax.annotation.Nullable;
+import java.util.UUID;
 
 public class LeapClientState {
     private static int shiftKeyDownCounter = 0;
     private static int leapPowerCounter = 0;
-    private static boolean leapCanceledInShifting = false;
     private static boolean attackWasDown = false;
 
     @Nullable
@@ -79,14 +84,7 @@ public class LeapClientState {
                 assert Minecraft.getInstance().player != null;
                 if (shiftKeyDownCounter <= 140 && Minecraft.getInstance().player.onGround()) {
                     Minecraft.getInstance().player.playSound(ModSounds.SHORT_WOOSH.get(), 0.3f, 0.7f);
-//                    Component powerBar = buildLeapPowerBar(leapPowerCounter);
-//
-//                    Minecraft.getInstance().player.displayClientMessage(
-//                            Component.literal("").append(powerBar.copy()), true);
                 } else {
-                    leapCanceledInShifting = true;
-//                    Minecraft.getInstance().player.displayClientMessage(
-//                            Component.literal("Leap canceled").withStyle(ChatFormatting.DARK_GRAY), true);
                     leapPowerCounter = 0;
                     lockingTarget = false;
                 }
@@ -110,16 +108,11 @@ public class LeapClientState {
             }
 
         } else {
-            if (leapPowerCounter > 0 && !leapCanceledInShifting) {
-//                Minecraft.getInstance().player.displayClientMessage(
-//                        Component.literal("Leap canceled").withStyle(ChatFormatting.DARK_GRAY), true);
-            }
             lockedLookEntity = null;
             wasLookKeyDown = false;
             lockingTarget = false;
             leapPowerCounter = 0;
             shiftKeyDownCounter = 0;
-            leapCanceledInShifting = false;
 
         }
 
@@ -162,8 +155,9 @@ public class LeapClientState {
                 reachVec,
                 searchBox,
                 e -> e.isAlive() && e != player
-                        && !(e instanceof TamableAnimal cat && cat.isTame() && cat.getOwner() == player)
+                        && !(e instanceof TamableAnimal cat && cat.isTame() && (cat.getOwner() == player || isClanedWith(cat, player)))
         );
+
         if (result != null) {
             if (!lockingTarget) {
                 lockingTarget = true;
@@ -216,8 +210,28 @@ public class LeapClientState {
         return leapPowerCounter;
     }
 
+    public static boolean isLeapActive() {
+        return shiftKeyDownCounter < 144;
+    }
 
     public static boolean isLockingTarget() {
         return lockingTarget;
+    }
+
+    public static boolean isClanedWith(TamableAnimal animal, LocalPlayer player) {
+        if (animal instanceof WCatEntity cat && cat.isTame() && !cat.isOwnedBy(player)) {
+            UUID clanUUID = ClientClanData.get().getCurrentClanUUID();
+            if (!clanUUID.equals(ClanData.EMPTY_UUID)) {
+                if (cat.getClanUUID().equals(clanUUID)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public static void setCanceled(){
+        shiftKeyDownCounter = 150;
     }
 }

@@ -62,10 +62,10 @@ public class ClientEvents {
         @SubscribeEvent
         public static void onKeyInput(InputEvent.Key event) {
 
-            if (ModKeybinds.SKILLMENU_KEY.consumeClick()) {
-                Minecraft.getInstance().setScreen(new SkillScreen());
-                ModPackets.sendToServer(new ReqSkillDataPacket());
-            }
+//            if (ModKeybinds.SKILLMENU_KEY.consumeClick()) {
+//                Minecraft.getInstance().setScreen(new SkillScreen());
+//                ModPackets.sendToServer(new ReqSkillDataPacket());
+//            }
 
             if (ModKeybinds.EMOTES_KEY.consumeClick()) {
                 Minecraft.getInstance().setScreen(new EmoteWheelScreen());
@@ -190,7 +190,7 @@ public class ClientEvents {
             public static void onKeyRegister(RegisterKeyMappingsEvent event) {
                 event.register(ModKeybinds.HISSING_KEY);
                 event.register(ModKeybinds.WATERDRINK_KEY);
-                event.register(ModKeybinds.SKILLMENU_KEY);
+//                event.register(ModKeybinds.SKILLMENU_KEY);
                 event.register(ModKeybinds.EMOTES_KEY);
             }
 

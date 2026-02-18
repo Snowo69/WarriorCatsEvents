@@ -8,6 +8,7 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -31,16 +32,17 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.server.ServerLifecycleHooks;
 import net.minecraftforge.server.command.ConfigCommand;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
+import net.snowteb.warriorcats_events.clan.ClanData;
 import net.snowteb.warriorcats_events.clan.PlayerClanData;
 import net.snowteb.warriorcats_events.clan.PlayerClanDataProvider;
-import net.snowteb.warriorcats_events.commands.GetClanDataCommand;
-import net.snowteb.warriorcats_events.commands.OpenClanDataScreenCommand;
-import net.snowteb.warriorcats_events.commands.ResetClanDataCommand;
+import net.snowteb.warriorcats_events.commands.*;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.item.ModItems;
 import net.snowteb.warriorcats_events.network.ModPackets;
@@ -54,6 +56,7 @@ import net.snowteb.warriorcats_events.stealth.PlayerStealth;
 import net.snowteb.warriorcats_events.stealth.PlayerStealthProvider;
 import net.snowteb.warriorcats_events.thirst.PlayerThirst;
 import net.snowteb.warriorcats_events.thirst.PlayerThirstProvider;
+import net.snowteb.warriorcats_events.util.ClanInviteManager;
 import net.snowteb.warriorcats_events.util.ModAttributes;
 
 import java.util.*;
@@ -71,6 +74,13 @@ public class ModEvents2 {
     @SubscribeEvent
     public static void onServerTick(TickEvent.ServerTickEvent event) {
         if (event.phase != TickEvent.Phase.END) return;
+
+        MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
+        if (server != null) {
+            for (ServerPlayer player : server.getPlayerList().getPlayers()) {
+                ClanInviteManager.tick(player);
+            }
+        }
 
         Iterator<Task> it = tasks.iterator();
         while (it.hasNext()) {
@@ -169,6 +179,19 @@ public class ModEvents2 {
         OpenClanDataScreenCommand.register(event.getDispatcher());
         GetClanDataCommand.register(event.getDispatcher());
         ResetClanDataCommand.register(event.getDispatcher());
+        ClanListCommand.register(event.getDispatcher());
+        RegisterClanCommand.register(event.getDispatcher());
+        ClanInviteAcceptCommand.register(event.getDispatcher());
+        ClanInviteDenyCommand.register(event.getDispatcher());
+        InviteToClanCommand.register(event.getDispatcher());
+        DismantleClanCommand.register(event.getDispatcher());
+        KickClanMemberCommand.register(event.getDispatcher());
+        ChangeRankClanMemberCommand.register(event.getDispatcher());
+        SetNewLeaderCommand.register(event.getDispatcher());
+        LeaveClanCommand.register(event.getDispatcher());
+        ManageClanCommand.register(event.getDispatcher());
+        ChangeMemberPermissionCommand.register(event.getDispatcher());
+
 
         ConfigCommand.register(event.getDispatcher());
     }
@@ -549,6 +572,29 @@ public class ModEvents2 {
                     cap.sync(player);
                 });
 
+                player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {
+
+                    UUID clanUUID = cap.getCurrentClanUUID();
+                    if (clanUUID == null || clanUUID.equals(ClanData.EMPTY_UUID)) {
+                        cap.setCurrentClanUUID(ClanData.EMPTY_UUID);
+                        return;
+                    }
+
+                    ClanData data;
+                    try {
+                        data = ClanData.get(player.serverLevel());
+                    } catch (Exception e) {
+                        cap.setCurrentClanUUID(ClanData.EMPTY_UUID);
+                        return;
+                    }
+
+                    if (data == null || data.clans == null || !data.clans.containsKey(clanUUID)) {
+                        cap.setCurrentClanUUID(ClanData.EMPTY_UUID);
+                    }
+
+                    ModPackets.sendToPlayer(new S2CSyncClanDataPacket(cap), player);
+                });
+
 
             }
         }
@@ -601,11 +647,40 @@ public class ModEvents2 {
         CompoundTag data = player.getPersistentData();
         CompoundTag persistent;
 
-
-
         if (player instanceof ServerPlayer sPlayer) {
+            ClanData clanData = ClanData.get(sPlayer.serverLevel());
+            ServerLevel sLevel = sPlayer.serverLevel();
+
+            for (ClanData.Clan clan : clanData.getAllClans()) {
+
+
+                for (UUID playerUUID : clan.members.keySet()) {
+
+
+                    ServerPlayer currentPlayer = sLevel.getServer().getPlayerList().getPlayer(playerUUID);
+
+                    if (currentPlayer != null) {
+                        UUID currentClanUUID = player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
+                                .map(PlayerClanData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID);
+
+                        if (!currentClanUUID.equals(clan.clanUUID)) {
+                            clanData.removeMember(currentPlayer, clan.clanUUID);
+                        }
+                    }
+
+                }
+
+                if (clan.members.isEmpty()) {
+                    clanData.deleteClan(sLevel, clan.clanUUID);
+                }
+            }
+
             player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {
                 ModPackets.sendToPlayer(new S2CSyncClanDataPacket(cap), sPlayer);
+
+                clanData.playerMorphNames.put(player.getUUID(), cap.getMorphName());
+                clanData.playerMorphData.put(player.getUUID(), cap.getVariantData());
+                clanData.setDirty();
             });
 
         }
@@ -626,21 +701,9 @@ public class ModEvents2 {
                     ModPackets.sendToPlayer(new S2CSyncClanDataPacket(cap), sPlayer);
                     ModPackets.sendToPlayer(new OpenClanSetupScreenPacket(), sPlayer);
             });
+
+
         }
-//        player.getInventory().add(new ItemStack(ModItems.WARRIORS_GUIDE.get()));
-//        player.getInventory().add(new ItemStack(ModItems.CLAWS.get()));
-//        player.sendSystemMessage(Component.literal("You have received your own [Claws] and [A Warrior's Guide]!").withStyle(ChatFormatting.YELLOW));
-//        player.sendSystemMessage(Component.literal("Get support and stay tuned for mod updates: ").append(
-//                Component.literal("[Discord]")
-//                        .withStyle(style -> style
-//                                .withColor(0x579dff)
-//                                .withUnderlined(true)
-//                                .withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://discord.gg/SkYvZr9DBb"))
-//                        )
-//        ));
-
-
-
 
     }
 

@@ -13,11 +13,12 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.network.NetworkEvent;
-import net.snowteb.warriorcats_events.WCEConfig;
+import net.snowteb.warriorcats_events.zconfig.WCEConfig;
 import net.snowteb.warriorcats_events.clan.PlayerClanData;
 import net.snowteb.warriorcats_events.clan.PlayerClanDataProvider;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.item.ModItems;
+import net.snowteb.warriorcats_events.zconfig.WCEServerConfig;
 
 import java.util.function.Supplier;
 
@@ -59,21 +60,23 @@ public class KittingInteractionPacket {
 
             int kittingCooldown = cat.getKittingInteractCooldown();
 
-            int kittingCD = (int) ((WCEConfig.COMMON.KIT_GROWTH_MINUTES.get() * 20 * 60) * 0.75f);
+            int kittingCD = (int) ((WCEServerConfig.SERVER.KIT_GROWTH_MINUTES.get() * 20 * 60) * 0.75f);
 
             if (cat.getFriendshipLevel(player.getUUID()) < 98) {
                 return;
             }
 
-            if (cat.getGender() == sPlayerGender) {
-                Component name = cat.hasCustomName() ? cat.getCustomName() : Component.literal("This cat");
-                player.sendSystemMessage(Component.empty()
-                        .append(name.copy().withStyle(ChatFormatting.AQUA))
-                        .append(Component.literal(" and ").withStyle(ChatFormatting.YELLOW))
-                        .append(Component.literal(morphName).withStyle(ChatFormatting.AQUA))
-                        .append(Component.literal(" can't have kits!").withStyle(ChatFormatting.YELLOW))
-                );
-                return;
+            if (sPlayerGender == 0 || sPlayerGender == 1) {
+                if (cat.getGender() == sPlayerGender) {
+                    Component name = cat.hasCustomName() ? cat.getCustomName() : Component.literal("This cat");
+                    player.sendSystemMessage(Component.empty()
+                            .append(name.copy().withStyle(ChatFormatting.AQUA))
+                            .append(Component.literal(" and ").withStyle(ChatFormatting.YELLOW))
+                            .append(Component.literal(morphName).withStyle(ChatFormatting.AQUA))
+                            .append(Component.literal(" can't have kits!").withStyle(ChatFormatting.YELLOW))
+                    );
+                    return;
+                }
             }
 
             if (kittingCooldown > 0) {

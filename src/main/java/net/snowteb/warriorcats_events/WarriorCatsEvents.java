@@ -21,6 +21,9 @@ import net.snowteb.warriorcats_events.network.ModPackets;
 import net.snowteb.warriorcats_events.screen.ModMenuTypes;
 import net.snowteb.warriorcats_events.sound.ModSounds;
 import net.snowteb.warriorcats_events.util.ModAttributes;
+import net.snowteb.warriorcats_events.zconfig.WCEClientConfig;
+import net.snowteb.warriorcats_events.zconfig.WCEConfig;
+import net.snowteb.warriorcats_events.zconfig.WCEServerConfig;
 import org.slf4j.Logger;
 import software.bernie.geckolib.GeckoLib;
 import tocraft.walkers.integrations.Integrations;
@@ -28,7 +31,7 @@ import tocraft.walkers.integrations.Integrations;
 @Mod(WarriorCatsEvents.MODID)
 public class WarriorCatsEvents {
     public static final String MODID = "warriorcats_events";
-    public static final String MOD_VERSION = "1.2.3";
+    public static final String MOD_VERSION = "1.3.0";
     public static final Logger LOGGER = LogUtils.getLogger();
 
     public WarriorCatsEvents() {
@@ -36,10 +39,16 @@ public class WarriorCatsEvents {
         GeckoLib.initialize();
         
         ModLoadingContext.get().registerConfig(
-                ModConfig.Type.COMMON,
-                WCEConfig.COMMON_SPEC,
-                MODID + "-common.toml"
-        );
+                ModConfig.Type.COMMON, WCEConfig.COMMON_SPEC,
+                MODID + "-common.toml");
+
+        ModLoadingContext.get().registerConfig(
+                ModConfig.Type.SERVER, WCEServerConfig.SPEC,
+                MODID + "-server.toml");
+
+        ModLoadingContext.get().registerConfig(
+                ModConfig.Type.CLIENT, WCEClientConfig.SPEC,
+                MODID + "-client.toml");
 
         ModSounds.register(modEventBus);
         ModItems.register(modEventBus);

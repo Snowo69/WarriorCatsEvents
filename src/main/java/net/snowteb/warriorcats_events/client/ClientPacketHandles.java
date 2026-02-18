@@ -6,8 +6,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.screen.AncientStickScreen;
-import net.snowteb.warriorcats_events.screen.clandata.CatDataScreen;
-import net.snowteb.warriorcats_events.screen.clandata.KitCreateScreen;
+import net.snowteb.warriorcats_events.screen.clandata.*;
 
 import java.util.List;
 
@@ -48,6 +47,24 @@ public class ClientPacketHandles {
                 Minecraft.getInstance().setScreen(new AncientStickScreen(cats));
             });
 
+    }
+
+    public static void openClanCreateScreen(String clanName, String morphName) {
+        Minecraft.getInstance().execute(() -> {
+            Minecraft mc = Minecraft.getInstance();
+            if (mc.level == null) return;
+
+            mc.setScreen(new CreateClanScreen(clanName, morphName));
+        });
+
+    }
+
+    public static void openClanListScreen() {
+        Minecraft.getInstance().execute(() -> Minecraft.getInstance().setScreen(new ClanListScreen()));
+    }
+
+    public static void openManageClanScreen(ClanInfo info) {
+        Minecraft.getInstance().execute(() -> Minecraft.getInstance().setScreen(new ManageClanScreen(info)));
     }
 }
 

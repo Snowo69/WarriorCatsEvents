@@ -12,6 +12,7 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
@@ -30,7 +31,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.*;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.damagesource.DamageSources;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -44,8 +44,6 @@ import net.minecraft.world.entity.ai.goal.target.OwnerHurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.OwnerHurtTargetGoal;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.animal.Animal;
-import net.minecraft.world.entity.animal.Dolphin;
-import net.minecraft.world.entity.animal.Fox;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.monster.Monster;
@@ -66,15 +64,14 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.network.NetworkHooks;
 import net.minecraftforge.network.PacketDistributor;
-import net.snowteb.warriorcats_events.WCEConfig;
 import net.snowteb.warriorcats_events.block.ModBlocks;
+import net.snowteb.warriorcats_events.clan.ClanData;
 import net.snowteb.warriorcats_events.clan.PlayerClanData;
 import net.snowteb.warriorcats_events.clan.PlayerClanDataProvider;
 import net.snowteb.warriorcats_events.client.AnimationClientData;
-import net.snowteb.warriorcats_events.client.ClientClanData;
+import net.snowteb.warriorcats_events.client.LeapClientState;
 import net.snowteb.warriorcats_events.effect.ModEffects;
 import net.snowteb.warriorcats_events.entity.ModEntities;
 import net.snowteb.warriorcats_events.item.ModItems;
@@ -84,6 +81,7 @@ import net.snowteb.warriorcats_events.network.packet.S2CSyncClanDataPacket;
 import net.snowteb.warriorcats_events.screen.WCatMenu;
 import net.snowteb.warriorcats_events.sound.ModSounds;
 import net.snowteb.warriorcats_events.util.ModTags;
+import net.snowteb.warriorcats_events.zconfig.WCEServerConfig;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
@@ -171,7 +169,6 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
     private UUID forbiddenPlayer = null;
 
     private int lovingParticlesTicks = 0;
-
 
     public Component getMother() {
         return this.entityData.get(MOTHER).orElse(Component.literal("None"));
@@ -264,6 +261,10 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
             SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.ITEM_STACK);
 
 
+    public float getAgeInMoons() {
+        return this.entityData.get(AGE_SYNC);
+    }
+
 //    @Nullable
 //    private Vec3 leaderCallTarget;
 
@@ -305,14 +306,28 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
     private static final EntityDataAccessor<Optional<Component>> MOTHER =
             SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.OPTIONAL_COMPONENT);
 
-    private static final EntityDataAccessor<Boolean> IS_AN_IMAGE =
-            SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.BOOLEAN);
+//    private static final EntityDataAccessor<Boolean> IS_AN_IMAGE =
+//            SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.BOOLEAN);
+
+    public static final EntityDataAccessor<Optional<UUID>> CLAN_UUID =
+            SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.OPTIONAL_UUID);
+
+    private boolean isImage;
+
+//    public void setAnImage(boolean isAnImage) {
+//        this.entityData.set(IS_AN_IMAGE, isAnImage);
+//    }
+//
+//    public boolean isAnImage() {
+//        return this.entityData.get(IS_AN_IMAGE);
+//    }
 
     public void setAnImage(boolean isAnImage) {
-        this.entityData.set(IS_AN_IMAGE, isAnImage);
+        this.isImage = isAnImage;
     }
+
     public boolean isAnImage() {
-        return this.entityData.get(IS_AN_IMAGE);
+        return this.isImage;
     }
 
     public enum CatInteraction {
@@ -1828,6 +1843,28 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         this.entityData.set(CLAN, Optional.of(clanName));
     }
 
+    public UUID getClanUUID() {
+        return this.entityData.get(CLAN_UUID).orElse(ClanData.EMPTY_UUID);
+    }
+
+    public void setClanUUID(UUID uuid) {
+        UUID oldClan = this.getClanUUID();
+
+        this.entityData.set(CLAN_UUID, Optional.ofNullable(uuid));
+
+        if (!this.level().isClientSide && this.level() instanceof ServerLevel sLevel) {
+            ClanData data = ClanData.get(sLevel);
+
+            if (!oldClan.equals(ClanData.EMPTY_UUID)) {
+                data.removeClanCatFromClan(oldClan, this);
+            }
+
+            if (!uuid.equals(ClanData.EMPTY_UUID)) {
+                data.addClanCat(uuid, this);
+            }
+        }
+    }
+
 
     private static final String[] PREFIX_1 = {
             // 1, 10, 11
@@ -1928,17 +1965,17 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
     private int getWanderRadius() {
         if (this.getPersonality() == Personality.INDEPENDENT) {
-            return WCEConfig.COMMON.WILDCAT_WANDER_RADIUS.get() * 2;
+            return WCEServerConfig.SERVER.WILDCAT_WANDER_RADIUS.get() * 2;
         }
-        return WCEConfig.COMMON.WILDCAT_WANDER_RADIUS.get();
+        return WCEServerConfig.SERVER.WILDCAT_WANDER_RADIUS.get();
     }
 
     public int getKittingTime() {
-        return 20 * 60 * WCEConfig.COMMON.KITTING_MINUTES.get();
+        return 20 * 60 * WCEServerConfig.SERVER.KITTING_MINUTES.get();
     }
 
     public int getKitGrowthTimeMinutes() {
-        return WCEConfig.COMMON.KIT_GROWTH_MINUTES.get();
+        return WCEServerConfig.SERVER.KIT_GROWTH_MINUTES.get();
     }
 
 
@@ -2355,6 +2392,17 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
         private Vec3 getRandomPointInRadius(WCatEntity wcat) {
             int attempts = 7;
+
+            if (this.cat.getRandom().nextFloat() < 0.1f) {
+                BlockPos homePos = wcat.getHomePosition();
+                if (homePos != null && !homePos.equals(BlockPos.ZERO)) {
+                    Vec3 targetPos = Vec3.atCenterOf(homePos);
+                    if (wcat.distanceToSqr(targetPos) < 20 * 20) {
+                        return targetPos;
+
+                    }
+                }
+            }
 
             for (int i = 0; i < attempts; i++) {
 
@@ -2843,6 +2891,27 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
     }
 
+    public class WCatLookAtPlayerGoal extends LookAtPlayerGoal {
+        private final WCatEntity cat;
+
+        public WCatLookAtPlayerGoal(WCatEntity cat, Class<? extends LivingEntity> pLookAtType, float pLookDistance) {
+            super(cat, pLookAtType, pLookDistance);
+            this.cat = cat;
+        }
+
+        @Override
+        public boolean canUse() {
+            if (this.cat.isAnImage()) return false;
+            return super.canUse();
+        }
+
+        @Override
+        public void tick() {
+            if (isAnImage()) return;
+            super.tick();
+        }
+
+    }
 
     public class WCatMoveToMateGoal extends Goal {
         private final WCatEntity cat;
@@ -2963,8 +3032,16 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         @Override
         public boolean canUse() {
             if (this.cat.lookAtLeaderFlag && this.cat.isLookingAtLeader) return false;
+            if (this.cat.isAnImage()) return false;
             return super.canUse();
         }
+
+        @Override
+        public void tick() {
+            if (isAnImage()) return;
+            super.tick();
+        }
+
     }
 
 
@@ -3528,10 +3605,10 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         ingredient.shrink(1);
 
         if (ingredient.isEmpty()) {
-            inventory.setItem(dockLeavesSlotIndex, ItemStack.EMPTY);
+            this.setItemSynced(dockLeavesSlotIndex, ItemStack.EMPTY);
         }
 
-        inventory.setItem(emptySlotIndex, new ItemStack(ModItems.DOCK_POULTICE.get(), 2));
+        this.setItemSynced(emptySlotIndex, new ItemStack(ModItems.DOCK_POULTICE.get(), 2));
 
         this.level().playSound(null, this.blockPosition(),
                 SoundEvents.SLIME_JUMP, SoundSource.NEUTRAL, 0.6F, 1.4F);
@@ -3573,7 +3650,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         for (int i = 0; i < inventory.getContainerSize(); i++) {
             ItemStack slot = inventory.getItem(i);
             if (slot.isEmpty()) {
-                inventory.setItem(i, stack.copyWithCount(1));
+                this.setItemSynced(i, stack.copyWithCount(1));
                 return true;
             }
             if (ItemStack.isSameItemSameTags(slot, stack) && slot.getCount() < 32) {
@@ -3607,6 +3684,20 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                     String.format("At: X=%.1f, Y=%.1f, Z=%.1f",
                             this.getX(), this.getY(), this.getZ())
             ).withStyle(ChatFormatting.GRAY));
+
+            Component message = Component.empty()
+                    .append(this.hasCustomName() ? this.getCustomName().copy() : Component.literal("null"))
+                    .append(" has died. At ")
+                    .append(Component.literal(String.format("X=%.1f, Y=%.1f, Z=%.1f",
+                            this.getX(), this.getY(), this.getZ())));
+            this.registerClanLog(message);
+
+            if (this.level() instanceof ServerLevel sLevel) {
+                if (!this.getClanUUID().equals(ClanData.EMPTY_UUID)) {
+                    ClanData data = ClanData.get(sLevel);
+                    data.removeClanCatFromAnyClan(this);
+                }
+            }
         }
 
         if (this.getMateUUID() != null) {
@@ -3627,7 +3718,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
             if (!stack.isEmpty()) {
                 this.spawnAtLocation(stack.copy());
-                inventory.setItem(i, ItemStack.EMPTY);
+                this.setItemSynced(i, ItemStack.EMPTY);
             }
         }
 
@@ -3703,11 +3794,11 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         this.targetSelector.addGoal(9, this.preyTarget);
         this.goalSelector.addGoal(10, new WCAttackGoal(this, 1.2D, true));
         this.goalSelector.addGoal(11, new WCatMoveToMateGoal(this));
-        this.goalSelector.addGoal(12, new BoundedWanderGoal(this, 1.0D));
+        if (!this.isAnImage()) this.goalSelector.addGoal(12, new BoundedWanderGoal(this, 1.0D));
         this.goalSelector.addGoal(13, new WCatGiveRandomItemGoal(this));
-        this.goalSelector.addGoal(13, new WCatRandomLookAroundGoal(this));
-        this.goalSelector.addGoal(13, new LookAtPlayerGoal(this, Player.class, 8.0F));
-        this.goalSelector.addGoal(14, new CasualBlockSeekGoal(this, 1.0D, 15, 0.07D));
+        if (!this.isAnImage()) this.goalSelector.addGoal(13, new WCatRandomLookAroundGoal(this));
+        if (!this.isAnImage()) this.goalSelector.addGoal(13, new WCatLookAtPlayerGoal(this, Player.class, 8.0F));
+        if (!this.isAnImage()) this.goalSelector.addGoal(14, new CasualBlockSeekGoal(this, 1.0D, 15, 0.07D));
 
     }
 
@@ -3771,6 +3862,26 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
     public InteractionResult mobInteract(Player pPlayer, InteractionHand pHand) {
         ItemStack itemstack = pPlayer.getItemInHand(pHand);
 
+        if (pPlayer.level().isClientSide) {
+            LeapClientState.setCanceled();
+        }
+
+        if (this.isOwnedBy(pPlayer)) {
+            if (pPlayer instanceof ServerPlayer sPlayer) {
+                UUID currentUUID = sPlayer.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
+                        .map(PlayerClanData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID);
+
+
+                if (!this.getClanUUID().equals(currentUUID)) {
+                    this.setClanUUID(currentUUID);
+                    if (pPlayer instanceof ServerPlayer serverPlayer) {
+                        ClanData data = ClanData.get(serverPlayer.serverLevel());
+                        data.addClanCat(currentUUID, this);
+                    }
+                }
+            }
+        }
+
         if (this.getRank() == MEDICINE && this.isTame() && this.getOwner() == pPlayer) {
             if (PlayerShape.getCurrentShape(pPlayer) instanceof Animal) {
                 if (!pPlayer.getItemInHand(pHand).isEmpty()) {
@@ -3820,7 +3931,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                         NetworkHooks.openScreen(
                                 sPlayer,
                                 new SimpleMenuProvider(
-                                        (id, inv, player) -> new WCatMenu(id, inv, this.inventory, this),
+                                        (id, inv, player) -> new WCatMenu(id, inv, this),
                                         Component.literal(catInvName.getString())
                                 ),
                                 buf -> buf.writeInt(this.getId())
@@ -3868,12 +3979,6 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                     this.tame(pPlayer);
                     this.level().broadcastEntityEvent(this, (byte) 7);
 
-                    pPlayer.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {
-                        String clanName = cap.getClanName();
-                        this.setClan(Component.literal(clanName));
-                    });
-
-
                     if (!this.hasCustomName()) {
                         int variant = this.getVariant();
                         String[] prefixSet = getPrefixForVariant(variant);
@@ -3909,6 +4014,31 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                     this.setNameColor(this.getRank());
 
 
+                    pPlayer.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {
+                        String clanName = cap.getClanName();
+                        this.setClan(Component.literal(clanName));
+                        this.setClanUUID(cap.getCurrentClanUUID());
+
+                        if (this.level() instanceof  ServerLevel sLevel) {
+                            ClanData data = ClanData.get(sLevel);
+                            ClanData.Clan clan = data.getClan(cap.getCurrentClanUUID());
+
+                            if (clan != null) {
+                                Component catJoinedClanLog = Component.empty()
+                                        .append(this.hasCustomName() ? this.getCustomName().copy() : Component.literal("A Cat"))
+                                        .append(" has joined ")
+                                        .append(Component.literal(clan.name).withStyle(Style.EMPTY.withColor(clan.color)))
+                                        .append("!");
+
+                                this.registerClanLog(catJoinedClanLog);
+                            }
+                        }
+
+
+                    });
+
+
+
                     mode = CatMode.FOLLOW;
                     sendModeMessage(pPlayer);
 
@@ -3923,29 +4053,59 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
             return InteractionResult.sidedSuccess(this.level().isClientSide());
         }
 
-        if (this.isTame() && pPlayer.isShiftKeyDown() && pPlayer.getUUID().equals(this.getOwnerUUID())
-                && pPlayer.getMainHandItem().isEmpty()) {
-            if (!this.level().isClientSide()) {
-                switch (mode) {
-                    case SIT:
-                        mode = CatMode.FOLLOW;
-                        this.setInSittingPose(false);
-                        break;
-                    case FOLLOW:
-                        mode = CatMode.WANDER;
-                        wanderCenter = this.blockPosition();
-                        break;
-                    case WANDER:
-                        mode = CatMode.SIT;
-                        this.setInSittingPose(true);
-                        break;
+        if (this.isTame() && pPlayer.isShiftKeyDown() && pPlayer.getMainHandItem().isEmpty()) {
+
+            if (!this.level().isClientSide() && pPlayer instanceof ServerPlayer sPlayer) {
+                ClanData data = ClanData.get(sPlayer.serverLevel());
+                UUID clanUUID = sPlayer.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
+                        .map(PlayerClanData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID);
+                ClanData.Clan clan = data.getClan(clanUUID);
+                boolean clanExistsAndIsValid = (!clanUUID.equals(ClanData.EMPTY_UUID) && clan != null);
+                boolean canAlsoCommand = false;
+
+                if (clanExistsAndIsValid) canAlsoCommand
+                        = data.canCommandWarriors(clan, sPlayer.getUUID()) && this.getClanUUID().equals(clanUUID) && !Objects.equals(this.getOwnerUUID(), pPlayer.getUUID());
+
+                if (pPlayer.getUUID().equals(this.getOwnerUUID()) || canAlsoCommand) {
+
+                    if (canAlsoCommand) {
+                        this.setOwnerUUID(pPlayer.getUUID());
+
+                        String morphName = pPlayer.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
+                                .map(PlayerClanData::getMorphName).orElse(pPlayer.getName().getString());
+
+                        Component message = Component.empty()
+                                .append(Component.literal(morphName).withStyle(ChatFormatting.AQUA))
+                                .append(Component.literal("(").withStyle(ChatFormatting.GRAY))
+                                .append(Component.literal(pPlayer.getName().getString()).withStyle(ChatFormatting.GRAY))
+                                .append(Component.literal(")").withStyle(ChatFormatting.GRAY))
+                                .append(" has taken ")
+                                .append(this.hasCustomName() ? this.getCustomName().copy() : Component.literal("a cat"));
+                        this.registerClanLog(message);
+                    }
+
+                    switch (mode) {
+                        case SIT:
+                            mode = CatMode.FOLLOW;
+                            this.setInSittingPose(false);
+                            break;
+                        case FOLLOW:
+                            mode = CatMode.WANDER;
+                            wanderCenter = this.blockPosition();
+                            break;
+                        case WANDER:
+                            mode = CatMode.SIT;
+                            this.setInSittingPose(true);
+                            break;
+                    }
+                    sendModeMessage(pPlayer);
                 }
-                sendModeMessage(pPlayer);
+                return InteractionResult.SUCCESS;
             }
-            return InteractionResult.SUCCESS;
         }
 
-        if (this.isTame() && pPlayer.isShiftKeyDown() && pPlayer.getUUID().equals(this.getOwnerUUID()) && itemstack.is(ModItems.WHISKERS.get()) && (this.getRank() != KIT)) {
+        if (this.isTame() && pPlayer.isShiftKeyDown() && pPlayer.getUUID().equals(this.getOwnerUUID())
+                && itemstack.is(ModItems.WHISKERS.get()) && (this.getRank() != KIT)) {
             Rank current = this.getRank();
 
             switch (current) {
@@ -3965,12 +4125,29 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
             this.setNameColor(this.getRank());
 
+
+            String morphName = pPlayer.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
+                    .map(PlayerClanData::getMorphName).orElse(pPlayer.getName().getString());
+
+            Component message = Component.empty()
+                    .append(Component.literal(morphName).withStyle(ChatFormatting.AQUA))
+                    .append(Component.literal("(").withStyle(ChatFormatting.GRAY))
+                    .append(Component.literal(pPlayer.getName().getString()).withStyle(ChatFormatting.GRAY))
+                    .append(Component.literal(")").withStyle(ChatFormatting.GRAY))
+                    .append(" has changed ")
+                    .append(this.hasCustomName() ? this.getCustomName().copy() : Component.literal("A cat"))
+                    .append("'s rank to ")
+                    .append(Component.literal(this.getRank().name()).withStyle(ChatFormatting.YELLOW));
+            this.registerClanLog(message);
+            this.updateClanCatData();
+
             sendRankMessage(pPlayer);
             return InteractionResult.SUCCESS;
         }
 
 
-        if (this.isTame() && itemstack.is(ModItems.CATMINT.get()) && this.getRank() != MEDICINE && !this.isExpectingKits() && !this.isBaby()) {
+        if (this.isTame() && itemstack.is(ModItems.CATMINT.get()) &&
+                this.getRank() != MEDICINE && !this.isExpectingKits() && !this.isBaby()) {
             if (!this.level().isClientSide()) {
                 if (((ServerLevel) this.level()).getEntity(this.getMateUUID()) instanceof Player) {
                     return InteractionResult.PASS;
@@ -3985,13 +4162,16 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
             return InteractionResult.SUCCESS;
         }
 
-        if (this.isTame() && itemstack.is(ModItems.WARRIORNAMERANDOMIZER.get()) && pPlayer.isShiftKeyDown()) {
+        if (this.isTame() && itemstack.is(ModItems.WARRIORNAMERANDOMIZER.get())
+                && pPlayer.isShiftKeyDown()) {
 
             if (!this.level().isClientSide()) {
 
                 if (this.getVariant() == 12 || this.getVariant() == 13 || this.getVariant() == 14
                         || this.getVariant() == 15 || this.getVariant() == 16 || this.getVariant() == 17
                         || this.getVariant() == 18 || this.getVariant() == 19) {
+
+                    Component oldName = this.hasCustomName() ? this.getCustomName().copy() : Component.literal("A cat");
 
                     itemstack.hurtAndBreak(1, pPlayer, (p) ->
                             p.broadcastBreakEvent(pHand));
@@ -4048,10 +4228,25 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
                     this.setNameColor(this.getRank());
 
+                    String morphName = pPlayer.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
+                            .map(PlayerClanData::getMorphName).orElse(pPlayer.getName().getString());
+
+                    Component message = Component.empty()
+                            .append(Component.literal(morphName).withStyle(ChatFormatting.AQUA))
+                            .append(Component.literal("(").withStyle(ChatFormatting.GRAY))
+                            .append(Component.literal(pPlayer.getName().getString()).withStyle(ChatFormatting.GRAY))
+                            .append(Component.literal(")").withStyle(ChatFormatting.GRAY))
+                            .append(" has changed ")
+                            .append(oldName)
+                            .append("'s name to ")
+                            .append(this.hasCustomName() ? this.getCustomName().copy() : Component.literal("null"));
+                    this.registerClanLog(message);
+                    this.updateClanCatData();
+
+
                 } else {
                     return InteractionResult.PASS;
                 }
-
 
             }
             return InteractionResult.sidedSuccess(this.level().isClientSide);
@@ -4115,9 +4310,23 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
                     this.setMate(Component.literal(sPlayerMorphName));
                     this.setMateUUID(sPlayer.getUUID());
-                    pPlayer.sendSystemMessage(Component.literal((this.hasCustomName() ? this.getCustomName().getString() : "This cat") + " and "
+
+                    Component message = Component.literal((this.hasCustomName() ? this.getCustomName().getString() : "This cat") + " and "
                                     + sPlayerMorphName + " are now a beautiful couple!")
-                            .withStyle(ChatFormatting.GREEN));
+                            .withStyle(ChatFormatting.GREEN);
+
+                    Component messageLog = Component.empty()
+                            .append(Component.literal((this.hasCustomName() ? this.getCustomName().getString() : "A cat")))
+                            .append(" and ")
+                            .append(Component.literal(sPlayerMorphName).withStyle(ChatFormatting.AQUA))
+                            .append(Component.literal("(").withStyle(ChatFormatting.GRAY))
+                            .append(Component.literal(pPlayer.getName().getString()).withStyle(ChatFormatting.GRAY))
+                            .append(Component.literal(")").withStyle(ChatFormatting.GRAY))
+                            .append(" are now a beautiful couple!");
+                    this.registerClanLog(messageLog);
+
+                    pPlayer.sendSystemMessage(message);
+
                     pPlayer.getItemInHand(InteractionHand.MAIN_HAND).shrink(1);
                     sPlayer.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {
                         cap.setMateUUID(this.getUUID());
@@ -4142,6 +4351,8 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
             if (itemstack.hasCustomHoverName()) {
                 itemstack.shrink(1);
+
+                Component oldName = this.hasCustomName() ? this.getCustomName().copy() : Component.literal("A cat");
 
                 String fullName = itemstack.getHoverName().getString();
 
@@ -4180,6 +4391,22 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
                 this.setNameColor(this.getRank());
 
+                String morphName = pPlayer.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
+                        .map(PlayerClanData::getMorphName).orElse(pPlayer.getName().getString());
+
+                Component message = Component.empty()
+                        .append(Component.literal(morphName).withStyle(ChatFormatting.AQUA))
+                        .append(Component.literal("(").withStyle(ChatFormatting.GRAY))
+                        .append(Component.literal(pPlayer.getName().getString()).withStyle(ChatFormatting.GRAY))
+                        .append(Component.literal(")").withStyle(ChatFormatting.GRAY))
+                        .append(" has changed ")
+                        .append(oldName)
+                        .append("'s name to ")
+                        .append(this.hasCustomName() ? this.getCustomName().copy() : Component.literal("null"));
+                this.registerClanLog(message);
+                this.updateClanCatData();
+
+
             }
 
             return InteractionResult.sidedSuccess(this.level().isClientSide);
@@ -4191,6 +4418,8 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
             if (!this.level().isClientSide()) {
                 itemstack.hurtAndBreak(1, pPlayer, (p) ->
                         p.broadcastBreakEvent(pHand));
+
+                Component oldName = this.hasCustomName() ? this.getCustomName() : Component.literal("Unnamed cat");
 
 
                 int variantS = this.getVariant();
@@ -4225,6 +4454,22 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
                 this.setNameColor(this.getRank());
 
+                String morphName = pPlayer.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
+                        .map(PlayerClanData::getMorphName).orElse(pPlayer.getName().getString());
+
+                Component message = Component.empty()
+                        .append(Component.literal(morphName).withStyle(ChatFormatting.AQUA))
+                        .append(Component.literal("(").withStyle(ChatFormatting.GRAY))
+                        .append(Component.literal(pPlayer.getName().getString()).withStyle(ChatFormatting.GRAY))
+                        .append(Component.literal(")").withStyle(ChatFormatting.GRAY))
+                        .append(" has changed ")
+                        .append(oldName)
+                        .append("'s name to ")
+                        .append(this.hasCustomName() ? this.getCustomName().copy() : Component.literal("null"));
+                this.registerClanLog(message);
+                this.updateClanCatData();
+
+
             }
             return InteractionResult.sidedSuccess(this.level().isClientSide);
         }
@@ -4232,10 +4477,8 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         if (itemstack.is(ModItems.WHISKERS.get())) {
             if (!(PlayerShape.getCurrentShape(pPlayer) instanceof Animal)) return InteractionResult.PASS;
 
-
             if (!level().isClientSide()) {
                 itemstack.hurtAndBreak(1, pPlayer, (p) -> p.broadcastBreakEvent(pHand));
-
 
                 if (this.isTame() && this.getOwner() == pPlayer) {
                     if (this.getPersonality() == Personality.NONE || this.getPersonality() == null) {
@@ -4319,34 +4562,6 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                         );
                     }
 
-
-//                Component msg = Component.literal(
-//                                "=========================").withStyle(ChatFormatting.GRAY)
-//                        .append("\n- Displaying cat information -").withStyle(ChatFormatting.WHITE)
-//                        .append("\n=========================").withStyle(ChatFormatting.GRAY)
-//                        .append("\nName: ").withStyle(ChatFormatting.GOLD)
-//                        .append(Component.literal(name).withStyle(ChatFormatting.WHITE))
-//                        .append("\nClan: ").withStyle(ChatFormatting.GOLD)
-//                        .append(clanText.copy().withStyle(ChatFormatting.WHITE))
-//                        .append("\nGender: ").withStyle(ChatFormatting.GOLD)
-//                        .append(Component.literal(genderText).withStyle(ChatFormatting.WHITE))
-//                        .append("\nRole: ").withStyle(ChatFormatting.GOLD)
-//                        .append(Component.literal(rankText).withStyle(ChatFormatting.WHITE))
-//                        .append("\nPersonality: ").withStyle(ChatFormatting.GOLD)
-//                        .append(Component.literal(personalityText).withStyle(ChatFormatting.WHITE))
-//                        .append("\nAge: ").withStyle(ChatFormatting.GOLD)
-//                        .append(Component.literal(ageText).withStyle(ChatFormatting.WHITE))
-//                        .append("\nMate: ").withStyle(ChatFormatting.GOLD)
-//                        .append(catMate.copy().withStyle(ChatFormatting.WHITE))
-//                        .append("\nExpecting kits: ").withStyle(ChatFormatting.GOLD)
-//                        .append(Component.literal(expectingText).withStyle(ChatFormatting.WHITE))
-//                        .append("\nTime until kits: ").withStyle(ChatFormatting.GOLD)
-//                        .append(Component.literal(KitTime).withStyle(ChatFormatting.WHITE))
-//                        .append("\n=========================").withStyle(ChatFormatting.GRAY);
-//                if (this.level().isClientSide()) {
-//                    pPlayer.displayClientMessage(msg, false);
-//
-//                }
                 } else {
                     if (!pPlayer.level().isClientSide && pPlayer instanceof ServerPlayer sPlayer) {
                         ModPackets.INSTANCE.send(
@@ -4376,6 +4591,20 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                                 serverPlayer.getAdvancements().award(adv, "fed_kit_deathberries");
                             }
                         }
+
+                        String morphName = pPlayer.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
+                                .map(PlayerClanData::getMorphName).orElse(pPlayer.getName().getString());
+
+
+                        Component message = Component.empty()
+                                .append(Component.literal(morphName).withStyle(ChatFormatting.AQUA))
+                                .append(Component.literal("(").withStyle(ChatFormatting.GRAY))
+                                .append(Component.literal(pPlayer.getName().getString()).withStyle(ChatFormatting.GRAY))
+                                .append(Component.literal(")").withStyle(ChatFormatting.GRAY))
+                                .append(" has given Deathberries to ")
+                                .append(this.hasCustomName() ? this.getCustomName().copy() : Component.literal("a kit"))
+                                .append("!");
+                        this.registerClanLog(message);
                     }
 
                     this.addEffect(new MobEffectInstance(ModEffects.DEATHBERRIES.get(), 3600, 0));
@@ -4532,84 +4761,78 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
     @Override
     public AgeableMob getBreedOffspring(ServerLevel level, AgeableMob otherParent) {
 
-        if (otherParent instanceof WCatEntity partner && this.isTame() && partner.isTame()) {
+        if (!(otherParent instanceof WCatEntity partner)) return null;
+        if (!this.isTame() || !partner.isTame()) return null;
 
+        WCatEntity female = null;
+        WCatEntity male = null;
 
-            if (this.getGender() == 1) {
-                int otherParentGender = partner.getGender();
-                if (otherParentGender == 0) {
-                    this.setExpectingKits(true);
+        if (this.getGender() == 1 && partner.getGender() == 0) {
+            female = this;
+            male = partner;
+        } else if (this.getGender() == 0 && partner.getGender() == 1) {
+            female = partner;
+            male = this;
+        }
 
-                    Entity owner = this.getOwner();
-                    if (owner instanceof ServerPlayer serverPlayer) {
-                        MinecraftServer server = serverPlayer.getServer();
-                        if (server != null) {
+        if (female != null) {
+            female.setExpectingKits(true);
 
-                            Advancement adv = server.getAdvancements()
-                                    .getAdvancement(new ResourceLocation("warriorcats_events:bred_wildcat"));
-
-                            if (adv != null) {
-                                serverPlayer.getAdvancements().award(adv, "bred_wildcat");
-                            }
-                        }
-                    }
-                }
-
-            }
-            this.resetLove();
-            partner.resetLove();
-            this.entityData.set(MOOD, Mood.HAPPY.ordinal());
-            partner.entityData.set(MOOD, Mood.HAPPY.ordinal());
-
-            /**
-             * If the cats are the same gender, unlock the advancement.
-             */
-            if (this.getGender() == partner.getGender()) {
-                Entity owner = this.getOwner();
-                if (owner instanceof ServerPlayer serverPlayer) {
-                    MinecraftServer server = serverPlayer.getServer();
-                    if (server != null) {
-
-                        Advancement adv = server.getAdvancements()
-                                .getAdvancement(new ResourceLocation("warriorcats_events:homo_bred"));
-
-                        if (adv != null) {
-                            serverPlayer.getAdvancements().award(adv, "homo_bred");
-                        }
+            Entity owner = female.getOwner();
+            if (owner instanceof ServerPlayer serverPlayer) {
+                MinecraftServer server = serverPlayer.getServer();
+                if (server != null) {
+                    Advancement adv = server.getAdvancements()
+                            .getAdvancement(new ResourceLocation("warriorcats_events:bred_wildcat"));
+                    if (adv != null) {
+                        serverPlayer.getAdvancements().award(adv, "bred_wildcat");
                     }
                 }
             }
+        }
 
-            /**
-             * After all is done, set this cats mate to the other cats name.
-             * And set the other cats mate to this cats name
-             */
-            Component MateName = otherParent.getCustomName();
-            Component thisName = this.getCustomName();
-            UUID MateUUID = otherParent.getUUID();
-            UUID thisUUID = this.getUUID();
+        this.resetLove();
+        partner.resetLove();
+        this.entityData.set(MOOD, Mood.HAPPY.ordinal());
+        partner.entityData.set(MOOD, Mood.HAPPY.ordinal());
 
-            this.setMate(MateName);
-            partner.setMate(thisName);
-            this.setMateUUID(MateUUID);
-            partner.setMateUUID(thisUUID);
-
-            /**
-             * If for any reason, bug, glitch, the other partner's mate info doesn't change, then try to change it again.
-             */
-            if (Objects.equals(partner.getMate(), Component.literal("None"))) {
-                partner.setMate(this.getCustomName());
+        if (this.getGender() == partner.getGender()) {
+            Entity owner = this.getOwner();
+            if (owner instanceof ServerPlayer serverPlayer) {
+                MinecraftServer server = serverPlayer.getServer();
+                if (server != null) {
+                    Advancement adv = server.getAdvancements()
+                            .getAdvancement(new ResourceLocation("warriorcats_events:homo_bred"));
+                    if (adv != null) {
+                        serverPlayer.getAdvancements().award(adv, "homo_bred");
+                    }
+                }
             }
+        }
+
+        Component mateName = otherParent.getCustomName();
+        Component thisName = this.getCustomName();
+
+        this.setMate(mateName);
+        partner.setMate(thisName);
+        this.setMateUUID(otherParent.getUUID());
+        partner.setMateUUID(this.getUUID());
+
+        Component message = Component.empty()
+                .append(mateName.copy())
+                .append(" & ")
+                .append(thisName.copy())
+                .append(" are now mates!");
+
+        this.registerClanLog(message);
+
+        if (Objects.equals(partner.getMate(), Component.literal("None"))) {
+            partner.setMate(this.getCustomName());
         }
 
         return null;
     }
 
-
-    @Override
-    public void handleEntityEvent(byte pId) {
-        super.handleEntityEvent(pId);
-    }
 
     /**
      * Called every tick.
@@ -4737,7 +4960,20 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
      */
     @Override
     public boolean canAttack(LivingEntity target) {
+        if (target instanceof Player player) {
+            if (player instanceof ServerPlayer sPlayer) {
+                UUID clanID = sPlayer.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
+                        .map(PlayerClanData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID);
+
+                if (this.getClanUUID().equals(clanID)) {
+                    return false;
+                }
+            }
+        }
         if (target instanceof TamableAnimal tam && tam.isTame()) {
+            if (tam instanceof WCatEntity cat) {
+                if (cat.getClanUUID().equals(this.getClanUUID())) return false;
+            }
 
             LivingEntity myOwner = this.getOwner();
             UUID thisOwnerUUID = myOwner != null ? myOwner.getUUID() : null;
@@ -4755,7 +4991,20 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
      */
     @Override
     public boolean isAlliedTo(Entity other) {
+        if (other instanceof Player player) {
+            if (player instanceof ServerPlayer sPlayer) {
+                UUID clanID = sPlayer.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
+                        .map(PlayerClanData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID);
+
+                if (this.getClanUUID().equals(clanID)) {
+                    return true;
+                }
+            }
+        }
         if (other instanceof TamableAnimal tam && tam.isTame()) {
+            if (tam instanceof WCatEntity cat) {
+                if (cat.getClanUUID().equals(this.getClanUUID())) return true;
+            }
 
             LivingEntity myOwner = this.getOwner();
             UUID thisOwnerUUID = myOwner != null ? myOwner.getUUID() : null;
@@ -4868,6 +5117,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
             tag.putUUID("ForbiddenP", this.getForbiddenPlayer());
         }
 
+        tag.putUUID("ClanUUID", this.getClanUUID());
 
     }
 
@@ -5023,6 +5273,14 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         } else {
             this.wanderCenter = null;
         }
+
+        if (tag.contains("ClanUUID")) {
+            this.setClanUUID(tag.getUUID("ClanUUID"));
+        } else {
+            this.setClanUUID(ClanData.EMPTY_UUID);
+        }
+
+
     }
 
     /**
@@ -5126,15 +5384,12 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
     private <T extends GeoAnimatable> PlayState predicate(AnimationState<T> tAnimationState) {
 
+        if (this.isAnImage()) return PlayState.STOP;
+
         LivingEntity cat = (LivingEntity) tAnimationState.getAnimatable();
         double speed = cat.getDeltaMovement().length();
         float animSpeed = (float) (speed * 6.0f);
         animSpeed = Mth.clamp(animSpeed * animSpeed, 0.2f, 1.5f);
-
-//        Vec3 velocity = this.getDeltaMovement();
-//        float avgVelocity = (float)((Math.abs(velocity.x) + Math.abs(velocity.z)) / 2f);
-//        boolean fuckingMovingConditions = avgVelocity >= 0.015f || this.walkAnimation.speed() != 0;
-//        boolean isKittyMoving = fuckingMovingConditions || tAnimationState.isMoving();
 
         if (this.isInWater()) {
             if (this.isSwimming()) {
@@ -5156,46 +5411,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
             return PlayState.CONTINUE;
         }
 
-        // ADD || moving
-        //The problem is basically that... It works okay but the this.isAShape has
-        // to be a synced data. that and finding a way to determine speed animation.
-
-        // The idea:
-        // Make a synced data accesor for this.isAShape, and one for sprinting.
-        // In Renderer, sync the player sprinting with the sprinting synced variable
-        // And use it to set the animaions if synced isAShape
-
         if ((tAnimationState.isMoving()) && !this.isCrouching()) {
-
-            /*
-//            if (this.isAShape) {
-//                if ((speed > 0.2039) && !this.isInWater()){
-//                    tAnimationState.getController().setAnimation(RawAnimation.begin().
-//                            then("animation.wcat.sprint", Animation.LoopType.LOOP));
-//                    tAnimationState.getController().setAnimationSpeed(1f);
-//                } else {
-//                    tAnimationState.getController().setAnimation(RawAnimation.begin().
-//                            then("animation.wcat.walk", Animation.LoopType.LOOP));
-//
-//                        tAnimationState.getController().setAnimationSpeed(1f);
-//
-//                }
-//            } else {
-//                if ((speed > 0.2039) && !this.isInWater() && !this.isAShape) {
-//                    tAnimationState.getController().setAnimation(RawAnimation.begin().
-//                            then("animation.wcat.sprint", Animation.LoopType.LOOP));
-//
-//                    tAnimationState.getController().setAnimationSpeed(0.185 * Math.exp(9.91 * speed));
-//
-//                } else {
-//                    tAnimationState.getController().setAnimation(RawAnimation.begin().
-//                            then("animation.wcat.walk", Animation.LoopType.LOOP));
-//                     tAnimationState.getController().setAnimationSpeed(animSpeed);
-//
-//                }
-//            }
-
-             */
 
             if ((speed > 0.2039) && !this.isInWater()) {
                 tAnimationState.getController().setAnimation(RawAnimation.begin().
@@ -5257,7 +5473,6 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         }
 
         if (this.isCrouching()) {
-            // ADD || moving
             if ((tAnimationState.isMoving()) && this.isCrouching()) {
                 tAnimationState.getController().setAnimation(RawAnimation.begin().
                         then("animation.wcat.crouchingwalk", Animation.LoopType.LOOP));
@@ -5270,7 +5485,6 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
 
             animPlayed = false;
-            // ADD || !moving
         } else if (!animPlayed) {
             tAnimationState.getController().setAnimation(RawAnimation.begin().
                     then("animation.wcat.idle", Animation.LoopType.LOOP));
@@ -5305,13 +5519,14 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
             case CHEST -> entityData.get(CHEST_ARMOR);
             case LEGS -> entityData.get(LEGS_ARMOR);
             case FEET -> entityData.get(FEET_ARMOR);
-            default -> ItemStack.EMPTY;
+            default -> super.getItemBySlot(slot);
         };
     }
 
 
     @Override
     public void setItemSlot(EquipmentSlot slot, ItemStack stack) {
+        super.setItemSlot(slot, stack);
         switch (slot) {
             case HEAD -> entityData.set(HEAD_ARMOR, stack.copy());
             case CHEST -> entityData.set(CHEST_ARMOR, stack.copy());
@@ -5322,7 +5537,21 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
 
     public void setNameColor(Rank rank) {
-        if (!WCEConfig.COMMON.COLORED_NAMES.get()) return;
+        if (!WCEServerConfig.SERVER.COLORED_NAMES.get()) {
+            TextColor none = TextColor.fromRgb(0xFFFFFF);
+            Component actualName = this.getCustomName();
+            if (actualName != null) {
+                this.setCustomName(
+                        Component.literal(actualName.getString())
+                                .withStyle(style -> style.withColor(none))
+                );
+
+                this.setCustomNameVisible(true);
+            }
+
+            return;
+        }
+
 
         TextColor none = TextColor.fromRgb(0xFFFFFF);
         TextColor kit = TextColor.fromRgb(0x42fcb5);
@@ -5420,13 +5649,20 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
         int litterSize = 1 + this.random.nextInt(3);
 
+        Component message = Component.empty()
+                .append((this.hasCustomName() ? this.getCustomName().copy() : Component.literal("A she-cat")))
+                .append(Component.literal(" has brought " + litterSize + " kits to the clan!").withStyle(ChatFormatting.WHITE));
+
+        this.registerClanLog(message);
+
+
         for (int i = 0; i < litterSize; i++) {
             this.resetLove();
             WCatEntity kit = ModEntities.WCAT.get().create(server);
 
             if (kit != null) {
                 kit.setPos(this.getX(), this.getY(), this.getZ());
-                int minutes = WCEConfig.COMMON.KIT_GROWTH_MINUTES.get();
+                int minutes = WCEServerConfig.SERVER.KIT_GROWTH_MINUTES.get();
                 int growingTicks = minutes * 20 * 60;
                 kit.setAge(-growingTicks);
                 kit.setTame(true);
@@ -5474,9 +5710,11 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
                     kit.setOwnerUUID(player.getUUID());
 
-                    owner.sendSystemMessage(Component.literal(kitName).withStyle(ChatFormatting.GREEN)
-                            .append(Component.literal(" has been born!").withStyle(ChatFormatting.WHITE))
-                    );
+                    Component messageKit = Component.literal(kitName).withStyle(ChatFormatting.GREEN)
+                            .append(Component.literal(" has been born!").withStyle(ChatFormatting.WHITE));
+
+                    owner.sendSystemMessage(messageKit);
+                    this.registerClanLog(messageKit);
 
 
                 }
@@ -5490,6 +5728,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
                 kit.setHomePosition(this.getHomePosition());
                 kit.setClan(this.getClan());
+                kit.setClanUUID(this.getClanUUID());
 
                 LivingEntity father = this.getMateEntity();
 
@@ -5551,16 +5790,21 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
             Entity owner = this.getOwner();
             if (owner instanceof Player) {
 
-                owner.sendSystemMessage(
-                        Component.empty()
-                                .append(prefix)
-                                .append(Component.literal("paw has become a warrior. "))
-                                .append(prefix)
-                                .append(Component.literal("paw will now be known as "))
-                                .append(Component.literal(newName).withStyle(ChatFormatting.GOLD))
-                                .append(Component.literal("!")
-                                )
-                );
+                Component message = Component.empty()
+                        .append(prefix)
+                        .append(Component.literal("paw has become a warrior. "))
+                        .append(prefix)
+                        .append(Component.literal("paw will now be known as "))
+                        .append(Component.literal(newName).withStyle(ChatFormatting.GOLD))
+                        .append(Component.literal("!")
+                        );
+
+                this.updateClanCatData();
+
+                owner.sendSystemMessage(message);
+
+                this.registerClanLog(message);
+
             }
 
             this.setCustomName(Component.literal(newName));
@@ -5586,32 +5830,6 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                         (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.5F)
                 :
                 (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F;
-    }
-
-    /**
-     * Makes a list of Wild Cats around certain area.
-     * If there is a cat in the area of different gender than this cats gender, then return true.
-     * Otherwise return false
-     */
-    private boolean hasValidMateNearby() {
-        if (!this.isTame()) return false;
-        if (this.isBaby()) return false;
-        if (this.isExpectingKits()) return false;
-        if (this.getRank() == MEDICINE) return false;
-
-        List<WCatEntity> list = this.level().getEntitiesOfClass(
-                WCatEntity.class,
-                this.getBoundingBox().inflate(16)
-        );
-
-        for (WCatEntity cat : list) {
-            if (cat != this && (cat.getGender() != this.getGender()) && !cat.isBaby() && !cat.isExpectingKits() && cat.getRank() != MEDICINE) {
-
-                return true;
-            }
-        }
-
-        return false;
     }
 
 
@@ -5646,7 +5864,9 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         this.entityData.define(MOTHER, Optional.empty());
         this.entityData.define(FATHER, Optional.empty());
 
-        this.entityData.define(IS_AN_IMAGE, false);
+//        this.entityData.define(IS_AN_IMAGE, false);
+        this.entityData.define(CLAN_UUID, Optional.empty());
+
 
     }
 
@@ -5692,55 +5912,8 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
      */
     public void setVariant(int variant) {
         this.entityData.set(VARIANT, variant);
-//        float scale = switch (variant) {
-//            case 0 -> 1f;
-//            case 1 -> 1.2f;
-//            case 2 -> 1.2f;
-//            case 3 -> 1.2f;
-//            case 4 -> 1f;
-//            case 5 -> 1.2f;
-//            case 6 -> 1.2f;
-//            case 7 -> 1.4f;
-//            case 8 -> 1f;
-//            case 9 -> 1.2f;
-//            case 10 -> 1.2f;
-//            case 11 -> 1.2f;
-//            case 12 -> 1.2f; //chestnutpatch
-//            case 13 -> 1.2f; //ratstar
-//            case 14 -> 1.2f; //twitchstream
-//            case 15 -> 1.2f; //blazepit
-//            case 16 -> 1.2f; //bengalpelt
-//            case 17 -> 1.2f; //sparrowstar
-//            case 18 -> 1f; //foxeater
-//            case 19 -> 1.2f; //willowsong
-//            default -> 1f;
-//        };
 
-//        float scale = switch (variant) {
-//            case 0 -> 1f;
-//            case 1 -> 1f;
-//            case 2 -> 1f;
-//            case 3 -> 1f;
-//            case 4 -> 1f;
-//            case 5 -> 1f;
-//            case 6 -> 1f;
-//            case 7 -> 1f;
-//            case 8 -> 1f;
-//            case 9 -> 1f;
-//            case 10 -> 1f;
-//            case 11 -> 1f;
-//            case 12 -> 1f; //chestnutpatch
-//            case 13 -> 1f; //ratstar
-//            case 14 -> 1f; //twitchstream
-//            case 15 -> 1f; //blazepit
-//            case 16 -> 1f; //bengalpelt
-//            case 17 -> 1f; //sparrowstar
-//            case 18 -> 1f; //foxeater
-//            case 19 -> 1f; //willowsong
-//            default -> 1f;
-//        };
         float scale = 1f;
-
 
         this.entityData.set(SCALE, scale);
     }
@@ -5904,10 +6077,29 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                     }
                 }
 
-
                 float moonsCalc = (float) ((this.getAge() + (20 * 60 * getKitGrowthTimeMinutes())) / (100.0 * getKitGrowthTimeMinutes()));
                 this.entityData.set(AGE_SYNC, moonsCalc);
             }
+
+//            if (this.tickCount % 6000 == 0 && this.level() instanceof ServerLevel sLevel) {
+//                ClanData data = ClanData.get(sLevel);
+//
+//                ClanData.Clan registeredClan = data.getClanByCat(this.getUUID());
+//
+//                if (registeredClan != null && !registeredClan.clanUUID.equals(this.getClanUUID())) {
+//                    registeredClan.clanCats.remove(this.getUUID());
+//                    data.setDirty();
+//                }
+//
+//                if (!this.getClanUUID().equals(ClanData.EMPTY_UUID)) {
+//                    ClanData.Clan correctClan = data.getClan(this.getClanUUID());
+//
+//                    if (correctClan != null && !correctClan.clanCats.containsKey(this.getUUID())) {
+//                        data.addClanCat(this.getClanUUID(), this);
+//                    }
+//                }
+//            }
+
 
             if (this.tickCount % 400 == 0 && this.level() instanceof ServerLevel serverLevel) {
 
@@ -5938,6 +6130,9 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                         }
                     }
                 }
+
+                this.updateClanCatData();
+
             }
 
 
@@ -5953,18 +6148,6 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                     if (this.getTarget() != null && this.getTarget().equals(this.getOwner())) {
                         this.setTarget(null);
                     }
-                }
-            }
-
-            if (this.tickCount % 600 == 0 && this.random.nextInt(3) == 0 && soundTick == 0) {
-                soundTick = 800;
-                if (this.getPersonality() == Personality.GRUMPY) {
-                    this.level().playSound(null, this.blockPosition(), SoundEvents.CAT_HISS, SoundSource.AMBIENT, 0.4f, 0.9f);
-
-                } else if (this.getPersonality() == Personality.SHY) {
-                    this.level().playSound(null, this.blockPosition(), SoundEvents.CAT_STRAY_AMBIENT, SoundSource.AMBIENT, 0.8f, 0.9f);
-                } else if (this.getPersonality() == Personality.FRIENDLY) {
-                    this.level().playSound(null, this.blockPosition(), SoundEvents.CAT_PURREOW, SoundSource.AMBIENT, 1f, 1.1f);
                 }
             }
 
@@ -6016,16 +6199,27 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                 Entity owner = this.getOwner();
                 if (owner instanceof Player) {
 
-                    owner.sendSystemMessage(
-                            Component.empty()
-                                    .append(prefix)
-                                    .append(Component.literal("kit has become an apprentice. "))
-                                    .append(prefix)
-                                    .append(Component.literal("kit will now be known as "))
-                                    .append(Component.literal(newName).withStyle(ChatFormatting.GOLD))
-                                    .append(Component.literal("!")
-                                    )
-                    );
+                    Component message = Component.empty()
+                            .append(prefix)
+                            .append(Component.literal("kit has become an apprentice. "))
+                            .append(prefix)
+                            .append(Component.literal("kit will now be known as "))
+                            .append(Component.literal(newName).withStyle(ChatFormatting.GOLD))
+                            .append(Component.literal("!")
+                            );
+
+                    if (this.level() instanceof ServerLevel sLevel) {
+                        ClanData data = ClanData.get(sLevel);
+                        ClanData.Clan clan = data.getClan(this.getClanUUID());
+
+                        if (clan != null) {
+                            data.addClanCat(clan, this);
+                        }
+                    }
+
+                    owner.sendSystemMessage(message);
+
+                    this.registerClanLog(message);
 
                 }
 
@@ -6098,7 +6292,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
     public void setRank(Rank rank) {
         this.entityData.set(RANK, rank.ordinal());
 
-        if (WCEConfig.COMMON.COLORED_NAMES.get()) this.setNameColor(rank);
+        this.setNameColor(rank);
     }
 
     public boolean isMale() {
@@ -6129,9 +6323,9 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         this.wanderCenter = this.blockPosition();
         this.assignRandomPersonality(this.random);
         if (this.getAge() < 0 && this.getAge() > -25000) {
-            int minutes = WCEConfig.COMMON.KIT_GROWTH_MINUTES.get();
+            int minutes = WCEServerConfig.SERVER.KIT_GROWTH_MINUTES.get();
             int growingTicks = minutes * 20 * 60;
-            this.setAge((growingTicks/2) + 100);
+            this.setAge((growingTicks / 2) + 100);
             this.setAppScale(true);
         }
 
@@ -6219,6 +6413,14 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         if (this.isTame() && this.getOwner() != null) {
             if (enemy == this.getOwner()) return;
 
+            if (enemy instanceof ServerPlayer player) {
+                UUID clanUUID = player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
+                        .map(PlayerClanData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID);
+                if (!clanUUID.equals(ClanData.EMPTY_UUID)) {
+                    if (clanUUID.equals(this.getClanUUID())) return;
+                }
+            }
+
             List<WCatEntity> allies = level().getEntitiesOfClass(
                     WCatEntity.class,
                     this.getBoundingBox().inflate(radius),
@@ -6244,6 +6446,16 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
     @Override
     protected SoundEvent getAmbientSound() {
+
+        if (this.random.nextFloat() < 0.05f) {
+            if (this.getPersonality() == Personality.GRUMPY) {
+                return SoundEvents.CAT_HISS;
+            } else if (this.getPersonality() == Personality.SHY) {
+                return SoundEvents.CAT_STRAY_AMBIENT;
+            } else if (this.getPersonality() == Personality.FRIENDLY) {
+                return SoundEvents.CAT_PURREOW;
+            }
+        }
         return SoundEvents.CAT_AMBIENT;
     }
 
@@ -6302,5 +6514,76 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         return super.isInvulnerableTo(source);
     }
 
+    public void registerClanLog(Component message) {
 
+        if (this.level() instanceof ServerLevel sLevel) {
+            ClanData data = ClanData.get(sLevel);
+            ClanData.Clan clan = data.getClan(this.getClanUUID());
+
+            if (clan != null) {
+                data.registerLog(sLevel, clan.clanUUID, message);
+                data.setDirty();
+            }
+        }
+
+    }
+
+    public void updateClanCatData() {
+        if (this.level() instanceof ServerLevel sLevel) {
+            ClanData data = ClanData.get(sLevel);
+            ClanData.Clan clan = data.getClan(this.getClanUUID());
+
+            if (clan != null) {
+                data.addClanCat(clan, this);
+            }
+        }
+    }
+
+
+    @Override
+    public void setYHeadRot(float rotation) {
+        if (isAnImage()) return;
+        super.setYHeadRot(rotation);
+    }
+
+    @Override
+    public void setYBodyRot(float rotation) {
+        if (isAnImage()) return;
+        super.setYBodyRot(rotation);
+    }
+
+    @Override
+    public void setXRot(float rotation) {
+        if (isAnImage()) return;
+        super.setXRot(rotation);
+    }
+
+    public void setItemSynced(int pIndex, ItemStack pStack) {
+        this.inventory.setItem(pIndex, pStack);
+        this.updateMainHandFromInventory();
+    }
+
+    public void updateMainHandFromInventory() {
+        ItemStack toEquip = ItemStack.EMPTY;
+
+        for (int i = 0; i < 3; i++) {
+            ItemStack stack = this.inventory.getItem(i);
+            if (!stack.isEmpty()) {
+                toEquip = stack.copyWithCount(1);
+                break;
+            }
+        }
+
+        this.setItemSlot(EquipmentSlot.MAINHAND, toEquip);
+    }
+
+
+    public SimpleContainer getCatInventory(){
+        return this.inventory;
+    }
+
+    @Override
+    public int getAmbientSoundInterval() {
+        return 240;
+    }
 }
