@@ -41,6 +41,15 @@ public class ModItems {
                         }
                     });
 
+    public static final RegistryObject<Item> HAY_BED_ITEM =
+            ITEMS.register("hay_bed",
+                    () -> new BlockItem(ModBlocks.HAY_BED.get(), new Item.Properties()) {
+                        @Override
+                        public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
+                            tooltip.add(Component.translatable("block.warriorcats_events.hay_bed.tooltip").withStyle(ChatFormatting.GRAY));
+                        }
+                    });
+
     public static final RegistryObject<Item> STONE_CRAFTING_TABLE =
             ITEMS.register("stone_crafting_table",
                     () -> new BlockItem(ModBlocks.STONE_CRAFTING_TABLE.get(), new Item.Properties()) {
@@ -92,6 +101,33 @@ public static final RegistryObject<Item> FLOWER_CROWN = ITEMS.register("flower_c
             () -> new FlowerArmorItem());
     public static final RegistryObject<Item> TEETH_CLAWS = ITEMS.register("teeth_claws",
             () -> new TeethClawsItem());
+
+
+    public static final RegistryObject<Item> BLUE_CAT_SOCKS = ITEMS.register("blue_cat_socks",
+            () -> new CatSocksArmorItem());
+    public static final RegistryObject<Item> ORANGE_CAT_SOCKS = ITEMS.register("orange_cat_socks",
+            () -> new CatSocksArmorItem());
+    public static final RegistryObject<Item> PINK_CAT_SOCKS = ITEMS.register("pink_cat_socks",
+            () -> new CatSocksArmorItem());
+    public static final RegistryObject<Item> WHITE_CAT_SOCKS = ITEMS.register("white_cat_socks",
+            () -> new CatSocksArmorItem());
+    public static final RegistryObject<Item> BLACK_CAT_SOCKS = ITEMS.register("black_cat_socks",
+            () -> new CatSocksArmorItem());
+    public static final RegistryObject<Item> GREEN_CAT_SOCKS = ITEMS.register("green_cat_socks",
+            () -> new CatSocksArmorItem());
+
+    public static final RegistryObject<Item> HEAD_LEAF = ITEMS.register("head_leaf",
+            () -> new PlantHeadArmorItem());
+    public static final RegistryObject<Item> HEAD_FLOWER = ITEMS.register("head_flower",
+            () -> new PlantHeadArmorItem());
+    public static final RegistryObject<Item> HEAD_DANDELION = ITEMS.register("head_dandelion",
+            () -> new PlantHeadArmorItem());
+
+    public static final RegistryObject<Item> TAIL_VINES = ITEMS.register("tail_vines",
+            () -> new PlantTailArmorItem());
+    public static final RegistryObject<Item> DRAPED_TAIL_VINES = ITEMS.register("draped_tail_vines",
+            () -> new DrapedTailVinesArmorItem());
+
 
     public static final RegistryObject<Item> ANCIENT_STICK = ITEMS.register("ancient_stick",
         () -> new AncientStickItem(new Item.Properties().stacksTo(1).durability(550)));
@@ -196,9 +232,6 @@ public static final RegistryObject<Item> FLOWER_CROWN = ITEMS.register("flower_c
 
     public static final RegistryObject<Item> GENERATIONS_MUSIC_DISC = ITEMS.register("generations_music_disc",
             () -> new RecordItem(6, ModSounds.GENERATIONS, new Item.Properties().stacksTo(1), 2650));
-//
-//    public static final RegistryObject<Item> STARCLAN_KNOWLEDGE = ITEMS.register("starclan_knowledge",
-//            () -> new ModBookItemToolTip(new Item.Properties().stacksTo(1)));
 
     public static final RegistryObject<Item> GLOW_SHROOM = ITEMS.register("glowshroom",
             () -> new BlockItem(ModBlocks.GLOWSHROOM.get(), new Item.Properties().stacksTo(16)));

@@ -4,8 +4,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
@@ -18,12 +16,11 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.snowteb.warriorcats_events.clan.ClanData;
-import net.snowteb.warriorcats_events.clan.PlayerClanData;
-import net.snowteb.warriorcats_events.clan.PlayerClanDataProvider;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.network.ModPackets;
-import net.snowteb.warriorcats_events.network.packet.c2s.CtSPerformLeapPacket;
+import net.snowteb.warriorcats_events.network.packet.c2s.skilltree.CtSPerformLeapPacket;
 import net.snowteb.warriorcats_events.sound.ModSounds;
+import net.snowteb.warriorcats_events.zconfig.WCEClientConfig;
 import tocraft.walkers.api.PlayerShape;
 
 import javax.annotation.Nullable;
@@ -39,21 +36,15 @@ public class LeapClientState {
     private static boolean wasLookKeyDown = false;
     private static boolean lockingTarget = false;
 
-
-    private static final Component STICK_GREEN =
-            Component.literal("▋").withStyle(ChatFormatting.GREEN);
-    private static final Component STICK_GRAY =
-            Component.literal("▋").withStyle(ChatFormatting.DARK_GRAY);
-
-
     public static void tick(boolean shifting) {
 
+        if (!WCEClientConfig.CLIENT.LEAP.get()) return;
 
         if (Minecraft.getInstance().player != null) {
             if (!(PlayerShape.getCurrentShape(Minecraft.getInstance().player) instanceof Animal)) return;
         }
 
-        if (shifting && Minecraft.getInstance().player.onGround()) {
+        if (shifting && Minecraft.getInstance().player.onGround() ) {
 
             if (shiftKeyDownCounter > 142 || !Minecraft.getInstance().player.onGround()) return;
 
@@ -78,7 +69,7 @@ public class LeapClientState {
 
             shiftKeyDownCounter++;
 
-            if (shiftKeyDownCounter >= 20) {
+            if (shiftKeyDownCounter >= 20 && !attackWasDown) {
                 leapPowerCounter+=2;
                 leapPowerCounter = Math.min(leapPowerCounter, 100);
                 assert Minecraft.getInstance().player != null;
@@ -102,10 +93,10 @@ public class LeapClientState {
                         shiftKeyDownCounter = 0;
                     }
                 }
-                wasLookKeyDown = lookKeyDown;
-                attackWasDown = attackDown;
 
             }
+            wasLookKeyDown = lookKeyDown;
+            attackWasDown = attackDown;
 
         } else {
             lockedLookEntity = null;

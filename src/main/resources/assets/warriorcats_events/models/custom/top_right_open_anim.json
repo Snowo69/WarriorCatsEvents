@@ -3,6 +3,7 @@
 	"credit": "Made with Blockbench",
 	"ambientocclusion": false,
 	"textures": {
+		"1": "warriorcats_events:block/leaf_door_top",
 		"particle": "#top"
 	},
 	"elements": [
@@ -11,11 +12,11 @@
 			"to": [3, 16, 3],
 			"rotation": {"angle": 0, "axis": "y", "origin": [0, 0, -13]},
 			"faces": {
-				"north": {"uv": [3, 0, 0, 16], "texture": "#top", "tintindex": 0, "cullface": "north"},
-				"east": {"uv": [16, 0, 0, 16], "texture": "#top", "tintindex": 0},
-				"south": {"uv": [3, 0, 0, 16], "texture": "#top", "tintindex": 0, "cullface": "south"},
-				"west": {"uv": [0, 0, 16, 16], "texture": "#top", "tintindex": 0, "cullface": "west"},
-				"up": {"uv": [0, 0, 16, 3], "rotation": 90, "texture": "#top", "tintindex": 0, "cullface": "up"}
+				"north": {"uv": [3, 0, 0, 16], "texture": "#1", "cullface": "north", "tintindex": 0},
+				"east": {"uv": [3, 0, 0, 16], "texture": "#1", "tintindex": 0},
+				"south": {"uv": [3, 0, 0, 16], "texture": "#1", "cullface": "south", "tintindex": 0},
+				"west": {"uv": [0, 0, 3, 16], "texture": "#1", "cullface": "west", "tintindex": 0},
+				"up": {"uv": [0, 0, 3, 3], "rotation": 90, "texture": "#1", "cullface": "up", "tintindex": 0}
 			}
 		},
 		{

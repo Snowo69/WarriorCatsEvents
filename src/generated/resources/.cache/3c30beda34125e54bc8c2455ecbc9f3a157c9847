@@ -1,3 +1,4 @@
-// 1.20.1	2026-01-15T10:13:07.2728053	Tags for minecraft:block mod id warriorcats_events
-aef27a04bdb0c4e54e03651f7a2544f091d1aa35 data/minecraft/tags/blocks/beds.json
+// 1.20.1	2026-02-19T10:36:02.855881	Tags for minecraft:block mod id warriorcats_events
+6fa6de15e56598af076bf86f13a3d829fb9c8972 data/minecraft/tags/blocks/beds.json
 165526e547c8cc399140087650f64dcce3d6ca5f data/minecraft/tags/blocks/doors.json
+243f0326dbbd72c3c595efaaf921707a3410982c data/minecraft/tags/blocks/trapdoors.json

@@ -7,14 +7,19 @@ import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.network.simple.SimpleChannel;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
-import net.snowteb.warriorcats_events.network.packet.*;
-import net.snowteb.warriorcats_events.network.packet.c2s.*;
-import net.snowteb.warriorcats_events.network.packet.s2c.StCFishingScreenPacket;
-import net.snowteb.warriorcats_events.network.packet.s2c.StCStealthSyncPacket;
-import net.snowteb.warriorcats_events.network.packet.s2c.SyncSkillDataPacket;
-import net.snowteb.warriorcats_events.network.packet.s2c.ThirstDataSyncStCPacket;
-import net.snowteb.warriorcats_events.network.packet.zcatmodifiers.*;
-import net.snowteb.warriorcats_events.network.packet.zcatmodifiers.SyncCatDataPacket;
+import net.snowteb.warriorcats_events.network.packet.c2s.cats.*;
+import net.snowteb.warriorcats_events.network.packet.c2s.clan.*;
+import net.snowteb.warriorcats_events.network.packet.c2s.others.*;
+import net.snowteb.warriorcats_events.network.packet.c2s.skilltree.*;
+import net.snowteb.warriorcats_events.network.packet.s2c.cats.OpenAncientStickScreenPacket;
+import net.snowteb.warriorcats_events.network.packet.s2c.cats.OpenCatDataScreenPacket;
+import net.snowteb.warriorcats_events.network.packet.s2c.cats.StCKitCreateScreenPacket;
+import net.snowteb.warriorcats_events.network.packet.s2c.cats.SyncCatDataPacket;
+import net.snowteb.warriorcats_events.network.packet.s2c.clan.*;
+import net.snowteb.warriorcats_events.network.packet.s2c.others.StCFishingScreenPacket;
+import net.snowteb.warriorcats_events.network.packet.s2c.skilltree.StCStealthSyncPacket;
+import net.snowteb.warriorcats_events.network.packet.s2c.skilltree.SyncSkillDataPacket;
+import net.snowteb.warriorcats_events.network.packet.s2c.others.ThirstDataSyncStCPacket;
 
 /**
  * All about this or any packets, just ask me personally, i aint explaining all that
@@ -327,6 +332,23 @@ public class ModPackets {
                 .consumerMainThread(CtSRequestManageScreenPacket::handle)
                 .add();
 
+        net.messageBuilder(SavePlayerGeneticsPacket.class, 46, NetworkDirection.PLAY_TO_SERVER)
+                .decoder(SavePlayerGeneticsPacket::decode)
+                .encoder(SavePlayerGeneticsPacket::encode)
+                .consumerMainThread(SavePlayerGeneticsPacket::handle)
+                .add();
+
+        net.messageBuilder(OpenSpecificClanScreen.class, 47, NetworkDirection.PLAY_TO_CLIENT)
+                .decoder(OpenSpecificClanScreen::decode)
+                .encoder(OpenSpecificClanScreen::encode)
+                .consumerMainThread(OpenSpecificClanScreen::handle)
+                .add();
+
+        net.messageBuilder(OpenCreateMorphPacket.class, 48, NetworkDirection.PLAY_TO_CLIENT)
+                .decoder(OpenCreateMorphPacket::new)
+                .encoder(OpenCreateMorphPacket::toBytes)
+                .consumerMainThread(OpenCreateMorphPacket::handle)
+                .add();
 
 
 

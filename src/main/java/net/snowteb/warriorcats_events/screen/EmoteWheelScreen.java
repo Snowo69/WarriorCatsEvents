@@ -9,12 +9,8 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.client.AnimationClientData;
-import net.snowteb.warriorcats_events.client.ClientClanData;
-import net.snowteb.warriorcats_events.entity.ModEntities;
-import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
-import net.snowteb.warriorcats_events.integration.WCatTypeProvider;
 import net.snowteb.warriorcats_events.network.ModPackets;
-import net.snowteb.warriorcats_events.network.packet.c2s.CtSSwitchShape;
+import net.snowteb.warriorcats_events.network.packet.c2s.others.CtSSwitchShape;
 import net.snowteb.warriorcats_events.util.ModButton;
 
 @OnlyIn(Dist.CLIENT)

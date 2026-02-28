@@ -36,6 +36,7 @@ public class BadgerAttackGoal extends MeleeAttackGoal {
     @Override
     public void start() {
         super.start();
+        this.mob.clearRestriction();
         attackDelay = 17;
         ticksUntilNextAttack = 17;
     }
@@ -46,6 +47,7 @@ public class BadgerAttackGoal extends MeleeAttackGoal {
      */
     @Override
     public void tick() {
+        this.mob.clearRestriction();
         super.tick();
         if (shouldCountTillNextAttack) {
             this.ticksUntilNextAttack = Math.max(this.ticksUntilNextAttack - 1, 0);
@@ -96,7 +98,7 @@ public class BadgerAttackGoal extends MeleeAttackGoal {
      */
     @Override
     protected double getAttackReachSqr(LivingEntity target) {
-        return 8.0;
+        return 9.0;
     }
 
 

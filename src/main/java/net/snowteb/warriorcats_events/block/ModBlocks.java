@@ -27,6 +27,11 @@ public class ModBlocks {
                             BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.MOSS).strength(0.2F).noOcclusion()
                     ));
 
+    public static final RegistryObject<Block> HAY_BED = BLOCKS.register("hay_bed",
+            () -> new MossBedBlock(
+                    BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.MOSS).strength(0.2F).noOcclusion()
+            ));
+
     public static final RegistryObject<Block> STONE_CRAFTING_TABLE = BLOCKS.register("stone_crafting_table",
             ()  -> new StoneCraftingTable(BlockBehaviour.Properties.copy(Blocks.STONE).strength(0.2F).noOcclusion()));
 
@@ -99,7 +104,11 @@ public class ModBlocks {
 
 
     public static final RegistryObject<Block> LEAF_DOOR = registerBlock("leaf_door",
-            () -> new ModDoorBlock(BlockBehaviour.Properties.copy(Blocks.OAK_DOOR).sound(SoundType.CHERRY_LEAVES).noOcclusion(),
+            () -> new LeafDoorBlock(BlockBehaviour.Properties.copy(Blocks.OAK_DOOR).sound(SoundType.CHERRY_LEAVES).noOcclusion(),
+                    ModBlockSetTypes.LEAF));
+
+    public static final RegistryObject<Block> LEAF_TRAPDOOR = registerBlock("leaf_trapdoor",
+            () -> new LeafTrapdoorBlock(BlockBehaviour.Properties.copy(Blocks.OAK_DOOR).sound(SoundType.CHERRY_LEAVES).noOcclusion(),
                     ModBlockSetTypes.LEAF));
 
     public static final RegistryObject<Block> GLOWSHROOM = BLOCKS.register("glowshroom", GlowshroomBlock::new);
@@ -107,6 +116,10 @@ public class ModBlocks {
 
     public static final RegistryObject<Block> STONECLEFT = registerBlock("stonecleft",
             () -> new StoneCleftBlock(BlockBehaviour.Properties.copy(Blocks.STONE).noOcclusion().requiresCorrectToolForDrops()));
+
+    public static final RegistryObject<Block> FRESHKILL_PILE = registerBlock("fresh_kill_pile",
+            () -> new FreshkillPileBlock());
+
 
 //    public static final RegistryObject<Block> DARK_LOG = registerBlock("dark_log",
 //            () -> new ModFlammableRotatedPillarBlock(BlockBehaviour.Properties.copy(Blocks.DARK_OAK_LOG).strength(3f).noLootTable()));

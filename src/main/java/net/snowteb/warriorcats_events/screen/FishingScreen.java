@@ -9,11 +9,10 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
 import net.snowteb.warriorcats_events.zconfig.WCEClientConfig;
-import net.snowteb.warriorcats_events.zconfig.WCEConfig;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.network.ModPackets;
-import net.snowteb.warriorcats_events.network.packet.c2s.CtSFishFailed;
-import net.snowteb.warriorcats_events.network.packet.c2s.CtSFishSuccesful;
+import net.snowteb.warriorcats_events.network.packet.c2s.others.CtSFishFailed;
+import net.snowteb.warriorcats_events.network.packet.c2s.others.CtSFishSuccesful;
 import org.lwjgl.glfw.GLFW;
 
 public class FishingScreen extends Screen {
@@ -67,7 +66,7 @@ public class FishingScreen extends Screen {
     protected void init() {
         this.imageWidth = 176;
         this.imageHeight = 48;
-        this.randomTiming = 20 * 15 + RandomSource.create().nextInt(10) * 20;
+        this.randomTiming = 20 * 12 + RandomSource.create().nextInt(8) * 20;
         this.randomYOffset = -(RandomSource.create().nextInt(16) * 2);
         this.randomFish = RandomSource.create().nextInt(8) + 1;
 

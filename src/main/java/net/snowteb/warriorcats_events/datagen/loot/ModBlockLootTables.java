@@ -35,6 +35,8 @@ public class ModBlockLootTables extends BlockLootSubProvider {
 
         this.dropSelf(ModBlocks.STONE_CRAFTING_TABLE.get());
 
+        this.dropSelf(ModBlocks.LEAF_TRAPDOOR.get());
+
         //DOCK
         {this.add(ModBlocks.DOCK.get(), block -> this.applyExplosionDecay(
                 block, LootTable.lootTable().withPool(LootPool.lootPool().when(
@@ -174,8 +176,28 @@ public class ModBlockLootTables extends BlockLootSubProvider {
 
         );
 
+        this.add(ModBlocks.FRESHKILL_PILE.get(),
+                block -> createSingleItemTableWithSilkTouch(
+                        block,
+                        Items.COBBLESTONE,
+                        UniformGenerator.between(2.0F, 4.0F)
+                )
+
+        );
+
+        this.add(ModBlocks.HAY_BED.get(),
+                block -> createSingleItemTableWithSilkTouch(
+                        block,
+                        Items.WHEAT,
+                        UniformGenerator.between(5.0F, 11.0F)
+                )
+
+        );
+
         this.add(ModBlocks.LEAF_DOOR.get(),
                 block -> createDoorTable(ModBlocks.LEAF_DOOR.get()));
+
+
 
 
     }

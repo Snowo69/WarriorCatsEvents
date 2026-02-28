@@ -26,7 +26,7 @@ public class ThirstHUD {
 
 
         int x = screenWidth / 2 + 7;
-        int y = screenHeight - 53;
+        int y = screenHeight - 51;
 
         /**
          * If the player has an air supply lower than the max, then move the HUD 9 pixels above.
@@ -37,8 +37,6 @@ public class ThirstHUD {
 
         int thirst = ClientThirstData.getPlayerThirst();
         int iconCount = 10;
-
-
 
         boolean lowThirst = thirst <= 5;
         boolean extraLowThirst = thirst <= 3;

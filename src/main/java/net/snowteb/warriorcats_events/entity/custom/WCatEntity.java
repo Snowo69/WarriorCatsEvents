@@ -58,6 +58,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.AABB;
@@ -67,6 +68,8 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.network.NetworkHooks;
 import net.minecraftforge.network.PacketDistributor;
 import net.snowteb.warriorcats_events.block.ModBlocks;
+import net.snowteb.warriorcats_events.block.custom.MossBedBlock;
+import net.snowteb.warriorcats_events.block.entity.MossBedBlockEntity;
 import net.snowteb.warriorcats_events.clan.ClanData;
 import net.snowteb.warriorcats_events.clan.PlayerClanData;
 import net.snowteb.warriorcats_events.clan.PlayerClanDataProvider;
@@ -76,10 +79,11 @@ import net.snowteb.warriorcats_events.effect.ModEffects;
 import net.snowteb.warriorcats_events.entity.ModEntities;
 import net.snowteb.warriorcats_events.item.ModItems;
 import net.snowteb.warriorcats_events.network.ModPackets;
-import net.snowteb.warriorcats_events.network.packet.OpenCatDataScreenPacket;
-import net.snowteb.warriorcats_events.network.packet.S2CSyncClanDataPacket;
+import net.snowteb.warriorcats_events.network.packet.s2c.cats.OpenCatDataScreenPacket;
+import net.snowteb.warriorcats_events.network.packet.s2c.clan.S2CSyncClanDataPacket;
 import net.snowteb.warriorcats_events.screen.WCatMenu;
 import net.snowteb.warriorcats_events.sound.ModSounds;
+import net.snowteb.warriorcats_events.util.GeneticsForVariant;
 import net.snowteb.warriorcats_events.util.ModTags;
 import net.snowteb.warriorcats_events.zconfig.WCEServerConfig;
 import org.jetbrains.annotations.Nullable;
@@ -138,7 +142,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
     public CatMode mode = CatMode.WANDER;
     public CatMode lastMode;
     public BlockPos wanderCenter = null;
-    int maxVariants = 30;
+    int maxVariants = 53;
     private boolean wasBaby = this.isBaby();
     int catSniffTickCooldown = 0;
 
@@ -306,21 +310,87 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
     private static final EntityDataAccessor<Optional<Component>> MOTHER =
             SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.OPTIONAL_COMPONENT);
 
-//    private static final EntityDataAccessor<Boolean> IS_AN_IMAGE =
-//            SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.BOOLEAN);
-
     public static final EntityDataAccessor<Optional<UUID>> CLAN_UUID =
             SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.OPTIONAL_UUID);
 
-    private boolean isImage;
 
-//    public void setAnImage(boolean isAnImage) {
-//        this.entityData.set(IS_AN_IMAGE, isAnImage);
-//    }
-//
-//    public boolean isAnImage() {
-//        return this.entityData.get(IS_AN_IMAGE);
-//    }
+    // GENETICS
+
+    private static final EntityDataAccessor<String> CHEST_FUR =
+            SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.STRING);
+    private static final EntityDataAccessor<String> BELLY_FUR =
+            SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.STRING);
+    private static final EntityDataAccessor<String> LEGS_FUR =
+            SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.STRING);
+    private static final EntityDataAccessor<String> HEAD_FUR =
+            SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.STRING);
+    private static final EntityDataAccessor<String> CHEEK_FUR =
+            SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.STRING);
+    private static final EntityDataAccessor<String> BACK_FUR =
+            SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.STRING);
+    private static final EntityDataAccessor<String> BOBTAIL =
+            SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.STRING);
+    private static final EntityDataAccessor<String> TAIL_FUR =
+            SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.STRING);
+
+
+    private static final EntityDataAccessor<String> BASE =
+            SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.STRING);
+    private static final EntityDataAccessor<String> ORANGE_BASE =
+            SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.STRING);
+    private static final EntityDataAccessor<String> WHITE_RATIO =
+            SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.STRING);
+    private static final EntityDataAccessor<String> ALBINO =
+            SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.STRING);
+    private static final EntityDataAccessor<String> DILUTE =
+            SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.STRING);
+    private static final EntityDataAccessor<String> AGOUTI =
+            SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.STRING);
+    private static final EntityDataAccessor<String> TABBY_STRIPES =
+            SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.STRING);
+    private static final EntityDataAccessor<String> EYES_ANOMALY =
+            SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.STRING);
+
+    public static final EntityDataAccessor<String> EYE_COLOR_LEFT =
+            SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.STRING);
+    public static final EntityDataAccessor<String> EYE_COLOR_RIGHT =
+            SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.STRING);
+    public static final EntityDataAccessor<Integer> RUFOUSING_VARIANT =
+            SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.INT);
+    public static final EntityDataAccessor<Integer> BLUE_RUFOUSING_VARIANT =
+            SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.INT);
+    public static final EntityDataAccessor<Integer> ORANGE_BASE_VARIANT =
+            SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.INT);
+    public static final EntityDataAccessor<Integer> WHITE_RATIO_VARIANT =
+            SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.INT);
+    public static final EntityDataAccessor<Integer> ALBINO_VARIANT =
+            SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.INT);
+    //    public static final EntityDataAccessor<Integer> DILUTE_VARIANT =
+//            SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.INT);
+    public static final EntityDataAccessor<Integer> TABBY_STRIPES_VARIANT =
+            SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.INT);
+    public static final EntityDataAccessor<Integer> EYE_COLOR_VARIANT_LEFT =
+            SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.INT);
+    public static final EntityDataAccessor<Integer> EYE_COLOR_VARIANT_RIGHT =
+            SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.INT);
+    public static final EntityDataAccessor<Integer> NOISE =
+            SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.INT);
+
+    public static final EntityDataAccessor<Float> SIZE =
+            SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.FLOAT);
+
+
+    private static final EntityDataAccessor<Boolean> GENETICAL_SKIN =
+            SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.BOOLEAN);
+
+    private WCGenetics storedFatherGenetics;
+    public String textureKey;
+    private final String[] textureLayersPaths = new String[12];
+
+    // GENETICS
+
+
+    private boolean isImage;
 
     public void setAnImage(boolean isAnImage) {
         this.isImage = isAnImage;
@@ -2284,16 +2354,12 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
         private Predicate<BlockState> defineTargetPredicate() {
 
-            Block targetBlock = switch (cat.getRank()) {
-                case KIT -> ModBlocks.MOSS_BED.get();
-                case APPRENTICE -> ModBlocks.MOSS_BED.get();
-                case WARRIOR -> ModBlocks.MOSS_BED.get();
-                case MEDICINE -> ModBlocks.STONECLEFT.get();
-                default -> ModBlocks.MOSS_BED.get();
+            return switch (cat.getRank()) {
+                case MEDICINE -> state -> state.is(ModBlocks.STONECLEFT.get());
+                default -> state -> state.getBlock() instanceof MossBedBlock;
             };
-
-            return state -> state.is(targetBlock);
         }
+
 
         /**
          * In certain radious, make a list of available blocks.
@@ -2807,7 +2873,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                 return false;
             }
 
-            return cat.mode == CatMode.WANDER && cat.distanceToSqr(homeTarget.getX(), homeTarget.getY(), homeTarget.getZ()) > 5 * 5;
+            return cat.mode == CatMode.WANDER && cat.distanceToSqr(homeTarget.getX(), homeTarget.getY(), homeTarget.getZ()) > 2 * 2;
         }
 
         @Override
@@ -2835,7 +2901,13 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                     homeTarget.getZ()
             );
 
-            if (dist < 4.0) {
+            if (dist < 2.0) {
+                cat.getNavigation().moveTo(
+                        homeTarget.getX(),
+                        homeTarget.getY(),
+                        homeTarget.getZ(),
+                        speed
+                );
                 cat.returnHomeFlag = false;
                 return;
             }
@@ -3375,6 +3447,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         private int cooldown = 0;
         private int keepTicks = 0;
         private static final int BASE_COOLDOWN = 45;
+        private float growingMinimumDistance = 0;
 
         public WCatPickupItemGoal(WCatEntity cat) {
             this.cat = cat;
@@ -3422,6 +3495,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
         @Override
         public void start() {
+            this.growingMinimumDistance = 0;
             if (target != null) {
                 cat.getNavigation().moveTo(target, 1.1D);
             }
@@ -3470,7 +3544,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
              * Then remove 1 from the stack on the ground.
              */
             ItemStack groundItems = target.getItem();
-            if (cat.distanceTo(target) < 1.42D) {
+            if (cat.distanceTo(target) < 1.42D + this.growingMinimumDistance) {
                 if (cat.tryInsert(groundItems)) {
                     groundItems.shrink(1);
 
@@ -3507,6 +3581,8 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                             target.blockPosition().offset(-2, 1, 2),
                             target.blockPosition().offset(-2, 1, -2)
                     );
+
+                    this.growingMinimumDistance += 0.05F;
 
                     for (BlockPos pos : positions) {
                         if (cat.getNavigation().moveTo(pos.getX(), pos.getY(), pos.getZ(), 1.1D)) {
@@ -3696,6 +3772,21 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                 if (!this.getClanUUID().equals(ClanData.EMPTY_UUID)) {
                     ClanData data = ClanData.get(sLevel);
                     data.removeClanCatFromAnyClan(this);
+                }
+
+                BlockPos homepos = this.getHomePosition();
+                if (homepos != null) {
+                    if (sLevel.getBlockState(homepos).getBlock() instanceof MossBedBlock) {
+                        BlockEntity bEntity = sLevel.getBlockEntity(homepos);
+                        if (bEntity instanceof MossBedBlockEntity mbEntity) {
+                            mbEntity.resetAssigned();
+                            mbEntity.setChanged();
+                            if (!sLevel.isClientSide()) {
+                                sLevel.sendBlockUpdated(homepos, sLevel.getBlockState(homepos),
+                                        sLevel.getBlockState(homepos), 3);
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -4019,7 +4110,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                         this.setClan(Component.literal(clanName));
                         this.setClanUUID(cap.getCurrentClanUUID());
 
-                        if (this.level() instanceof  ServerLevel sLevel) {
+                        if (this.level() instanceof ServerLevel sLevel) {
                             ClanData data = ClanData.get(sLevel);
                             ClanData.Clan clan = data.getClan(cap.getCurrentClanUUID());
 
@@ -4036,7 +4127,6 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
 
                     });
-
 
 
                     mode = CatMode.FOLLOW;
@@ -4248,6 +4338,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                     return InteractionResult.PASS;
                 }
 
+                this.updateMatesName();
             }
             return InteractionResult.sidedSuccess(this.level().isClientSide);
         }
@@ -4261,14 +4352,6 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                     PlayerClanData.Age playerMorphAge = sPlayer.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
                             .map(PlayerClanData::getMorphAge).orElse(PlayerClanData.Age.ADULT);
 
-//                    if (sPlayerGender == this.getGender()) {
-//                        pPlayer.sendSystemMessage(Component.literal(sPlayerMorphName + " is the same gender as "
-//                                + (this.hasCustomName() ? this.getCustomName().getString() : "this cat"))
-//                                .withStyle(ChatFormatting.YELLOW));
-//                        return InteractionResult.PASS;
-//                    } else {
-//
-//                    }
                     if (playerMorphAge != PlayerClanData.Age.ADULT) {
                         pPlayer.sendSystemMessage(Component.literal(sPlayerMorphName + " is not old enough for this.")
                                 .withStyle(ChatFormatting.RED));
@@ -4327,10 +4410,15 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
                     pPlayer.sendSystemMessage(message);
 
+                    WCGenetics mateGenetics = this.getGenetics();
+                    if (!this.isOnGeneticalSkin()) mateGenetics = GeneticsForVariant.get(this.getVariant());
+
                     pPlayer.getItemInHand(InteractionHand.MAIN_HAND).shrink(1);
+                    WCGenetics finalMateGenetics = mateGenetics;
                     sPlayer.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {
                         cap.setMateUUID(this.getUUID());
                         cap.setMateName(this.hasCustomName() ? this.getCustomName() : Component.literal("Undefined"));
+                        cap.setMateGenetics(finalMateGenetics);
                         ModPackets.sendToPlayer(new S2CSyncClanDataPacket(cap), sPlayer);
                     });
                     this.level().playSound(null, this.blockPosition(), SoundEvents.CAT_PURREOW, SoundSource.NEUTRAL, 0.6F, 1.0F);
@@ -4405,6 +4493,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                         .append(this.hasCustomName() ? this.getCustomName().copy() : Component.literal("null"));
                 this.registerClanLog(message);
                 this.updateClanCatData();
+                this.updateMatesName();
 
 
             }
@@ -4468,6 +4557,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                         .append(this.hasCustomName() ? this.getCustomName().copy() : Component.literal("null"));
                 this.registerClanLog(message);
                 this.updateClanCatData();
+                this.updateMatesName();
 
 
             }
@@ -4770,6 +4860,8 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         if (this.getGender() == 1 && partner.getGender() == 0) {
             female = this;
             male = partner;
+
+
         } else if (this.getGender() == 0 && partner.getGender() == 1) {
             female = partner;
             male = this;
@@ -4777,6 +4869,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
         if (female != null) {
             female.setExpectingKits(true);
+            female.setStoredFatherGenetics(male);
 
             Entity owner = female.getOwner();
             if (owner instanceof ServerPlayer serverPlayer) {
@@ -5119,6 +5212,13 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
         tag.putUUID("ClanUUID", this.getClanUUID());
 
+        this.saveGeneticsNBT(tag);
+        if (this.storedFatherGenetics != null) {
+            CompoundTag fatherTag = new CompoundTag();
+            saveFatherGeneticsToNBT(fatherTag, this.storedFatherGenetics);
+            tag.put("StoredFatherGenetics", fatherTag);
+        }
+
     }
 
     @Override
@@ -5281,6 +5381,36 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         }
 
 
+        this.loadGeneticsNBT(tag);
+
+        if (tag.contains("StoredFatherGenetics")) {
+
+            CompoundTag fatherTag = tag.getCompound("StoredFatherGenetics");
+
+            this.storedFatherGenetics = new WCGenetics(
+                    fatherTag.getString("Bobtail"),
+                    fatherTag.getString("ChestFur"),
+                    fatherTag.getString("BellyFur"),
+                    fatherTag.getString("LegsFur"),
+                    fatherTag.getString("HeadFur"),
+                    fatherTag.getString("CheekFur"),
+                    fatherTag.getString("TailFur"),
+                    fatherTag.getString("BackFur"),
+
+                    fatherTag.getString("Base"),
+                    fatherTag.getString("Orange"),
+                    fatherTag.getString("WhiteRatio"),
+                    fatherTag.getString("Albino"),
+                    fatherTag.getString("Dilute"),
+                    fatherTag.getString("Agouti"),
+                    fatherTag.getString("TabbyStripes"),
+                    fatherTag.getString("EyesAnomaly"),
+                    fatherTag.getInt("Rufousing"),
+                    fatherTag.getInt("BlueRufousing"),
+                    fatherTag.getInt("Noise")
+            );
+        }
+
     }
 
     /**
@@ -5295,6 +5425,8 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                 (this, "attackController", 0, this::attackPredicate));
         controllers.add(new AnimationController<>
                 (this, "playerController", 0, this::playerPredicate));
+//        controllers.add(new AnimationController<>
+//                (this, "blinkController", 0, this::blinkPredicate));
 
     }
 
@@ -5376,7 +5508,14 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         }
 
         if (!this.isAttacking()) {
-            return PlayState.STOP;
+            if (this.swinging && this.attackAnimationTimeout <= 0) {
+                controller.setAnimation(RawAnimation.begin()
+                        .then("animation.wcat.swing", Animation.LoopType.LOOP));
+            } else {
+                controller.stop();
+                return PlayState.STOP;
+            }
+            this.swinging = false;
         }
         return PlayState.CONTINUE;
     }
@@ -5494,6 +5633,23 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         return PlayState.CONTINUE;
 
     }
+
+//    private <T extends GeoAnimatable> PlayState blinkPredicate(AnimationState<T> state) {
+//
+//        var controller = state.getController();
+//
+//        if (this.isAnImage()) return PlayState.STOP;
+//
+//        if (this.random.nextFloat() < 0.025f) {
+//
+//            controller.setAnimation(RawAnimation.begin()
+//                            .then("animation.wcat.blink", Animation.LoopType.PLAY_ONCE));
+//
+//            return PlayState.CONTINUE;
+//        }
+//
+//        return PlayState.CONTINUE;
+//    }
 
 
     @Override
@@ -5661,6 +5817,21 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
             WCatEntity kit = ModEntities.WCAT.get().create(server);
 
             if (kit != null) {
+
+                if (this.storedFatherGenetics != null) {
+
+                    WCGenetics motherGenetics = this.getGenetics();
+                    WCGenetics fatherGenetics = this.storedFatherGenetics;
+
+                    kit.setOnGeneticalSkin(this.isOnGeneticalSkin());
+
+                    kit.inheritGeneticsFromParents(motherGenetics, fatherGenetics);
+
+                } else {
+                    kit.initializeGenetics();
+                }
+
+
                 kit.setPos(this.getX(), this.getY(), this.getZ());
                 int minutes = WCEServerConfig.SERVER.KIT_GROWTH_MINUTES.get();
                 int growingTicks = minutes * 20 * 60;
@@ -5757,6 +5928,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
             }
         }
 
+        this.storedFatherGenetics = null;
     }
 
     public @Nullable LivingEntity getMateEntity() {
@@ -5864,11 +6036,641 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         this.entityData.define(MOTHER, Optional.empty());
         this.entityData.define(FATHER, Optional.empty());
 
-//        this.entityData.define(IS_AN_IMAGE, false);
         this.entityData.define(CLAN_UUID, Optional.empty());
+        this.entityData.define(SIZE, 0.0f);
 
+
+        // GENETICS
+
+        this.entityData.define(CHEST_FUR, "s-s");
+        this.entityData.define(BELLY_FUR, "s-s");
+        this.entityData.define(LEGS_FUR, "s-s");
+        this.entityData.define(HEAD_FUR, "s-s");
+        this.entityData.define(CHEEK_FUR, "s-s");
+        this.entityData.define(BACK_FUR, "s-s");
+        this.entityData.define(BOBTAIL, "B-B");
+        this.entityData.define(TAIL_FUR, "s-s");
+
+        this.entityData.define(BASE, "B-b");
+        this.entityData.define(ORANGE_BASE, "o-o");
+        this.entityData.define(WHITE_RATIO, "w-w");
+        this.entityData.define(ALBINO, "C-cs");
+        this.entityData.define(DILUTE, "d-d");
+        this.entityData.define(AGOUTI, "a-a");
+        this.entityData.define(TABBY_STRIPES, "mc-mc");
+        this.entityData.define(EYE_COLOR_LEFT, "green");
+        this.entityData.define(EYE_COLOR_RIGHT, "green");
+        this.entityData.define(EYES_ANOMALY, "H-h");
+
+        this.entityData.define(RUFOUSING_VARIANT, 0);
+        this.entityData.define(BLUE_RUFOUSING_VARIANT, 0);
+        this.entityData.define(ORANGE_BASE_VARIANT, 0);
+        this.entityData.define(WHITE_RATIO_VARIANT, 0);
+        this.entityData.define(ALBINO_VARIANT, 0);
+        this.entityData.define(TABBY_STRIPES_VARIANT, 0);
+        this.entityData.define(EYE_COLOR_VARIANT_LEFT, 0);
+        this.entityData.define(EYE_COLOR_VARIANT_RIGHT, 0);
+        this.entityData.define(NOISE, 0);
+
+        this.entityData.define(GENETICAL_SKIN, false);
+
+        // GENETICS
 
     }
+
+
+    public boolean isOnGeneticalSkin() {
+        return this.entityData.get(GENETICAL_SKIN);
+    }
+
+    public void setOnGeneticalSkin(boolean value) {
+        this.entityData.set(GENETICAL_SKIN, value);
+    }
+
+
+    public WCGenetics getGenetics() {
+        WCGenetics genetics = new WCGenetics();
+
+        genetics.chestFur = (this.entityData.get(CHEST_FUR));
+        genetics.bellyFur = (this.entityData.get(BELLY_FUR));
+        genetics.legsFur = (this.entityData.get(LEGS_FUR));
+        genetics.headFur = (this.entityData.get(HEAD_FUR));
+        genetics.cheekFur = (this.entityData.get(CHEEK_FUR));
+        genetics.backFur = (this.entityData.get(BACK_FUR));
+        genetics.bobtail = (this.entityData.get(BOBTAIL));
+        genetics.tailFur = (this.entityData.get(TAIL_FUR));
+
+        genetics.base = (this.entityData.get(BASE));
+        genetics.orangeBase = (this.entityData.get(ORANGE_BASE));
+        genetics.whiteRatio = (this.entityData.get(WHITE_RATIO));
+        genetics.albino = (this.entityData.get(ALBINO));
+        genetics.dilute = (this.entityData.get(DILUTE));
+        genetics.agouti = (this.entityData.get(AGOUTI));
+        genetics.tabbyStripes = (this.entityData.get(TABBY_STRIPES));
+        genetics.eyesAnomaly = (this.entityData.get(EYES_ANOMALY));
+        genetics.rufousing = (this.entityData.get(RUFOUSING_VARIANT));
+        genetics.blueRufousing = (this.entityData.get(BLUE_RUFOUSING_VARIANT));
+        genetics.noise = (this.entityData.get(NOISE));
+
+
+        return genetics;
+    }
+
+    public void setGenetics(WCGenetics genetics) {
+        this.entityData.set(CHEST_FUR, genetics.chestFur);
+        this.entityData.set(BELLY_FUR, genetics.bellyFur);
+        this.entityData.set(LEGS_FUR, genetics.legsFur);
+        this.entityData.set(HEAD_FUR, genetics.headFur);
+        this.entityData.set(CHEEK_FUR, genetics.cheekFur);
+        this.entityData.set(BACK_FUR, genetics.backFur);
+        this.entityData.set(BOBTAIL, genetics.bobtail);
+        this.entityData.set(TAIL_FUR, genetics.tailFur);
+
+        this.entityData.set(BASE, genetics.base);
+        this.entityData.set(ORANGE_BASE, genetics.orangeBase);
+        this.entityData.set(WHITE_RATIO, genetics.whiteRatio);
+        this.entityData.set(ALBINO, genetics.albino);
+        this.entityData.set(DILUTE, genetics.dilute);
+        this.entityData.set(AGOUTI, genetics.agouti);
+        this.entityData.set(TABBY_STRIPES, genetics.tabbyStripes);
+        this.entityData.set(EYES_ANOMALY, genetics.eyesAnomaly);
+
+        this.entityData.set(RUFOUSING_VARIANT, genetics.rufousing);
+        this.entityData.set(BLUE_RUFOUSING_VARIANT, genetics.blueRufousing);
+        this.entityData.set(NOISE, genetics.noise);
+    }
+
+    public void initializeGenetics() {
+        this.entityData.set(CHEST_FUR, WCGenetics.FurGene.generateAlelo(random) + "-" + WCGenetics.FurGene.generateAlelo(random));
+        this.entityData.set(BELLY_FUR, WCGenetics.FurGene.generateAlelo(random) + "-" + WCGenetics.FurGene.generateAlelo(random));
+        this.entityData.set(LEGS_FUR, WCGenetics.FurGene.generateAlelo(random) + "-" + WCGenetics.FurGene.generateAlelo(random));
+        this.entityData.set(HEAD_FUR, WCGenetics.FurGene.generateAlelo(random) + "-" + WCGenetics.FurGene.generateAlelo(random));
+        this.entityData.set(CHEEK_FUR, WCGenetics.FurGene.generateAlelo(random) + "-" + WCGenetics.FurGene.generateAlelo(random));
+        this.entityData.set(BACK_FUR, WCGenetics.FurGene.generateAlelo(random) + "-" + WCGenetics.FurGene.generateAlelo(random));
+        this.entityData.set(BOBTAIL, WCGenetics.FurGene.generateAlelo(random) + "-" + WCGenetics.FurGene.generateAlelo(random));
+        this.entityData.set(TAIL_FUR, WCGenetics.FurGene.generateAlelo(random) + "-" + WCGenetics.FurGene.generateAlelo(random));
+
+        this.setOnGeneticalSkin(true);
+
+        this.entityData.set(BASE, WCGenetics.Base.generateAlelo(this.random) + "-" + WCGenetics.Base.generateAlelo(this.random));
+
+        this.entityData.set(ORANGE_BASE, WCGenetics.OrangeBase.generateAlelo(this.random) + "-" + WCGenetics.OrangeBase.generateAlelo(this.random));
+        this.entityData.set(ORANGE_BASE_VARIANT, this.random.nextInt(7));
+
+        this.entityData.set(WHITE_RATIO, WCGenetics.WhiteRatio.generateAlelo(this.random) + "-" + WCGenetics.WhiteRatio.generateAlelo(this.random));
+        this.entityData.set(WHITE_RATIO_VARIANT, this.random.nextInt(9));
+
+        this.entityData.set(ALBINO, WCGenetics.Albino.generateAlelo(this.random) + "-" + WCGenetics.Albino.generateAlelo(this.random));
+        this.entityData.set(ALBINO_VARIANT, this.random.nextInt(3));
+
+        this.entityData.set(DILUTE, WCGenetics.Dilute.generateAlelo(this.random) + "-" + WCGenetics.Dilute.generateAlelo(this.random));
+
+        this.entityData.set(AGOUTI, WCGenetics.Agouti.generateAlelo(this.random) + "-" + WCGenetics.Agouti.generateAlelo(this.random));
+
+        this.entityData.set(TABBY_STRIPES, WCGenetics.TabbyStripeTypes.generateAlelo(this.random) + "-" + WCGenetics.TabbyStripeTypes.generateAlelo(this.random));
+        this.entityData.set(TABBY_STRIPES_VARIANT, this.random.nextInt(5));
+
+        this.entityData.set(EYES_ANOMALY, WCGenetics.EyesAnomaly.generateAlelo(this.random) + "-" + WCGenetics.EyesAnomaly.generateAlelo(this.random));
+
+        String leftEyeColor = WCGenetics.EyeColor.generateAlelo(this.random, this.entityData.get(WHITE_RATIO), this.entityData.get(ALBINO));
+        int eyeLeftVariant = this.random.nextInt(11);
+
+        this.entityData.set(EYE_COLOR_LEFT, leftEyeColor);
+        this.entityData.set(EYE_COLOR_VARIANT_LEFT, eyeLeftVariant);
+
+        if (WCGenetics.EyesAnomaly.isHeteroChromic(this.entityData.get(EYES_ANOMALY))) {
+            this.entityData.set(EYE_COLOR_RIGHT, WCGenetics.EyeColor.generateAlelo(this.random, this.entityData.get(WHITE_RATIO), this.entityData.get(ALBINO)));
+            this.entityData.set(EYE_COLOR_VARIANT_RIGHT, this.random.nextInt(11));
+        } else {
+            this.entityData.set(EYE_COLOR_RIGHT, leftEyeColor);
+            this.entityData.set(EYE_COLOR_VARIANT_RIGHT, eyeLeftVariant);
+        }
+
+        this.entityData.set(NOISE, this.random.nextInt(3));
+
+        if (WCGenetics.Base.isBlack(this.entityData.get(BASE))) {
+            this.entityData.set(RUFOUSING_VARIANT, this.random.nextInt(3));
+        } else {
+            this.entityData.set(RUFOUSING_VARIANT, this.random.nextInt(7));
+        }
+
+        if (WCGenetics.Dilute.isDilute(this.entityData.get(DILUTE))) {
+            this.entityData.set(BLUE_RUFOUSING_VARIANT, this.random.nextInt(3));
+        } else {
+            this.entityData.set(BLUE_RUFOUSING_VARIANT, this.random.nextInt(7));
+        }
+
+    }
+
+    public void saveGeneticsNBT(CompoundTag tag) {
+
+        CompoundTag geneticsTag = new CompoundTag();
+
+        geneticsTag.putBoolean("Genetical", this.isOnGeneticalSkin());
+
+        geneticsTag.putString("ChestFur", this.entityData.get(CHEST_FUR));
+        geneticsTag.putString("BellyFur", this.entityData.get(BELLY_FUR));
+        geneticsTag.putString("LegsFur", this.entityData.get(LEGS_FUR));
+        geneticsTag.putString("HeadFur", this.entityData.get(HEAD_FUR));
+        geneticsTag.putString("CheekFur", this.entityData.get(CHEEK_FUR));
+        geneticsTag.putString("BackFur", this.entityData.get(BACK_FUR));
+        geneticsTag.putString("TailFur", this.entityData.get(TAIL_FUR));
+        geneticsTag.putString("Bobtail", this.entityData.get(BOBTAIL));
+
+        geneticsTag.putString("Base", this.entityData.get(BASE));
+        geneticsTag.putString("OrangeBase", this.entityData.get(ORANGE_BASE));
+        geneticsTag.putString("WhiteRatio", this.entityData.get(WHITE_RATIO));
+        geneticsTag.putString("Albino", this.entityData.get(ALBINO));
+        geneticsTag.putString("Dilute", this.entityData.get(DILUTE));
+        geneticsTag.putString("Agouti", this.entityData.get(AGOUTI));
+        geneticsTag.putString("TabbyStripes", this.entityData.get(TABBY_STRIPES));
+        geneticsTag.putString("EyeColorLeft", this.entityData.get(EYE_COLOR_LEFT));
+        geneticsTag.putString("EyeColorRight", this.entityData.get(EYE_COLOR_RIGHT));
+        geneticsTag.putString("EyesAnomaly", this.entityData.get(EYES_ANOMALY));
+
+        geneticsTag.putInt("Rufousing", this.entityData.get(RUFOUSING_VARIANT));
+        geneticsTag.putInt("BlueRufousing", this.entityData.get(BLUE_RUFOUSING_VARIANT));
+        geneticsTag.putInt("OrangeBaseVariant", this.entityData.get(ORANGE_BASE_VARIANT));
+        geneticsTag.putInt("WhiteRatioVariant", this.entityData.get(WHITE_RATIO_VARIANT));
+        geneticsTag.putInt("AlbinoVariant", this.entityData.get(ALBINO_VARIANT));
+//        geneticsTag.putInt("DiluteVariant", this.entityData.get(DILUTE_VARIANT));
+        geneticsTag.putInt("TabbyStripesVariant", this.entityData.get(TABBY_STRIPES_VARIANT));
+        geneticsTag.putInt("EyeColorVariantLeft", this.entityData.get(EYE_COLOR_VARIANT_LEFT));
+        geneticsTag.putInt("EyeColorVariantRight", this.entityData.get(EYE_COLOR_VARIANT_RIGHT));
+        geneticsTag.putInt("Noise", this.entityData.get(NOISE));
+        geneticsTag.putFloat("Size", this.entityData.get(SIZE));
+
+        tag.put("Genetics", geneticsTag);
+    }
+
+    public void loadGeneticsNBT(CompoundTag tag) {
+
+        if (tag.contains("Genetics")) {
+            CompoundTag geneticsTag = tag.getCompound("Genetics");
+
+            this.setOnGeneticalSkin(geneticsTag.getBoolean("Genetical"));
+
+            WCGenetics genetics = new WCGenetics(
+                    geneticsTag.getString("Bobtail"),
+                    geneticsTag.getString("ChestFur"),
+                    geneticsTag.getString("BellyFur"),
+                    geneticsTag.getString("LegsFur"),
+                    geneticsTag.getString("HeadFur"),
+                    geneticsTag.getString("CheekFur"),
+                    geneticsTag.getString("TailFur"),
+                    geneticsTag.getString("BackFur"),
+
+                    geneticsTag.getString("Base"),
+                    geneticsTag.getString("OrangeBase"),
+                    geneticsTag.getString("WhiteRatio"),
+                    geneticsTag.getString("Albino"),
+                    geneticsTag.getString("Dilute"),
+                    geneticsTag.getString("Agouti"),
+                    geneticsTag.getString("TabbyStripes"),
+                    geneticsTag.getString("EyesAnomaly"),
+
+                    geneticsTag.getInt("Rufousing"),
+                    geneticsTag.getInt("BlueRufousing"),
+                    geneticsTag.getInt("Noise")
+            );
+
+            this.setGenetics(genetics);
+
+
+            this.entityData.set(EYE_COLOR_LEFT, geneticsTag.getString("EyeColorLeft"));
+            this.entityData.set(EYE_COLOR_RIGHT, geneticsTag.getString("EyeColorRight"));
+
+            this.entityData.set(ORANGE_BASE_VARIANT, geneticsTag.getInt("OrangeBaseVariant"));
+            this.entityData.set(WHITE_RATIO_VARIANT, geneticsTag.getInt("WhiteRatioVariant"));
+            this.entityData.set(ALBINO_VARIANT, geneticsTag.getInt("AlbinoVariant"));
+            this.entityData.set(TABBY_STRIPES_VARIANT, geneticsTag.getInt("TabbyStripesVariant"));
+            this.entityData.set(EYE_COLOR_VARIANT_LEFT, geneticsTag.getInt("EyeColorVariantLeft"));
+            this.entityData.set(EYE_COLOR_VARIANT_RIGHT, geneticsTag.getInt("EyeColorVariantRight"));
+            this.entityData.set(SIZE, geneticsTag.getFloat("Size"));
+        }
+    }
+
+    public void setStoredFatherGenetics(WCatEntity father) {
+        if (father.isOnGeneticalSkin()) {
+            this.storedFatherGenetics = father.getGenetics();
+        } else {
+            this.storedFatherGenetics = GeneticsForVariant.get(father.getVariant());
+        }
+    }
+
+    private void saveFatherGeneticsToNBT(CompoundTag tag, WCGenetics genetics) {
+
+        tag.putString("ChestFur", genetics.chestFur);
+        tag.putString("BellyFur", genetics.bellyFur);
+        tag.putString("LegsFur", genetics.legsFur);
+        tag.putString("HeadFur", genetics.headFur);
+        tag.putString("CheekFur", genetics.cheekFur);
+        tag.putString("BackFur", genetics.backFur);
+        tag.putString("TailFur", genetics.tailFur);
+        tag.putString("Bobtail", genetics.bobtail);
+
+        tag.putString("Base", genetics.base);
+        tag.putString("Orange", genetics.orangeBase);
+        tag.putString("WhiteRatio", genetics.whiteRatio);
+        tag.putString("Albino", genetics.albino);
+        tag.putString("Dilute", genetics.dilute);
+        tag.putString("Agouti", genetics.agouti);
+        tag.putString("TabbyStripes", genetics.tabbyStripes);
+        tag.putString("EyesAnomaly", genetics.eyesAnomaly);
+        tag.putInt("Rufousing", genetics.rufousing);
+        tag.putInt("BlueRufousing", genetics.blueRufousing);
+        tag.putInt("Noise", genetics.noise);
+
+    }
+
+    public static String inheritGenetics(String motherGene, String fatherGene, RandomSource random) {
+        String[] motherAlleles = motherGene.split("-");
+        String[] fatherAlleles = fatherGene.split("-");
+
+        String motherAllele = motherAlleles[random.nextInt(2)];
+        String fatherAllele = fatherAlleles[random.nextInt(2)];
+
+        return normalize(motherAllele + "-" + fatherAllele);
+    }
+
+    private static String normalize(String gene) {
+
+        String[] alleles = gene.split("-");
+
+        String a = alleles[0];
+        String b = alleles[1];
+
+        if (b.equals(b.toUpperCase()) && a.equals(a.toLowerCase())) {
+            return b + "-" + a;
+        }
+
+        return gene;
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public String getCatTextureKey() {
+        if (this.textureKey == null) this.defineTextureLayers();
+
+        return this.textureKey;
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    private void defineTextureLayers() {
+        String folderPath = "warriorcats_events:textures/entity/wcat/genetics/";
+
+        if (!this.isOnGeneticalSkin()) return;
+
+        String basePath = folderPath + "base/";
+        if (WCGenetics.Base.isBlack(this.entityData.get(BASE))) {
+            basePath += "black";
+        } else if (WCGenetics.Base.isChocolate(this.entityData.get(BASE))) {
+            basePath += "chocolate";
+        } else if (WCGenetics.Base.isCinnamon(this.entityData.get(BASE))) {
+            basePath += "cinnamon";
+        } else {
+            basePath = folderPath + "empty";
+        }
+
+        String orangeBasePath = folderPath + "orange_base/";
+        if (WCGenetics.OrangeBase.isOrange(this.entityData.get(ORANGE_BASE), this.entityData.get(GENDER))) {
+//            orangeBasePath += "orange";
+
+            if (WCGenetics.TabbyStripeTypes.isMackerel(this.entityData.get(TABBY_STRIPES))) {
+                orangeBasePath += "orange_" + "mackerel_" + this.entityData.get(TABBY_STRIPES_VARIANT);// ORANGE_BASE -> 0-4
+            } else {
+                orangeBasePath += "orange_" + "mackerel_" + this.entityData.get(TABBY_STRIPES_VARIANT);// ORANGE_BASE -> 0-4
+            }
+
+        } else if (WCGenetics.OrangeBase.isTortoiseshell(this.entityData.get(ORANGE_BASE))) {
+//            orangeBasePath += "tortie_" + this.entityData.get(ORANGE_BASE_VARIANT);// ORANGE_BASE -> 0-4
+
+            if (WCGenetics.TabbyStripeTypes.isMackerel(this.entityData.get(TABBY_STRIPES))) {
+                orangeBasePath += "tortie_" + this.entityData.get(ORANGE_BASE_VARIANT) + "_mackerel_" + this.entityData.get(TABBY_STRIPES_VARIANT);// ORANGE_BASE -> 0-4
+            } else {
+                orangeBasePath += "tortie_" + this.entityData.get(ORANGE_BASE_VARIANT) + "_classic_" + this.entityData.get(TABBY_STRIPES_VARIANT);// ORANGE_BASE -> 0-4
+            }
+
+        } else {
+            orangeBasePath = folderPath + "empty";
+        }
+
+
+        if (WCGenetics.Dilute.isDilute(this.entityData.get(DILUTE))) {
+            if (WCGenetics.Base.isBlack(this.entityData.get(BASE))) {
+                basePath = folderPath + "base/black_to_gray";
+            } else if (WCGenetics.Base.isChocolate(this.entityData.get(BASE))) {
+                basePath = folderPath + "base/chocolate_to_lilac";
+            } else if (WCGenetics.Base.isCinnamon(this.entityData.get(BASE))) {
+                basePath = folderPath + "base/cinnamon_to_fawn";
+            }
+
+            if (WCGenetics.OrangeBase.isOrange(this.entityData.get(ORANGE_BASE), this.entityData.get(GENDER))) {
+//                orangeBasePath = folderPath + "orange_base/orange_to_cream";
+
+                if (WCGenetics.TabbyStripeTypes.isMackerel(this.entityData.get(TABBY_STRIPES))) {
+                    orangeBasePath = folderPath + "orange_base/orange_to_cream_" + "mackerel_" + this.entityData.get(TABBY_STRIPES_VARIANT);// ORANGE_BASE -> 0-4
+                } else {
+                    orangeBasePath = folderPath + "orange_base/orange_to_cream_" + "classic_" + this.entityData.get(TABBY_STRIPES_VARIANT);// ORANGE_BASE -> 0-4
+                }
+
+            } else if (WCGenetics.OrangeBase.isTortoiseshell(this.entityData.get(ORANGE_BASE))) {
+//                orangeBasePath = folderPath + "orange_base/tortie_to_cream_" + this.entityData.get(ORANGE_BASE_VARIANT);// ORANGE_BASE -> 0-4
+
+                if (WCGenetics.TabbyStripeTypes.isMackerel(this.entityData.get(TABBY_STRIPES))) {
+                    orangeBasePath = folderPath + "orange_base/tortie_to_cream_" + this.entityData.get(ORANGE_BASE_VARIANT) + "_mackerel_" + this.entityData.get(TABBY_STRIPES_VARIANT);// ORANGE_BASE -> 0-4
+                } else {
+                    orangeBasePath = folderPath + "orange_base/tortie_to_cream_" + this.entityData.get(ORANGE_BASE_VARIANT) + "_classic_" + this.entityData.get(TABBY_STRIPES_VARIANT);// ORANGE_BASE -> 0-4
+                }
+
+            } else {
+                orangeBasePath = folderPath + "empty";
+            }
+
+        }
+
+        String albinoPath = folderPath + "albino/";
+        if (!WCGenetics.Albino.isNotAlbino(this.entityData.get(ALBINO))) {
+            if (WCGenetics.Albino.isTrueAlbino(this.entityData.get(ALBINO))) {
+                albinoPath += "full_albino_" + this.entityData.get(ALBINO_VARIANT);
+            } else if (WCGenetics.Albino.isMink(this.entityData.get(ALBINO))) {
+                albinoPath += "mink_" + this.entityData.get(ALBINO_VARIANT);// ALBINO -> 0-2
+            } else if (WCGenetics.Albino.isSepia(this.entityData.get(ALBINO))) {
+                albinoPath += "sepia_" + this.entityData.get(ALBINO_VARIANT);// ALBINO -> 0-2
+            } else if (WCGenetics.Albino.isSiamese(this.entityData.get(ALBINO))) {
+                albinoPath += "siamese_" + this.entityData.get(ALBINO_VARIANT);// ALBINO -> 0-2
+            } else {
+                albinoPath = folderPath + "empty";
+            }
+        } else {
+            albinoPath = folderPath + "empty";
+        }
+
+        String whiteMarks = folderPath + "white_marks/";
+        if (WCGenetics.WhiteRatio.isWhite(this.entityData.get(WHITE_RATIO))) {
+            whiteMarks += "full_white";
+        } else if (WCGenetics.WhiteRatio.isHighSpotted(this.entityData.get(WHITE_RATIO))) {
+            whiteMarks += "high_spots_" + this.entityData.get(WHITE_RATIO_VARIANT);// WHITE_MARKS -> 0-3
+        } else if (WCGenetics.WhiteRatio.isLowSpotted(this.entityData.get(WHITE_RATIO))) {
+            whiteMarks += "low_spots_" + this.entityData.get(WHITE_RATIO_VARIANT);// WHITE_MARKS -> 0-3
+        } else {
+            whiteMarks = folderPath + "empty";
+        }
+
+
+        String agoutiMarks = folderPath + "agouti_marks/";
+        if (WCGenetics.Agouti.isTabby(this.entityData.get(AGOUTI))) {
+            String secondStripesKey = "";
+            if (WCGenetics.Base.isBlack(this.entityData.get(BASE))) {
+                basePath = folderPath + "base/black_to_darkbrown";
+                secondStripesKey = "black_";
+            } else if (WCGenetics.Base.isChocolate(this.entityData.get(BASE))) {
+                secondStripesKey = "darkbrown_";
+            } else if (WCGenetics.Base.isCinnamon(this.entityData.get(BASE))) {
+                secondStripesKey = "mediumbrown_";
+            }
+
+
+            if (WCGenetics.TabbyStripeTypes.isMackerel(this.entityData.get(TABBY_STRIPES))) {
+                if (WCGenetics.Dilute.isDilute(this.entityData.get(DILUTE))) {
+                    agoutiMarks += "mackerel_dilute_" + secondStripesKey + this.entityData.get(TABBY_STRIPES_VARIANT); // TABBY_MARKS -> 0-4
+                } else {
+                    agoutiMarks += "mackerel_" + secondStripesKey + this.entityData.get(TABBY_STRIPES_VARIANT); // TABBY_MARKS -> 0-4
+                }
+            } else if (WCGenetics.TabbyStripeTypes.isClassic(this.entityData.get(TABBY_STRIPES))) {
+                if (WCGenetics.Dilute.isDilute(this.entityData.get(DILUTE))) {
+                    agoutiMarks += "classic_dilute_" + secondStripesKey + this.entityData.get(TABBY_STRIPES_VARIANT); // TABBY_MARKS -> 0-4
+                } else {
+                    agoutiMarks += "classic_" + secondStripesKey + this.entityData.get(TABBY_STRIPES_VARIANT); // TABBY_MARKS -> 0-4
+                }
+            } else {
+                agoutiMarks = folderPath + "empty";
+            }
+        } else {
+            agoutiMarks = folderPath + "empty";
+        }
+
+        String eyeColorLeft = folderPath + "eyes_color/left/";
+        switch (WCGenetics.EyeColor.getEyeColor(this.entityData.get(EYE_COLOR_LEFT))) {
+            case BLUE -> eyeColorLeft += "blue_" + this.entityData.get(EYE_COLOR_VARIANT_LEFT);// EYES -> 0.4
+            case GREEN -> eyeColorLeft += "green_" + this.entityData.get(EYE_COLOR_VARIANT_LEFT);// EYES -> 0.4
+            case YELLOW -> eyeColorLeft += "yellow_" + this.entityData.get(EYE_COLOR_VARIANT_LEFT);// EYES -> 0.4
+            case RED -> eyeColorLeft += "red_" + this.entityData.get(EYE_COLOR_VARIANT_LEFT);// EYES -> 0.4
+        }
+
+        String eyeColorRight = folderPath + "eyes_color/right/";
+        switch (WCGenetics.EyeColor.getEyeColor(this.entityData.get(EYE_COLOR_RIGHT))) {
+            case BLUE -> eyeColorRight += "blue_" + this.entityData.get(EYE_COLOR_VARIANT_RIGHT);// EYES -> 0.4
+            case GREEN -> eyeColorRight += "green_" + this.entityData.get(EYE_COLOR_VARIANT_RIGHT);// EYES -> 0.4
+            case YELLOW -> eyeColorRight += "yellow_" + this.entityData.get(EYE_COLOR_VARIANT_RIGHT);// EYES -> 0.4
+            case RED -> eyeColorRight += "red_" + this.entityData.get(EYE_COLOR_VARIANT_RIGHT);// EYES -> 0.4
+        }
+
+        String noisePath = folderPath + "details/noise_" + this.entityData.get(NOISE);
+        if (WCGenetics.Base.isBlack(this.entityData.get(BASE)) && WCGenetics.Dilute.isDilute(this.entityData.get(DILUTE))){
+            noisePath = folderPath + "details/noise_black_" + this.entityData.get(NOISE);
+        }
+        String skinDetails = folderPath + "details/skin";
+
+        int rufousingRatio = this.entityData.get(RUFOUSING_VARIANT);
+        int rufousingIntKey = rufousingRatio * 5;
+        if (!WCGenetics.Albino.isNotAlbino(this.entityData.get(ALBINO))) rufousingIntKey = 0;
+        String rufousing = folderPath + "details/rufousing_" + rufousingIntKey;
+
+        int bluerufousingRatio = this.entityData.get(BLUE_RUFOUSING_VARIANT);
+        int bluerufousingIntKey = bluerufousingRatio * 5;
+        if (!WCGenetics.Albino.isNotAlbino(this.entityData.get(ALBINO))) bluerufousingIntKey = 0;
+        String bluerufousing = folderPath + "details/blue_rufousing_" + bluerufousingIntKey;
+
+        String armorOverlay = folderPath + "details/armor";
+
+        /**
+         *  // BASE -> 0-4
+         *  // ORANGE_BASE -> 0-4
+         *  // WHITE_MARKS -> 0-3
+         *  // ALBINO -> 0-2
+         *  // DILUTE -> 0-4
+         *  // TABBY_MARKS -> 0-4
+         *  // EYES -> 0.4
+         *  // NOISE -> 0-2
+         */
+
+        this.textureLayersPaths[0] = basePath + ".png";
+        this.textureLayersPaths[1] = agoutiMarks + ".png";
+        this.textureLayersPaths[2] = orangeBasePath + ".png";
+        this.textureLayersPaths[3] = rufousing + ".png";
+        this.textureLayersPaths[4] = bluerufousing + ".png";
+        this.textureLayersPaths[5] = whiteMarks + ".png";
+        this.textureLayersPaths[6] = albinoPath + ".png";
+        this.textureLayersPaths[7] = noisePath + ".png";
+        this.textureLayersPaths[8] = skinDetails + ".png";
+        this.textureLayersPaths[9] = eyeColorLeft + ".png";
+        this.textureLayersPaths[10] = eyeColorRight + ".png";
+        this.textureLayersPaths[11] = armorOverlay + ".png";
+
+        this.textureKey =
+                "wcat/" + WCGenetics.encodeGene(this.entityData.get(BASE)) +
+                        WCGenetics.encodeGene(this.entityData.get(ORANGE_BASE)) + this.entityData.get(ORANGE_BASE_VARIANT) +
+                        WCGenetics.encodeGene(this.entityData.get(AGOUTI)) +
+                        WCGenetics.encodeGene(this.entityData.get(TABBY_STRIPES)) + this.entityData.get(TABBY_STRIPES_VARIANT) +
+                        WCGenetics.encodeGene(this.entityData.get(WHITE_RATIO)) + this.entityData.get(WHITE_RATIO_VARIANT) +
+                        WCGenetics.encodeGene(this.entityData.get(DILUTE)) +
+                        WCGenetics.encodeGene(this.entityData.get(ALBINO)) + this.entityData.get(ALBINO_VARIANT) +
+                        WCGenetics.encodeGene(this.entityData.get(EYES_ANOMALY)) +
+                        this.entityData.get(EYE_COLOR_LEFT) + this.entityData.get(EYE_COLOR_VARIANT_LEFT) +
+                        this.entityData.get(EYE_COLOR_RIGHT) + this.entityData.get(EYE_COLOR_VARIANT_RIGHT) +
+                        this.entityData.get(BLUE_RUFOUSING_VARIANT) + this.entityData.get(RUFOUSING_VARIANT) +
+                        "noise_" + this.entityData.get(NOISE);
+    }
+
+
+    @OnlyIn(Dist.CLIENT)
+    public String[] getTextureLayersPaths() {
+        if (this.textureKey == null) this.defineTextureLayers();
+
+        return this.textureLayersPaths;
+    }
+
+    public void inheritGeneticsFromParents(WCGenetics mother, WCGenetics father) {
+        WCGenetics childGenes = new WCGenetics();
+
+        childGenes.chestFur = inheritGenetics(mother.chestFur, father.chestFur, random);
+        childGenes.bellyFur = inheritGenetics(mother.bellyFur, father.bellyFur, random);
+        childGenes.legsFur = inheritGenetics(mother.legsFur, father.legsFur, random);
+        childGenes.headFur = inheritGenetics(mother.headFur, father.headFur, random);
+        childGenes.cheekFur = inheritGenetics(mother.cheekFur, father.cheekFur, random);
+        childGenes.backFur = inheritGenetics(mother.backFur, father.backFur, random);
+        childGenes.tailFur = inheritGenetics(mother.tailFur, father.tailFur, random);
+        childGenes.bobtail = inheritGenetics(mother.bobtail, father.bobtail, random);
+
+        childGenes.base = inheritGenetics(mother.base, father.base, random);
+        childGenes.orangeBase = inheritGenetics(mother.orangeBase, father.orangeBase, random);
+        childGenes.whiteRatio = inheritGenetics(mother.whiteRatio, father.whiteRatio, random);
+        childGenes.albino = inheritGenetics(mother.albino, father.albino, random);
+        childGenes.dilute = inheritGenetics(mother.dilute, father.dilute, random);
+        childGenes.agouti = inheritGenetics(mother.agouti, father.agouti, random);
+        childGenes.tabbyStripes = inheritGenetics(mother.tabbyStripes, father.tabbyStripes, random);
+        childGenes.eyesAnomaly = inheritGenetics(mother.eyesAnomaly, father.eyesAnomaly, random);
+
+        this.setGenetics(childGenes);
+
+        String leftEyeColor = WCGenetics.EyeColor.generateAlelo(this.random, this.entityData.get(WHITE_RATIO), this.entityData.get(ALBINO));
+        int eyeLeftVariant = this.random.nextInt(11);
+
+        this.entityData.set(EYE_COLOR_LEFT, leftEyeColor);
+        this.entityData.set(EYE_COLOR_VARIANT_LEFT, eyeLeftVariant);
+
+        if (WCGenetics.EyesAnomaly.isHeteroChromic(this.entityData.get(EYES_ANOMALY))) {
+            this.entityData.set(EYE_COLOR_RIGHT, WCGenetics.EyeColor.generateAlelo(this.random, this.entityData.get(WHITE_RATIO), this.entityData.get(ALBINO)));
+            this.entityData.set(EYE_COLOR_VARIANT_RIGHT, this.random.nextInt(11));
+        } else {
+            this.entityData.set(EYE_COLOR_RIGHT, leftEyeColor);
+            this.entityData.set(EYE_COLOR_VARIANT_RIGHT, eyeLeftVariant);
+        }
+
+        this.entityData.set(ORANGE_BASE_VARIANT, this.random.nextInt(7));
+        this.entityData.set(WHITE_RATIO_VARIANT, this.random.nextInt(9));
+        this.entityData.set(ALBINO_VARIANT, this.random.nextInt(3));
+        this.entityData.set(TABBY_STRIPES_VARIANT, this.random.nextInt(5));
+
+        int rufousingVar = (mother.rufousing + father.rufousing)/2;
+        int blueRufousingVar = (mother.blueRufousing + father.blueRufousing)/2;
+
+        if (WCGenetics.Base.isBlack(this.entityData.get(BASE))) {
+            this.entityData.set(RUFOUSING_VARIANT, this.random.nextInt(3));
+        } else {
+            this.entityData.set(RUFOUSING_VARIANT, rufousingVar);
+        }
+
+        if (WCGenetics.Dilute.isDilute(this.entityData.get(DILUTE))) {
+            this.entityData.set(BLUE_RUFOUSING_VARIANT, this.random.nextInt(3));
+        } else {
+            this.entityData.set(BLUE_RUFOUSING_VARIANT, blueRufousingVar);
+        }
+
+    }
+
+    public void setGeneticalVariants(String eyesVariantLeft, String eyesVariantRight, int rufVar, int blueRufVar,
+                                     int orangeVar, int whiteVar, int tabbyVar,
+                                     int albinoVar, int leftEyeVar, int rightEyeVar, int noise, float size) {
+
+        this.entityData.set(EYE_COLOR_LEFT, eyesVariantLeft);
+        this.entityData.set(EYE_COLOR_RIGHT, eyesVariantRight);
+        this.entityData.set(RUFOUSING_VARIANT, Math.min(rufVar, 6));
+        this.entityData.set(BLUE_RUFOUSING_VARIANT, Math.min(blueRufVar, 6));
+        this.entityData.set(ORANGE_BASE_VARIANT, Math.min(orangeVar, 6));
+        this.entityData.set(WHITE_RATIO_VARIANT, Math.min(8, whiteVar));
+        this.entityData.set(TABBY_STRIPES_VARIANT, Math.min(tabbyVar, 4));
+        this.entityData.set(ALBINO_VARIANT, Math.min(albinoVar, 2));
+        this.entityData.set(EYE_COLOR_VARIANT_LEFT, Math.min(leftEyeVar, 10));
+        this.entityData.set(EYE_COLOR_VARIANT_RIGHT, Math.min(rightEyeVar, 10));
+        this.entityData.set(NOISE, Math.min(noise, 2));
+        this.entityData.set(SIZE, size);
+
+    }
+
+    public void setSize(float value) {
+        this.entityData.set(SIZE, value);
+    }
+
+    public float getSize() {
+        return this.entityData.get(SIZE);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     @Override
     public void onAddedToWorld() {
@@ -6065,6 +6867,9 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                     }
                 }
             }
+
+            // Ong this is a mess
+
 
             if (this.tickCount % 9600 == 0) {
                 this.setRandomMood(this.random);
@@ -6322,6 +7127,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         this.setVariant(randomVariant);
         this.wanderCenter = this.blockPosition();
         this.assignRandomPersonality(this.random);
+        this.initializeGenetics();
         if (this.getAge() < 0 && this.getAge() > -25000) {
             int minutes = WCEServerConfig.SERVER.KIT_GROWTH_MINUTES.get();
             int growingTicks = minutes * 20 * 60;
@@ -6561,6 +7367,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
     public void setItemSynced(int pIndex, ItemStack pStack) {
         this.inventory.setItem(pIndex, pStack);
         this.updateMainHandFromInventory();
+        this.updateOffHandFromInventory();
     }
 
     public void updateMainHandFromInventory() {
@@ -6577,13 +7384,51 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         this.setItemSlot(EquipmentSlot.MAINHAND, toEquip);
     }
 
+    public void updateOffHandFromInventory() {
+        ItemStack toEquip = ItemStack.EMPTY;
+        int found = 0;
+        for (int i = 0; i < 3; i++) {
+            ItemStack stack = this.inventory.getItem(i);
 
-    public SimpleContainer getCatInventory(){
+            if (!stack.isEmpty()) {
+                found++;
+
+                if (found == 2) {
+                    toEquip = stack.copyWithCount(1);
+                    break;
+                }
+            }
+        }
+
+        this.setItemSlot(EquipmentSlot.OFFHAND, toEquip);
+    }
+
+
+    public SimpleContainer getCatInventory() {
         return this.inventory;
     }
 
     @Override
     public int getAmbientSoundInterval() {
-        return 240;
+        if (this.getRandom().nextFloat() < 0.50f) return 180;
+        else return 220;
+    }
+
+    @Override
+    public void setTarget(@Nullable LivingEntity pTarget) {
+        if (this.isOrderedToSit() || this.mode == CatMode.SIT) return;
+        if (this.getRank() == MEDICINE) return;
+        super.setTarget(pTarget);
+    }
+
+    public void updateMatesName() {
+        if (this.level() instanceof ServerLevel sLevel) {
+            Entity mate = sLevel.getEntity(this.getMateUUID());
+            if (mate != null) {
+                if (mate instanceof WCatEntity cat) {
+                    cat.setMate(this.hasCustomName() ? this.getCustomName() : Component.literal("Unnamed cat"));
+                }
+            }
+        }
     }
 }

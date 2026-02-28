@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "package": "net.snowteb.warriorcats_events.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "refmap": "mixins.warriorcats_events.refmap.json",
+  "minVersion": "0.8",
+  "client": [
+    "GameRendererHitMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

@@ -5,8 +5,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.BiomeColors;
-import net.minecraft.client.renderer.ItemBlockRenderTypes;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.network.chat.ClickEvent;
@@ -24,6 +22,9 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.block.ModBlocks;
+import net.snowteb.warriorcats_events.block.entity.FreshkillPileRenderer;
+import net.snowteb.warriorcats_events.block.entity.ModBlockEntities;
+import net.snowteb.warriorcats_events.block.entity.MossBedRenderer;
 import net.snowteb.warriorcats_events.client.LeapClientState;
 import net.snowteb.warriorcats_events.client.ThirstHUD;
 import net.snowteb.warriorcats_events.entity.ModEntities;
@@ -32,17 +33,15 @@ import net.snowteb.warriorcats_events.entity.client.*;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.item.ModItems;
 import net.snowteb.warriorcats_events.network.ModPackets;
-import net.snowteb.warriorcats_events.network.packet.OpenCatDataScreenPacket;
-import net.snowteb.warriorcats_events.network.packet.OpenClanSetupScreenPacket;
-import net.snowteb.warriorcats_events.network.packet.c2s.CtSHissPacket;
-import net.snowteb.warriorcats_events.network.packet.c2s.ReqSkillDataPacket;
-import net.snowteb.warriorcats_events.network.packet.s2c.StCFishingScreenPacket;
-import net.snowteb.warriorcats_events.network.packet.c2s.WaterPacket;
-import net.snowteb.warriorcats_events.network.packet.zcatmodifiers.SyncMorphStatsPacket;
+import net.snowteb.warriorcats_events.network.packet.s2c.cats.OpenCatDataScreenPacket;
+import net.snowteb.warriorcats_events.network.packet.s2c.clan.OpenClanSetupScreenPacket;
+import net.snowteb.warriorcats_events.network.packet.c2s.others.CtSHissPacket;
+import net.snowteb.warriorcats_events.network.packet.s2c.others.StCFishingScreenPacket;
+import net.snowteb.warriorcats_events.network.packet.c2s.others.WaterPacket;
 import net.snowteb.warriorcats_events.screen.*;
 import net.snowteb.warriorcats_events.screen.clandata.CatDataScreen;
 import net.snowteb.warriorcats_events.screen.clandata.ClanSetupScreen;
-import net.snowteb.warriorcats_events.screen.clandata.MorphGrowthScreen;
+import net.snowteb.warriorcats_events.screen.clandata.CreateMorphGeneticsScreen;
 import net.snowteb.warriorcats_events.skills.StealthClientState;
 import net.snowteb.warriorcats_events.sound.ModSounds;
 import net.snowteb.warriorcats_events.stealth.PlayerStealthProvider;
@@ -63,8 +62,8 @@ public class ClientEvents {
         public static void onKeyInput(InputEvent.Key event) {
 
 //            if (ModKeybinds.SKILLMENU_KEY.consumeClick()) {
-//                Minecraft.getInstance().setScreen(new SkillScreen());
-//                ModPackets.sendToServer(new ReqSkillDataPacket());
+//                Minecraft.getInstance().setScreen(new PauseAnimationScreen());
+////                Minecraft.getInstance().setScreen(new CreateMorphGeneticsScreen());
 //            }
 
             if (ModKeybinds.EMOTES_KEY.consumeClick()) {
@@ -82,7 +81,6 @@ public class ClientEvents {
                 Minecraft.getInstance().getSoundManager().stop(null, SoundSource.MUSIC);
             }
         }
-
 
 
         @SubscribeEvent
@@ -134,9 +132,7 @@ public class ClientEvents {
                 waterPressed = false;
             }
 
-
         }
-
 
         /**
          * Part of the Update checker
@@ -161,16 +157,13 @@ public class ClientEvents {
                                                     )
                                     )
                                     .append(" available: "
-                                    + UpdateCheck.latestVersion).withStyle(style -> style.withColor(TextColor.fromRgb(0xfffb00))
-                    ));
+                                            + UpdateCheck.latestVersion).withStyle(style -> style.withColor(TextColor.fromRgb(0xfffb00))
+                                    ));
 
 
                 }
             }
         }
-
-
-
 
 
     }
@@ -185,19 +178,24 @@ public class ClientEvents {
             event.registerLayerDefinition(ModModelLayers.VANILLAWCAT_LAYER, VanillaWCatModel::createBodyLayer);
         }
         */
+        @SubscribeEvent
+        public static void registerBER(EntityRenderersEvent.RegisterRenderers event) {
+            event.registerBlockEntityRenderer(ModBlockEntities.FRESH_KILL_PILE.get(), FreshkillPileRenderer::new);
+            event.registerBlockEntityRenderer(ModBlockEntities.MOSS_BED.get(), MossBedRenderer::new);
+        }
 
-            @SubscribeEvent
-            public static void onKeyRegister(RegisterKeyMappingsEvent event) {
-                event.register(ModKeybinds.HISSING_KEY);
-                event.register(ModKeybinds.WATERDRINK_KEY);
+        @SubscribeEvent
+        public static void onKeyRegister(RegisterKeyMappingsEvent event) {
+            event.register(ModKeybinds.HISSING_KEY);
+            event.register(ModKeybinds.WATERDRINK_KEY);
 //                event.register(ModKeybinds.SKILLMENU_KEY);
-                event.register(ModKeybinds.EMOTES_KEY);
-            }
+            event.register(ModKeybinds.EMOTES_KEY);
+        }
 
-            @SubscribeEvent
-            public static void registerGuiOverlays(RegisterGuiOverlaysEvent event) {
-                event.registerAboveAll("thirst", ThirstHUD.HUD_THIRST);
-            }
+        @SubscribeEvent
+        public static void registerGuiOverlays(RegisterGuiOverlaysEvent event) {
+            event.registerAboveAll("thirst", ThirstHUD.HUD_THIRST);
+        }
 
         @SubscribeEvent
         public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
@@ -222,7 +220,7 @@ public class ClientEvents {
                                 ? BiomeColors.getAverageFoliageColor(world, pos)
                                 : FoliageColor.getDefaultColor();
                     },
-                    ModBlocks.LEAF_DOOR.get()
+                    ModBlocks.LEAF_DOOR.get(), ModBlocks.LEAF_TRAPDOOR.get()
             );
         }
 
@@ -230,11 +228,12 @@ public class ClientEvents {
         @SubscribeEvent
         public static void clientSetup(FMLClientSetupEvent event) {
             MenuScreens.register(ModMenuTypes.STONECLEFT_MENU.get(), StoneCleftScreen::new);
+            MenuScreens.register(ModMenuTypes.FRESHKILL_PILE_MENU.get(), FreshkillPileScreen::new);
             MenuScreens.register(ModMenuTypes.WCAT_INVENTORY.get(), WCatScreen::new);
             UpdateCheck.checkForUpdates();
 
             ItemProperties.register(ModItems.ANCIENT_STICK.get(),
-                    new ResourceLocation(WarriorCatsEvents.MODID,"dismiss_active"),
+                    new ResourceLocation(WarriorCatsEvents.MODID, "dismiss_active"),
                     (stack, level, entity, seed) -> {
                         if (stack.hasTag() && stack.getTag().getBoolean("dismissClanSwitchActive")) {
                             return 1.0F;

@@ -8,7 +8,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.snowteb.warriorcats_events.clan.ClanData;
 import net.snowteb.warriorcats_events.client.ClanInfo;
 import net.snowteb.warriorcats_events.network.ModPackets;
-import net.snowteb.warriorcats_events.network.packet.S2CClanListPacket;
+import net.snowteb.warriorcats_events.network.packet.s2c.clan.S2CClanListPacket;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -20,12 +20,12 @@ public class ClanListCommand {
                 Commands.literal("wce")
                         .then(Commands.literal("clan")
                                 .then(Commands.literal("list")
-                                        .executes(ctx -> getList(ctx.getSource(), ctx.getSource().getPlayerOrException()))
+                                        .executes(ctx -> getList(ctx.getSource().getPlayerOrException()))
                                 )
                         ));
     }
 
-    private static int getList(CommandSourceStack source, ServerPlayer player) {
+    public static int getList(ServerPlayer player) {
 
         ServerLevel level = player.serverLevel();
         ClanData data = ClanData.get(level);

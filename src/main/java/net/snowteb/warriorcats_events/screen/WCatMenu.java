@@ -35,6 +35,7 @@ public class WCatMenu extends AbstractContainerMenu {
                 public void setChanged() {
                     super.setChanged();
                     cat.updateMainHandFromInventory();
+                    cat.updateOffHandFromInventory();
                 }
             });
         }

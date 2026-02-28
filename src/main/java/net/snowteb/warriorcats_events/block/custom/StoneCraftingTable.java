@@ -25,7 +25,7 @@ import net.snowteb.warriorcats_events.screen.StoneCraftingTableMenu;
 import tocraft.walkers.api.PlayerShape;
 
 public class StoneCraftingTable extends HorizontalDirectionalBlock {
-    private static final Component CONTAINER_TITLE = Component.translatable("container.stone_crafting_table.crafting");
+    private static final Component CONTAINER_TITLE = Component.translatable("block.warriorcats_events.stone_crafting_table");
 
     protected static final VoxelShape NORTH_TABLE = Block.box(2.0D, 0.0D, 6.0D, 13.0D, 6.0D, 14.0D);
     protected static final VoxelShape NORTH_ROCK1 = Block.box(0.0D, 0.0D, 0.0D, 4.0D, 2.0D, 4.0D);

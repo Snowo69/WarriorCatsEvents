@@ -21,8 +21,9 @@ public class ModBlockTagGenerator extends BlockTagsProvider {
     protected void addTags(HolderLookup.Provider pProvider) {
 
         this.tag(BlockTags.DOORS).add(ModBlocks.LEAF_DOOR.get());
+        this.tag(BlockTags.TRAPDOORS).add(ModBlocks.LEAF_TRAPDOOR.get());
 
-        this.tag(BlockTags.BEDS).add(ModBlocks.MOSS_BED.get());
+        this.tag(BlockTags.BEDS).add(ModBlocks.MOSS_BED.get(), ModBlocks.HAY_BED.get());
 
     }
 }

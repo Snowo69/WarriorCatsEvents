@@ -1,9 +1,7 @@
 package net.snowteb.warriorcats_events.event;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.resources.sounds.Sound;
 import net.minecraft.core.particles.BlockParticleOption;
-import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -32,7 +30,6 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
@@ -43,13 +40,12 @@ import net.snowteb.warriorcats_events.clan.ClanData;
 import net.snowteb.warriorcats_events.clan.PlayerClanData;
 import net.snowteb.warriorcats_events.clan.PlayerClanDataProvider;
 import net.snowteb.warriorcats_events.commands.*;
-import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.item.ModItems;
 import net.snowteb.warriorcats_events.network.ModPackets;
-import net.snowteb.warriorcats_events.network.packet.OpenClanSetupScreenPacket;
-import net.snowteb.warriorcats_events.network.packet.S2CSyncClanDataPacket;
-import net.snowteb.warriorcats_events.network.packet.s2c.SyncSkillDataPacket;
-import net.snowteb.warriorcats_events.network.packet.s2c.ThirstDataSyncStCPacket;
+import net.snowteb.warriorcats_events.network.packet.s2c.clan.OpenClanSetupScreenPacket;
+import net.snowteb.warriorcats_events.network.packet.s2c.clan.S2CSyncClanDataPacket;
+import net.snowteb.warriorcats_events.network.packet.s2c.skilltree.SyncSkillDataPacket;
+import net.snowteb.warriorcats_events.network.packet.s2c.others.ThirstDataSyncStCPacket;
 import net.snowteb.warriorcats_events.skills.PlayerSkill;
 import net.snowteb.warriorcats_events.skills.PlayerSkillProvider;
 import net.snowteb.warriorcats_events.stealth.PlayerStealth;
@@ -58,6 +54,7 @@ import net.snowteb.warriorcats_events.thirst.PlayerThirst;
 import net.snowteb.warriorcats_events.thirst.PlayerThirstProvider;
 import net.snowteb.warriorcats_events.util.ClanInviteManager;
 import net.snowteb.warriorcats_events.util.ModAttributes;
+import net.snowteb.warriorcats_events.zconfig.WCEServerConfig;
 
 import java.util.*;
 
@@ -191,6 +188,7 @@ public class ModEvents2 {
         LeaveClanCommand.register(event.getDispatcher());
         ManageClanCommand.register(event.getDispatcher());
         ChangeMemberPermissionCommand.register(event.getDispatcher());
+        OpenMorphCreateCommand.register(event.getDispatcher());
 
 
         ConfigCommand.register(event.getDispatcher());
@@ -287,7 +285,7 @@ public class ModEvents2 {
                         var speedAttr = player.getAttribute(Attributes.MOVEMENT_SPEED);
                         if (speedAttr != null) {
                             speedAttr.removeModifier(PlayerSkill.SPEED_SKILL_UUID);
-                            double bonus = 0.025 * newStore.getSpeedLevel();
+                            double bonus = (0.025* WCEServerConfig.SERVER.SKILL_SPEED_MULTIPLIER.get()) * newStore.getSpeedLevel();
                             if (bonus > 0) {
                                 speedAttr.addPermanentModifier(
                                         new AttributeModifier(
@@ -302,7 +300,7 @@ public class ModEvents2 {
                         var hpAttr = player.getAttribute(Attributes.MAX_HEALTH);
                         if (hpAttr != null) {
                             hpAttr.removeModifier(PlayerSkill.HP_SKILL_UUID);
-                            double bonus = 0.1 * newStore.getHPLevel();
+                            double bonus = (0.1*WCEServerConfig.SERVER.SKILL_HP_MULTIPLIER.get()) * newStore.getHPLevel();
                             if (bonus > 0) {
                                 hpAttr.addPermanentModifier(
                                         new AttributeModifier(
@@ -317,7 +315,7 @@ public class ModEvents2 {
                         var dmgAttr = player.getAttribute(Attributes.ATTACK_DAMAGE);
                         if (dmgAttr != null) {
                             dmgAttr.removeModifier(PlayerSkill.DMG_SKILL_UUID);
-                            double bonus = 0.12 * newStore.getDMGLevel();
+                            double bonus = (0.12*WCEServerConfig.SERVER.SKILL_DMG_MULTIPLIER.get()) * newStore.getDMGLevel();
                             if (bonus > 0) {
                                 dmgAttr.addPermanentModifier(
                                         new AttributeModifier(
@@ -332,7 +330,7 @@ public class ModEvents2 {
                         var jumpAttr = player.getAttribute(ModAttributes.PLAYER_JUMP.get());
                         if (jumpAttr != null) {
                             jumpAttr.removeModifier(PlayerSkill.JUMP_SKILL_UUID);
-                            double bonus = 0.093 * newStore.getJumpLevel();
+                            double bonus = (0.093*WCEServerConfig.SERVER.SKILL_JUMP_MULTIPLIER.get()) * newStore.getJumpLevel();
                             if (bonus > 0) {
                                 jumpAttr.addPermanentModifier(
                                         new AttributeModifier(
@@ -347,7 +345,7 @@ public class ModEvents2 {
                         var armorAttr = player.getAttribute(Attributes.ARMOR);
                         if (armorAttr != null) {
                             armorAttr.removeModifier(PlayerSkill.ARMOR_SKILL_UUID);
-                            double bonus = 3.5 * newStore.getArmorLevel();
+                            double bonus = (3.5*WCEServerConfig.SERVER.SKILL_ARMOR_MULTIPLIER.get()) * newStore.getArmorLevel();
                             if (bonus > 0) {
                                 armorAttr.addPermanentModifier(
                                         new AttributeModifier(

@@ -1,19 +1,17 @@
 package net.snowteb.warriorcats_events.screen.clandata;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.snowteb.warriorcats_events.clan.PlayerClanData;
 import net.snowteb.warriorcats_events.client.ClientClanData;
 import net.snowteb.warriorcats_events.client.MorphStatsClientData;
 import net.snowteb.warriorcats_events.network.ModPackets;
-import net.snowteb.warriorcats_events.network.packet.c2s.ReqSkillDataPacket;
-import net.snowteb.warriorcats_events.network.packet.zcatmodifiers.UpdateClanDataPacket;
+import net.snowteb.warriorcats_events.network.packet.c2s.skilltree.ReqSkillDataPacket;
+import net.snowteb.warriorcats_events.network.packet.c2s.clan.UpdateClanDataPacket;
 import net.snowteb.warriorcats_events.screen.SkillScreen;
 
 import java.util.ArrayList;

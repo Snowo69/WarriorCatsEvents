@@ -11,8 +11,8 @@ import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.client.ClientClanData;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.network.ModPackets;
-import net.snowteb.warriorcats_events.network.packet.zcatmodifiers.*;
-import net.snowteb.warriorcats_events.network.packet.zcatmodifiers.SyncCatDataPacket;
+import net.snowteb.warriorcats_events.network.packet.c2s.cats.*;
+import net.snowteb.warriorcats_events.network.packet.s2c.cats.SyncCatDataPacket;
 import net.snowteb.warriorcats_events.util.ModButton;
 import org.lwjgl.glfw.GLFW;
 

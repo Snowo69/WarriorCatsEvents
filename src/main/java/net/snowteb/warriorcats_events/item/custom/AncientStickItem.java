@@ -13,7 +13,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.network.ModPackets;
-import net.snowteb.warriorcats_events.network.packet.zcatmodifiers.OpenAncientStickScreenPacket;
+import net.snowteb.warriorcats_events.network.packet.s2c.cats.OpenAncientStickScreenPacket;
 
 import javax.annotation.Nullable;
 import java.util.List;

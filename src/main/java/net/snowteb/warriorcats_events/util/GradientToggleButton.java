@@ -21,7 +21,7 @@ public class GradientToggleButton extends AbstractButton {
     private final int texHeight;
     private final PressAction onPress;
     private float textScale = 0.82f;
-    private int color = 0;
+    private int color = 0xFFFFFF;
     private boolean selected;
 
 
@@ -91,7 +91,7 @@ public class GradientToggleButton extends AbstractButton {
 
 
 
-        if (hovered) {
+        if (hovered && active) {
             gui.fill(this.getX(), this.getY(),
                     this.getX() + this.width,
                     this.getY() + this.height,
@@ -110,24 +110,14 @@ public class GradientToggleButton extends AbstractButton {
                 this.getMessage(),
                 textX,
                 textY,
-                this.isHoveredOrFocused() ? 0xFFFFA0 : 0xFFFFFF
+                this.active ? (this.isHoveredOrFocused() ? 0xFFFFA0 : 0xFFFFFF) : 0xFF555555
         );
         gui.pose().popPose();
 
 
-
-//        if (selected) {
-//            int x = getX();
-//            int y = getY();
-//            int w = width;
-//            int h = height;
-//            int borderColor = 0xFFe8ae1c;
-//
-//            gui.fill(x, y, x + w, y + 1, borderColor);
-//            gui.fill(x, y + h - 1, x + w, y + h, borderColor);
-//            gui.fill(x, y, x + 1, y + h, borderColor);
-//            gui.fill(x + w - 1, y, x + w, y + h, borderColor);
-//        }
+        if (!this.active) {
+            gui.fill(this.getX(), this.getY(), this.width + this.getX(),this.height + this.getY(), 0, 0x55000000);
+        }
 
     }
 

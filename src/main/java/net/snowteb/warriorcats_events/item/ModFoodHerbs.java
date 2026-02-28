@@ -74,7 +74,7 @@ public class ModFoodHerbs {
     public static final FoodProperties MOUSE_FOOD = new FoodProperties.Builder()
             .nutrition(6).saturationMod(6f).build();
     public static final FoodProperties SQUIRREL_FOOD = new FoodProperties.Builder()
-            .nutrition(8).saturationMod(10f).build();
+            .nutrition(7).saturationMod(8f).build();
     public static final FoodProperties PIGEON_FOOD = new FoodProperties.Builder()
-            .nutrition(10).saturationMod(12f).build();
+            .nutrition(8).saturationMod(10f).build();
 }

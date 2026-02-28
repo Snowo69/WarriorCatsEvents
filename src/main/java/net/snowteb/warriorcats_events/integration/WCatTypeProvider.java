@@ -7,6 +7,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.snowteb.warriorcats_events.clan.ClanData;
+import net.snowteb.warriorcats_events.entity.custom.WCGenetics;
 import net.snowteb.warriorcats_events.zconfig.WCEConfig;
 import net.snowteb.warriorcats_events.clan.PlayerClanData;
 import net.snowteb.warriorcats_events.clan.PlayerClanDataProvider;
@@ -91,6 +92,18 @@ public class WCatTypeProvider extends TypeProvider<WCatEntity> {
         cat.setBaby(isBaby);
         cat.setAppScale(isAppScale);
 
+        player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {
+            if (cap.isOnGeneticalSkin()) {
+                cat.setGenetics(cap.getPlayerGenetics());
+                WCGenetics.GeneticalVariants variants = cap.getPlayerGeneticalVariants();
+                cat.setGeneticalVariants(variants.eyeColorLeft, variants.eyeColorRight, variants.rufousingVariant
+                ,variants.blueRufousingVariant, variants.orangeVar, variants.whiteVar, variants.tabbyVar
+                ,variants.albinoVar, variants.leftEyeVar, variants.rightEyeVar, variants.noise, variants.size);
+                cat.setOnGeneticalSkin(true);
+                cat.setGender(1);
+            }
+        });
+
         return cat;
     }
 
@@ -101,7 +114,7 @@ public class WCatTypeProvider extends TypeProvider<WCatEntity> {
 
     @Override
     public int getRange() {
-        return 29;
+        return 52;
     }
 
     @Override

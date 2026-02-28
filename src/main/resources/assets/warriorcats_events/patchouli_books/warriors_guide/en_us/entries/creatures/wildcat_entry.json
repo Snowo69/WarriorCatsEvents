@@ -63,7 +63,12 @@
       "title": "Cats' Information",
       "text": "You can know all of a cat's information using your Whiskers. And with this same item you can also change their clan role."
     },
-
+    {
+      "type": "patchouli:spotlight",
+      "item": "warriorcats_events:moss_bed",
+      "title": "Setting their home",
+      "text": "To set a cat's home... You should try to make them comfortable first. Back in the days, every cat had their own nest, their own comfy bedding to sleep and rest. $(br2)Cats can only recognize a home if they have somewhere to rest! So make sure you give them a good place to sleep, only then they will see your camp as home.$(br)"
+    },
     {
       "type": "patchouli:image",
       "images": [

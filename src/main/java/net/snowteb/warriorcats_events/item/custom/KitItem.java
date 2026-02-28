@@ -13,8 +13,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.snowteb.warriorcats_events.clan.PlayerClanDataProvider;
 import net.snowteb.warriorcats_events.item.ModItems;
 import net.snowteb.warriorcats_events.network.ModPackets;
-import net.snowteb.warriorcats_events.network.packet.zcatmodifiers.StCKitCreateScreenPacket;
-import net.snowteb.warriorcats_events.screen.clandata.KitCreateScreen;
+import net.snowteb.warriorcats_events.network.packet.s2c.cats.StCKitCreateScreenPacket;
 
 public class KitItem extends Item {
     public KitItem(Properties pProperties) {

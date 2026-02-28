@@ -79,50 +79,6 @@ public class ModEvents {
 
     }
 
-//    /**
-//     * Adds the custom font.
-//     */
-//    @SubscribeEvent
-//    public static void addPackFinder(AddPackFindersEvent event) {
-//        if (event.getPackType() != PackType.CLIENT_RESOURCES) return;
-//
-//        var modFileInfo = ModList.get().getModFileById("warriorcats_events");
-//        if (modFileInfo == null) return;
-//
-//        var modFile = modFileInfo.getFile();
-//
-//        Path packPath = modFile.getFilePath()
-//                .resolve("resourcepacks/requiem_text_roman_font");
-//
-//        event.addRepositorySource(consumer -> {
-//            consumer.accept(Pack.create(
-//                    "requiem_text_roman_font",
-//                    Component.literal("Requiem Roman Font"),
-//                    false,
-//                    id -> new PathPackResources(
-//                            id,
-//                            true,
-//                            packPath
-//                    ),
-//                    new Pack.Info(
-//                            Component.literal("Optional Requiem Roman Font"),
-//                            15,
-//                            15,
-//                            FeatureFlagSet.of(),
-//                            false
-//                    ),
-//                    PackType.CLIENT_RESOURCES,
-//                    Pack.Position.TOP,
-//                    false,
-//                    PackSource.BUILT_IN
-//            ));
-//        });
-//    }
-
-
-
-
-
     @SubscribeEvent
     public static void entityAttributeEvent(EntityAttributeCreationEvent event) {
         event.put(ModEntities.MOUSE.get(), MouseEntity.setAttributes().build());
@@ -130,7 +86,6 @@ public class ModEvents {
         event.put(ModEntities.WCAT.get(), WCatEntity.setAttributes().build());
         event.put(ModEntities.PIGEON.get(), PigeonEntity.setAttributes().build());
         event.put(ModEntities.BADGER.get(), BadgerEntity.setAttributes().build());
-       // event.put(ModEntities.VANILLAWCAT.get(), VanillaWCatEntity.setAttributes().build());
 
     }
 

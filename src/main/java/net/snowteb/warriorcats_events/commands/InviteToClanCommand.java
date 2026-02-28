@@ -14,8 +14,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.snowteb.warriorcats_events.clan.ClanData;
 import net.snowteb.warriorcats_events.clan.PlayerClanData;
 import net.snowteb.warriorcats_events.clan.PlayerClanDataProvider;
-import net.snowteb.warriorcats_events.network.ModPackets;
-import net.snowteb.warriorcats_events.network.packet.S2COpenRegisterClanScreenPacket;
 import net.snowteb.warriorcats_events.util.ClanInviteManager;
 
 import java.util.UUID;

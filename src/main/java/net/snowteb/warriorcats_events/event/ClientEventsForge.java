@@ -3,7 +3,6 @@ package net.snowteb.warriorcats_events.event;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
-import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
@@ -25,7 +24,7 @@ import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.block.custom.MossBedBlock;
 import net.snowteb.warriorcats_events.client.LeapClientState;
 import net.snowteb.warriorcats_events.network.ModPackets;
-import net.snowteb.warriorcats_events.network.packet.c2s.ReqSkillDataPacket;
+import net.snowteb.warriorcats_events.network.packet.c2s.skilltree.ReqSkillDataPacket;
 import net.snowteb.warriorcats_events.screen.SkillScreen;
 import net.snowteb.warriorcats_events.stealth.PlayerStealthProvider;
 import tocraft.walkers.api.PlayerShape;
@@ -39,8 +38,8 @@ public class ClientEventsForge {
     public static void onScreenInit(ScreenEvent.Init.Post event) {
         if (!(event.getScreen() instanceof InventoryScreen screen)) return;
 
-        int x = screen.getGuiLeft() + screen.getXSize() - 155;
-        int y = screen.getGuiTop() - 22;
+        int x = screen.getGuiLeft() + screen.getXSize() - 152;
+        int y = screen.getGuiTop() - 18;
 
         extraButton = Button.builder(
                 Component.literal("Skill tree"),
@@ -88,6 +87,8 @@ public class ClientEventsForge {
                     if (PlayerShape.getCurrentShape(player) instanceof Animal) {
                         poseStack.mulPose(Axis.ZP.rotationDegrees(90.0F));
                         poseStack.mulPose(Axis.YP.rotationDegrees(90.0F));
+
+                        player.swinging = false;
                     }
 
                 }

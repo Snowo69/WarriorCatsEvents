@@ -39,7 +39,22 @@ public class ModItemModelProvider extends ItemModelProvider {
         simpleItem(ModItems.WARRIOR_NAMETAG);
         simpleItem(ModItems.KIT_ITEM);
 
+        simpleItem(ModItems.BLUE_CAT_SOCKS);
+        simpleItem(ModItems.ORANGE_CAT_SOCKS);
+        simpleItem(ModItems.PINK_CAT_SOCKS);
+        simpleItem(ModItems.WHITE_CAT_SOCKS);
+        simpleItem(ModItems.BLACK_CAT_SOCKS);
+        simpleItem(ModItems.GREEN_CAT_SOCKS);
+
+        simpleItem(ModItems.HEAD_LEAF);
+        simpleItem(ModItems.HEAD_FLOWER);
+        simpleItem(ModItems.HEAD_DANDELION);
+        simpleItem(ModItems.TAIL_VINES);
+        simpleItem(ModItems.DRAPED_TAIL_VINES);
+
+
         simpleBlockItem(ModBlocks.LEAF_DOOR);
+//        simpleBlockItem(ModBlocks.LEAF_TRAPDOOR);
 
 //        withExistingParent(ModItems.STONE_CRAFTING_TABLE.getId().getPath(), modLoc("block/" + ModBlocks.STONE_CRAFTING_TABLE.getId().getPath()));
 

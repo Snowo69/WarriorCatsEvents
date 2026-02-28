@@ -22,6 +22,16 @@ public class WCEServerConfig {
         public final ForgeConfigSpec.BooleanValue ENHANCED_ANIMALS;
         public final ForgeConfigSpec.BooleanValue COLORED_NAMES;
         public final ForgeConfigSpec.BooleanValue VISIBLE_MORPH_NAME;
+        public final ForgeConfigSpec.BooleanValue LEAP_SERVER;
+        public final ForgeConfigSpec.BooleanValue SKILL_TREE_SERVER;
+        public final ForgeConfigSpec.BooleanValue VANILLA_MEAT_BONUS;
+
+        public final ForgeConfigSpec.DoubleValue SKILL_SPEED_MULTIPLIER;
+        public final ForgeConfigSpec.DoubleValue SKILL_HP_MULTIPLIER;
+        public final ForgeConfigSpec.DoubleValue SKILL_DMG_MULTIPLIER;
+        public final ForgeConfigSpec.DoubleValue SKILL_JUMP_MULTIPLIER;
+        public final ForgeConfigSpec.DoubleValue SKILL_ARMOR_MULTIPLIER;
+
 
 
         public Server(ForgeConfigSpec.Builder builder) {
@@ -52,8 +62,35 @@ public class WCEServerConfig {
                     .define("aggroAnimals", true);
 
             VISIBLE_MORPH_NAME = builder
-                    .comment("Whether your own morph's name should be visible")
+                    .comment("Whether morph names should be visible")
                     .define("visibleMorphName", true);
+
+            LEAP_SERVER = builder
+                    .comment("Whether leaping is enabled in this server/world")
+                    .define("serverLeap", true);
+
+            SKILL_TREE_SERVER = builder
+                    .comment("Whether skills are enabled in this server/world")
+                    .define("serverSkills", true);
+
+            VANILLA_MEAT_BONUS = builder
+                    .comment("Whether eating raw meats will feed you better")
+                    .define("rawFoodBonus", true);
+
+            builder.push("wce_skills");
+
+            SKILL_SPEED_MULTIPLIER = builder
+                    .comment("The multipliers for each skill.")
+                    .comment("This defines how much the skill will increase or decrease its attributes")
+                    .defineInRange("speed_Multiplier", 1.0, 0.1, 2.0);
+            SKILL_HP_MULTIPLIER = builder
+                    .defineInRange("HP_Multiplier", 1.0, 0.1, 2.0);
+            SKILL_DMG_MULTIPLIER = builder
+                    .defineInRange("damage_Multiplier", 1.0, 0.1, 2.0);
+            SKILL_JUMP_MULTIPLIER = builder
+                    .defineInRange("jump_Multiplier", 1.0, 0.1, 2.0);
+            SKILL_ARMOR_MULTIPLIER = builder
+                    .defineInRange("armor_Multiplier", 1.0, 0.1, 2.0);
 
             builder.pop();
         }

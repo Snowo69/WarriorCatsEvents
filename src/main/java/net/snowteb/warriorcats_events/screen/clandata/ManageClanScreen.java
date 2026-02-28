@@ -1,6 +1,5 @@
 package net.snowteb.warriorcats_events.screen.clandata;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -11,13 +10,12 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
-import net.minecraft.world.entity.Entity;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.client.ClanInfo;
 import net.snowteb.warriorcats_events.entity.ModEntities;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.network.ModPackets;
-import net.snowteb.warriorcats_events.network.packet.CtSManageClanMemberPacket;
+import net.snowteb.warriorcats_events.network.packet.c2s.clan.CtSManageClanMemberPacket;
 import net.snowteb.warriorcats_events.util.ClanSymbol;
 import net.snowteb.warriorcats_events.util.MemberScrollList;
 import net.snowteb.warriorcats_events.util.ModButton;

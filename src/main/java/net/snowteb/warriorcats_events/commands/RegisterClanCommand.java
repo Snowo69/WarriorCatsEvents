@@ -11,8 +11,7 @@ import net.snowteb.warriorcats_events.clan.ClanData;
 import net.snowteb.warriorcats_events.clan.PlayerClanData;
 import net.snowteb.warriorcats_events.clan.PlayerClanDataProvider;
 import net.snowteb.warriorcats_events.network.ModPackets;
-import net.snowteb.warriorcats_events.network.packet.OpenClanSetupScreenPacket;
-import net.snowteb.warriorcats_events.network.packet.S2COpenRegisterClanScreenPacket;
+import net.snowteb.warriorcats_events.network.packet.s2c.clan.S2COpenRegisterClanScreenPacket;
 
 import java.util.UUID;
 

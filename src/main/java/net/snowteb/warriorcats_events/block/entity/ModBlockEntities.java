@@ -18,10 +18,17 @@ public class ModBlockEntities {
                     BlockEntityType.Builder.of(StoneCleftBlockEntity::new,
                             ModBlocks.STONECLEFT.get()).build(null));
 
+    public static final RegistryObject<BlockEntityType<FreshkillPileBlockEntity>> FRESH_KILL_PILE =
+            BLOCK_ENTITIES.register("fresh_kill_pile_block", () ->
+                    BlockEntityType.Builder.of(FreshkillPileBlockEntity::new,
+                            ModBlocks.FRESHKILL_PILE.get()).build(null));
+
     public static final RegistryObject<BlockEntityType<MossBedBlockEntity>> MOSS_BED =
             BLOCK_ENTITIES.register("moss_bed", () ->
                     BlockEntityType.Builder.of(MossBedBlockEntity::new,
-                            ModBlocks.MOSS_BED.get()).build(null)
+                            ModBlocks.MOSS_BED.get(),
+                            ModBlocks.HAY_BED.get())
+                            .build(null)
             );
 
 

@@ -11,7 +11,7 @@ import net.snowteb.warriorcats_events.WarriorCatsEvents;
 
 public class WCatScreen extends AbstractContainerScreen<WCatMenu>  {
     private static final ResourceLocation TEXTURE =
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/catinv_gui_2.png");
+            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/catinv_gui.png");
 
     public WCatScreen(WCatMenu pMenu, Inventory pPlayerInventory, Component pTitle) {
         super(pMenu, pPlayerInventory, pTitle);

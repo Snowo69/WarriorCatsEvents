@@ -1,13 +1,11 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_item": {
+    "has_leaves": {
       "conditions": {
         "items": [
           {
-            "items": [
-              "minecraft:air"
-            ]
+            "tag": "minecraft:leaves"
           }
         ]
       },
@@ -22,7 +20,7 @@
   },
   "requirements": [
     [
-      "has_item",
+      "has_leaves",
       "has_the_recipe"
     ]
   ],

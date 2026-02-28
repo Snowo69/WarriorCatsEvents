@@ -11,7 +11,7 @@ import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.network.ModPackets;
-import net.snowteb.warriorcats_events.network.packet.C2SRegisterClanPacket;
+import net.snowteb.warriorcats_events.network.packet.c2s.clan.C2SRegisterClanPacket;
 import net.snowteb.warriorcats_events.util.ClanSymbol;
 import net.snowteb.warriorcats_events.util.ImageScrollList;
 
@@ -57,9 +57,9 @@ public class CreateClanScreen extends Screen {
 
     private ImageScrollList symbolList;
 
-    private static final ResourceLocation BG_TEXTURE =
+    public static final ResourceLocation BG_TEXTURE =
             new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/background_scene.png");
-    private static final ResourceLocation BANNER =
+    public static final ResourceLocation BANNER =
             new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/banner.png");
 
 

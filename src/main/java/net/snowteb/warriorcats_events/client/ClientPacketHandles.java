@@ -9,6 +9,7 @@ import net.snowteb.warriorcats_events.screen.AncientStickScreen;
 import net.snowteb.warriorcats_events.screen.clandata.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @OnlyIn(Dist.CLIENT)
 public class ClientPacketHandles {
@@ -65,6 +66,26 @@ public class ClientPacketHandles {
 
     public static void openManageClanScreen(ClanInfo info) {
         Minecraft.getInstance().execute(() -> Minecraft.getInstance().setScreen(new ManageClanScreen(info)));
+    }
+
+    public static void openSpecificClan(String clanName, UUID clanUUID) {
+        Minecraft.getInstance().execute(() -> {
+            Minecraft mc = Minecraft.getInstance();
+            if (mc.level == null) return;
+
+            mc.setScreen(new SpecificClanScreen(clanName, clanUUID));
+        });
+
+    }
+
+    public static void openCreateMorphScreen() {
+        Minecraft.getInstance().execute(() -> {
+            Minecraft mc = Minecraft.getInstance();
+            if (mc.level == null) return;
+
+            mc.setScreen(new CreateMorphGeneticsScreen());
+        });
+
     }
 }
 

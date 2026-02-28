@@ -21,20 +21,22 @@ import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ToolAction;
 import net.minecraftforge.common.ToolActions;
+import net.snowteb.warriorcats_events.item.ModItems;
 import net.snowteb.warriorcats_events.network.ModPackets;
-import net.snowteb.warriorcats_events.network.packet.s2c.StCFishingScreenPacket;
+import net.snowteb.warriorcats_events.network.packet.s2c.others.StCFishingScreenPacket;
 import net.snowteb.warriorcats_events.sound.ModSounds;
 import org.jetbrains.annotations.Nullable;
 import tocraft.walkers.api.PlayerShape;
@@ -54,19 +56,34 @@ public class ClawsTooltip extends ShearsItem {
     }
 
     @Override
-    public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot slot) {
-        ImmutableMultimap.Builder<Attribute, AttributeModifier> modifier = ImmutableMultimap.builder();
-        if (slot == EquipmentSlot.MAINHAND) {
-            modifier.put(Attributes.ATTACK_DAMAGE,
-                    new AttributeModifier(ATTACK_DAMAGE_UUID, "Weapon modifier",
-                            4.0, AttributeModifier.Operation.ADDITION));
-            modifier.put(Attributes.ATTACK_SPEED,
-                    new AttributeModifier(ATTACK_SPEED_UUID, "Weapon modifier",
-                            1.6, AttributeModifier.Operation.ADDITION));
-        }
-        Multimap<Attribute, AttributeModifier> modifiers = modifier.build();
+    public Multimap<Attribute, AttributeModifier> getAttributeModifiers(
+            EquipmentSlot slot, ItemStack stack) {
 
-        return modifiers;
+        ImmutableMultimap.Builder<Attribute, AttributeModifier> builder =
+                ImmutableMultimap.builder();
+
+        if (slot == EquipmentSlot.MAINHAND) {
+
+            float modifier = clawsDamageModifier(stack);
+
+            builder.put(Attributes.ATTACK_DAMAGE,
+                    new AttributeModifier(
+                            ATTACK_DAMAGE_UUID,
+                            "Claws damage modifier",
+                            4.0 * modifier,
+                            AttributeModifier.Operation.ADDITION
+                    ));
+
+            builder.put(Attributes.ATTACK_SPEED,
+                    new AttributeModifier(
+                            ATTACK_SPEED_UUID,
+                            "Claws speed modifier",
+                            1.0f + (0.6f * modifier),
+                            AttributeModifier.Operation.ADDITION
+                    ));
+        }
+
+        return builder.build();
     }
 
 
@@ -138,10 +155,31 @@ public class ClawsTooltip extends ShearsItem {
                 }
 
                 if (player != null) {
-                    itemstack.hurtAndBreak(-3, player, (p_150686_) -> {
-                        p_150686_.broadcastBreakEvent(pContext.getHand());
+                    itemstack.hurtAndBreak(-3, player, (p) -> {
 
+                        p.broadcastBreakEvent(pContext.getHand());
                     });
+
+                    if (!level.isClientSide() && level.getRandom().nextFloat() < 0.006F) {
+                        ItemStack itemstack1 = Items.MOSS_BLOCK.asItem().getDefaultInstance();
+                        if (level.getRandom().nextFloat() < 0.05F) {
+                            itemstack1 = Items.BROWN_DYE.asItem().getDefaultInstance();
+                            itemstack1.setHoverName(Component.empty()
+                                    .append("Fox dung")
+                                    .append(Component.literal(" (Really stinky)").withStyle(ChatFormatting.GRAY)));
+                        }
+                        ItemEntity itemEntity = new ItemEntity(level, blockpos.getX(), blockpos.getY(), blockpos.getZ(), itemstack1);
+                        itemEntity.setItem(itemstack1.copyWithCount(level.random.nextInt(2) + 1));
+
+                        Vec3 spawnPos = Vec3.atCenterOf(blockpos);
+
+                        Vec3 direction = player.position().subtract(spawnPos)
+                                .normalize().scale(0.35);
+
+                        itemEntity.setDeltaMovement(direction);
+                        level.addFreshEntity(itemEntity);
+
+                    }
                 }
 
                 if (!level.isClientSide() && level.getRandom().nextInt(40) == 0) {
@@ -160,15 +198,30 @@ public class ClawsTooltip extends ShearsItem {
 
     }
 
+    private float clawsDamageModifier(ItemStack stack) {
+        if (!stack.is(ModItems.CLAWS.get())) {
+            return 1.0f;
+        }
+
+        float max = stack.getMaxDamage();
+        float remaining = max - stack.getDamageValue();
+        float durabilityPercent = remaining / max;
+
+        return 0.2f + (0.8f * durabilityPercent);
+    }
+
     /**
      * Every time you hurt an entity, damage the tool.
      */
     public boolean hurtEnemy(ItemStack pStack, LivingEntity pTarget, LivingEntity pAttacker) {
-        pStack.hurtAndBreak(1, pAttacker, (p_43296_) -> {
-            p_43296_.broadcastBreakEvent(EquipmentSlot.MAINHAND);
-        });
-
+        damageTool(pStack, 1, pAttacker);
         return true;
+    }
+
+    public void damageTool(ItemStack stack, int amount, LivingEntity attacker) {
+        if (stack.hurt(amount, attacker.level().random, attacker instanceof ServerPlayer ? (ServerPlayer) attacker : null)) {
+            stack.setDamageValue(stack.getMaxDamage());
+        }
     }
 
     private boolean isRiverOrOcean(Level level, BlockPos origin) {
@@ -220,6 +273,10 @@ public class ClawsTooltip extends ShearsItem {
 
                 if (!pLevel.isClientSide) {
                     if (PlayerShape.getCurrentShape(pPlayer) instanceof Animal) {
+                        if (pPlayer.getItemInHand(InteractionHand.MAIN_HAND).getDamageValue() <= 0) {
+                            pPlayer.displayClientMessage(Component.literal("Your claws are too damaged.").withStyle(ChatFormatting.RED), true);
+                            return InteractionResultHolder.fail(itemstack);
+                        }
                         boolean canFish = isRiverOrOcean(pLevel, pos);
 
                         if (canFish) {

@@ -6,6 +6,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -14,6 +16,7 @@ import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.animal.*;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.AbstractSkeleton;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.player.Player;
@@ -25,16 +28,12 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
-import net.minecraftforge.event.entity.player.AttackEntityEvent;
-import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
-import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
-import net.minecraftforge.event.entity.player.SleepingTimeCheckEvent;
+import net.minecraftforge.event.entity.player.*;
 import net.minecraftforge.event.level.SleepFinishedTimeEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.snowteb.warriorcats_events.zconfig.WCEConfig;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.block.custom.MossBedBlock;
 import net.snowteb.warriorcats_events.clan.ClanData;
@@ -46,7 +45,7 @@ import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.item.ModFoodHerbs;
 import net.snowteb.warriorcats_events.item.ModItems;
 import net.snowteb.warriorcats_events.network.ModPackets;
-import net.snowteb.warriorcats_events.network.packet.s2c.ThirstDataSyncStCPacket;
+import net.snowteb.warriorcats_events.network.packet.s2c.others.ThirstDataSyncStCPacket;
 import net.snowteb.warriorcats_events.skills.PlayerSkillProvider;
 import net.snowteb.warriorcats_events.thirst.PlayerThirstProvider;
 import net.snowteb.warriorcats_events.zconfig.WCEServerConfig;
@@ -166,17 +165,20 @@ public class ModEventsForge {
                 thirst.addThirst(randomThirst);
             }
 
-            if (stack.is(Items.CHICKEN) || stack.is(Items.PORKCHOP)
-                    || stack.is(Items.BEEF) || stack.is(Items.MUTTON)
-                    || stack.is(Items.RABBIT) || stack.is(Items.SALMON)
-                    || stack.is(Items.COD) || stack.is(Items.TROPICAL_FISH)
-                    || stack.is(Items.SWEET_BERRIES)) {
-                int randomThirst = 1 + player.getRandom().nextInt(1);
-                thirst.addThirst(randomThirst);
-                if (!stack.is(Items.SWEET_BERRIES)) {
-                    player.getFoodData().eat(3, 0.84f);
+            if (WCEServerConfig.SERVER.VANILLA_MEAT_BONUS.get()) {
+                if (stack.is(Items.CHICKEN) || stack.is(Items.PORKCHOP)
+                        || stack.is(Items.BEEF) || stack.is(Items.MUTTON)
+                        || stack.is(Items.RABBIT) || stack.is(Items.SALMON)
+                        || stack.is(Items.COD) || stack.is(Items.TROPICAL_FISH)
+                        || stack.is(Items.SWEET_BERRIES)) {
+                    int randomThirst = 1 + player.getRandom().nextInt(1);
+                    thirst.addThirst(randomThirst);
+                    if (!stack.is(Items.SWEET_BERRIES)) {
+                        player.getFoodData().eat(3, 0.84f);
+                    }
                 }
             }
+
 
 
             if (player instanceof ServerPlayer serverPlayer) {
@@ -193,6 +195,27 @@ public class ModEventsForge {
                 player.removeEffect(ModEffects.DEATHBERRIES.get());
             }
 
+        }
+
+        if (stack.is(Items.CHICKEN) || stack.is(Items.PORKCHOP)
+                || stack.is(Items.BEEF) || stack.is(Items.MUTTON)
+                || stack.is(Items.RABBIT) || stack.is(Items.SALMON)
+                || stack.is(Items.COD) || stack.is(Items.TROPICAL_FISH)
+                || stack.is(ModItems.SQUIRREL_FOOD.get()) || stack.is(ModItems.PIGEON_FOOD.get())
+                || stack.is(ModItems.MOUSE_FOOD.get())
+        ) {
+            if (event.getEntity().level().random.nextFloat() < 0.22) {
+                Level level = event.getEntity().level();
+                LivingEntity entity = event.getEntity();
+                if (entity instanceof Player && level instanceof ServerLevel) {
+                    ItemStack bonestack = new ItemStack(Items.BONE, 1 + level.getRandom().nextInt(3));
+                    ItemEntity itemEnt = new ItemEntity(level, entity.getX(), entity.getY(), entity.getZ(), bonestack);
+                    itemEnt.setDeltaMovement(entity.getLookAngle().scale(0.3));
+                    itemEnt.setPickUpDelay(60);
+                    level.addFreshEntity(itemEnt);
+                    level.playSound(null, itemEnt.blockPosition(), SoundEvents.TURTLE_EGG_CRACK, SoundSource.PLAYERS, 0.8f, 1.0f);
+                }
+            }
         }
     }
 

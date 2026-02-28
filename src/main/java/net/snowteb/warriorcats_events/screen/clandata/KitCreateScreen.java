@@ -9,15 +9,8 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
-import net.snowteb.warriorcats_events.clan.PlayerClanData;
-import net.snowteb.warriorcats_events.client.ClientClanData;
 import net.snowteb.warriorcats_events.network.ModPackets;
-import net.snowteb.warriorcats_events.network.packet.SaveClanDataPacket;
-import net.snowteb.warriorcats_events.network.packet.zcatmodifiers.CtSCreateAndSpawnKitPacket;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import net.snowteb.warriorcats_events.network.packet.c2s.cats.CtSCreateAndSpawnKitPacket;
 
 public class KitCreateScreen extends Screen {
     private int textCooldown = 0;
@@ -26,7 +19,7 @@ public class KitCreateScreen extends Screen {
 
     private Button saveButton;
 
-    private VariantScrollList variantScrollList;
+//    private VariantScrollList variantScrollList;
 
 
 
@@ -36,40 +29,40 @@ public class KitCreateScreen extends Screen {
     }
 
 
-    private static final ResourceLocation[] VARIANTS = {
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var_empty.png"),
-
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var1.png"),
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var2.png"),
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var3.png"),
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var4.png"),
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var5.png"),
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var6.png"),
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var7.png"),
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var8.png"),
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var9.png"),
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var10.png"),
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var11.png"),
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var12.png"),
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var13.png"),
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var14.png"),
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var15.png"),
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var16.png"),
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var17.png"),
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var18.png"),
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var19.png"),
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var20.png"),
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var21.png"),
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var22.png"),
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var23.png"),
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var24.png"),
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var25.png"),
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var26.png"),
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var27.png"),
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var28.png"),
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var29.png"),
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var30.png")
-    };
+//    private static final ResourceLocation[] VARIANTS = {
+//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var_empty.png"),
+//
+//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var1.png"),
+//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var2.png"),
+//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var3.png"),
+//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var4.png"),
+//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var5.png"),
+//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var6.png"),
+//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var7.png"),
+//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var8.png"),
+//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var9.png"),
+//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var10.png"),
+//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var11.png"),
+//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var12.png"),
+//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var13.png"),
+//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var14.png"),
+//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var15.png"),
+//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var16.png"),
+//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var17.png"),
+//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var18.png"),
+//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var19.png"),
+//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var20.png"),
+//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var21.png"),
+//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var22.png"),
+//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var23.png"),
+//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var24.png"),
+//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var25.png"),
+//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var26.png"),
+//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var27.png"),
+//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var28.png"),
+//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var29.png"),
+//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var30.png")
+//    };
 
     private static final ResourceLocation BANNER =
             new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/banner.png");
@@ -103,7 +96,6 @@ public class KitCreateScreen extends Screen {
             morphNameShow = kitPrefix + "kit";
         }
 
-        pGuiGraphics.renderOutline(centerx-71, centery - 106, 148, 38, 0xFFFFFFFF);
 
 
         pGuiGraphics.drawCenteredString(Minecraft.getInstance().font,
@@ -117,15 +109,18 @@ public class KitCreateScreen extends Screen {
 
         ResourceLocation currentVariant;
 
-        VariantScrollList.VariantEntry selected = variantScrollList.getSelectedEntry();
+//        int selected = 0;
+//        if (variantScrollList.getSelectedEntry() != null) {
+//            selected = variantScrollList.getSelectedEntry().getId();
+//        }
 
-        if (selected != null) {
-            int variant = selected.getId() + 1;
-            currentVariant = VARIANTS[variant];
-
-        } else {
-            currentVariant = VARIANTS[0];
-        }
+//        if (selected != null) {
+//            int variant = selected.getId() + 1;
+//            currentVariant = VARIANTS[variant];
+//
+//        } else {
+//            currentVariant = VARIANTS[0];
+//        }
 
         if (textCooldown > 0) {
             pGuiGraphics.drawString(Minecraft.getInstance().font, "Some fields are empty",
@@ -135,13 +130,13 @@ public class KitCreateScreen extends Screen {
 
         super.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
 
-        pGuiGraphics.enableScissor(centerx - 32, centery - 60, centerx + 32, centery +4);
-        pGuiGraphics.blit(currentVariant, centerx - 32, centery - 60,
-                0, 0,
-                256, 256,
-                64, 64
-        );
-        pGuiGraphics.disableScissor();
+//        pGuiGraphics.enableScissor(centerx - 32, centery - 60, centerx + 32, centery +4);
+//        pGuiGraphics.blit(currentVariant, centerx - 32, centery - 60,
+//                0, 0,
+//                256, 256,
+//                64, 64
+//        );
+//        pGuiGraphics.disableScissor();
 
 
 //        int xPosition = -230;
@@ -156,6 +151,47 @@ public class KitCreateScreen extends Screen {
 //                200, 56
 //        );
 //        pGuiGraphics.disableScissor();
+
+//        if (!ClientClanData.get().isOnGeneticalSkin()) {
+//            pGuiGraphics.renderOutline(centerx-71, centery - 106, 148, 58, 0xFFFFFFFF);
+//
+//
+//            WCatEntity entityToRender = new WCatEntity(ModEntities.WCAT.get(), Minecraft.getInstance().level);
+//
+//            entityToRender.setOnGeneticalSkin(false);
+//            entityToRender.setOnGround(true);
+//            entityToRender.setVariant(selected);
+//            if (variantScrollList.getSelectedEntry() != null) {
+//                entityToRender.setVariant(variantScrollList.getSelectedEntry().getId());
+//            }
+//            entityToRender.setYRot(0);
+//            entityToRender.yHeadRot = 0;
+//            entityToRender.yBodyRot = 0;
+//
+//            pGuiGraphics.pose().pushPose();
+//
+//            pGuiGraphics.pose().translate(centerx, centery + 5, 0);
+//
+//            float scale = 1.4f;
+//
+//            pGuiGraphics.pose().scale(scale, scale, scale);
+//
+//            Quaternionf rotation = new Quaternionf(0.0F, 0.0F, 0.0F, 0.0F);
+//            Quaternionf pose = new Quaternionf(0.8F, 0.0F, 0.3F, 0.0F);
+//
+//            InventoryScreen.renderEntityInInventory(
+//                    pGuiGraphics,
+//                    0,
+//                    0,
+//                    48,
+//                    pose,
+//                    rotation,
+//                    entityToRender
+//            );
+//
+//            pGuiGraphics.pose().popPose();
+//        }
+
 
     }
 
@@ -174,54 +210,80 @@ public class KitCreateScreen extends Screen {
         int centerX = this.width / 2;
         int centerY = this.height / 2;
 
-        int listWidth = 140;
-        int listHeight = 40;
-        int top = centerY - 105;
-        int bottom = centerY - 70;
-
-        this.variantScrollList = new VariantScrollList(
-                Minecraft.getInstance(),
-                listWidth,
-                listHeight,
-                top,
-                bottom,
-                20
-        );
-        this.variantScrollList.setRenderTopAndBottom(false);
-        this.variantScrollList.setLeftPos(((centerX - (listWidth/2))));
-
-        variantScrollList.addOption("Calico", 0);
-        variantScrollList.addOption("Siamese", 1);
-        variantScrollList.addOption("Gray", 2);
-        variantScrollList.addOption("Abyssinian", 3);
-        variantScrollList.addOption("Black", 4);
-        variantScrollList.addOption("Maine Coon", 5);
-        variantScrollList.addOption("Russian Blue", 6);
-        variantScrollList.addOption("Dark Brown Tabby", 7);
-        variantScrollList.addOption("White", 8);
-        variantScrollList.addOption("Calico 2", 9);
-        variantScrollList.addOption("Munchkin", 10);
-        variantScrollList.addOption("Light Gray Tabby", 11);
-        variantScrollList.addOption("Chestnutpatch (Bookwom)", 12);
-        variantScrollList.addOption("Ratstar (Telefonjoker)", 13);
-        variantScrollList.addOption("Twitchstream (Cat)", 14);
-        variantScrollList.addOption("Blazepit (Cat)", 15);
-        variantScrollList.addOption("Bengalpelt (Klyonstar)", 16);
-        variantScrollList.addOption("Sparrowstar (Whale_shark)", 17);
-        variantScrollList.addOption("Foxeater (Sejr)", 18);
-        variantScrollList.addOption("Willowsong (Sejr)", 19);
-        variantScrollList.addOption("White 2", 20);
-        variantScrollList.addOption("Dalmatian", 21);
-        variantScrollList.addOption("Gray Tabby", 22);
-        variantScrollList.addOption("Brown", 23);
-        variantScrollList.addOption("Pale Ginger", 24);
-        variantScrollList.addOption("Black 2", 25);
-        variantScrollList.addOption("Bengal", 26);
-        variantScrollList.addOption("Snowshoe", 27);
-        variantScrollList.addOption("Toyger", 28);
-        variantScrollList.addOption("Turkish Van", 29);
-
-        this.addRenderableWidget(this.variantScrollList);
+//        int listWidth = 140;
+//        int listHeight = 40;
+//        int top = centerY - 105;
+//        int bottom = centerY - 50;
+//
+//        this.variantScrollList = new VariantScrollList(
+//                Minecraft.getInstance(),
+//                listWidth,
+//                listHeight,
+//                top,
+//                bottom,
+//                20
+//        );
+//        this.variantScrollList.setRenderTopAndBottom(false);
+//        this.variantScrollList.setLeftPos(((centerX - (listWidth/2))));
+//
+//        variantScrollList.addOption("Calico", 0);
+//        variantScrollList.addOption("Siamese", 1);
+//        variantScrollList.addOption("Gray", 2);
+//        variantScrollList.addOption("Abyssinian", 3);
+//        variantScrollList.addOption("Black", 4);
+//        variantScrollList.addOption("Maine Coon", 5);
+//        variantScrollList.addOption("Russian Blue", 6);
+//        variantScrollList.addOption("Dark Brown Tabby", 7);
+//        variantScrollList.addOption("White", 8);
+//        variantScrollList.addOption("Calico 2", 9);
+//        variantScrollList.addOption("Munchkin", 10);
+//        variantScrollList.addOption("Light Gray Tabby", 11);
+//        variantScrollList.addOption("Chestnutpatch (Bookwom)", 12);
+//        variantScrollList.addOption("Ratstar (Telefonjoker)", 13);
+//        variantScrollList.addOption("Twitchstream (Cat)", 14);
+//        variantScrollList.addOption("Blazepit (Cat)", 15);
+//        variantScrollList.addOption("Bengalpelt (Klyonstar)", 16);
+//        variantScrollList.addOption("Sparrowstar (Whale_shark)", 17);
+//        variantScrollList.addOption("Foxeater (Sejr)", 18);
+//        variantScrollList.addOption("Willowsong (Sejr)", 19);
+//        variantScrollList.addOption("White 2", 20);
+//        variantScrollList.addOption("Dalmatian", 21);
+//        variantScrollList.addOption("Gray Tabby", 22);
+//        variantScrollList.addOption("Brown", 23);
+//        variantScrollList.addOption("Pale Ginger", 24);
+//        variantScrollList.addOption("Black 2", 25);
+//        variantScrollList.addOption("Bengal", 26);
+//        variantScrollList.addOption("Snowshoe", 27);
+//        variantScrollList.addOption("Toyger", 28);
+//        variantScrollList.addOption("Turkish Van", 29);
+//        variantScrollList.addOption("Albino (CoffeeCat)", 30);
+//        variantScrollList.addOption("Bengal (CoffeeCat)", 31);
+//        variantScrollList.addOption("Brindle Tortie (Mswolfy81)", 32);
+//        variantScrollList.addOption("Cream Calico 1 (Lightley)", 33);
+//        variantScrollList.addOption("Cream Calico 2 (Lightley)", 34);
+//        variantScrollList.addOption("Cream Calico 3 (Lightley)", 35);
+//        variantScrollList.addOption("Caramel (CoffeeCat)", 36);
+//        variantScrollList.addOption("Frostdawn (whitenoisewife)", 37);
+//        variantScrollList.addOption("Gray-white Tabby (Slay)", 38);
+//        variantScrollList.addOption("Hailflake (pvppet, Mswolfy81)", 39);
+//        variantScrollList.addOption("Karpati (whitenoisewife)", 40);
+//        variantScrollList.addOption("Leafstar (whitenoisewife)", 41);
+//        variantScrollList.addOption("Longtail (whitenoisewife)", 42);
+//        variantScrollList.addOption("Mothpaw (CoffeeCat)", 43);
+//        variantScrollList.addOption("Redtail (whitenoisewife)", 44);
+//        variantScrollList.addOption("Salem (CoffeeCat, Mswolfy81)", 45);
+//        variantScrollList.addOption("Short hair (CoffeeCat)", 46);
+//        variantScrollList.addOption("Stoneflare (Feathered Melodica)", 47);
+//        variantScrollList.addOption("Tortie point (whitenoisewife)", 48);
+//        variantScrollList.addOption("Turtleheart (RainbowServal, Mswolfy81)", 49);
+//        variantScrollList.addOption("Violetdew (bem te vi, Mswolfy81)", 50);
+//        variantScrollList.addOption("Patch (Feathered Melodica)", 51);
+//        variantScrollList.addOption("Parlee (PsychicStudios, CoffeeCat)", 52);
+//
+//
+//        if (!ClientClanData.get().isOnGeneticalSkin()) {
+//            this.addRenderableWidget(this.variantScrollList);
+//        }
 
 
         kitPrefixBox = new EditBox(
@@ -243,21 +305,27 @@ public class KitCreateScreen extends Screen {
 
     private void onSave() {
         String kitPrefix = kitPrefixBox.getValue().trim();
-        VariantScrollList.VariantEntry selectedVariant = variantScrollList.getSelectedEntry();
+//        VariantScrollList.VariantEntry selectedVariant = variantScrollList.getSelectedEntry();
 
-        if (kitPrefix.isEmpty() || selectedVariant == null) {
+//        if (kitPrefix.isEmpty() || (selectedVariant == null && !ClientClanData.get().isOnGeneticalSkin())) {
+//            textCooldown = 100;
+//            return;
+//        }
+
+        if (kitPrefix.isEmpty()) {
             textCooldown = 100;
             return;
         }
 
+
         String prefix = kitPrefixBox.getValue().trim();
 
         int variant = 0;
-        VariantScrollList.VariantEntry selected = variantScrollList.getSelectedEntry();
+//        VariantScrollList.VariantEntry selected = variantScrollList.getSelectedEntry();
 
-        if (selected != null) {
-            variant = selected.getId();
-        }
+//        if (selected != null) {
+//            variant = selected.getId();
+//        }
 
 
         this.minecraft.setScreen(null);
@@ -269,6 +337,7 @@ public class KitCreateScreen extends Screen {
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         if (keyCode == 256) {
+            Minecraft.getInstance().setScreen(null);
             return true;
         }
         return super.keyPressed(keyCode, scanCode, modifiers);

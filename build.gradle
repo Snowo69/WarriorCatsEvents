@@ -237,9 +237,9 @@ tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
 }
 
-//mixin {
-//    add sourceSets.main, "mixins.warriorcats_events.refmap.json"
-//    config 'mixins.warriorcats_events.json'
-//    debug.verbose = true
-//    debug.export = true
-//}
+mixin {
+    add sourceSets.main, "mixins.warriorcats_events.refmap.json"
+    config 'mixins.warriorcats_events.json'
+    debug.verbose = true
+    debug.export = true
+}

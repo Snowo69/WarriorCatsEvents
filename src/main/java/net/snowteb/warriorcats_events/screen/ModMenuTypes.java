@@ -19,6 +19,10 @@ public class ModMenuTypes {
     public static final RegistryObject<MenuType<StoneCleftMenu>> STONECLEFT_MENU =
             registerMenuType("stone_cleft_menu", StoneCleftMenu::new);
 
+    public static final RegistryObject<MenuType<FreshKillPileMenu>> FRESHKILL_PILE_MENU =
+            registerMenuType("fresh_kill_pile_menu", FreshKillPileMenu::new);
+
+
     public static final RegistryObject<MenuType<WCatMenu>> WCAT_INVENTORY =
             registerMenuType("wcat_inventory", WCatMenu::new);
 

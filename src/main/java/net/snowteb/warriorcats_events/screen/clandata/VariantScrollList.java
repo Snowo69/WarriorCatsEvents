@@ -6,6 +6,7 @@ import net.minecraft.client.gui.components.AbstractSelectionList;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 
 public class VariantScrollList extends AbstractSelectionList<VariantScrollList.VariantEntry> {
+    private boolean visible = true;
 
     public VariantScrollList(Minecraft mc, int width, int height, int top, int bottom, int itemHeight) {
 
@@ -19,6 +20,10 @@ public class VariantScrollList extends AbstractSelectionList<VariantScrollList.V
         return this.getLeft() + this.getRowWidth() + 20;
     }
 
+
+    public void setVisible(boolean visible) {
+        this.visible = visible;
+    }
 
     @Override
     public int getRowWidth() {
@@ -36,6 +41,12 @@ public class VariantScrollList extends AbstractSelectionList<VariantScrollList.V
 
     public VariantEntry getSelectedEntry() {
         return this.getSelected();
+    }
+
+    @Override
+    public void render(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
+        if (!visible) return;
+        super.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
     }
 
     public class VariantEntry extends AbstractSelectionList.Entry<VariantEntry> {

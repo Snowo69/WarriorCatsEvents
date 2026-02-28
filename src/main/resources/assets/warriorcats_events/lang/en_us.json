@@ -6,14 +6,14 @@
   "block.warriorcats_events.moss_bed": "Moss Nest",
   "block.warriorcats_events.moss_bed.tooltip": "A comfortable moss nest, lined with feathers, ferns, and flowers.",
 
+  "block.warriorcats_events.hay_bed": "Hay Nest",
+  "block.warriorcats_events.hay_bed.tooltip": "A comfortable hay nest made from wheat. The wheat might itch a little.",
+
   "item.warriorcats_events.dock_leaves": "Dock Leaves",
   "item.warriorcats_events.dock_leaves.tooltip": "Good for making poultices and wraping herbs",
 
   "item.warriorcats_events.sorrel_leaves": "Sorrel Leaves",
   "item.warriorcats_events.sorrel_leaves.tooltip": "Traveling herb. Used to ease hunger and thirst",
-
-  "item.warriorcats_events.starclan_knowledge": "The lives of a leader",
-  "item.warriorcats_events.starclan_knowledge.tooltip": "Contains the 9 lives' ceremony",
 
   "item.warriorcats_events.dock_poultice": "Dock Poultice",
   "item.warriorcats_events.dock_poultice.tooltip": "Good for scratches and sore pads\\nRight click: Heal a Wild Cat.",
@@ -57,6 +57,7 @@
 
   "block.warriorcats_events.catmint": "Catmint",
   "block.warriorcats_events.stone_cleft": "Stone Cleft",
+  "block.warriorcats_events.fresh_kill_pile": "Fresh-kill Pile",
   "block.warriorcats_events.stonecleft": "Stone Cleft",
   "block.warriorcats_events.dark_log": "Dark Log",
   "block.warriorcats_events.stripped_dark_log": "Stripped Dark Log",
@@ -70,6 +71,7 @@
   "block.warriorcats_events.daisy": "Daisy",
   "block.warriorcats_events.deathberries_bush": "Deathberries Bush",
   "block.warriorcats_events.leaf_door": "Leaf Door",
+  "block.warriorcats_events.leaf_trapdoor": "Leaf Trapdoor",
   "block.warriorcats_events.starrytree_sapling": "Starry Tree Sapling",
   "block.warriorcats_events.darktree_sapling": "Dark Tree Sapling",
   "block.warriorcats_events.glowshroom": "Glowshroom",
@@ -124,7 +126,19 @@
 
   "item.warriorcats_events.warriors_guide": "A Warrior's Guide",
   "item.warriorcats_events.warriors_guide.tooltip": "Every warrior needs guidance at some point!",
-  "container.stone_crafting_table.crafting": "Paw Crafting",
-  "block.warriorcats_events.stone_crafting_table.tooltip": "A rock specially designed to craft anything with your paws!"
+  "block.warriorcats_events.stone_crafting_table.tooltip": "A rock specially designed to craft anything with your paws!",
 
+
+  "item.warriorcats_events.green_cat_socks": "Green Cat Socks",
+  "item.warriorcats_events.black_cat_socks": "Black Cat Socks",
+  "item.warriorcats_events.white_cat_socks": "White Cat Socks",
+  "item.warriorcats_events.pink_cat_socks": "Pink Cat Socks",
+  "item.warriorcats_events.orange_cat_socks": "Orange Cat Socks",
+  "item.warriorcats_events.blue_cat_socks": "Blue Cat Socks",
+
+  "item.warriorcats_events.head_leaf": "Head Leaf",
+  "item.warriorcats_events.head_flower": "Head Flower",
+  "item.warriorcats_events.head_dandelion": "Head Dandelion",
+  "item.warriorcats_events.tail_vines": "Tail Vines",
+  "item.warriorcats_events.draped_tail_vines": "Draped Tail Vines"
 }

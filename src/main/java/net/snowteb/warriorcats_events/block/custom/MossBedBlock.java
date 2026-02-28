@@ -1,8 +1,13 @@
 package net.snowteb.warriorcats_events.block.custom;
 
 import javax.annotation.Nullable;
+
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
@@ -13,18 +18,28 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.BedBlock;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BedPart;
+import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.snowteb.warriorcats_events.block.entity.MossBedBlockEntity;
+import net.snowteb.warriorcats_events.clan.ClanData;
+import net.snowteb.warriorcats_events.clan.PlayerClanData;
+import net.snowteb.warriorcats_events.clan.PlayerClanDataProvider;
+import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
+import net.snowteb.warriorcats_events.item.ModItems;
 
 public class MossBedBlock extends BedBlock {
     protected static final VoxelShape BASE = Block.box(2.0D, 0.0D, 2.0D, 14.0D, 1.0D, 14.0D);
@@ -44,6 +59,87 @@ public class MossBedBlock extends BedBlock {
 
     public InteractionResult use(BlockState state, Level level, BlockPos pos,
                                  Player player, InteractionHand hand, BlockHitResult hit) {
+
+        if (level.getBlockEntity(pos) instanceof MossBedBlockEntity mbEntity) {
+
+            if (!mbEntity.getAssignedUUID().equals(ClanData.EMPTY_UUID)) {
+                if (!level.isClientSide) {
+                    if (mbEntity.getAssignedEntity(level) != player) {
+                        player.displayClientMessage(Component.literal("This nest is already owned.")
+                                .withStyle(ChatFormatting.RED), true);
+                        return InteractionResult.FAIL;
+                    }
+                }
+            } else {
+                if (player.getItemInHand(hand).is(ModItems.WHISKERS.get())) {
+
+                    if (level instanceof ServerLevel sLevel) {
+                        int chunkRadius = (200 >> 4) + 1;
+                        int centerChunkX = player.blockPosition().getX() >> 4;
+                        int centerChunkZ = player.blockPosition().getZ() >> 4;
+
+                        for (int dx = -chunkRadius; dx <= chunkRadius; dx++) {
+                            for (int dz = -chunkRadius; dz <= chunkRadius; dz++) {
+
+                                int chunkX = centerChunkX + dx;
+                                int chunkZ = centerChunkZ + dz;
+
+                                LevelChunk chunk = sLevel.getChunkSource().getChunkNow(chunkX, chunkZ);
+                                if (chunk == null) continue;
+
+                                for (BlockEntity be : chunk.getBlockEntities().values()) {
+                                    if (be instanceof MossBedBlockEntity mossBed) {
+
+                                        if (be.getBlockPos().distSqr(player.blockPosition()) <= (200 * 200)) {
+
+                                            if (mossBed.getAssignedUUID().equals(player.getUUID())) {
+                                                mossBed.resetAssigned();
+                                                mossBed.setChanged();
+
+                                                Vec3 centerOfThisMossbed = mossBed.getBlockPos().getCenter();
+                                                sLevel.sendParticles(
+                                                        ParticleTypes.SMOKE,
+                                                        centerOfThisMossbed.x, mossBed.getBlockPos().getY() + 0.5, centerOfThisMossbed.z,
+                                                        10, 0.2, 0.5, 0.2, 0.02
+                                                );
+
+                                                BlockState bstate = level.getBlockState(mossBed.getBlockPos());
+                                                level.sendBlockUpdated(mossBed.getBlockPos(), bstate, bstate, 3);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    mbEntity.assignNest(player.getUUID());
+
+                    String morphName = player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
+                                    .map(PlayerClanData::getMorphName).orElse(player.getName().getString());
+
+                    mbEntity.setCatName(morphName + " (" + player.getName().getString() +")");
+
+                    player.displayClientMessage(Component.literal("You have claimed this nest")
+                            .withStyle(ChatFormatting.GREEN), true);
+
+                    if (level instanceof ServerLevel sLevel) {
+                        Vec3 centerOfThisMossbed = mbEntity.getBlockPos().getCenter();
+
+                        sLevel.sendParticles(
+                                ParticleTypes.HAPPY_VILLAGER,
+                                centerOfThisMossbed.x, pos.getY() + 0.5, centerOfThisMossbed.z,
+                                10, 0.2, 0.5, 0.2, 0.02
+                        );
+                    }
+
+                    mbEntity.setChanged();
+                    level.sendBlockUpdated(pos, state, state, 3);
+
+                    return InteractionResult.SUCCESS;
+                }
+            }
+        }
         BlockState headState = state.setValue(PART, BedPart.HEAD);
         return super.use(headState, level, pos, player, hand, hit);
     }
@@ -77,13 +173,53 @@ public class MossBedBlock extends BedBlock {
         super.playerWillDestroy(pLevel, pPos, pState, pPlayer);
     }
 
+
     @Override
-    public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos currentPos, BlockPos neighborPos) {
-        return state;
+    public BlockState updateShape(BlockState pState, Direction pFacing, BlockState pFacingState, LevelAccessor pLevel, BlockPos pCurrentPos, BlockPos pFacingPos) {
+        if (!pState.canSurvive(pLevel, pCurrentPos)) {
+            return Blocks.AIR.defaultBlockState();
+        }
+        return pState;
     }
 
     @Override
     public RenderShape getRenderShape(BlockState state) {
         return RenderShape.MODEL;
     }
+
+    @Override
+    public void onRemove(BlockState pState, Level pLevel, BlockPos pPos, BlockState pNewState, boolean pMovedByPiston) {
+        BlockEntity blockEntity = pLevel.getBlockEntity(pPos);
+        if (blockEntity instanceof MossBedBlockEntity mossBedBlockEntity) {
+            LivingEntity entity = mossBedBlockEntity.getAssignedEntity(pLevel);
+            if (entity != null && pState.getBlock() != pNewState.getBlock()) {
+                if (entity instanceof WCatEntity cat) {
+                    cat.setHomePosition(BlockPos.ZERO);
+                    if (cat.getOwner() instanceof Player player) {
+                        if (!pLevel.isClientSide) {
+                            player.sendSystemMessage(
+                                    Component.empty()
+                                            .append(cat.hasCustomName() ? cat.getCustomName() : Component.literal("A cat")).withStyle(ChatFormatting.YELLOW)
+                                            .append(Component.literal(" has lost their nest.").withStyle(ChatFormatting.YELLOW))
+                            );
+                        }
+                    }
+                }
+                if (entity instanceof Player player) {
+                    if (!pLevel.isClientSide) {
+                        player.sendSystemMessage(Component.literal("Your nest has been removed.").withStyle(ChatFormatting.GRAY));
+                    }
+                }
+            }
+        }
+        super.onRemove(pState, pLevel, pPos, pNewState, pMovedByPiston);
+    }
+
+    @Override
+    public boolean canSurvive(BlockState pState, LevelReader pLevel, BlockPos pPos) {
+        return pLevel.getBlockState(pPos.below()).isFaceSturdy(pLevel, pPos.below(), Direction.UP);
+    }
+
+
+
 }

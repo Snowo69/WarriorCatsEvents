@@ -1,7 +1,6 @@
 package net.snowteb.warriorcats_events.screen;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
@@ -11,7 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.network.ModPackets;
-import net.snowteb.warriorcats_events.network.packet.zcatmodifiers.CommandCatsPacket;
+import net.snowteb.warriorcats_events.network.packet.c2s.cats.CommandCatsPacket;
 import net.snowteb.warriorcats_events.screen.clandata.MultipleSelectionScrollList;
 import org.lwjgl.glfw.GLFW;
 

@@ -10,19 +10,16 @@ import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
-import net.snowteb.warriorcats_events.clan.ClanData;
 import net.snowteb.warriorcats_events.client.ClanInfo;
 import net.snowteb.warriorcats_events.client.ClientClanCache;
 import net.snowteb.warriorcats_events.entity.ModEntities;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
-import net.snowteb.warriorcats_events.network.CtSRequestManageScreenPacket;
+import net.snowteb.warriorcats_events.network.packet.c2s.clan.CtSRequestManageScreenPacket;
 import net.snowteb.warriorcats_events.network.ModPackets;
-import net.snowteb.warriorcats_events.network.packet.CtSRegisterLogPacket;
+import net.snowteb.warriorcats_events.network.packet.c2s.clan.CtSRegisterLogPacket;
 import net.snowteb.warriorcats_events.util.*;
 import org.lwjgl.glfw.GLFW;
 
-import java.awt.*;
-import java.time.format.TextStyle;
 import java.util.UUID;
 
 import static net.snowteb.warriorcats_events.screen.clandata.ManageClanScreen.pose;

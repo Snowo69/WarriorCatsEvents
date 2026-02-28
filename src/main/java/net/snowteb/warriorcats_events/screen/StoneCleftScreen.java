@@ -11,7 +11,7 @@ import net.snowteb.warriorcats_events.WarriorCatsEvents;
 
 public class StoneCleftScreen extends AbstractContainerScreen<StoneCleftMenu>  {
     private static final ResourceLocation TEXTURE =
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/stonecleft_gui_2.png");
+            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/stonecleft_gui.png");
 
     public StoneCleftScreen(StoneCleftMenu pMenu, Inventory pPlayerInventory, Component pTitle) {
         super(pMenu, pPlayerInventory, pTitle);

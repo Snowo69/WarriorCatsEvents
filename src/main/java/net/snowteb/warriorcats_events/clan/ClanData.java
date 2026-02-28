@@ -6,15 +6,13 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.saveddata.SavedData;
-import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.network.ModPackets;
-import net.snowteb.warriorcats_events.network.packet.S2CSyncClanDataPacket;
+import net.snowteb.warriorcats_events.network.packet.s2c.clan.S2CSyncClanDataPacket;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -513,7 +511,7 @@ public class ClanData extends SavedData {
 
         clan.logs.add(new ClanLogEntry(time, message));
 
-        if (clan.logs.size() > 200) {
+        if (clan.logs.size() > 300) {
             clan.logs.remove(0);
         }
 

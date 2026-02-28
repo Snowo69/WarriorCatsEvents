@@ -11,12 +11,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.snowteb.warriorcats_events.clan.ClanData;
 import net.snowteb.warriorcats_events.clan.PlayerClanData;
 import net.snowteb.warriorcats_events.clan.PlayerClanDataProvider;
-import net.snowteb.warriorcats_events.client.ClanInfo;
-import net.snowteb.warriorcats_events.network.ModPackets;
-import net.snowteb.warriorcats_events.network.packet.S2CClanListPacket;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 public class DismantleClanCommand {

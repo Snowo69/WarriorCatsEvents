@@ -34,6 +34,7 @@ public class WCAttackGoal extends MeleeAttackGoal {
     @Override
     public void start() {
         super.start();
+        this.mob.clearRestriction();
         attackDelay = 17;
         ticksUntilNextAttack = 17;
     }

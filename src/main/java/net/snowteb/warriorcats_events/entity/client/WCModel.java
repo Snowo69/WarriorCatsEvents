@@ -4,8 +4,8 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.item.ItemStack;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
+import net.snowteb.warriorcats_events.entity.custom.WCGenetics;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.item.ModItems;
 import software.bernie.geckolib.constant.DataTickets;
@@ -27,31 +27,55 @@ public class WCModel extends GeoModel<WCatEntity> {
             new ResourceLocation("warriorcats_events:textures/entity/wcat/wcskin3.png"),
             new ResourceLocation("warriorcats_events:textures/entity/wcat/wcskin4.png"),
             new ResourceLocation("warriorcats_events:textures/entity/wcat/wcskin5.png"),
-            new ResourceLocation("warriorcats_events:textures/entity/wcat/wcskin6.png"),
+            new ResourceLocation("warriorcats_events:textures/entity/wcat/wcskin6.png"), // 5
             new ResourceLocation("warriorcats_events:textures/entity/wcat/wcskin7.png"),
             new ResourceLocation("warriorcats_events:textures/entity/wcat/wcskin8.png"),
             new ResourceLocation("warriorcats_events:textures/entity/wcat/wcskin9.png"),
             new ResourceLocation("warriorcats_events:textures/entity/wcat/wcskin10.png"),
-            new ResourceLocation("warriorcats_events:textures/entity/wcat/wcskin11.png"),
+            new ResourceLocation("warriorcats_events:textures/entity/wcat/wcskin11.png"), //10
             new ResourceLocation("warriorcats_events:textures/entity/wcat/wcskin12.png"),
             new ResourceLocation("warriorcats_events:textures/entity/wcat/chestnutpatch.png"),
             new ResourceLocation("warriorcats_events:textures/entity/wcat/ratstar.png"),
             new ResourceLocation("warriorcats_events:textures/entity/wcat/twitchstream.png"),
-            new ResourceLocation("warriorcats_events:textures/entity/wcat/blazepit.png"),
+            new ResourceLocation("warriorcats_events:textures/entity/wcat/blazepit.png"), // 15
             new ResourceLocation("warriorcats_events:textures/entity/wcat/bengalpelt.png"),
             new ResourceLocation("warriorcats_events:textures/entity/wcat/sparrowstar.png"),
             new ResourceLocation("warriorcats_events:textures/entity/wcat/foxeater.png"),
             new ResourceLocation("warriorcats_events:textures/entity/wcat/willowsong.png"),
-            new ResourceLocation("warriorcats_events:textures/entity/wcat/wcskin13.png"),
+            new ResourceLocation("warriorcats_events:textures/entity/wcat/wcskin13.png"), //20
             new ResourceLocation("warriorcats_events:textures/entity/wcat/wcskin14.png"),
             new ResourceLocation("warriorcats_events:textures/entity/wcat/wcskin15.png"),
             new ResourceLocation("warriorcats_events:textures/entity/wcat/wcskin16.png"),
             new ResourceLocation("warriorcats_events:textures/entity/wcat/wcskin17.png"),
-            new ResourceLocation("warriorcats_events:textures/entity/wcat/wcskin18.png"),
+            new ResourceLocation("warriorcats_events:textures/entity/wcat/wcskin18.png"), //25
             new ResourceLocation("warriorcats_events:textures/entity/wcat/wcskin19.png"),
             new ResourceLocation("warriorcats_events:textures/entity/wcat/wcskin20.png"),
             new ResourceLocation("warriorcats_events:textures/entity/wcat/wcskin21.png"),
-            new ResourceLocation("warriorcats_events:textures/entity/wcat/wcskin22.png")
+            new ResourceLocation("warriorcats_events:textures/entity/wcat/wcskin22.png"),
+
+            new ResourceLocation("warriorcats_events:textures/entity/wcat/albino.png"), //30
+            new ResourceLocation("warriorcats_events:textures/entity/wcat/bengal.png"),
+            new ResourceLocation("warriorcats_events:textures/entity/wcat/brindle_tortie.png"),
+            new ResourceLocation("warriorcats_events:textures/entity/wcat/brown_cream_calico.png"),
+            new ResourceLocation("warriorcats_events:textures/entity/wcat/brown_cream_calico2.png"),
+            new ResourceLocation("warriorcats_events:textures/entity/wcat/brown_cream_calico3.png"), //35
+            new ResourceLocation("warriorcats_events:textures/entity/wcat/caramel.png"),
+            new ResourceLocation("warriorcats_events:textures/entity/wcat/frostdawn.png"),
+            new ResourceLocation("warriorcats_events:textures/entity/wcat/gray_white_tabby.png"),
+            new ResourceLocation("warriorcats_events:textures/entity/wcat/hailflake.png"),
+            new ResourceLocation("warriorcats_events:textures/entity/wcat/karpati.png"), //40
+            new ResourceLocation("warriorcats_events:textures/entity/wcat/leafstar.png"),
+            new ResourceLocation("warriorcats_events:textures/entity/wcat/longtail.png"),
+            new ResourceLocation("warriorcats_events:textures/entity/wcat/mothpaw.png"),
+            new ResourceLocation("warriorcats_events:textures/entity/wcat/redtail.png"),
+            new ResourceLocation("warriorcats_events:textures/entity/wcat/salem.png"), // 45
+            new ResourceLocation("warriorcats_events:textures/entity/wcat/short_hair.png"),
+            new ResourceLocation("warriorcats_events:textures/entity/wcat/stoneflare.png"),
+            new ResourceLocation("warriorcats_events:textures/entity/wcat/tortie_point.png"),
+            new ResourceLocation("warriorcats_events:textures/entity/wcat/turtleheart.png"),
+            new ResourceLocation("warriorcats_events:textures/entity/wcat/violetdew.png"), //50
+            new ResourceLocation("warriorcats_events:textures/entity/wcat/patch.png"),
+            new ResourceLocation("warriorcats_events:textures/entity/wcat/parlee.png"), //52
     };
 
     @Override
@@ -77,20 +101,53 @@ public class WCModel extends GeoModel<WCatEntity> {
     public void setCustomAnimations(WCatEntity animatable, long instanceId, AnimationState<WCatEntity> animationState) {
         CoreGeoBone head = animatable.isAnImage() ? null : getAnimationProcessor().getBone("mainHead");
 
+//        getBone("crown").ifPresent(bone -> {
+//            bone.setHidden(true);
+//        });
 
-        getBone("crown").ifPresent(bone -> {
-            boolean hasCrown = animatable
-                    .getItemBySlot(EquipmentSlot.HEAD)
-                    .is(ModItems.FLOWER_CROWN.get());
-            bone.setHidden(!hasCrown);
-        });
+//        getBone("crown").ifPresent(bone -> {
+//            boolean hasCrown = animatable
+//                    .getItemBySlot(EquipmentSlot.HEAD)
+//                    .is(ModItems.FLOWER_CROWN.get());
+//            bone.setHidden(!hasCrown);
+//        });
 
-        getBone("mane").ifPresent(bone -> {
-            boolean hasMane = animatable
-                    .getItemBySlot(EquipmentSlot.HEAD)
-                    .is(ModItems.LEAF_MANE.get());
-            bone.setHidden(!hasMane);
-        });
+//        getBone("mane").ifPresent(bone -> {
+//            boolean hasMane = animatable
+//                    .getItemBySlot(EquipmentSlot.HEAD)
+//                    .is(ModItems.LEAF_MANE.get());
+//            bone.setHidden(true);
+//        });
+
+        boolean hasChestFur = (WCGenetics.FurGene.isLongFur(animatable.getGenetics().chestFur));
+        boolean hasBellyFur = (WCGenetics.FurGene.isLongFur(animatable.getGenetics().bellyFur));
+        boolean hasLegsFur = (WCGenetics.FurGene.isLongFur(animatable.getGenetics().legsFur));
+        boolean hasHeadFur = (WCGenetics.FurGene.isLongFur(animatable.getGenetics().headFur));
+        boolean hasCheekFur = (WCGenetics.FurGene.isLongFur(animatable.getGenetics().cheekFur));
+        boolean hasBackFur = (WCGenetics.FurGene.isLongFur(animatable.getGenetics().backFur));
+        boolean hasTailFur = (WCGenetics.FurGene.isLongFur(animatable.getGenetics().tailFur));
+        boolean isBobtail = (WCGenetics.Bobtail.isBobtail(animatable.getGenetics().bobtail));
+
+        {
+            getBone("chest_fur").ifPresent(bone -> bone.setHidden(!hasChestFur));
+            getBone("belly_fur").ifPresent(bone -> bone.setHidden(!hasBellyFur));
+
+            getBone("front_right_fur2").ifPresent(bone -> bone.setHidden(!hasLegsFur));
+            getBone("front_right_fur").ifPresent(bone -> bone.setHidden(!hasLegsFur));
+
+            getBone("head_tuft").ifPresent(bone -> bone.setHidden(!hasHeadFur));
+            getBone("face_fur").ifPresent(bone -> bone.setHidden(!hasCheekFur));
+            getBone("back_fur").ifPresent(bone -> bone.setHidden(!hasBackFur));
+
+            getBone("tailsub").ifPresent(bone -> bone.setHidden(isBobtail));
+            getBone("tail2").ifPresent(bone -> bone.setHidden(isBobtail));
+
+            getBone("tail_fur").ifPresent(bone -> bone.setHidden(!hasTailFur));
+            getBone("tail_fur2").ifPresent(bone -> bone.setHidden(!hasTailFur));
+            getBone("tail_fur3").ifPresent(bone -> bone.setHidden(!hasTailFur));
+
+        }
+
 
         {
             boolean hasFlowerArmor = animatable.getItemBySlot(EquipmentSlot.CHEST).is(ModItems.FLOWER_ARMOR.get());
