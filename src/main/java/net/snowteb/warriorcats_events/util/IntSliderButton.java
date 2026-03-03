@@ -1,0 +1,35 @@
+package net.snowteb.warriorcats_events.util;
+
+import net.minecraft.client.gui.components.AbstractSliderButton;
+import net.minecraft.network.chat.Component;
+
+public class IntSliderButton extends AbstractSliderButton {
+
+    private final int min;
+    private final int max;
+
+    public IntSliderButton(int x, int y, int width, int height,
+                           int min, int max, int initialValue) {
+
+        super(x, y, width, height, Component.empty(),
+                (double) (initialValue - min) / (max - min));
+
+        this.min = min;
+        this.max = max;
+
+        updateMessage();
+    }
+
+    @Override
+    protected void updateMessage() {
+        this.setMessage(Component.literal("Value: " + getActualValue()));
+    }
+
+    @Override
+    protected void applyValue() {
+    }
+
+    public int getActualValue() {
+        return (int) (min + (float)value * (max - min));
+    }
+}

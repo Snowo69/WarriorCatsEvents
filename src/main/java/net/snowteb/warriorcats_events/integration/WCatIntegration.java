@@ -2,9 +2,14 @@ package net.snowteb.warriorcats_events.integration;
 
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.monster.Phantom;
+import net.minecraft.world.entity.player.Player;
 import net.snowteb.warriorcats_events.entity.ModEntities;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import tocraft.walkers.ability.AbilityRegistry;
+import tocraft.walkers.api.WalkersTickHandler;
+import tocraft.walkers.api.WalkersTickHandlers;
+import tocraft.walkers.api.model.EntityUpdater;
+import tocraft.walkers.api.model.EntityUpdaters;
 import tocraft.walkers.api.variant.TypeProviderRegistry;
 import tocraft.walkers.integrations.AbstractIntegration;
 import tocraft.walkers.traits.TraitRegistry;
@@ -29,7 +34,7 @@ public class WCatIntegration extends AbstractIntegration {
 //        EntityUpdaters.register(ModEntities.WCAT.get(), new EntityUpdater<WCatEntity>() {
 //            @Override
 //            public void update(Player from, WCatEntity to) {
-//
+//                if (from.onClimbable()) to.setAnimIndex(3);
 //            }
 //        });
 

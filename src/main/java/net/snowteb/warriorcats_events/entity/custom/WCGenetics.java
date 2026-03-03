@@ -117,8 +117,8 @@ public class WCGenetics {
 
 
     public static class GeneticalVariants {
-        public String eyeColorLeft = "";
-        public String eyeColorRight = "";
+        public String eyeColorLeft = "yellow";
+        public String eyeColorRight = "yellow";
         public int rufousingVariant = 0;
         public int blueRufousingVariant = 0;
         public int orangeVar = 0;
@@ -129,6 +129,10 @@ public class WCGenetics {
         public int rightEyeVar = 0;
         public int noise = 0;
         public float size = 0;
+
+        public GeneticalVariants() {
+
+        }
 
         public GeneticalVariants(String eyeColorLeft, String eyeColorRight, int rufousingVariant,
                                  int blueRufousingVariant, int orangeVar, int whiteVar,

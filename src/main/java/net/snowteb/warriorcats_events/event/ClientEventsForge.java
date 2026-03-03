@@ -9,11 +9,15 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.block.BedBlock;
+import net.minecraft.world.level.block.entity.BedBlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderGuiOverlayEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
@@ -25,9 +29,12 @@ import net.snowteb.warriorcats_events.block.custom.MossBedBlock;
 import net.snowteb.warriorcats_events.client.LeapClientState;
 import net.snowteb.warriorcats_events.network.ModPackets;
 import net.snowteb.warriorcats_events.network.packet.c2s.skilltree.ReqSkillDataPacket;
+import net.snowteb.warriorcats_events.screen.EmoteMenu;
 import net.snowteb.warriorcats_events.screen.SkillScreen;
 import net.snowteb.warriorcats_events.stealth.PlayerStealthProvider;
 import tocraft.walkers.api.PlayerShape;
+
+import static net.snowteb.warriorcats_events.WCEClient.isRenderingEmoteMenu;
 
 @Mod.EventBusSubscriber(modid = WarriorCatsEvents.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public class ClientEventsForge {
@@ -85,8 +92,49 @@ public class ClientEventsForge {
                     poseStack.translate(0.0D, 0.1D, -0.3D);
 
                     if (PlayerShape.getCurrentShape(player) instanceof Animal) {
+                        if (player != Minecraft.getInstance().player) {
+                            poseStack.translate(0.0D, -0.6D, 0.0D);
+                            player.setOnGround(true);
+                        }
                         poseStack.mulPose(Axis.ZP.rotationDegrees(90.0F));
                         poseStack.mulPose(Axis.YP.rotationDegrees(90.0F));
+
+                        player.swinging = false;
+                    }
+
+                } else if (player.level()
+                        .getBlockState(bedPos)
+                        .getBlock() instanceof BedBlock) {
+
+                    PoseStack poseStack = event.getPoseStack();
+
+                    if (PlayerShape.getCurrentShape(player) instanceof Animal) {
+                        poseStack.pushPose();
+
+                        poseStack.translate(0.5D, 0.1D, -0.3D);
+                        poseStack.scale(0.95F, 0.95F, 0.95F);
+
+                        if (player != Minecraft.getInstance().player) {
+                            poseStack.translate(0.0D, -0.15D, 0.0D);
+                            player.setOnGround(true);
+                        }
+                        BlockState state = player.level().getBlockState(bedPos);
+                        Direction facing = state.getValue(BedBlock.FACING);
+
+                        poseStack.mulPose(Axis.ZP.rotationDegrees(90.0F));
+                        poseStack.mulPose(Axis.YP.rotationDegrees(90.0F));
+                        if (facing == Direction.WEST) {
+
+                        } else if (facing == Direction.EAST) {
+                            poseStack.translate(0.0D, 1D, 0.0D);
+                        } else if (facing == Direction.SOUTH) {
+                            poseStack.mulPose(Axis.ZP.rotationDegrees(90.0F));
+                            poseStack.translate(1D, -0.0D, 0.0D);
+                        } else if (facing == Direction.NORTH) {
+                            poseStack.mulPose(Axis.ZP.rotationDegrees(-90.0F));
+                            poseStack.translate(-0D, -1.0D, 0.0D);
+                        }
+
 
                         player.swinging = false;
                     }
@@ -106,6 +154,12 @@ public class ClientEventsForge {
                 if (player.level()
                         .getBlockState(bedPos)
                         .getBlock() instanceof MossBedBlock) {
+
+                    event.getPoseStack().popPose();
+
+                } else if (player.level()
+                        .getBlockState(bedPos)
+                        .getBlock() instanceof BedBlock) {
 
                     event.getPoseStack().popPose();
                 }
@@ -171,6 +225,10 @@ public class ClientEventsForge {
         if (!mcinstance.isWindowActive()) return;
         if (mcinstance.screen != null) return;
         if (mcinstance.level == null) return;
+
+        if (isRenderingEmoteMenu) {
+            new EmoteMenu().render(event.getGuiGraphics());
+        }
 
         if (LeapClientState.getLeapPowerCounter() <= 0) return;
         if (!LeapClientState.isLeapActive()) return;

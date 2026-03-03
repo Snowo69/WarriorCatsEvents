@@ -334,6 +334,52 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .unlockedBy("has_item", has(Items.MOSS_CARPET))
                 .save(pWriter,  new ResourceLocation(WarriorCatsEvents.MODID, "moss_block_from_carpet"));
 
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.BLUE_PARROT_BODY_FEATHERS.get(), 1)
+                .pattern("AAA")
+                .pattern("AAA")
+                .pattern("AAA")
+                .define('A', ModItems.BLUE_PARROT_FEATHER.get())
+                .unlockedBy("has_item", has(ModItems.BLUE_PARROT_FEATHER.get()))
+                .save(pWriter);
 
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.RED_PARROT_BODY_FEATHERS.get(), 1)
+                .pattern("AAA")
+                .pattern("AAA")
+                .pattern("AAA")
+                .define('A', ModItems.RED_PARROT_FEATHER.get())
+                .unlockedBy("has_item", has(ModItems.RED_PARROT_FEATHER.get()))
+                .save(pWriter);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.GREEN_PARROT_BODY_FEATHERS.get(), 1)
+                .pattern("AAA")
+                .pattern("AAA")
+                .pattern("AAA")
+                .define('A', ModItems.GREEN_PARROT_FEATHER.get())
+                .unlockedBy("has_item", has(ModItems.GREEN_PARROT_FEATHER.get()))
+                .save(pWriter);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.LIGHTBLUE_PARROT_BODY_FEATHERS.get(), 1)
+                .pattern("AAA")
+                .pattern("AAA")
+                .pattern("AAA")
+                .define('A', ModItems.LIGHTBLUE_PARROT_FEATHER.get())
+                .unlockedBy("has_item", has(ModItems.LIGHTBLUE_PARROT_FEATHER.get()))
+                .save(pWriter);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.GRAY_PARROT_BODY_FEATHERS.get(), 1)
+                .pattern("AAA")
+                .pattern("AAA")
+                .pattern("AAA")
+                .define('A', ModItems.GRAY_PARROT_FEATHER.get())
+                .unlockedBy("has_item", has(ModItems.GRAY_PARROT_FEATHER.get()))
+                .save(pWriter);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.CHICKEN_BODY_FEATHERS.get(), 1)
+                .pattern("AAA")
+                .pattern("AAA")
+                .pattern("AAA")
+                .define('A', Items.FEATHER)
+                .unlockedBy("has_item", has(Items.FEATHER))
+                .save(pWriter);
     }
 }

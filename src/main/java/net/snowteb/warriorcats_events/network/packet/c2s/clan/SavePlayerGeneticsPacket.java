@@ -4,6 +4,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.network.NetworkEvent;
 import net.snowteb.warriorcats_events.clan.PlayerClanData;
@@ -96,7 +97,10 @@ public class SavePlayerGeneticsPacket {
             shape.setAppScale(isApprentice);
             shape.setAge(shapeAge);
 
-            PlayerShape.updateShapes(player, shape);
+            if (!PlayerShape.updateShapes(player, shape)) {
+                player.sendSystemMessage(Component.literal("Couldn't update your morph"));
+            }
+
 
         });
 
@@ -149,8 +153,10 @@ public class SavePlayerGeneticsPacket {
 
         cat.setVariant(data);
 
-        if (WCEServerConfig.SERVER.VISIBLE_MORPH_NAME.get()) cat.setCustomName(name);
-        cat.setCustomNameVisible(WCEServerConfig.SERVER.VISIBLE_MORPH_NAME.get());
+        cat.setCustomName(name);
+        cat.setCustomNameVisible(true);
+        cat.setShowMorphName(true);
+
 
         cat.setAge(age);
         cat.setBaby(isBaby);
@@ -167,6 +173,9 @@ public class SavePlayerGeneticsPacket {
                 cat.setGender(1);
             }
         });
+
+        cat.setPlayerBoundUuid(player.getUUID());
+
 
         return cat;
     }

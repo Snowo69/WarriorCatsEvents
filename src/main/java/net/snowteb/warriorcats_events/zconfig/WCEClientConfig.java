@@ -18,6 +18,7 @@ public class WCEClientConfig {
         public final ForgeConfigSpec.IntValue FISHING_SCREEN_Y_OFFSET;
         public final ForgeConfigSpec.BooleanValue LEAP;
         public final ForgeConfigSpec.BooleanValue OWN_MORPH_NAME;
+        public final ForgeConfigSpec.BooleanValue AMBIENT_MUSIC;
 
         public Client(ForgeConfigSpec.Builder builder) {
             builder.push("wce_client");
@@ -33,6 +34,10 @@ public class WCEClientConfig {
             OWN_MORPH_NAME = builder
                     .comment("Whether your own morph nametag is visible")
                     .define("showNametag", true);
+
+            AMBIENT_MUSIC = builder
+                    .comment("Whether ambient music from the mod will play for you")
+                    .define("cuteAmbientMusic", true);
 
 
             builder.pop();

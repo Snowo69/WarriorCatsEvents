@@ -7,6 +7,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.snowteb.warriorcats_events.clan.ClanData;
+import net.snowteb.warriorcats_events.entity.client.WCModel;
 import net.snowteb.warriorcats_events.entity.custom.WCGenetics;
 import net.snowteb.warriorcats_events.zconfig.WCEConfig;
 import net.snowteb.warriorcats_events.clan.PlayerClanData;
@@ -85,12 +86,18 @@ public class WCatTypeProvider extends TypeProvider<WCatEntity> {
 
         cat.setVariant(data);
 
-        if (WCEServerConfig.SERVER.VISIBLE_MORPH_NAME.get()) cat.setCustomName(name);
-        cat.setCustomNameVisible(WCEServerConfig.SERVER.VISIBLE_MORPH_NAME.get());
+
+        cat.setCustomName(name);
+        cat.setCustomNameVisible(true);
+        cat.setShowMorphName(true);
+
+
 
         cat.setAge(age);
         cat.setBaby(isBaby);
         cat.setAppScale(isAppScale);
+
+        cat.setPlayerBoundUuid(player.getUUID());
 
         player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {
             if (cap.isOnGeneticalSkin()) {
@@ -114,7 +121,7 @@ public class WCatTypeProvider extends TypeProvider<WCatEntity> {
 
     @Override
     public int getRange() {
-        return 52;
+        return WCModel.TEXTURES.length - 1;
     }
 
     @Override

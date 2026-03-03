@@ -130,6 +130,43 @@
       { "name": "warriorcats_events:mod_ambient/cat_call_1", "volume": 0.9, "pitch": 1.0 },
       { "name": "warriorcats_events:mod_ambient/cat_call_2", "volume": 0.9, "pitch": 1.0 }
     ]
+  },
+
+  "menu.click": {
+    "sounds": [
+      { "name": "warriorcats_events:menu/menu_click", "volume": 0.9, "pitch": 1.0 }
+    ]
+  },
+
+  "menu.button": {
+    "sounds": [
+      { "name": "warriorcats_events:menu/menu_button", "volume": 0.9, "pitch": 1.0 }
+    ]
+  },
+
+  "menu.open": {
+    "sounds": [
+      { "name": "warriorcats_events:menu/menu_open", "volume": 0.9, "pitch": 1.0 }
+    ]
+  },
+
+  "menu.section": {
+    "sounds": [
+      { "name": "warriorcats_events:menu/menu_section", "volume": 0.9, "pitch": 1.0 }
+    ]
+  },
+
+  "menu.select": {
+    "sounds": [
+      { "name": "warriorcats_events:menu/menu_select", "volume": 0.9, "pitch": 1.0 }
+    ]
+  },
+
+
+  "menu.accept": {
+    "sounds": [
+      { "name": "warriorcats_events:menu/section_accept", "volume": 0.9, "pitch": 1.0 }
+    ]
   }
 
 

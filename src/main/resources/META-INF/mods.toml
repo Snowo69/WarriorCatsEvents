@@ -6,7 +6,7 @@ license="All Rights Reserved"
 modId="warriorcats_events"
 displayName="Warrior Cats Events"
 description="Turn your world into a Warrior Cats survival experience!"
-version="1.4.0"
+version="1.4.1"
 authors="Klyonstar / Snowstar"
 credits="""
 Sharon Hurvitz (Author of "Generations")
@@ -37,7 +37,7 @@ license= "All Rights Reserved"
 [[dependencies.warriorcats_events]]
     modId="walkers"
     mandatory=true
-    versionRange="[5.7,)"
+    versionRange="[5.8.7,)"
     ordering="NONE"
     side="BOTH"
 

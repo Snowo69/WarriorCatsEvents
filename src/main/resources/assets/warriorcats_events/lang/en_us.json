@@ -140,5 +140,18 @@
   "item.warriorcats_events.head_flower": "Head Flower",
   "item.warriorcats_events.head_dandelion": "Head Dandelion",
   "item.warriorcats_events.tail_vines": "Tail Vines",
-  "item.warriorcats_events.draped_tail_vines": "Draped Tail Vines"
+  "item.warriorcats_events.draped_tail_vines": "Draped Tail Vines",
+
+  "item.warriorcats_events.green_parrot_feather": "Green Parrot Feather",
+  "item.warriorcats_events.red_parrot_feather": "Red Parrot Feather",
+  "item.warriorcats_events.blue_parrot_feather": "Blue Parrot Feather",
+  "item.warriorcats_events.lightblue_parrot_feather": "Light Blue Parrot Feather",
+  "item.warriorcats_events.gray_parrot_feather": "Gray Parrot Feather",
+
+  "item.warriorcats_events.green_parrot_body_feathers": "Green Parrot Body Feathers",
+  "item.warriorcats_events.red_parrot_body_feathers": "Red Parrot Body Feathers",
+  "item.warriorcats_events.blue_parrot_body_feathers": "Blue Parrot Body Feathers",
+  "item.warriorcats_events.lightblue_parrot_body_feathers": "Light Blue Parrot Body Feathers",
+  "item.warriorcats_events.gray_parrot_body_feathers": "Gray Parrot Body Feathers",
+  "item.warriorcats_events.chicken_body_feathers": "Chicken Body Feathers"
 }

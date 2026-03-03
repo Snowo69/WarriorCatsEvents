@@ -7,6 +7,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.snowteb.warriorcats_events.WCEClient;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.client.ClientClanData;
 import net.snowteb.warriorcats_events.entity.ModEntities;
@@ -16,11 +17,21 @@ import net.snowteb.warriorcats_events.network.ModPackets;
 import net.snowteb.warriorcats_events.network.packet.c2s.clan.SavePlayerGeneticsPacket;
 import net.snowteb.warriorcats_events.util.FloatSliderButton;
 import net.snowteb.warriorcats_events.util.GradientToggleButton;
+import net.snowteb.warriorcats_events.util.IntSliderButton;
 
 import static net.snowteb.warriorcats_events.screen.clandata.CreateClanScreen.BANNER;
 import static net.snowteb.warriorcats_events.screen.clandata.CreateClanScreen.BG_TEXTURE;
 
 public class CreateMorphGeneticsScreen extends Screen {
+
+    private float animationTime = 0f;
+    private float duration = 20f;
+    private boolean closing = false;
+
+    private final float startX = 0;
+    private final float endX = -700;
+    private float menuX = 0;
+
 
     private String eyeColorLeft = "yellow";
     private String eyeColorRight = "yellow";
@@ -57,6 +68,7 @@ public class CreateMorphGeneticsScreen extends Screen {
     private GradientToggleButton agoutiAndTabbySection;
     private GradientToggleButton eyesAndAnomalySection;
     private GradientToggleButton furBobtailNoiseSection;
+    private GradientToggleButton extraSection;
 
 
     private GradientSwitchButton bobtailSwitch;
@@ -69,6 +81,8 @@ public class CreateMorphGeneticsScreen extends Screen {
     private GradientSwitchButton tailFurSwitch;
     private VariantScrollList noiseList;
     private FloatSliderButton sizeSlider;
+    private IntSliderButton rufousingSlider;
+    private IntSliderButton blueRufousingSlider;
 
 
     private GradientToggleButton setBlackButton;
@@ -332,7 +346,8 @@ public class CreateMorphGeneticsScreen extends Screen {
                 70, 20,
                 Component.literal("Save morph"),
                 btn -> {
-                    saveAndNext();
+                    closing = true;
+                    animationTime = 0f;
                 }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
                 60, 20, 1f, 0xFFFFFFFF
         );
@@ -448,8 +463,10 @@ public class CreateMorphGeneticsScreen extends Screen {
 
             buttonHeight += 20;
 
+            int xOffset = -30;
+
             diluteSection = new GradientToggleButton(
-                    centerX - 135, buttonHeight, 60, 16,
+                    centerX - 135 + xOffset, buttonHeight, 60, 16,
                     Component.literal("Dilute"),
                     btn -> {
                         selectMainSection(diluteSection);
@@ -460,7 +477,7 @@ public class CreateMorphGeneticsScreen extends Screen {
             );
 
             agoutiAndTabbySection = new GradientToggleButton(
-                    centerX - 65, buttonHeight, 60, 16,
+                    centerX - 65 + xOffset, buttonHeight, 60, 16,
                     Component.literal("Agouti"),
                     btn -> {
                         selectMainSection(agoutiAndTabbySection);
@@ -472,7 +489,7 @@ public class CreateMorphGeneticsScreen extends Screen {
 
 
             eyesAndAnomalySection = new GradientToggleButton(
-                    centerX + 5, buttonHeight, 60, 16,
+                    centerX + 5 + xOffset, buttonHeight, 60, 16,
                     Component.literal("Eyes"),
                     btn -> {
                         selectMainSection(eyesAndAnomalySection);
@@ -485,7 +502,7 @@ public class CreateMorphGeneticsScreen extends Screen {
             );
 
             furBobtailNoiseSection = new GradientToggleButton(
-                    centerX + 75, buttonHeight, 60, 16,
+                    centerX + 75 + xOffset, buttonHeight, 60, 16,
                     Component.literal("Details"),
                     btn -> {
                         selectMainSection(furBobtailNoiseSection);
@@ -494,6 +511,20 @@ public class CreateMorphGeneticsScreen extends Screen {
                         this.addRenderableWidget(noiseList);
                         this.removeWidget(sizeSlider);
                         this.addRenderableWidget(sizeSlider);
+                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    80, 20, 1f, 0xFFFFFFFF
+            );
+
+            extraSection = new GradientToggleButton(
+                    centerX + 145 + xOffset, buttonHeight, 60, 16,
+                    Component.literal("Extra"),
+                    btn -> {
+                        selectMainSection(extraSection);
+                        mainSectionActiveMenu = "extra";
+                        this.removeWidget(rufousingSlider);
+                        this.addRenderableWidget(rufousingSlider);
+                        this.removeWidget(blueRufousingSlider);
+                        this.addRenderableWidget(blueRufousingSlider);
                     }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
                     80, 20, 1f, 0xFFFFFFFF
             );
@@ -663,6 +694,14 @@ public class CreateMorphGeneticsScreen extends Screen {
             whiteVariantList.addOption("Spots 7", 6);
             whiteVariantList.addOption("Spots 8", 7);
             whiteVariantList.addOption("Spots 9", 8);
+            whiteVariantList.addOption("Spots 10", 9);
+            whiteVariantList.addOption("Spots 11", 10);
+            whiteVariantList.addOption("Spots 12", 11);
+            whiteVariantList.addOption("Spots 13", 12);
+            whiteVariantList.addOption("Spots 14", 13);
+            whiteVariantList.addOption("Spots 15", 14);
+            whiteVariantList.addOption("Spots 16", 15);
+            whiteVariantList.addOption("Spots 17", 16);
         }
 
         // ALBINO BUTTONS
@@ -1030,6 +1069,17 @@ public class CreateMorphGeneticsScreen extends Screen {
             noiseList.addOption("Noise 3", 2);
         }
 
+        // EXTRA
+        {
+            rufousingSlider = new IntSliderButton(36, centerY + 5,
+                    80, 20,
+                    0, 6, 0);
+
+            blueRufousingSlider = new IntSliderButton(36, centerY + 45,
+                    80, 20,
+                    0, 6, 0);
+        }
+
         this.addRenderableWidget(bobtailSwitch);
         this.addRenderableWidget(chestFurSwitch);
         this.addRenderableWidget(legsFurSwitch);
@@ -1081,10 +1131,13 @@ public class CreateMorphGeneticsScreen extends Screen {
         this.addRenderableWidget(agoutiAndTabbySection);
         this.addRenderableWidget(eyesAndAnomalySection);
         this.addRenderableWidget(furBobtailNoiseSection);
+        this.addRenderableWidget(extraSection);
 
         this.addRenderableWidget(setOnGeneticalSkinButton);
         this.addRenderableWidget(setOnPresetSkinButton);
         this.addRenderableWidget(saveButton);
+
+        menuX = 500;
 
     }
 
@@ -1095,7 +1148,29 @@ public class CreateMorphGeneticsScreen extends Screen {
 
         pGuiGraphics.blit(BG_TEXTURE, 0, 0, 0, 0, this.width, this.height, this.width, this.height);
 
-        pGuiGraphics.enableScissor(10, 5, 143, 5 + 37);
+        if (closing) {
+            animationTime += pPartialTick;
+
+            float progress = Math.min(animationTime / duration, 1f);
+
+            float eased = progress * progress * progress;
+
+            menuX = startX + (endX - startX) * eased;
+
+            if (progress >= 1f) {
+                saveAndNext();
+            }
+        } else {
+            if (menuX > 0) {
+                menuX -= (menuX) * 0.03f;
+                if (menuX < 0) menuX = 0;
+            }
+        }
+
+        pGuiGraphics.pose().pushPose();
+        pGuiGraphics.pose().translate(menuX, 0, 0);
+
+        pGuiGraphics.enableScissor((int) (10 + menuX), 5, (int) (143 + menuX), 5 + 37);
         pGuiGraphics.blit(
                 BANNER,
                 10, 5,
@@ -1105,6 +1180,17 @@ public class CreateMorphGeneticsScreen extends Screen {
         );
         pGuiGraphics.disableScissor();
 
+        pGuiGraphics.blit(WCEClient.WCE_TITLE,
+                centerX - 200 - this.width,
+                centerY - 62, 0, 0,
+                250, 125,250,125);
+
+        pGuiGraphics.blit(WCEClient.WCE_TITLE,
+                centerX - 125 + this.width,
+                centerY - 62, 0, 0,
+                250, 125,250,125);
+
+
 
         baseSection.visible = false;
         orangeSection.visible = false;
@@ -1113,6 +1199,7 @@ public class CreateMorphGeneticsScreen extends Screen {
         diluteSection.visible = false;
         eyesAndAnomalySection.visible = false;
         furBobtailNoiseSection.visible = false;
+        extraSection.visible = false;
         agoutiAndTabbySection.visible = false;
         setBlackButton.visible = false;
         setChocolateButton.visible = false;
@@ -1159,6 +1246,7 @@ public class CreateMorphGeneticsScreen extends Screen {
             diluteSection.visible = true;
             eyesAndAnomalySection.visible = true;
             furBobtailNoiseSection.visible = true;
+            extraSection.visible = true;
             agoutiAndTabbySection.visible = true;
 
             if (mainSectionActiveMenu.equals("base")) {
@@ -1290,6 +1378,21 @@ public class CreateMorphGeneticsScreen extends Screen {
 
             }
 
+            if (mainSectionActiveMenu.equals("extra")) {
+
+                rufousingVariant = rufousingSlider.getActualValue();
+                blueRufousingVariant = blueRufousingSlider.getActualValue();
+
+                pGuiGraphics.drawCenteredString(font, "Extra", 76, centerY - 30, 0xFFFFFFFF);
+                pGuiGraphics.pose().pushPose();
+                pGuiGraphics.pose().translate(76, centerY - 3, 0);
+                pGuiGraphics.pose().scale(0.8f,0.8f,0.7f);
+                pGuiGraphics.drawCenteredString(font, "Rufousing", 0, 0, 0xFFFFFFFF);
+                pGuiGraphics.drawCenteredString(font, "Blue tint", 0, 50, 0xFFFFFFFF);
+                pGuiGraphics.pose().popPose();
+
+            }
+
         }
 
         if (!onGeneticalSkin) centerX += -50;
@@ -1343,6 +1446,7 @@ public class CreateMorphGeneticsScreen extends Screen {
 
         super.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
 
+        pGuiGraphics.pose().popPose();
     }
 
     private void selectMode(GradientToggleButton button) {
@@ -1361,6 +1465,7 @@ public class CreateMorphGeneticsScreen extends Screen {
         agoutiAndTabbySection.setSelected(false);
         eyesAndAnomalySection.setSelected(false);
         furBobtailNoiseSection.setSelected(false);
+        extraSection.setSelected(false);
 
         this.removeWidget(orangeVariantList);
         this.removeWidget(whiteVariantList);
@@ -1370,6 +1475,8 @@ public class CreateMorphGeneticsScreen extends Screen {
         this.removeWidget(rightEyeVariantList);
         this.removeWidget(noiseList);
         this.removeWidget(sizeSlider);
+        this.removeWidget(rufousingSlider);
+        this.removeWidget(blueRufousingSlider);
 
         if (button != null) button.setSelected(true);
     }

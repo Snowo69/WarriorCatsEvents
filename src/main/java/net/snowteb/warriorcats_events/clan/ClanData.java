@@ -406,6 +406,11 @@ public class ClanData extends SavedData {
             this.registerLog(player.serverLevel(), clan.clanUUID, playerLeftLog);
         });
         player.sendSystemMessage(Component.literal("You have been removed from your clan.").withStyle(ChatFormatting.YELLOW));
+
+        if (clan.members.isEmpty()) {
+            deleteClan(player.serverLevel(), clanUUID);
+        }
+
         setDirty();
 
 

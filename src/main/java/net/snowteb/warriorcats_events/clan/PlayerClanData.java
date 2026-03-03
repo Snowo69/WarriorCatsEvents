@@ -100,9 +100,9 @@ public class PlayerClanData {
         if (!genetics.tabbyStripes.isEmpty()) this.tabbyStripes = genetics.tabbyStripes;
         if (!genetics.eyesAnomaly.isEmpty()) this.eyesAnomaly = genetics.eyesAnomaly;
 
-        if (genetics.rufousing != 0) this.rufousing = genetics.rufousing;
-        if (genetics.blueRufousing != 0) this.blueRufousing = genetics.blueRufousing;
-        if (genetics.noise != 0) this.noise = genetics.noise;
+        this.rufousing = genetics.rufousing;
+        this.blueRufousing = genetics.blueRufousing;
+        this.noise = genetics.noise;
 
     }
 
@@ -113,16 +113,32 @@ public class PlayerClanData {
 
         if (!eyesVariantLeft.isEmpty()) this.eyeColorLeft = eyesVariantLeft;
         if (!eyesVariantRight.isEmpty()) this.eyeColorRight = eyesVariantRight;
-        if (rufVar != 0) this.rufousingVariant = rufVar;
-        if (blueRufVar != 0) this.blueRufousingVariant = blueRufVar;
-        if (orangeVar != 0) this.orangeVar = orangeVar;
-        if (whiteVar != 0) this.whiteVar = whiteVar;
-        if (tabbyVar != 0) this.tabbyVar = tabbyVar;
-        if (albinoVar != 0) this.albinoVar = albinoVar;
-        if (leftEyeVar != 0) this.leftEyeVar = leftEyeVar;
-        if (rightEyeVar != 0) this.rightEyeVar = rightEyeVar;
-        if (noise != 0) this.noise = noise;
-        if (size != 0) this.size = size;
+        this.rufousingVariant = rufVar;
+        this.blueRufousingVariant = blueRufVar;
+        this.orangeVar = orangeVar;
+        this.whiteVar = whiteVar;
+        this.tabbyVar = tabbyVar;
+        this.albinoVar = albinoVar;
+        this.leftEyeVar = leftEyeVar;
+        this.rightEyeVar = rightEyeVar;
+        this.noise = noise;
+        this.size = size;
+    }
+
+    public void setPlayerGeneticalVariants(WCGenetics.GeneticalVariants genetics) {
+
+        if (!genetics.eyeColorLeft.isEmpty()) this.eyeColorLeft = genetics.eyeColorLeft;
+        if (!genetics.eyeColorRight.isEmpty()) this.eyeColorRight = genetics.eyeColorRight;
+        this.rufousingVariant = genetics.rufousingVariant;
+        this.blueRufousingVariant = genetics.blueRufousingVariant;
+        this.orangeVar = genetics.orangeVar;
+        this.whiteVar = genetics.whiteVar;
+        this.tabbyVar = genetics.tabbyVar;
+        this.albinoVar = genetics.albinoVar;
+        this.leftEyeVar = genetics.leftEyeVar;
+        this.rightEyeVar = genetics.rightEyeVar;
+        this.noise = genetics.noise;
+        this.size = genetics.size;
     }
 
     public WCGenetics getPlayerGenetics() {

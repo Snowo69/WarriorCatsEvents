@@ -1,5 +1,6 @@
 package net.snowteb.warriorcats_events.screen.clandata;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -8,6 +9,7 @@ import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.snowteb.warriorcats_events.WCEClient;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.clan.PlayerClanData;
 import net.snowteb.warriorcats_events.client.ClientClanData;
@@ -36,11 +38,16 @@ public class ClanSetupScreen extends Screen {
 
     private Button randomizeButton;
 
-//    private VariantScrollList variantScrollList;
-
     private SwitchButton automaticSufix;
     private  SwitchButton useSufixes;
 
+    private float animationTime = 0f;
+    private float duration = 20f;
+    private boolean closing = false;
+
+    private final float startX = 0;
+    private final float endX = -700;
+    private float menuX = 0;
 
     private static final String[] SUFIX = {
             "claw", "fur", "feather", "pelt", "eye",
@@ -57,42 +64,6 @@ public class ClanSetupScreen extends Screen {
     }
 
 
-//    private static final ResourceLocation[] VARIANTS = {
-//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var_empty.png"),
-//
-//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var1.png"),
-//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var2.png"),
-//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var3.png"),
-//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var4.png"),
-//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var5.png"),
-//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var6.png"),
-//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var7.png"),
-//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var8.png"),
-//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var9.png"),
-//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var10.png"),
-//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var11.png"),
-//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var12.png"),
-//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var13.png"),
-//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var14.png"),
-//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var15.png"),
-//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var16.png"),
-//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var17.png"),
-//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var18.png"),
-//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var19.png"),
-//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var20.png"),
-//
-//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var21.png"),
-//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var22.png"),
-//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var23.png"),
-//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var24.png"),
-//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var25.png"),
-//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var26.png"),
-//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var27.png"),
-//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var28.png"),
-//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var29.png"),
-//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var30.png")
-//    };
-
     private static final ResourceLocation BANNER =
             new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/banner.png");
 
@@ -106,8 +77,32 @@ public class ClanSetupScreen extends Screen {
         pGuiGraphics.blit(BG_TEXTURE, 0, 0, 0, 0, this.width, this.height, this.width, this.height);
 
 
+        if (closing) {
+            animationTime += pPartialTick;
+
+            float progress = Math.min(animationTime / duration, 1f);
+
+            float eased = progress * progress * progress;
+
+            menuX = startX + (endX - startX) * eased;
+
+            if (progress >= 1f) {
+                onSave();
+            }
+        }
+
+
+        pGuiGraphics.pose().pushPose();
+        pGuiGraphics.pose().translate(menuX, 0, 0);
+
         int centerx = (this.width) / 2;
         int centery = (this.height) / 2;
+
+        pGuiGraphics.blit(WCEClient.WCE_TITLE,
+                centerx - 125 + this.width,
+                centery - 62, 0, 0,
+                250, 125,250,125);
+
 
         boolean prefixToolTip = pMouseX >= centerx - 220 && pMouseY >= centery - 40
                 && pMouseX <= centerx - 130 && pMouseY <= centery - 20;
@@ -228,18 +223,6 @@ public class ClanSetupScreen extends Screen {
             pGuiGraphics.drawString(Minecraft.getInstance().font, "<Suffix>", centerx-117, centery -34, 0xFF7d7d7d);
         }
 
-        ResourceLocation currentVariant;
-
-//        VariantScrollList.VariantEntry selected = variantScrollList.getSelectedEntry();
-
-//        if (selected != null) {
-//            int variant = selected.getId() + 1;
-//            currentVariant = VARIANTS[variant];
-//
-//        } else {
-//            currentVariant = VARIANTS[0];
-//        }
-
         if (textCooldown > 0) {
             pGuiGraphics.drawString(Minecraft.getInstance().font, "Some fields are empty",
                     centerx - 55, centery + 75, 0xFFFF0000);
@@ -255,27 +238,22 @@ public class ClanSetupScreen extends Screen {
 
         super.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
 
-//        pGuiGraphics.enableScissor(this.width - 148, centery - 120, this.width - 20, centery + 8);
-//        pGuiGraphics.blit(currentVariant, this.width - 148, centery - 120,
-//                0, 0,
-//                256, 256,
-//                128, 128
-//        );
-//        pGuiGraphics.disableScissor();
-
 
         int xPosition = -230;
         int yPosition = -120;
 
-        pGuiGraphics.enableScissor(centerx + xPosition, centery + yPosition, centerx + xPosition + 200, centery + yPosition + 56);
+        pGuiGraphics.enableScissor((int) (centerx + xPosition + menuX), centery + yPosition, (int) (centerx + xPosition + 200  + menuX), centery + yPosition + 56);
         pGuiGraphics.blit(
                 BANNER,
-                centerx - 230, centery - 120,
+                (int) (centerx - 230), centery - 120,
                 0, 0,
                 800, 225,
                 200, 56
         );
         pGuiGraphics.disableScissor();
+
+        pGuiGraphics.pose().popPose();
+
 
     }
 
@@ -303,56 +281,6 @@ public class ClanSetupScreen extends Screen {
     protected void init() {
         int centerX = this.width / 2;
         int centerY = this.height / 2;
-
-//        int listWidth = 140;
-//        int listHeight = 40;
-//        int top = centerY + 20;
-//        int bottom = centerY + 100;
-
-//        this.variantScrollList = new VariantScrollList(
-//                Minecraft.getInstance(),
-//                listWidth,
-//                listHeight,
-//                top,
-//                bottom,
-//                20
-//        );
-//        this.variantScrollList.setRenderTopAndBottom(false);
-//        this.variantScrollList.setLeftPos(((this.width - listWidth - 20)));
-//
-//        variantScrollList.addOption("Calico", 0);
-//        variantScrollList.addOption("Siamese", 1);
-//        variantScrollList.addOption("Gray", 2);
-//        variantScrollList.addOption("Abyssinian", 3);
-//        variantScrollList.addOption("Black", 4);
-//        variantScrollList.addOption("Maine Coon", 5);
-//        variantScrollList.addOption("Russian Blue", 6);
-//        variantScrollList.addOption("Dark Brown Tabby", 7);
-//        variantScrollList.addOption("White", 8);
-//        variantScrollList.addOption("Calico 2", 9);
-//        variantScrollList.addOption("Munchkin", 10);
-//        variantScrollList.addOption("Light Gray Tabby", 11);
-//        variantScrollList.addOption("Chestnutpatch (Bookwom)", 12);
-//        variantScrollList.addOption("Ratstar (Telefonjoker)", 13);
-//        variantScrollList.addOption("Twitchstream (Cat)", 14);
-//        variantScrollList.addOption("Blazepit (Cat)", 15);
-//        variantScrollList.addOption("Bengalpelt (Klyonstar)", 16);
-//        variantScrollList.addOption("Sparrowstar (Whale_shark)", 17);
-//        variantScrollList.addOption("Foxeater (Sejr)", 18);
-//        variantScrollList.addOption("Willowsong (Sejr)", 19);
-//        variantScrollList.addOption("White 2", 20);
-//        variantScrollList.addOption("Dalmatian", 21);
-//        variantScrollList.addOption("Gray Tabby", 22);
-//        variantScrollList.addOption("Brown", 23);
-//        variantScrollList.addOption("Pale Ginger", 24);
-//        variantScrollList.addOption("Black 2", 25);
-//        variantScrollList.addOption("Bengal", 26);
-//        variantScrollList.addOption("Snowshoe", 27);
-//        variantScrollList.addOption("Toyger", 28);
-//        variantScrollList.addOption("Turkish Van", 29);
-//
-//        this.addRenderableWidget(this.variantScrollList);
-
 
         morphPrefixBox = new EditBox(
                 this.font,
@@ -451,7 +379,9 @@ public class ClanSetupScreen extends Screen {
 
         saveButton = Button.builder(
                 Component.literal("Next"),
-                btn -> onSave()
+                btn -> {
+                    onBeforeSave();
+                }
         ).bounds(centerX-40, centerY + 85, 80, 20).build();
 
         this.addRenderableWidget(saveButton);
@@ -472,20 +402,29 @@ public class ClanSetupScreen extends Screen {
         selected.setSelected(true);
     }
 
+    private void onBeforeSave() {
+        String clanName = clanNameBox.getValue().trim();
+        String morphPrefix = morphPrefixBox.getValue().trim();
+        String morphSufix = morphSufixBox.getValue().trim();
+        boolean isAgeSelected = (ageKit.isSelected() || ageApprentice.isSelected() || ageAdult.isSelected());
+        boolean autoSufix = automaticSufix.getValue();
+
+        if (clanName.isEmpty() || morphPrefix.isEmpty()
+                || (useSufixes.getValue() && morphSufix.isEmpty())
+                || !isAgeSelected) {
+            textCooldown = 100;
+            return;
+        }
+
+        closing = true;
+        animationTime = 0f;
+    }
     private void onSave() {
         String clanName = clanNameBox.getValue().trim();
         String morphPrefix = morphPrefixBox.getValue().trim();
         String morphSufix = morphSufixBox.getValue().trim();
-//        VariantScrollList.VariantEntry selectedVariant = variantScrollList.getSelectedEntry();
         boolean isAgeSelected = (ageKit.isSelected() || ageApprentice.isSelected() || ageAdult.isSelected());
         boolean autoSufix = automaticSufix.getValue();
-
-//        if (clanName.isEmpty() || morphPrefix.isEmpty()
-//                || selectedVariant == null || (useSufixes.getValue() && morphSufix.isEmpty())
-//                || !isAgeSelected) {
-//            textCooldown = 100;
-//            return;
-//        }
 
         if (clanName.isEmpty() || morphPrefix.isEmpty()
                 || (useSufixes.getValue() && morphSufix.isEmpty())
@@ -522,11 +461,6 @@ public class ClanSetupScreen extends Screen {
         data.setUseSufixes(useSufixes.getValue());
 
         int variant = 0;
-//        VariantScrollList.VariantEntry selected = variantScrollList.getSelectedEntry();
-
-//        if (selected != null) {
-//            variant = selected.getId();
-//        }
         data.setVariantData(variant);
 
 
@@ -547,6 +481,9 @@ public class ClanSetupScreen extends Screen {
             data.setMorphAge(PlayerClanData.Age.ADULT);
         }
 
+        if (ClientClanData.get().isFirstLoginHandled()) {
+            data.setFirstLoginHandled(true);
+        }
 
         this.minecraft.setScreen(null);
         if (!ClientClanData.get().isFirstLoginHandled()){

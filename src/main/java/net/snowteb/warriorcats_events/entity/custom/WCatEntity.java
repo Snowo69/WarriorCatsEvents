@@ -2,7 +2,6 @@ package net.snowteb.warriorcats_events.entity.custom;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.Advancement;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ItemParticleOption;
@@ -67,16 +66,17 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.network.NetworkHooks;
 import net.minecraftforge.network.PacketDistributor;
+import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.block.ModBlocks;
 import net.snowteb.warriorcats_events.block.custom.MossBedBlock;
 import net.snowteb.warriorcats_events.block.entity.MossBedBlockEntity;
 import net.snowteb.warriorcats_events.clan.ClanData;
 import net.snowteb.warriorcats_events.clan.PlayerClanData;
 import net.snowteb.warriorcats_events.clan.PlayerClanDataProvider;
-import net.snowteb.warriorcats_events.client.AnimationClientData;
 import net.snowteb.warriorcats_events.client.LeapClientState;
 import net.snowteb.warriorcats_events.effect.ModEffects;
 import net.snowteb.warriorcats_events.entity.ModEntities;
+import net.snowteb.warriorcats_events.entity.client.WCModel;
 import net.snowteb.warriorcats_events.item.ModItems;
 import net.snowteb.warriorcats_events.network.ModPackets;
 import net.snowteb.warriorcats_events.network.packet.s2c.cats.OpenCatDataScreenPacket;
@@ -142,7 +142,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
     public CatMode mode = CatMode.WANDER;
     public CatMode lastMode;
     public BlockPos wanderCenter = null;
-    int maxVariants = 53;
+    int maxVariants = WCModel.TEXTURES.length;
     private boolean wasBaby = this.isBaby();
     int catSniffTickCooldown = 0;
 
@@ -277,7 +277,6 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
             SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.BOOLEAN);
     public int attackAnimationTimeout = 0;
 
-
     private static final EntityDataAccessor<Integer> GENDER =
             SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> EXPECTING_KITS =
@@ -388,6 +387,16 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
     private final String[] textureLayersPaths = new String[12];
 
     // GENETICS
+
+
+    private static final EntityDataAccessor<Optional<UUID>> PLAYER_BOUND_UUID =
+            SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.OPTIONAL_UUID);
+
+    private static final EntityDataAccessor<Integer> ANIM_INDEX =
+            SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.INT);
+
+    private static final EntityDataAccessor<Boolean> SHOW_MORPH_NAME =
+            SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.BOOLEAN);
 
 
     private boolean isImage;
@@ -5219,6 +5228,10 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
             tag.put("StoredFatherGenetics", fatherTag);
         }
 
+        tag.putUUID("PlayerBoundUUID", this.getPlayerBoundUuid());
+        tag.putInt("AnimIndex", this.entityData.get(ANIM_INDEX));
+        tag.putBoolean("ShowMorphName", this.entityData.get(SHOW_MORPH_NAME));
+
     }
 
     @Override
@@ -5411,6 +5424,18 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
             );
         }
 
+        if (tag.contains("PlayerBoundUUID")) {
+            this.setPlayerBoundUuid(tag.getUUID("PlayerBoundUUID"));
+        }
+
+        if (tag.contains("AnimIndex")) {
+            this.setAnimIndex(tag.getInt("AnimIndex"));
+        }
+
+        if (tag.contains("ShowMorphName")) {
+            this.setShowMorphName(tag.getBoolean("ShowMorphName"));
+        }
+
     }
 
     /**
@@ -5425,56 +5450,70 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                 (this, "attackController", 0, this::attackPredicate));
         controllers.add(new AnimationController<>
                 (this, "playerController", 0, this::playerPredicate));
-//        controllers.add(new AnimationController<>
-//                (this, "blinkController", 0, this::blinkPredicate));
 
     }
 
-    @OnlyIn(Dist.CLIENT)
+
     private <T extends GeoAnimatable> PlayState playerPredicate(AnimationState<T> state) {
 
-        Player player = Minecraft.getInstance().player;
-
-        if (!AnimationClientData.isPlayerShape) {
-            AnimationClientData.reset();
+        if (this.getPlayerBoundUuid().equals(ClanData.EMPTY_UUID)) {
             return PlayState.CONTINUE;
         }
 
-        int anim1 = AnimationClientData.getAnim1();
-        int anim2 = AnimationClientData.getAnim2();
-        int anim3 = AnimationClientData.getAnim3();
-        int anim4 = AnimationClientData.getAnim4();
-        int anim5 = AnimationClientData.getAnim5();
-        int anim6 = AnimationClientData.getAnim6();
+        int animIndex = this.entityData.get(ANIM_INDEX);
 
-        if (PlayerShape.getCurrentShape(player) instanceof WCatEntity) {
+        if (animIndex != -1) {
 
             if (!animPlayed) {
-                if (anim1 == 1) {
+                if (animIndex == -2) {
+                    state.getController().setAnimation(RawAnimation.begin()
+                            .then("animation.wcat.silly", Animation.LoopType.PLAY_ONCE));
+                    animPlayed = true;
+                } else if (animIndex == 1) {
                     state.getController().setAnimation(RawAnimation.begin()
                             .then("animation.wcat.groom", Animation.LoopType.PLAY_ONCE));
                     animPlayed = true;
-                } else if (anim2 == 1) {
+                } else if (animIndex == 2) {
                     state.getController().setAnimation(RawAnimation.begin()
                             .then("animation.wcat.stretch", Animation.LoopType.PLAY_ONCE));
                     animPlayed = true;
-                } else if (anim3 == 1) {
+                } else if (animIndex == 3) {
                     state.getController().setAnimation(RawAnimation.begin()
                             .then("animation.wcat.scratch", Animation.LoopType.PLAY_ONCE));
                     animPlayed = true;
-                } else if (anim4 == 1) {
+                } else if (animIndex == 4) {
                     state.getController().setAnimation(RawAnimation.begin()
                             .then("animation.wcat.attack", Animation.LoopType.PLAY_ONCE));
                     animPlayed = true;
-                } else if (anim5 == 1) {
+                } else if (animIndex == 5) {
                     state.getController().setAnimation(RawAnimation.begin()
                             .then("animation.wcat.standstand", Animation.LoopType.PLAY_ONCE)
                             .then("animation.wcat.standidle", Animation.LoopType.LOOP));
                     animPlayed = true;
-                } else if (anim6 == 1) {
+                } else if (animIndex == 6) {
                     state.getController().setAnimation(RawAnimation.begin()
                             .then("animation.wcat.sitlay", Animation.LoopType.PLAY_ONCE)
                             .then("animation.wcat.layidle", Animation.LoopType.LOOP));
+                    animPlayed = true;
+                } else if (animIndex == 7) {
+                    state.getController().setAnimation(RawAnimation.begin()
+                            .then("animation.wcat.start_sit", Animation.LoopType.PLAY_ONCE)
+                            .then("animation.wcat.sit_idle", Animation.LoopType.LOOP));
+                    animPlayed = true;
+                } else if (animIndex == 8) {
+                    state.getController().setAnimation(RawAnimation.begin()
+                            .then("animation.wcat.start_loaf", Animation.LoopType.PLAY_ONCE)
+                            .then("animation.wcat.loaf_idle", Animation.LoopType.LOOP));
+                    animPlayed = true;
+                } else if (animIndex == 9) {
+                    state.getController().setAnimation(RawAnimation.begin()
+                            .then("animation.wcat.laysleep", Animation.LoopType.PLAY_ONCE)
+                            .then("animation.wcat.sleep_idle", Animation.LoopType.LOOP));
+                    animPlayed = true;
+                } else if (animIndex == 10) {
+                    state.getController().setAnimation(RawAnimation.begin()
+                            .then("animation.wcat.fall_death", Animation.LoopType.PLAY_ONCE)
+                            .then("animation.wcat.death_idle", Animation.LoopType.LOOP));
                     animPlayed = true;
                 }
 
@@ -5484,15 +5523,87 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                 state.getController().setAnimation(RawAnimation.begin()
                         .then("animation.wcat.idle", Animation.LoopType.LOOP));
                 animPlayed = false;
-                AnimationClientData.reset();
+                this.setAnimIndex(animIndex);
 
                 return PlayState.CONTINUE;
             }
+        } else if ((animPlayed && state.getController().hasAnimationFinished()) || state.isMoving()) {
+            state.getController().setAnimation(RawAnimation.begin()
+                    .then("animation.wcat.idle", Animation.LoopType.LOOP));
+            animPlayed = false;
         }
 
 
         return PlayState.CONTINUE;
     }
+
+    public void setAnimIndex (int value) {
+        this.entityData.set(ANIM_INDEX, value);
+    }
+
+//    @OnlyIn(Dist.CLIENT)
+//    private <T extends GeoAnimatable> PlayState playerPredicate(AnimationState<T> state) {
+//
+//        Player player = Minecraft.getInstance().player;
+//
+//        if (!AnimationClientData.isPlayerShape) {
+//            AnimationClientData.reset();
+//            return PlayState.CONTINUE;
+//        }
+//
+//        int anim1 = AnimationClientData.getAnim1();
+//        int anim2 = AnimationClientData.getAnim2();
+//        int anim3 = AnimationClientData.getAnim3();
+//        int anim4 = AnimationClientData.getAnim4();
+//        int anim5 = AnimationClientData.getAnim5();
+//        int anim6 = AnimationClientData.getAnim6();
+//
+//        if (PlayerShape.getCurrentShape(player) instanceof WCatEntity) {
+//
+//            if (!animPlayed) {
+//                if (anim1 == 1) {
+//                    state.getController().setAnimation(RawAnimation.begin()
+//                            .then("animation.wcat.groom", Animation.LoopType.PLAY_ONCE));
+//                    animPlayed = true;
+//                } else if (anim2 == 1) {
+//                    state.getController().setAnimation(RawAnimation.begin()
+//                            .then("animation.wcat.stretch", Animation.LoopType.PLAY_ONCE));
+//                    animPlayed = true;
+//                } else if (anim3 == 1) {
+//                    state.getController().setAnimation(RawAnimation.begin()
+//                            .then("animation.wcat.scratch", Animation.LoopType.PLAY_ONCE));
+//                    animPlayed = true;
+//                } else if (anim4 == 1) {
+//                    state.getController().setAnimation(RawAnimation.begin()
+//                            .then("animation.wcat.attack", Animation.LoopType.PLAY_ONCE));
+//                    animPlayed = true;
+//                } else if (anim5 == 1) {
+//                    state.getController().setAnimation(RawAnimation.begin()
+//                            .then("animation.wcat.standstand", Animation.LoopType.PLAY_ONCE)
+//                            .then("animation.wcat.standidle", Animation.LoopType.LOOP));
+//                    animPlayed = true;
+//                } else if (anim6 == 1) {
+//                    state.getController().setAnimation(RawAnimation.begin()
+//                            .then("animation.wcat.sitlay", Animation.LoopType.PLAY_ONCE)
+//                            .then("animation.wcat.layidle", Animation.LoopType.LOOP));
+//                    animPlayed = true;
+//                }
+//
+//            }
+//
+//            if ((animPlayed && state.getController().hasAnimationFinished()) || state.isMoving()) {
+//                state.getController().setAnimation(RawAnimation.begin()
+//                        .then("animation.wcat.idle", Animation.LoopType.LOOP));
+//                animPlayed = false;
+//                AnimationClientData.reset();
+//
+//                return PlayState.CONTINUE;
+//            }
+//        }
+//
+//
+//        return PlayState.CONTINUE;
+//    }
 
 
     private <T extends GeoAnimatable> PlayState attackPredicate(AnimationState<T> state) {
@@ -5570,7 +5681,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         }
 
 
-        if (this.random.nextInt(1200) == 0 && (!AnimationClientData.isPlayerShape) && !this.isBeingCarried && !this.isAnImage()) {
+        if (this.random.nextInt(1200) == 0 && !this.isBeingCarried && !this.isAnImage() && this.getPlayerBoundUuid().equals(ClanData.EMPTY_UUID)) {
 
             int rand = this.random.nextInt(4);
 
@@ -6076,7 +6187,33 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
         // GENETICS
 
+        this.entityData.define(PLAYER_BOUND_UUID, Optional.of(ClanData.EMPTY_UUID));
+        this.entityData.define(ANIM_INDEX, -1);
+        this.entityData.define(SHOW_MORPH_NAME, true);
+
+
     }
+
+    public void setShowMorphName(boolean value) {
+        this.entityData.set(SHOW_MORPH_NAME, value);
+    }
+
+    public boolean shouldShowMorphName() {
+        return this.entityData.get(SHOW_MORPH_NAME);
+    }
+
+    public void setPlayerBoundUuid(UUID uuid) {
+        this.entityData.set(PLAYER_BOUND_UUID, Optional.ofNullable(uuid));
+    }
+
+    public UUID getPlayerBoundUuid() {
+        return this.entityData.get(PLAYER_BOUND_UUID).orElse(ClanData.EMPTY_UUID);
+    }
+
+
+
+
+
 
 
     public boolean isOnGeneticalSkin() {
@@ -6158,7 +6295,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         this.entityData.set(ORANGE_BASE_VARIANT, this.random.nextInt(7));
 
         this.entityData.set(WHITE_RATIO, WCGenetics.WhiteRatio.generateAlelo(this.random) + "-" + WCGenetics.WhiteRatio.generateAlelo(this.random));
-        this.entityData.set(WHITE_RATIO_VARIANT, this.random.nextInt(9));
+        this.entityData.set(WHITE_RATIO_VARIANT, this.random.nextInt(17));
 
         this.entityData.set(ALBINO, WCGenetics.Albino.generateAlelo(this.random) + "-" + WCGenetics.Albino.generateAlelo(this.random));
         this.entityData.set(ALBINO_VARIANT, this.random.nextInt(3));
@@ -6233,7 +6370,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         geneticsTag.putInt("OrangeBaseVariant", this.entityData.get(ORANGE_BASE_VARIANT));
         geneticsTag.putInt("WhiteRatioVariant", this.entityData.get(WHITE_RATIO_VARIANT));
         geneticsTag.putInt("AlbinoVariant", this.entityData.get(ALBINO_VARIANT));
-//        geneticsTag.putInt("DiluteVariant", this.entityData.get(DILUTE_VARIANT));
+
         geneticsTag.putInt("TabbyStripesVariant", this.entityData.get(TABBY_STRIPES_VARIANT));
         geneticsTag.putInt("EyeColorVariantLeft", this.entityData.get(EYE_COLOR_VARIANT_LEFT));
         geneticsTag.putInt("EyeColorVariantRight", this.entityData.get(EYE_COLOR_VARIANT_RIGHT));
@@ -6378,7 +6515,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
             if (WCGenetics.TabbyStripeTypes.isMackerel(this.entityData.get(TABBY_STRIPES))) {
                 orangeBasePath += "orange_" + "mackerel_" + this.entityData.get(TABBY_STRIPES_VARIANT);// ORANGE_BASE -> 0-4
             } else {
-                orangeBasePath += "orange_" + "mackerel_" + this.entityData.get(TABBY_STRIPES_VARIANT);// ORANGE_BASE -> 0-4
+                orangeBasePath += "orange_" + "classic_" + this.entityData.get(TABBY_STRIPES_VARIANT);// ORANGE_BASE -> 0-4
             }
 
         } else if (WCGenetics.OrangeBase.isTortoiseshell(this.entityData.get(ORANGE_BASE))) {
@@ -6461,7 +6598,9 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         if (WCGenetics.Agouti.isTabby(this.entityData.get(AGOUTI))) {
             String secondStripesKey = "";
             if (WCGenetics.Base.isBlack(this.entityData.get(BASE))) {
-                basePath = folderPath + "base/black_to_darkbrown";
+                if (!WCGenetics.Dilute.isDilute(this.entityData.get(DILUTE))) {
+                    basePath = folderPath + "base/black_to_darkbrown";
+                }
                 secondStripesKey = "black_";
             } else if (WCGenetics.Base.isChocolate(this.entityData.get(BASE))) {
                 secondStripesKey = "darkbrown_";
@@ -6555,10 +6694,10 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                         WCGenetics.encodeGene(this.entityData.get(WHITE_RATIO)) + this.entityData.get(WHITE_RATIO_VARIANT) +
                         WCGenetics.encodeGene(this.entityData.get(DILUTE)) +
                         WCGenetics.encodeGene(this.entityData.get(ALBINO)) + this.entityData.get(ALBINO_VARIANT) +
-                        WCGenetics.encodeGene(this.entityData.get(EYES_ANOMALY)) +
-                        this.entityData.get(EYE_COLOR_LEFT) + this.entityData.get(EYE_COLOR_VARIANT_LEFT) +
-                        this.entityData.get(EYE_COLOR_RIGHT) + this.entityData.get(EYE_COLOR_VARIANT_RIGHT) +
-                        this.entityData.get(BLUE_RUFOUSING_VARIANT) + this.entityData.get(RUFOUSING_VARIANT) +
+                        WCGenetics.encodeGene(this.entityData.get(EYES_ANOMALY)) + "eyel" +
+                        this.entityData.get(EYE_COLOR_LEFT)  + this.entityData.get(EYE_COLOR_VARIANT_LEFT) + "eyer" +
+                        this.entityData.get(EYE_COLOR_RIGHT) + this.entityData.get(EYE_COLOR_VARIANT_RIGHT) + "bruf" +
+                        this.entityData.get(BLUE_RUFOUSING_VARIANT) + "ruf" + this.entityData.get(RUFOUSING_VARIANT) +
                         "noise_" + this.entityData.get(NOISE);
     }
 
@@ -6608,7 +6747,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         }
 
         this.entityData.set(ORANGE_BASE_VARIANT, this.random.nextInt(7));
-        this.entityData.set(WHITE_RATIO_VARIANT, this.random.nextInt(9));
+        this.entityData.set(WHITE_RATIO_VARIANT, this.random.nextInt(17));
         this.entityData.set(ALBINO_VARIANT, this.random.nextInt(3));
         this.entityData.set(TABBY_STRIPES_VARIANT, this.random.nextInt(5));
 
@@ -6638,7 +6777,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         this.entityData.set(RUFOUSING_VARIANT, Math.min(rufVar, 6));
         this.entityData.set(BLUE_RUFOUSING_VARIANT, Math.min(blueRufVar, 6));
         this.entityData.set(ORANGE_BASE_VARIANT, Math.min(orangeVar, 6));
-        this.entityData.set(WHITE_RATIO_VARIANT, Math.min(8, whiteVar));
+        this.entityData.set(WHITE_RATIO_VARIANT, Math.min(16, whiteVar));
         this.entityData.set(TABBY_STRIPES_VARIANT, Math.min(tabbyVar, 4));
         this.entityData.set(ALBINO_VARIANT, Math.min(albinoVar, 2));
         this.entityData.set(EYE_COLOR_VARIANT_LEFT, Math.min(leftEyeVar, 10));

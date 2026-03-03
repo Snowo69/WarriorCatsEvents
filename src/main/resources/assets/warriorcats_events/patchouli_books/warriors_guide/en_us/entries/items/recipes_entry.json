@@ -1,0 +1,76 @@
+{
+
+
+  "name": "- Recipes",
+  "icon": "minecraft:brewing_stand",
+  "category": "warriorcats_events:items_category",
+  "pages": [
+    {
+      "type": "patchouli:crafting",
+      "title": "Moss Bed",
+      "recipe": "warriorcats_events:moss_bed"
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Body Feathers",
+      "recipe": "warriorcats_events:red_parrot_body_feathers"
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Socks",
+      "recipe": "warriorcats_events:white_cat_socks"
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Leaf Door",
+      "recipe": "warriorcats_events:leaf_door"
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Leaf Trapdoor",
+      "recipe": "warriorcats_events:leaf_trapdoor"
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Head Flower",
+      "recipe": "warriorcats_events:head_flower"
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Head Dandelion",
+      "recipe": "warriorcats_events:head_dandelion"
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Hay Bed",
+      "recipe": "warriorcats_events:hay_bed"
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Fresh-kill Pile",
+      "recipe": "warriorcats_events:fresh_kill_pile"
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Flower Crown",
+      "recipe": "warriorcats_events:flower_crown"
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Flower Armor",
+      "recipe": "warriorcats_events:flower_armor"
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Draped Tail Vines",
+      "recipe": "warriorcats_events:draped_tail_vines"
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Tail Vines",
+      "recipe": "warriorcats_events:tail_vines"
+    }
+  ]
+
+
+}

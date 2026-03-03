@@ -273,7 +273,7 @@ public class ClawsTooltip extends ShearsItem {
 
                 if (!pLevel.isClientSide) {
                     if (PlayerShape.getCurrentShape(pPlayer) instanceof Animal) {
-                        if (pPlayer.getItemInHand(InteractionHand.MAIN_HAND).getDamageValue() <= 0) {
+                        if (pPlayer.getItemInHand(InteractionHand.MAIN_HAND).getDamageValue() >= this.getMaxDamage(itemstack) - 5) {
                             pPlayer.displayClientMessage(Component.literal("Your claws are too damaged.").withStyle(ChatFormatting.RED), true);
                             return InteractionResultHolder.fail(itemstack);
                         }

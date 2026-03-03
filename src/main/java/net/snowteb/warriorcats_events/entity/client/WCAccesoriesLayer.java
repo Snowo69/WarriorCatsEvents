@@ -9,6 +9,9 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.common.Mod;
@@ -17,6 +20,7 @@ import net.snowteb.warriorcats_events.entity.custom.WCGenetics;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.item.ModItems;
 import net.snowteb.warriorcats_events.item.custom.CatSocksArmorItem;
+import net.snowteb.warriorcats_events.item.custom.FeathersArmorItem;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.renderer.GeoRenderer;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
@@ -67,6 +71,20 @@ public class WCAccesoriesLayer extends GeoRenderLayer<WCatEntity> {
     );
 
 
+    private final AccessoryModel bodyFeathersModelUp = new AccessoryModel(
+            new ResourceLocation(WarriorCatsEvents.MODID, "geo/wcat.body_feathers_up.geo.json"),
+            new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/chicken_feathers.png")
+    );
+    private final AccessoryModel bodyFeathersModelMid = new AccessoryModel(
+            new ResourceLocation(WarriorCatsEvents.MODID, "geo/wcat.body_feathers_mid.geo.json"),
+            new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/chicken_feathers.png")
+    );
+    private final AccessoryModel bodyFeathersModelDown = new AccessoryModel(
+            new ResourceLocation(WarriorCatsEvents.MODID, "geo/wcat.body_feathers_down.geo.json"),
+            new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/chicken_feathers.png")
+    );
+
+
     private final AccessoryRenderer crownRenderer;
     private final AccessoryRenderer leafmaneRenderer;
     private final AccessoryRenderer flowerAccesoryRenderer;
@@ -75,6 +93,7 @@ public class WCAccesoriesLayer extends GeoRenderLayer<WCatEntity> {
     private final AccessoryRenderer leafShieldRenderer;
     private final AccessoryRenderer tailLichenRenderer;
     private final AccessoryRenderer dandelionRenderer;
+    private final AccessoryRenderer bodyFeathersRenderer;
 
 
 
@@ -89,6 +108,8 @@ public class WCAccesoriesLayer extends GeoRenderLayer<WCatEntity> {
         this.leafShieldRenderer = new AccessoryRenderer(context, leafShieldModel);
         this.tailLichenRenderer = new AccessoryRenderer(context, tailLichenModel);
         this.dandelionRenderer = new AccessoryRenderer(context, dandelionModel);
+
+        this.bodyFeathersRenderer = new AccessoryRenderer(context, bodyFeathersModelUp);
     }
 
     @Override
@@ -116,7 +137,6 @@ public class WCAccesoriesLayer extends GeoRenderLayer<WCatEntity> {
 
 
             float interpolatedYaw = Mth.lerp(partialTick, animatable.yBodyRotO, animatable.yBodyRot);
-
 
 
             poseStack.mulPose(Axis.YP.rotationDegrees(interpolatedYaw + 180f));
@@ -241,8 +261,8 @@ public class WCAccesoriesLayer extends GeoRenderLayer<WCatEntity> {
 
                 poseStack.pushPose();
 
-                poseStack.translate(0.108D, 0.64D, -0.51D);
-                poseStack.mulPose(Axis.ZP.rotationDegrees(-96f));
+                poseStack.translate(0.098D, 0.64D, -0.51D);
+                poseStack.mulPose(Axis.ZP.rotationDegrees(-92f));
                 poseStack.mulPose(Axis.YP.rotationDegrees(25f));
                 poseStack.mulPose(Axis.XP.rotationDegrees(5f));
 
@@ -278,12 +298,12 @@ public class WCAccesoriesLayer extends GeoRenderLayer<WCatEntity> {
 
                 poseStack.pushPose();
 
-                poseStack.translate(-0.15D, 0.70D, -0.519D);
+                poseStack.translate(-0.135D, 0.70D, -0.519D);
 
-                float scale = 0.80f;
+                float scale = 1.00f;
                 poseStack.scale(scale, scale, scale);
 
-                poseStack.mulPose(Axis.ZP.rotationDegrees(50f));
+                poseStack.mulPose(Axis.ZP.rotationDegrees(62f));
 
                 RenderType accessoryRenderType = RenderType.entityCutout(flowerAccesoryModel.getTextureResource(animatable));
 
@@ -759,6 +779,152 @@ public class WCAccesoriesLayer extends GeoRenderLayer<WCatEntity> {
                 poseStack.popPose();
 
 
+
+                buffer = bufferSource.getBuffer(renderType);
+            }
+        }
+
+        if (animatable.getItemBySlot(EquipmentSlot.CHEST).getItem() instanceof FeathersArmorItem featherArmor) {
+            bodyFeathersModelUp.texture = AccessoryModel.FEATHER_TEXTURES[5];
+            bodyFeathersModelMid.texture = AccessoryModel.FEATHER_TEXTURES[5];
+            bodyFeathersModelDown.texture = AccessoryModel.FEATHER_TEXTURES[5];
+
+            if (featherArmor == ModItems.BLUE_PARROT_BODY_FEATHERS.get()) {
+                bodyFeathersModelUp.texture = AccessoryModel.FEATHER_TEXTURES[3];
+                bodyFeathersModelMid.texture = AccessoryModel.FEATHER_TEXTURES[3];
+                bodyFeathersModelDown.texture = AccessoryModel.FEATHER_TEXTURES[3];
+            } else if (featherArmor == ModItems.LIGHTBLUE_PARROT_BODY_FEATHERS.get()) {
+                bodyFeathersModelUp.texture = AccessoryModel.FEATHER_TEXTURES[4];
+                bodyFeathersModelMid.texture = AccessoryModel.FEATHER_TEXTURES[4];
+                bodyFeathersModelDown.texture = AccessoryModel.FEATHER_TEXTURES[4];
+            } else if (featherArmor == ModItems.GRAY_PARROT_BODY_FEATHERS.get()) {
+                bodyFeathersModelUp.texture = AccessoryModel.FEATHER_TEXTURES[1];
+                bodyFeathersModelMid.texture = AccessoryModel.FEATHER_TEXTURES[1];
+                bodyFeathersModelDown.texture = AccessoryModel.FEATHER_TEXTURES[1];
+            } else if (featherArmor == ModItems.GREEN_PARROT_BODY_FEATHERS.get()) {
+                bodyFeathersModelUp.texture = AccessoryModel.FEATHER_TEXTURES[2];
+                bodyFeathersModelMid.texture = AccessoryModel.FEATHER_TEXTURES[2];
+                bodyFeathersModelDown.texture = AccessoryModel.FEATHER_TEXTURES[2];
+            } else if (featherArmor == ModItems.RED_PARROT_BODY_FEATHERS.get()) {
+                bodyFeathersModelUp.texture = AccessoryModel.FEATHER_TEXTURES[0];
+                bodyFeathersModelMid.texture = AccessoryModel.FEATHER_TEXTURES[0];
+                bodyFeathersModelDown.texture = AccessoryModel.FEATHER_TEXTURES[0];
+            }
+
+            if (bone.getName().equals("moreup")) {
+                var bakedModel = bodyFeathersModelUp.getBakedModel(bodyFeathersModelUp.getModelResource(animatable));
+
+                poseStack.pushPose();
+
+                float scale = 1f;
+                poseStack.translate(0.00D, -0.01D, 0.00D);
+
+                poseStack.scale(scale, scale, scale);
+
+                poseStack.mulPose(Axis.XP.rotationDegrees(0f));
+
+                RenderUtils.translateMatrixToBone(poseStack, bone);
+
+                RenderType accessoryRenderType = RenderType.entityCutout(bodyFeathersModelUp.getTextureResource(animatable));
+
+                VertexConsumer accessoryBuffer = bufferSource.getBuffer(accessoryRenderType);
+
+                float interpolatedYaw = Mth.lerp(partialTick, animatable.yBodyRotO, animatable.yBodyRot);
+                poseStack.mulPose(Axis.YP.rotationDegrees(interpolatedYaw + 180f));
+
+
+                bodyFeathersRenderer.reRender(
+                        bakedModel,
+                        poseStack,
+                        bufferSource,
+                        animatable,
+                        accessoryRenderType,
+                        accessoryBuffer,
+                        partialTick,
+                        packedLight,
+                        packedOverlay,
+                        1f, 1f, 1f, 1f
+                );
+
+                poseStack.popPose();
+
+                buffer = bufferSource.getBuffer(renderType);
+            }
+            if (bone.getName().equals("up")) {
+                var bakedModel = bodyFeathersModelMid.getBakedModel(bodyFeathersModelMid.getModelResource(animatable));
+
+                poseStack.pushPose();
+
+                float scale = 1f;
+                poseStack.translate(0.00D, -0.01D, 0.00D);
+
+                poseStack.scale(scale, scale, scale);
+
+                poseStack.mulPose(Axis.XP.rotationDegrees(0f));
+
+                RenderUtils.translateMatrixToBone(poseStack, bone);
+
+                RenderType accessoryRenderType = RenderType.entityCutout(bodyFeathersModelMid.getTextureResource(animatable));
+
+                VertexConsumer accessoryBuffer = bufferSource.getBuffer(accessoryRenderType);
+
+                float interpolatedYaw = Mth.lerp(partialTick, animatable.yBodyRotO, animatable.yBodyRot);
+                poseStack.mulPose(Axis.YP.rotationDegrees(interpolatedYaw + 180f));
+
+
+                bodyFeathersRenderer.reRender(
+                        bakedModel,
+                        poseStack,
+                        bufferSource,
+                        animatable,
+                        accessoryRenderType,
+                        accessoryBuffer,
+                        partialTick,
+                        packedLight,
+                        packedOverlay,
+                        1f, 1f, 1f, 1f
+                );
+
+                poseStack.popPose();
+
+                buffer = bufferSource.getBuffer(renderType);
+            }
+            if (bone.getName().equals("bodydown2")) {
+                var bakedModel = bodyFeathersModelDown.getBakedModel(bodyFeathersModelDown.getModelResource(animatable));
+
+                poseStack.pushPose();
+
+                float scale = 1f;
+                poseStack.translate(0.00D, +0.50D, -0.32D);
+
+                poseStack.scale(scale, scale, scale);
+
+                poseStack.mulPose(Axis.XP.rotationDegrees(90f));
+
+                RenderUtils.translateMatrixToBone(poseStack, bone);
+
+                RenderType accessoryRenderType = RenderType.entityCutout(bodyFeathersModelDown.getTextureResource(animatable));
+
+                VertexConsumer accessoryBuffer = bufferSource.getBuffer(accessoryRenderType);
+
+                float interpolatedYaw = Mth.lerp(partialTick, animatable.yBodyRotO, animatable.yBodyRot);
+                poseStack.mulPose(Axis.YP.rotationDegrees(interpolatedYaw + 180f));
+
+
+                bodyFeathersRenderer.reRender(
+                        bakedModel,
+                        poseStack,
+                        bufferSource,
+                        animatable,
+                        accessoryRenderType,
+                        accessoryBuffer,
+                        partialTick,
+                        packedLight,
+                        packedOverlay,
+                        1f, 1f, 1f, 1f
+                );
+
+                poseStack.popPose();
 
                 buffer = bufferSource.getBuffer(renderType);
             }

@@ -10,6 +10,7 @@ import net.minecraftforge.network.NetworkEvent;
 import net.snowteb.warriorcats_events.clan.PlayerClanData;
 import net.snowteb.warriorcats_events.clan.PlayerClanDataProvider;
 import net.snowteb.warriorcats_events.entity.ModEntities;
+import net.snowteb.warriorcats_events.entity.custom.WCGenetics;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.zconfig.WCEServerConfig;
 import tocraft.walkers.api.PlayerShape;
@@ -50,6 +51,8 @@ public class CtSSwitchShape {
                 } else {
                     PlayerShape.updateShapes(player, null);
                 }
+
+
         });
         ctx.get().setPacketHandled(true);
         return true;
@@ -99,12 +102,28 @@ public class CtSSwitchShape {
 
         cat.setVariant(data);
 
-        if (WCEServerConfig.SERVER.VISIBLE_MORPH_NAME.get()) cat.setCustomName(name);
-        cat.setCustomNameVisible(WCEServerConfig.SERVER.VISIBLE_MORPH_NAME.get());
+        cat.setCustomName(name);
+        cat.setCustomNameVisible(true);
+        cat.setShowMorphName(true);
+
 
         cat.setAge(age);
         cat.setBaby(isBaby);
         cat.setAppScale(isAppScale);
+
+        player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {
+            if (cap.isOnGeneticalSkin()) {
+                cat.setGenetics(cap.getPlayerGenetics());
+                WCGenetics.GeneticalVariants variants = cap.getPlayerGeneticalVariants();
+                cat.setGeneticalVariants(variants.eyeColorLeft, variants.eyeColorRight, variants.rufousingVariant
+                        ,variants.blueRufousingVariant, variants.orangeVar, variants.whiteVar, variants.tabbyVar
+                        ,variants.albinoVar, variants.leftEyeVar, variants.rightEyeVar, variants.noise, variants.size);
+                cat.setOnGeneticalSkin(true);
+                cat.setGender(1);
+            }
+        });
+
+        cat.setPlayerBoundUuid(player.getUUID());
 
         return cat;
     }

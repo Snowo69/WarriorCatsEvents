@@ -10,15 +10,21 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.FluidTags;
+import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.level.block.AbstractCauldronBlock;
+import net.minecraft.world.level.block.LayeredCauldronBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.network.NetworkEvent;
 import net.snowteb.warriorcats_events.network.ModPackets;
 import net.snowteb.warriorcats_events.network.packet.s2c.others.ThirstDataSyncStCPacket;
+import net.snowteb.warriorcats_events.thirst.PlayerThirst;
 import net.snowteb.warriorcats_events.thirst.PlayerThirstProvider;
+import tocraft.walkers.api.PlayerShape;
 
 import java.util.function.Supplier;
 
@@ -55,6 +61,10 @@ public class WaterPacket {
                 });
 
 
+
+            } else if (isLookingAtCauldron(player, level)) {
+
+                drinkFromCauldron(player, level);
 
             } else {
 
@@ -93,6 +103,85 @@ public class WaterPacket {
         BlockState state = level.getBlockState(pos);
 
         return state.getFluidState().is(FluidTags.WATER);
+    }
+
+    private boolean isLookingAtCauldron(ServerPlayer player, ServerLevel level) {
+        double reach = 2.0D;
+
+        if (!(PlayerShape.getCurrentShape(player) instanceof Animal)) return false;
+
+        Vec3 eyePos = player.getEyePosition();
+        Vec3 lookVec = player.getLookAngle();
+        Vec3 endPos = eyePos.add(lookVec.scale(reach));
+
+        ClipContext context = new ClipContext(
+                eyePos,
+                endPos,
+                ClipContext.Block.OUTLINE,
+                ClipContext.Fluid.ANY,
+                player
+        );
+
+        BlockHitResult hitResult = level.clip(context);
+        if (hitResult.getType() != HitResult.Type.BLOCK) return false;
+
+        BlockPos pos = hitResult.getBlockPos();
+        BlockState state = level.getBlockState(pos);
+
+        return state.getBlock() instanceof AbstractCauldronBlock;
+    }
+
+    private void drinkFromCauldron(ServerPlayer player, ServerLevel level) {
+        double reach = 2.0D;
+
+        Vec3 eyePos = player.getEyePosition();
+        Vec3 lookVec = player.getLookAngle();
+        Vec3 endPos = eyePos.add(lookVec.scale(reach));
+
+        ClipContext context = new ClipContext(
+                eyePos,
+                endPos,
+                ClipContext.Block.OUTLINE,
+                ClipContext.Fluid.ANY,
+                player
+        );
+
+        BlockHitResult hitResult = level.clip(context);
+        if (hitResult.getType() != HitResult.Type.BLOCK) return;
+
+        BlockPos pos = hitResult.getBlockPos();
+        BlockState state = level.getBlockState(pos);
+
+        if (state.getBlock() instanceof LayeredCauldronBlock) {
+
+                if (!level.isClientSide) {
+
+
+
+                    float thirstLevel = player.getCapability(PlayerThirstProvider.PLAYER_THIRST)
+                                    .map(PlayerThirst::getThirst).orElse(0);
+
+                    if (thirstLevel >= 20f) return;
+
+
+                    player.getCapability(PlayerThirstProvider.PLAYER_THIRST).ifPresent(thirst -> {
+                        thirst.addThirst(1);
+                        ModPackets.sendToPlayer(new ThirstDataSyncStCPacket(thirst.getThirst()), player);
+                        player.displayClientMessage(Component.literal("Thirst level: " + 5*thirst.getThirst() + "%").withStyle(ChatFormatting.GRAY), true);
+                        level.sendParticles(ParticleTypes.SPLASH, player.getX(),player.getY() + 0.4, player.getZ(), 10, 0.3, 0.2, 0.3, 0.01);
+                    });
+
+                    level.playSound(null, player.blockPosition(), SoundEvents.DROWNED_SWIM, SoundSource.PLAYERS, 0.2f ,1.5f);
+
+                    if (level.getRandom().nextInt(8) == 0) {
+                        LayeredCauldronBlock.lowerFillLevel(state, level, pos);
+                        level.gameEvent(null, GameEvent.FLUID_PICKUP, pos);
+                    }
+
+                }
+
+
+        }
     }
 
 }

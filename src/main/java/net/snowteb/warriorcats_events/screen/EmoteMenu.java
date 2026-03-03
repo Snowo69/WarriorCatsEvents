@@ -1,0 +1,81 @@
+package net.snowteb.warriorcats_events.screen;
+
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.util.Mth;
+import net.snowteb.warriorcats_events.WCEClient;
+import net.snowteb.warriorcats_events.WarriorCatsEvents;
+
+public class EmoteMenu {
+
+
+    public void render(GuiGraphics guiGraphics) {
+
+        if (!Minecraft.getInstance().options.hideGui && WCEClient.isRenderingEmoteMenu && Minecraft.getInstance().screen == null) {
+            if (Minecraft.getInstance().level != null && Minecraft.getInstance().player != null) {
+
+
+                int centerX = Minecraft.getInstance().getWindow().getGuiScaledWidth() / 2;
+                int centerY = Minecraft.getInstance().getWindow().getGuiScaledHeight() / 2;
+
+                int panelWidth = 270;
+                int panelHeight = 50;
+
+                int left = centerX - panelWidth / 2;
+                int top = centerY - panelHeight / 2;
+
+                int minIndex = -1;
+                if (WarriorCatsEvents.Devs.isDev(Minecraft.getInstance().player.getUUID())) minIndex = -2;
+
+
+                WCEClient.emoteOffset = Mth.clamp(WCEClient.emoteOffset, minIndex, WCEClient.MAX_EMOTES);
+
+
+                guiGraphics.fillGradient(left, top, left + panelWidth, top + panelHeight, 0x44333333, 0x114b2300);
+                guiGraphics.renderOutline(left, top, panelWidth, panelHeight, 0xFF999999);
+
+                for (int i = -2; i <= 2; i++) {
+
+                    int index = WCEClient.emoteOffset + i;
+                    if (index >= minIndex && index < WCEClient.MAX_EMOTES + 1) {
+
+                        int drawX = centerX + (i * 50);
+                        int drawY = centerY;
+
+                        PoseStack pose = guiGraphics.pose();
+
+                        pose.pushPose();
+                        pose.translate(drawX, drawY - 20, 0);
+
+                        guiGraphics.renderOutline(-20, 0, 40, 40, 0xFF555555);
+
+                        guiGraphics.blit(WCEClient.EmoteIndexData.getIcon(index) ,
+                                -16, 6, 0, 0,
+                                32, 32, 32, 32);
+
+                        pose.scale(0.5f, 0.5f, 1f);
+                        guiGraphics.drawCenteredString(
+                                Minecraft.getInstance().font,
+                                WCEClient.EmoteIndexData.getText(index),
+                                0,
+                                5,
+                                0xdddddd
+                        );
+                        pose.popPose();
+                    }
+                }
+
+
+                guiGraphics.renderOutline(
+                        centerX - 20,
+                        centerY - 20,
+                        40,
+                        40,
+                        0xFFFFFFFF
+                );
+            }
+        }
+
+    }
+}

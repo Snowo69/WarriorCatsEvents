@@ -10,14 +10,20 @@ import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundSource;
+import net.snowteb.warriorcats_events.WCEClient;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.client.ClientClanData;
 import net.snowteb.warriorcats_events.network.ModPackets;
 import net.snowteb.warriorcats_events.network.packet.c2s.others.CtSTeleportToLocationPacket;
 import net.snowteb.warriorcats_events.sound.ModSounds;
+import net.snowteb.warriorcats_events.zconfig.WCEClientConfig;
 
 public class SpawnLocationScreen extends Screen {
     private int textCooldown = 0;
+
+    private float menuX;
+    private final float targetX = 0;
+
 
     private ToggleButton somewhereButton;
     private ToggleButton taigaButton;
@@ -52,7 +58,10 @@ public class SpawnLocationScreen extends Screen {
                 && pMouseX <= centerX - 45 && pMouseY <= centerY + 10;
 
 
-
+        if (menuX > targetX) {
+            menuX -= (menuX) * 0.03f;
+            if (menuX < targetX) menuX = targetX;
+        }
 
         pGuiGraphics.blit(
                 BG_TEXTURE,
@@ -64,9 +73,13 @@ public class SpawnLocationScreen extends Screen {
                 this.width, this.height
         );
 
+        pGuiGraphics.pose().pushPose();
+        pGuiGraphics.pose().translate(menuX, 0, 0);
 
-        int centerx = (this.width) / 2;
-        int centery = (this.height) / 2;
+        pGuiGraphics.blit(WCEClient.WCE_TITLE,
+                centerX - 200 - this.width,
+                centerY - 62, 0, 0,
+                250, 125,250,125);
 
         String morphName = ClientClanData.get().getMorphName();
         String genderWord;
@@ -74,7 +87,7 @@ public class SpawnLocationScreen extends Screen {
 
         if (genderValue == 0) {
             genderWord = "his";
-        } else if (genderValue == 1){
+        } else if (genderValue == 1) {
             genderWord = "her";
         } else {
             genderWord = "their";
@@ -84,34 +97,35 @@ public class SpawnLocationScreen extends Screen {
         pGuiGraphics.pose().scale(1.2f, 1.2f, 1.2f);
         pGuiGraphics.drawString(Minecraft.getInstance().font,
                 morphName + " began " + genderWord + " journey at...",
-                centerx - 125, centery - 55, 0xFFFFFFFF);
+                centerX - 125, centerY - 55, 0xFFFFFFFF);
         pGuiGraphics.pose().popPose();
 
         if (textCooldown > 0) {
             pGuiGraphics.drawString(Minecraft.getInstance().font, "Some fields are empty",
-                    centerx - 55, centery + 75, 0xFFFF0000);
+                    centerX - 55, centerY + 75, 0xFFFF0000);
         }
 
         if (somewhereTooltip) pGuiGraphics.renderTooltip(Minecraft.getInstance().font,
                 Component.literal("This option wont change your current location.")
                         .withStyle(ChatFormatting.GRAY)
-                ,pMouseX, pMouseY);
+                , pMouseX, pMouseY);
 
         super.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
 
         int xPosition = -230;
         int yPosition = -120;
 
-        pGuiGraphics.enableScissor(centerx + xPosition, centery + yPosition, centerx + xPosition + 200, centery + yPosition + 56);
+        pGuiGraphics.enableScissor((int) (centerX + xPosition + menuX), centerY + yPosition, (int) (centerX + xPosition + 200 + menuX), centerY + yPosition + 56);
         pGuiGraphics.blit(
                 BANNER,
-                centerx - 230, centery - 120,
+                centerX - 230, centerY - 120,
                 0, 0,
                 800, 225,
                 200, 56
         );
         pGuiGraphics.disableScissor();
 
+        pGuiGraphics.pose().popPose();
     }
 
     @Override
@@ -119,17 +133,19 @@ public class SpawnLocationScreen extends Screen {
         if (keyCode == 256) {
             ModPackets.sendToServer(new CtSTeleportToLocationPacket(32));
 
-            Minecraft.getInstance().getSoundManager().play(
-                    new SimpleSoundInstance(
-                            ModSounds.GENERATIONS_BG.get().getLocation(),
-                            SoundSource.MUSIC, 0.4F, 1.0F,
-                            SoundInstance.createUnseededRandom(),
-                            false, 0,
-                            SoundInstance.Attenuation.NONE,
-                            0, 0, 0,
-                            true
-                    )
-            );
+            if (WCEClientConfig.CLIENT.AMBIENT_MUSIC.get()) {
+                Minecraft.getInstance().getSoundManager().play(
+                        new SimpleSoundInstance(
+                                ModSounds.GENERATIONS_BG.get().getLocation(),
+                                SoundSource.MUSIC, 0.4F, 1.0F,
+                                SoundInstance.createUnseededRandom(),
+                                false, 0,
+                                SoundInstance.Attenuation.NONE,
+                                0, 0, 0,
+                                true
+                        )
+                );
+            }
         }
         return super.keyPressed(keyCode, scanCode, modifiers);
     }
@@ -146,6 +162,8 @@ public class SpawnLocationScreen extends Screen {
 
     @Override
     protected void init() {
+        menuX = 500;
+
         int centerX = this.width / 2;
         int centerY = this.height / 2;
 
@@ -209,11 +227,10 @@ public class SpawnLocationScreen extends Screen {
         this.addRenderableWidget(junglePyramidButton);
 
 
-
         saveButton = Button.builder(
                 Component.literal("Finish"),
                 btn -> onFinish()
-        ).bounds(centerX-40, centerY + 85, 80, 20).build();
+        ).bounds(centerX - 40, centerY + 85, 80, 20).build();
 
         this.addRenderableWidget(saveButton);
     }
@@ -236,17 +253,17 @@ public class SpawnLocationScreen extends Screen {
 
         boolean isLocationSelected =
                 (somewhereButton.isSelected() || taigaButton.isSelected()
-                || plainsButton.isSelected() || savannahButton.isSelected()
-                ||  forestButton.isSelected() || taigaVillageButton.isSelected()
-                || plainsVillageButton.isSelected() || savannahVillageButton.isSelected()
-                || junglePyramidButton.isSelected());
+                        || plainsButton.isSelected() || savannahButton.isSelected()
+                        || forestButton.isSelected() || taigaVillageButton.isSelected()
+                        || plainsVillageButton.isSelected() || savannahVillageButton.isSelected()
+                        || junglePyramidButton.isSelected());
 
         if (!isLocationSelected) {
             textCooldown = 100;
             return;
         }
 
-        int locationValue =0;
+        int locationValue = 0;
 
         if (somewhereButton.isSelected()) {
             locationValue = 0;
@@ -276,21 +293,23 @@ public class SpawnLocationScreen extends Screen {
             locationValue = 8;
         }
 
-        Minecraft mc = Minecraft.getInstance();
-        mc.getSoundManager().play(
-                new SimpleSoundInstance(
-                        ModSounds.GENERATIONS_BG.get().getLocation(),
-                        SoundSource.MASTER,
-                        0.4F,
-                        1.0F,
-                        SoundInstance.createUnseededRandom(),
-                        false,
-                        0,
-                        SoundInstance.Attenuation.NONE,
-                        0, 0, 0,
-                        true
-                )
-        );
+        if (WCEClientConfig.CLIENT.AMBIENT_MUSIC.get()) {
+            Minecraft mc = Minecraft.getInstance();
+            mc.getSoundManager().play(
+                    new SimpleSoundInstance(
+                            ModSounds.GENERATIONS_BG.get().getLocation(),
+                            SoundSource.MASTER,
+                            0.4F,
+                            1.0F,
+                            SoundInstance.createUnseededRandom(),
+                            false,
+                            0,
+                            SoundInstance.Attenuation.NONE,
+                            0, 0, 0,
+                            true
+                    )
+            );
+        }
         ModPackets.sendToServer(new CtSTeleportToLocationPacket(locationValue));
 
 

@@ -11,7 +11,9 @@ import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Mth;
 import net.minecraft.world.level.FoliageColor;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.*;
@@ -20,6 +22,7 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.snowteb.warriorcats_events.WCEClient;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.block.ModBlocks;
 import net.snowteb.warriorcats_events.block.entity.FreshkillPileRenderer;
@@ -33,6 +36,8 @@ import net.snowteb.warriorcats_events.entity.client.*;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.item.ModItems;
 import net.snowteb.warriorcats_events.network.ModPackets;
+import net.snowteb.warriorcats_events.network.packet.c2s.clan.EmoteMorphPacket;
+import net.snowteb.warriorcats_events.network.packet.c2s.others.CtSSwitchShape;
 import net.snowteb.warriorcats_events.network.packet.s2c.cats.OpenCatDataScreenPacket;
 import net.snowteb.warriorcats_events.network.packet.s2c.clan.OpenClanSetupScreenPacket;
 import net.snowteb.warriorcats_events.network.packet.c2s.others.CtSHissPacket;
@@ -46,6 +51,8 @@ import net.snowteb.warriorcats_events.skills.StealthClientState;
 import net.snowteb.warriorcats_events.sound.ModSounds;
 import net.snowteb.warriorcats_events.stealth.PlayerStealthProvider;
 import net.snowteb.warriorcats_events.util.ModKeybinds;
+
+import static net.snowteb.warriorcats_events.WCEClient.*;
 
 public class ClientEvents {
     private static boolean hissPressed;
@@ -66,9 +73,9 @@ public class ClientEvents {
 ////                Minecraft.getInstance().setScreen(new CreateMorphGeneticsScreen());
 //            }
 
-            if (ModKeybinds.EMOTES_KEY.consumeClick()) {
-                Minecraft.getInstance().setScreen(new EmoteWheelScreen());
-            }
+//            if (ModKeybinds.EMOTES_KEY.consumeClick()) {
+//                Minecraft.getInstance().setScreen(new EmoteWheelScreen());
+//            }
 
         }
 
@@ -82,6 +89,25 @@ public class ClientEvents {
             }
         }
 
+        @SubscribeEvent
+        public static void onScroll(InputEvent.MouseScrollingEvent event) {
+            Minecraft mc = Minecraft.getInstance();
+
+            if (isRenderingEmoteMenu && mc.screen == null) {
+
+                emoteOffset -= (int) event.getScrollDelta();
+
+                if (WarriorCatsEvents.Devs.isDev(Minecraft.getInstance().player.getUUID())) {
+                    emoteOffset = Mth.clamp(emoteOffset, -2, MAX_EMOTES);
+                } else {
+                    emoteOffset = Mth.clamp(emoteOffset, -1, MAX_EMOTES);
+                }
+
+                WCEClient.playLocalSound(ModSounds.MENU_CLICK.get(), SoundSource.NEUTRAL, 0.1f,1.3f);
+
+                event.setCanceled(true);
+            }
+        }
 
         @SubscribeEvent
         public static void onClientTick(TickEvent.ClientTickEvent event) {
@@ -130,6 +156,32 @@ public class ClientEvents {
                 }
             } else {
                 waterPressed = false;
+            }
+
+
+            if (EMOTES_HUD_MENU_KEY.consumeClick()) {
+
+                if (isRenderingEmoteMenu) {
+
+                    int selected = emoteOffset;
+
+                    if (selected == -1) {
+                        ModPackets.sendToServer(new CtSSwitchShape());
+                    } else {
+                        ModPackets.sendToServer(new EmoteMorphPacket(selected));
+                    }
+
+                } else {
+                    WCEClient.playLocalSound(ModSounds.MENU_OPEN.get(), SoundSource.NEUTRAL, 0.4f,1f);
+                }
+
+                emoteOffset = 0;
+                isRenderingEmoteMenu = !isRenderingEmoteMenu;
+            }
+
+            if (isRenderingEmoteMenu && (mc.screen != null || mc.player == null)) {
+                isRenderingEmoteMenu = false;
+                emoteOffset = 0;
             }
 
         }
@@ -189,12 +241,13 @@ public class ClientEvents {
             event.register(ModKeybinds.HISSING_KEY);
             event.register(ModKeybinds.WATERDRINK_KEY);
 //                event.register(ModKeybinds.SKILLMENU_KEY);
-            event.register(ModKeybinds.EMOTES_KEY);
+//            event.register(ModKeybinds.EMOTES_KEY);
+            event.register(WCEClient.EMOTES_HUD_MENU_KEY);
         }
 
         @SubscribeEvent
         public static void registerGuiOverlays(RegisterGuiOverlaysEvent event) {
-            event.registerAboveAll("thirst", ThirstHUD.HUD_THIRST);
+            event.registerBelowAll("thirst", ThirstHUD.HUD_THIRST);
         }
 
         @SubscribeEvent

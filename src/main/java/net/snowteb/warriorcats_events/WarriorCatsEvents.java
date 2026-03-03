@@ -28,11 +28,28 @@ import org.slf4j.Logger;
 import software.bernie.geckolib.GeckoLib;
 import tocraft.walkers.integrations.Integrations;
 
+import java.util.Set;
+import java.util.UUID;
+
 @Mod(WarriorCatsEvents.MODID)
 public class WarriorCatsEvents {
     public static final String MODID = "warriorcats_events";
-    public static final String MOD_VERSION = "1.4.0";
+    public static final String MOD_VERSION = "1.4.1";
     public static final Logger LOGGER = LogUtils.getLogger();
+
+
+    public static class Devs {
+        private static final Set<UUID> DEVS = Set.of(
+                UUID.fromString("76754682-2435-4a2e-b2b5-c3ee99782812"),
+                UUID.fromString("380df991-f603-344c-a090-369bad2a924a"),
+                UUID.fromString("bd10cd3b-b641-4db7-839b-691339fcbfaf")
+        );
+
+        public static boolean isDev(UUID uuid) {
+            return DEVS.contains(uuid);
+        }
+    }
+
 
     public WarriorCatsEvents() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();

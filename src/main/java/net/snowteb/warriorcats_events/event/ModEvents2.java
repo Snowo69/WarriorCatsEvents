@@ -40,6 +40,7 @@ import net.snowteb.warriorcats_events.clan.ClanData;
 import net.snowteb.warriorcats_events.clan.PlayerClanData;
 import net.snowteb.warriorcats_events.clan.PlayerClanDataProvider;
 import net.snowteb.warriorcats_events.commands.*;
+import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.item.ModItems;
 import net.snowteb.warriorcats_events.network.ModPackets;
 import net.snowteb.warriorcats_events.network.packet.s2c.clan.OpenClanSetupScreenPacket;
@@ -55,6 +56,7 @@ import net.snowteb.warriorcats_events.thirst.PlayerThirstProvider;
 import net.snowteb.warriorcats_events.util.ClanInviteManager;
 import net.snowteb.warriorcats_events.util.ModAttributes;
 import net.snowteb.warriorcats_events.zconfig.WCEServerConfig;
+import tocraft.walkers.api.PlayerShape;
 
 import java.util.*;
 
@@ -387,6 +389,43 @@ public class ModEvents2 {
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
         if (event.side == LogicalSide.SERVER && event.phase == TickEvent.Phase.END) {
 
+            ServerPlayer player = (ServerPlayer) event.player;
+            int endTick = event.player.getPersistentData().getInt("wcat_animation_playing");
+            if (endTick != 0) {
+                if (player.server.getTickCount() >= endTick) {
+
+                    LivingEntity shape = PlayerShape.getCurrentShape(player);
+                    if (shape instanceof WCatEntity cat) {
+                        cat.setAnimIndex(-1);
+                        PlayerShape.updateShapes(player, cat);
+                    }
+
+                    player.getPersistentData().remove("wcat_animation_playing");
+                }
+            }
+
+            int jumpEndTick = event.player.getPersistentData().getInt("wcat_jump");
+            if (jumpEndTick != 0) {
+                if (player.server.getTickCount() >= jumpEndTick) {
+
+                    LivingEntity shape = PlayerShape.getCurrentShape(player);
+                    if (shape instanceof WCatEntity && player.onGround()) {
+
+                        Vec3 currentDeltaMov = player.getDeltaMovement();
+                        player.setDeltaMovement(currentDeltaMov.x, currentDeltaMov.y + 0.7f, currentDeltaMov.z);
+                        player.hurtMarked = true;
+
+                        player.serverLevel().sendParticles(ParticleTypes.GLOW_SQUID_INK,
+                                player.getX(), player.getY(),  player.getZ(),
+                                3, 0.3f, 0.3f, 0.3f,0.2f);
+                    }
+
+                    player.getPersistentData().remove("wcat_jump");
+                }
+            }
+
+
+
             event.player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA).ifPresent(PlayerClanData::tick);
 
             event.player.getCapability(PlayerThirstProvider.PLAYER_THIRST).ifPresent(thirst -> {
@@ -649,29 +688,44 @@ public class ModEvents2 {
             ClanData clanData = ClanData.get(sPlayer.serverLevel());
             ServerLevel sLevel = sPlayer.serverLevel();
 
-            for (ClanData.Clan clan : clanData.getAllClans()) {
+            UUID clanUUID = sPlayer.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
+                    .map(PlayerClanData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID);
+            ClanData.Clan clan =   clanData.getClan(clanUUID);
 
-
-                for (UUID playerUUID : clan.members.keySet()) {
-
-
-                    ServerPlayer currentPlayer = sLevel.getServer().getPlayerList().getPlayer(playerUUID);
-
-                    if (currentPlayer != null) {
-                        UUID currentClanUUID = player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
-                                .map(PlayerClanData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID);
-
-                        if (!currentClanUUID.equals(clan.clanUUID)) {
-                            clanData.removeMember(currentPlayer, clan.clanUUID);
-                        }
-                    }
-
+            if (clan != null) {
+                if (!clan.clanUUID.equals(clanUUID) || !clan.members.containsKey(sPlayer.getUUID())) {
+                    sPlayer.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {
+                        cap.setCurrentClanUUID(ClanData.EMPTY_UUID);
+                        cap.setClanName("None");
+                        sPlayer.sendSystemMessage(Component.literal("You have been removed from your clan.").withStyle(ChatFormatting.YELLOW));
+                    });
                 }
 
-                if (clan.members.isEmpty()) {
-                    clanData.deleteClan(sLevel, clan.clanUUID);
-                }
+            } else {
+                sPlayer.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {
+                    cap.setCurrentClanUUID(ClanData.EMPTY_UUID);
+                    cap.setClanName("None");
+                });
             }
+
+//                for (UUID playerUUID : clan.members.keySet()) {
+//
+//
+//                    ServerPlayer currentPlayer = sLevel.getServer().getPlayerList().getPlayer(playerUUID);
+//
+//                    if (currentPlayer != null) {
+//                        UUID currentClanUUID = currentPlayer.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
+//                                .map(PlayerClanData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID);
+//
+//                        if (!currentClanUUID.equals(clan.clanUUID)) {
+//                            clanData.removeMember(currentPlayer, clan.clanUUID);
+//                        }
+//                    }
+//
+//                }
+
+
+
 
             player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {
                 ModPackets.sendToPlayer(new S2CSyncClanDataPacket(cap), sPlayer);

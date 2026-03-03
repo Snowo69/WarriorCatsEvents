@@ -59,6 +59,21 @@ public class ModSounds {
             registerSoundEvents("leader.cat_call");
 
 
+    public static final RegistryObject<SoundEvent> MENU_BUTTON =
+            registerSoundEvents("menu.button");
+    public static final RegistryObject<SoundEvent> MENU_CLICK =
+            registerSoundEvents("menu.click");
+    public static final RegistryObject<SoundEvent> MENU_OPEN =
+            registerSoundEvents("menu.open");
+    public static final RegistryObject<SoundEvent> MENU_SECTION =
+            registerSoundEvents("menu.section");
+    public static final RegistryObject<SoundEvent> MENU_SELECT =
+            registerSoundEvents("menu.select");
+    public static final RegistryObject<SoundEvent> MENU_ACCEPT =
+            registerSoundEvents("menu.accept");
+
+
+
     private static RegistryObject<SoundEvent> registerSoundEvents(String name) {
         return SOUND_EVENTS.register(name,
                 () -> SoundEvent.createVariableRangeEvent(new ResourceLocation(WarriorCatsEvents.MODID, name)));

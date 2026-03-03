@@ -52,6 +52,19 @@ public class ModItemModelProvider extends ItemModelProvider {
         simpleItem(ModItems.TAIL_VINES);
         simpleItem(ModItems.DRAPED_TAIL_VINES);
 
+        simpleItem(ModItems.GREEN_PARROT_FEATHER);
+        simpleItem(ModItems.BLUE_PARROT_FEATHER);
+        simpleItem(ModItems.LIGHTBLUE_PARROT_FEATHER);
+        simpleItem(ModItems.RED_PARROT_FEATHER);
+        simpleItem(ModItems.GRAY_PARROT_FEATHER);
+
+        simpleItem(ModItems.GREEN_PARROT_BODY_FEATHERS);
+        simpleItem(ModItems.BLUE_PARROT_BODY_FEATHERS);
+        simpleItem(ModItems.LIGHTBLUE_PARROT_BODY_FEATHERS);
+        simpleItem(ModItems.RED_PARROT_BODY_FEATHERS);
+        simpleItem(ModItems.GRAY_PARROT_BODY_FEATHERS);
+        simpleItem(ModItems.CHICKEN_BODY_FEATHERS);
+
 
         simpleBlockItem(ModBlocks.LEAF_DOOR);
 //        simpleBlockItem(ModBlocks.LEAF_TRAPDOOR);

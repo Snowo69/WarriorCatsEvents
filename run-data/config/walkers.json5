@@ -1,4 +1,6 @@
 {
+  // ONLY use if you know what you're doing! This OVERWRITES the serverside API level and CAN cause mod addons to stop working properly! -1 - do not overwrite, 0 - api only, 1 - unlocking only, 2 - morphing only, 3 - morphing & variants menu only, 4 - everything
+  "apiLevel": -1,
   // Whether a player's equipped shape is revoked on death.
   "revoke2ndShapeOnDeath": false,
   // Whether shapes equip the items (swords, items, tools) held by the underlying player.
@@ -9,8 +11,10 @@
   "playerCanTriggerHostiles": true,
   // Whether hostile mobs ignore players with hostile mob shapes.
   "hostilesIgnoreHostileShapedPlayer": true,
-  // Whether a hostile mob will stop targeting you after switching to a hostile mob shape.
-  "hostilesForgetNewHostileShapedPlayer": false,
+  // Whether hostile mobs ignore players, even if the player shapes into a not-hostile mob. Requires 'hostilesIgnoreHostileShapedPlayer' to be 'true'.
+  "hostilesIgnoreNotHostileShapedPlayer": false,
+  // Whether a hostile mob will stop targeting you after switching to a (hostile) mob shape.
+  "hostilesForgetNewShapedPlayer": false,
   // hunterAttackAsPreyMorphedPlayer
   "hunterAttackAsPreyMorphedPlayer": true,
   // If false, the PreyTrait doesn't cause owned hunter (e.g. tamed wolves) to hunt the player.
@@ -119,5 +123,7 @@
   // Whether the player blacklist should prevent unlocking.
   "blacklistPreventsUnlocking": true,
   // Whether the player blacklist should prevent morphing.
-  "blacklistPreventsMorphing": true
+  "blacklistPreventsMorphing": true,
+  // The health that a normal player should have (e.g. 20). Set to -1 to use a cached one or if you don't know what this option does
+  "player_health": -1.0
 }

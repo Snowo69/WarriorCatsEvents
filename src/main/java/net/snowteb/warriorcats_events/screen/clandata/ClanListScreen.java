@@ -17,9 +17,14 @@ public class ClanListScreen extends Screen {
     }
 
     private ClanScrollList clanList;
+    private float menuX;
+    private final float targetX = 0;
 
     @Override
     protected void init() {
+
+        menuX = -200;
+
         clanList = new ClanScrollList(
                 minecraft,
                 200,
@@ -43,17 +48,26 @@ public class ClanListScreen extends Screen {
     @Override
     public void render(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
 
+        if (menuX < targetX) {
+            menuX += (targetX - menuX) * 0.10f;
+            if (menuX > targetX) menuX = targetX;
+        }
+
+        pGuiGraphics.pose().pushPose();
+        pGuiGraphics.pose().translate(menuX, 0, 0);
+
         pGuiGraphics.blit(Screen.BACKGROUND_LOCATION, 10, 10, 0.0F, 0, 200, 40, 32, 32);
         pGuiGraphics.fillGradient(RenderType.guiOverlay(), 10, 10,210, 100, 0xbd000000, 0, 0);
 
         super.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
 
-        pGuiGraphics.pose().pushPose();
         pGuiGraphics.pose().scale(1.2f,1.2f,1.2f);
         pGuiGraphics.drawCenteredString(Minecraft.getInstance().font, "Existing Clans", 92, 20, 0xFFFFFF);
-        pGuiGraphics.pose().popPose();
+        pGuiGraphics.pose().scale(5/6f,5/6f,5/6f);
 
         pGuiGraphics.renderOutline(10,10,200,this.height - 30,0xFFFFFFFF);
+
+        pGuiGraphics.pose().popPose();
 
     }
 

@@ -60,8 +60,15 @@ public class SpecificClanScreen extends Screen {
         this.specificUUID = clanUUID;
     }
 
+
+    private float menuY;
+    private final float targetY = 0;
+
+
     @Override
     protected void init() {
+        menuY = -200;
+
         this.clan = ClientClanCache.getClan(specificUUID);
 
         int centerX = width / 2;
@@ -192,6 +199,14 @@ public class SpecificClanScreen extends Screen {
     public void render(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
         renderBackground(pGuiGraphics);
 
+        if (menuY < targetY) {
+            menuY += (targetY - menuY) * 0.10f;
+            if (menuY > targetY) menuY = targetY;
+        }
+
+        pGuiGraphics.pose().pushPose();
+        pGuiGraphics.pose().translate(0, menuY, 0);
+
         super.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
 
 
@@ -319,6 +334,7 @@ public class SpecificClanScreen extends Screen {
                 "Leader: " + clan.leaderName, centerX, centerY - 70, 0xFFFFFF);
 
 
+        pGuiGraphics.pose().popPose();
 
     }
 

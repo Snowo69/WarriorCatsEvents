@@ -5,9 +5,12 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractSelectionList;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
+import net.minecraft.sounds.SoundSource;
+import net.snowteb.warriorcats_events.WCEClient;
 import net.snowteb.warriorcats_events.entity.ModEntities;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.screen.clandata.ManageClanScreen;
+import net.snowteb.warriorcats_events.sound.ModSounds;
 
 import java.util.UUID;
 
@@ -92,6 +95,8 @@ public class MemberScrollList extends AbstractSelectionList<MemberScrollList.Mem
         @Override
         public boolean mouseClicked(double mouseX, double mouseY, int button) {
             MemberScrollList.this.setSelected(this);
+            WCEClient.playLocalSound(ModSounds.MENU_CLICK.get(), SoundSource.NEUTRAL, 0.1f,1.3f);
+
 
             return true;
         }

@@ -2,6 +2,7 @@ package net.snowteb.warriorcats_events.client;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.ChatScreen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.gui.overlay.IGuiOverlay;
@@ -22,7 +23,9 @@ public class ThirstHUD {
         Minecraft mc = Minecraft.getInstance();
         if (!mc.isWindowActive()) return;
         if (mc.level == null) return;
-        if (mc.screen != null) return;
+        if (mc.screen != null) {
+            if (!(mc.screen instanceof ChatScreen)) return;
+        }
 
 
         int x = screenWidth / 2 + 7;
@@ -64,9 +67,14 @@ public class ThirstHUD {
                 yOffset = (int)(Math.sin((tickCount + i) * 3.0) * 2);
             }
 
+            RenderSystem.enableBlend();
+            RenderSystem.defaultBlendFunc();
+
             RenderSystem.setShader(GameRenderer::getPositionTexShader);
             RenderSystem.setShaderColor(1.0f,1.0f,1.0f,1.0f);
             guiGraphics.blit(texture, x + i * 8, y + yOffset, 0,0,14,14,14,14);
+
+            RenderSystem.disableBlend();
         }
 
     }

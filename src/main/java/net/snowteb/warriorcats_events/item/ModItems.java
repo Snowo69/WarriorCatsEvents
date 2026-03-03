@@ -238,6 +238,31 @@ public static final RegistryObject<Item> FLOWER_CROWN = ITEMS.register("flower_c
 
 
 
+    public static final RegistryObject<Item> GREEN_PARROT_FEATHER = ITEMS.register("green_parrot_feather",
+            () -> new Item(new Item.Properties().stacksTo(16)));
+    public static final RegistryObject<Item> RED_PARROT_FEATHER = ITEMS.register("red_parrot_feather",
+            () -> new Item(new Item.Properties().stacksTo(16)));
+    public static final RegistryObject<Item> BLUE_PARROT_FEATHER = ITEMS.register("blue_parrot_feather",
+            () -> new Item(new Item.Properties().stacksTo(16)));
+    public static final RegistryObject<Item> LIGHTBLUE_PARROT_FEATHER = ITEMS.register("lightblue_parrot_feather",
+            () -> new Item(new Item.Properties().stacksTo(16)));
+    public static final RegistryObject<Item> GRAY_PARROT_FEATHER = ITEMS.register("gray_parrot_feather",
+            () -> new Item(new Item.Properties().stacksTo(16)));
+
+    public static final RegistryObject<Item> GREEN_PARROT_BODY_FEATHERS = ITEMS.register("green_parrot_body_feathers",
+            () -> new FeathersArmorItem());
+    public static final RegistryObject<Item> RED_PARROT_BODY_FEATHERS = ITEMS.register("red_parrot_body_feathers",
+            () -> new FeathersArmorItem());
+    public static final RegistryObject<Item> BLUE_PARROT_BODY_FEATHERS = ITEMS.register("blue_parrot_body_feathers",
+            () -> new FeathersArmorItem());
+    public static final RegistryObject<Item> LIGHTBLUE_PARROT_BODY_FEATHERS = ITEMS.register("lightblue_parrot_body_feathers",
+            () -> new FeathersArmorItem());
+    public static final RegistryObject<Item> GRAY_PARROT_BODY_FEATHERS = ITEMS.register("gray_parrot_body_feathers",
+            () -> new FeathersArmorItem());
+    public static final RegistryObject<Item> CHICKEN_BODY_FEATHERS = ITEMS.register("chicken_body_feathers",
+            () -> new FeathersArmorItem());
+
+
 
 
     public static void register(IEventBus modEventBus) {

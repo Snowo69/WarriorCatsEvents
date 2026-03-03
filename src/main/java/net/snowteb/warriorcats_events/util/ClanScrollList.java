@@ -4,8 +4,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractSelectionList;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.sounds.SoundSource;
+import net.snowteb.warriorcats_events.WCEClient;
 import net.snowteb.warriorcats_events.client.ClanInfo;
 import net.snowteb.warriorcats_events.screen.clandata.SpecificClanScreen;
+import net.snowteb.warriorcats_events.sound.ModSounds;
 
 public class ClanScrollList extends AbstractSelectionList<ClanScrollList.ClanEntry> {
 
@@ -51,11 +54,14 @@ public class ClanScrollList extends AbstractSelectionList<ClanScrollList.ClanEnt
         public boolean mouseClicked(double mouseX, double mouseY, int button) {
             if (button == 0) {
                 ClanScrollList.this.setSelected(this);
+                WCEClient.playLocalSound(ModSounds.MENU_OPEN.get(), SoundSource.NEUTRAL, 0.7f,1.0f);
 
                 Minecraft.getInstance().setScreen(
                         new SpecificClanScreen(clan.name, clan.uuid)
                 );
                 return true;
+
+
             }
             return false;
         }

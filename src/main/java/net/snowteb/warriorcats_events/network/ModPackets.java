@@ -350,6 +350,12 @@ public class ModPackets {
                 .consumerMainThread(OpenCreateMorphPacket::handle)
                 .add();
 
+        net.messageBuilder(EmoteMorphPacket.class, 49, NetworkDirection.PLAY_TO_SERVER)
+                .decoder(EmoteMorphPacket::decode)
+                .encoder(EmoteMorphPacket::encode)
+                .consumerMainThread(EmoteMorphPacket::handle)
+                .add();
+
 
 
 

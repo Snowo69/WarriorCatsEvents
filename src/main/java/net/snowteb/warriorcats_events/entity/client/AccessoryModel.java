@@ -1,13 +1,27 @@
 package net.snowteb.warriorcats_events.entity.client;
 
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.Items;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
+import net.snowteb.warriorcats_events.item.ModItems;
+import net.snowteb.warriorcats_events.item.custom.FlowerArmorItem;
 import software.bernie.geckolib.model.GeoModel;
 
 public class AccessoryModel extends GeoModel<WCatEntity> {
     private final ResourceLocation model;
-    private final ResourceLocation texture;
+    public ResourceLocation texture;
+
+    public static final ResourceLocation[] FEATHER_TEXTURES = {
+            new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/red_parrot_feathers.png"),
+            new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/gray_parrot_feathers.png"),
+            new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/green_parrot_feathers.png"),
+            new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/blue_parrot_feathers.png"),
+            new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/light_blue_parrot_feathers.png"),
+            new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/chicken_feathers.png"),
+    };
 
     public AccessoryModel(ResourceLocation model,
                           ResourceLocation texture) {

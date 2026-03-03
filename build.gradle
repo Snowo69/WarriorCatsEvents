@@ -154,7 +154,7 @@ dependencies {
 
     implementation fg.deobf("software.bernie.geckolib:geckolib-forge-${minecraft_version}:${geckolib_version}")
     implementation ("com.eliotlash.mclib:mclib:20")
-    implementation fg.deobf("dev.tocraft:walkers-forge:1.20.1-5.7")
+    implementation fg.deobf("dev.tocraft:walkers-forge:1.20.1-5.8.7")
     implementation fg.deobf('dev.tocraft:craftedcore-forge:1.20.1-5.8')
 
     compileOnly fg.deobf("vazkii.patchouli:Patchouli:1.20.1-84-FORGE:api")

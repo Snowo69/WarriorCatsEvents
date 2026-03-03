@@ -41,6 +41,8 @@ public class ManageClanScreen extends Screen {
     public static final Quaternionf rotation = new Quaternionf(0.0F, 0.0F, 0.0F, 0.0F);
     public static final Quaternionf pose = new Quaternionf(1.9F, 0.0F, 0.6F, 0.0F);
 
+    private float menuY;
+
     public ManageClanScreen(ClanInfo clanInfo) {
         super(Component.literal("Manage Clan"));
         this.clanInfo = clanInfo;
@@ -128,10 +130,19 @@ public class ManageClanScreen extends Screen {
 
         drawMainMenu();
 
+        menuY = 500;
     }
 
     @Override
     public void render(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
+
+        if (menuY > 0) {
+            menuY -= (menuY) * 0.10f;
+            if (menuY < 0) menuY = 0;
+        }
+
+        pGuiGraphics.pose().pushPose();
+        pGuiGraphics.pose().translate(0, menuY, 0);
 
         int centerX = width / 2;
         int centerY = height / 2;
@@ -351,6 +362,8 @@ public class ManageClanScreen extends Screen {
         }
 
         super.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
+
+        pGuiGraphics.pose().popPose();
 
     }
 
