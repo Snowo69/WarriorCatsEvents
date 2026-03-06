@@ -70,7 +70,7 @@ public class ClawsTooltip extends ShearsItem {
                     new AttributeModifier(
                             ATTACK_DAMAGE_UUID,
                             "Claws damage modifier",
-                            4.0 * modifier,
+                            3.0 * modifier,
                             AttributeModifier.Operation.ADDITION
                     ));
 

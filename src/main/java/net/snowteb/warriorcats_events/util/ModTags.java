@@ -22,7 +22,7 @@ public class ModTags {
     public static class Items {
         public static final TagKey<Item> PREY = tag("prey");
         public static final TagKey<Item> HERBS = tag("herbs");
-        public static final TagKey<Item> HIT_THROUGH_BLOCKS = tag("hit_through_blocks");
+        public static final TagKey<Item> FEATHERS = tag("feathers");
 
 
 

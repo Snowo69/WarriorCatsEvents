@@ -381,5 +381,71 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .define('A', Items.FEATHER)
                 .unlockedBy("has_item", has(Items.FEATHER))
                 .save(pWriter);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.VULTURE_BODY_FEATHERS.get(), 1)
+                .pattern("AAA")
+                .pattern("AAA")
+                .pattern("AAA")
+                .define('A', ModItems.BLACK_VULTURE_FEATHER.get())
+                .unlockedBy("has_item", has(ModItems.BLACK_VULTURE_FEATHER.get()))
+                .save(pWriter);
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.PIGEON_BODY_FEATHERS.get(), 1)
+                .pattern("AAA")
+                .pattern("AAA")
+                .pattern("AAA")
+                .define('A', ModItems.PIGEON_FEATHER.get())
+                .unlockedBy("has_item", has(ModItems.PIGEON_FEATHER.get()))
+                .save(pWriter);
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.CROW_BODY_FEATHERS.get(), 1)
+                .pattern("AAA")
+                .pattern("AAA")
+                .pattern("AAA")
+                .define('A', ModItems.CROW_FEATHER.get())
+                .unlockedBy("has_item", has(ModItems.CROW_FEATHER.get()))
+                .save(pWriter);
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.GOLDFINCH_BODY_FEATHERS.get(), 1)
+                .pattern("AAA")
+                .pattern("AAA")
+                .pattern("AAA")
+                .define('A', ModItems.GOLDFINCH_FEATHER.get())
+                .unlockedBy("has_item", has(ModItems.GOLDFINCH_FEATHER.get()))
+                .save(pWriter);
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.CARDINAL_BODY_FEATHERS.get(), 1)
+                .pattern("AAA")
+                .pattern("AAA")
+                .pattern("AAA")
+                .define('A', ModItems.CARDINAL_FEATHER.get())
+                .unlockedBy("has_item", has(ModItems.CARDINAL_FEATHER.get()))
+                .save(pWriter);
+
+
+
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.BLACK_VULTURE_FEATHER.get(), 2)
+                .requires(ModTags.Items.FEATHERS)
+                .requires(ModTags.Items.FEATHERS)
+                .requires(ModTags.Items.FEATHERS)
+                .requires(Items.BLACK_DYE)
+                .unlockedBy("has_item", has(ModTags.Items.FEATHERS))
+                .save(pWriter);
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.CROW_FEATHER.get(), 1)
+                .requires(ModTags.Items.FEATHERS)
+                .requires(Items.BLACK_DYE)
+                .unlockedBy("has_item", has(ModTags.Items.FEATHERS))
+                .save(pWriter);
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.GOLDFINCH_FEATHER.get(), 3)
+                .requires(ModTags.Items.FEATHERS)
+                .requires(ModTags.Items.FEATHERS)
+                .requires(ModTags.Items.FEATHERS)
+                .requires(Items.BLACK_DYE)
+                .requires(Items.YELLOW_DYE)
+                .requires(Items.YELLOW_DYE)
+                .unlockedBy("has_item", has(ModTags.Items.FEATHERS))
+                .save(pWriter);
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.CARDINAL_FEATHER.get(), 1)
+                .requires(ModTags.Items.FEATHERS)
+                .requires(Items.RED_DYE)
+                .unlockedBy("has_item", has(ModTags.Items.FEATHERS))
+                .save(pWriter);
+
     }
 }

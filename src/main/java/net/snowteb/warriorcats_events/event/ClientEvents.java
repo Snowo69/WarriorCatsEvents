@@ -16,10 +16,12 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.FoliageColor;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.ConfigScreenHandler;
 import net.minecraftforge.client.event.*;
 import net.minecraftforge.client.event.sound.PlaySoundEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.snowteb.warriorcats_events.WCEClient;
@@ -28,6 +30,7 @@ import net.snowteb.warriorcats_events.block.ModBlocks;
 import net.snowteb.warriorcats_events.block.entity.FreshkillPileRenderer;
 import net.snowteb.warriorcats_events.block.entity.ModBlockEntities;
 import net.snowteb.warriorcats_events.block.entity.MossBedRenderer;
+import net.snowteb.warriorcats_events.client.EntityChatBubbleManager;
 import net.snowteb.warriorcats_events.client.LeapClientState;
 import net.snowteb.warriorcats_events.client.ThirstHUD;
 import net.snowteb.warriorcats_events.entity.ModEntities;
@@ -119,6 +122,9 @@ public class ClientEvents {
             /**
              * If the skill is unlocked and on, and the player is shifting, send the info to the StealthClientState.
              */
+
+            EntityChatBubbleManager.tick();
+
             player.getCapability(PlayerStealthProvider.STEALTH_MODE).ifPresent(cap -> {
                 if (!cap.isUnlocked() || !cap.isOn()) return;
 
@@ -240,8 +246,6 @@ public class ClientEvents {
         public static void onKeyRegister(RegisterKeyMappingsEvent event) {
             event.register(ModKeybinds.HISSING_KEY);
             event.register(ModKeybinds.WATERDRINK_KEY);
-//                event.register(ModKeybinds.SKILLMENU_KEY);
-//            event.register(ModKeybinds.EMOTES_KEY);
             event.register(WCEClient.EMOTES_HUD_MENU_KEY);
         }
 
@@ -257,8 +261,6 @@ public class ClientEvents {
             event.registerEntityRenderer(ModEntities.WCAT.get(), WCRenderer::new);
             event.registerEntityRenderer(ModEntities.PIGEON.get(), PigeonRenderer::new);
             event.registerEntityRenderer(ModEntities.BADGER.get(), BadgerRenderer::new);
-            //event.registerEntityRenderer(ModEntities.VANILLAWCAT.get(), VanillaWCatRenderer::new);
-
 
         }
 
@@ -284,6 +286,17 @@ public class ClientEvents {
             MenuScreens.register(ModMenuTypes.FRESHKILL_PILE_MENU.get(), FreshkillPileScreen::new);
             MenuScreens.register(ModMenuTypes.WCAT_INVENTORY.get(), WCatScreen::new);
             UpdateCheck.checkForUpdates();
+
+
+            ModLoadingContext.get().registerExtensionPoint(
+                    ConfigScreenHandler.ConfigScreenFactory.class,
+                    () -> new ConfigScreenHandler.ConfigScreenFactory(
+                            (mc, parent) -> {
+                                WCEClient.playLocalSound(ModSounds.MENU_OPEN.get(), SoundSource.NEUTRAL, 1.0f,1.3f);
+                                return new WCEConfigScreen(parent);
+                            }
+                    )
+            );
 
             ItemProperties.register(ModItems.ANCIENT_STICK.get(),
                     new ResourceLocation(WarriorCatsEvents.MODID, "dismiss_active"),

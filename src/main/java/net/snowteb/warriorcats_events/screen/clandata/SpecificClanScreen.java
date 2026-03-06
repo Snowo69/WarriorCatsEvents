@@ -9,6 +9,8 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundSource;
+import net.snowteb.warriorcats_events.WCEClient;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.client.ClanInfo;
 import net.snowteb.warriorcats_events.client.ClientClanCache;
@@ -17,6 +19,7 @@ import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.network.packet.c2s.clan.CtSRequestManageScreenPacket;
 import net.snowteb.warriorcats_events.network.ModPackets;
 import net.snowteb.warriorcats_events.network.packet.c2s.clan.CtSRegisterLogPacket;
+import net.snowteb.warriorcats_events.sound.ModSounds;
 import net.snowteb.warriorcats_events.util.*;
 import org.lwjgl.glfw.GLFW;
 
@@ -170,6 +173,7 @@ public class SpecificClanScreen extends Screen {
         backButton = new GradientToggleButton(
                 centerX - 20, centerY + 88, 40, 15, Component.literal("Back"),
                 btn -> {
+                    WCEClient.playLocalSound(ModSounds.MENU_OPEN.get(), SoundSource.NEUTRAL, 0.8f,1.3f);
                     Minecraft.getInstance().setScreen(new ClanListScreen());
                 },
                 new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),

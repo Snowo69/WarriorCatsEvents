@@ -2,10 +2,13 @@ package net.snowteb.warriorcats_events.network.packet.s2c.clan;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundSource;
 import net.minecraftforge.network.NetworkEvent;
+import net.snowteb.warriorcats_events.WCEClient;
 import net.snowteb.warriorcats_events.client.ClanInfo;
 import net.snowteb.warriorcats_events.client.ClientClanCache;
 import net.snowteb.warriorcats_events.client.ClientPacketHandles;
+import net.snowteb.warriorcats_events.sound.ModSounds;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -115,6 +118,8 @@ public class S2CClanListPacket {
     public static void handle(S2CClanListPacket msg, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
             ClientClanCache.setClans(msg.clans);
+            WCEClient.playLocalSound(ModSounds.MENU_OPEN.get(), SoundSource.NEUTRAL, 0.8f,1.3f);
+
             ClientPacketHandles.openClanListScreen();
         });
         ctx.get().setPacketHandled(true);

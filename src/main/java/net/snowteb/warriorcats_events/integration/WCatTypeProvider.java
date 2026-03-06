@@ -9,10 +9,8 @@ import net.minecraft.world.level.Level;
 import net.snowteb.warriorcats_events.clan.ClanData;
 import net.snowteb.warriorcats_events.entity.client.WCModel;
 import net.snowteb.warriorcats_events.entity.custom.WCGenetics;
-import net.snowteb.warriorcats_events.zconfig.WCEConfig;
 import net.snowteb.warriorcats_events.clan.PlayerClanData;
 import net.snowteb.warriorcats_events.clan.PlayerClanDataProvider;
-import net.snowteb.warriorcats_events.zconfig.WCEServerConfig;
 import tocraft.walkers.api.variant.TypeProvider;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 
@@ -106,6 +104,14 @@ public class WCatTypeProvider extends TypeProvider<WCatEntity> {
                 cat.setGeneticalVariants(variants.eyeColorLeft, variants.eyeColorRight, variants.rufousingVariant
                 ,variants.blueRufousingVariant, variants.orangeVar, variants.whiteVar, variants.tabbyVar
                 ,variants.albinoVar, variants.leftEyeVar, variants.rightEyeVar, variants.noise, variants.size);
+
+                cat.setChimeraGenetics(cap.getPlayerChimeraGenetics());
+
+                WCGenetics.GeneticalChimeraVariants variantsChimera = cap.getPlayerChimeraVariants();
+                cat.setGeneticalVariantsChimera(variantsChimera.chimeraVariant, variantsChimera.rufousingVariant,
+                        variantsChimera.blueRufousingVariant, variantsChimera.orangeVar, variantsChimera.whiteVar, variantsChimera.tabbyVar
+                        , variantsChimera.albinoVar, variantsChimera.noise);
+
                 cat.setOnGeneticalSkin(true);
                 cat.setGender(1);
             }

@@ -9,12 +9,8 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fml.common.Mod;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.entity.custom.WCGenetics;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
@@ -84,6 +80,15 @@ public class WCAccesoriesLayer extends GeoRenderLayer<WCatEntity> {
             new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/chicken_feathers.png")
     );
 
+    private final AccessoryModel bodyVultureFeathersModelMid = new AccessoryModel(
+            new ResourceLocation(WarriorCatsEvents.MODID, "geo/wcat.body_vulture_feathers_mid.geo.json"),
+            new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/black_vulture_feathers.png")
+    );
+    private final AccessoryModel bodyVultureFeathersModelUp = new AccessoryModel(
+            new ResourceLocation(WarriorCatsEvents.MODID, "geo/wcat.body_vulture_feathers_up.geo.json"),
+            new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/black_vulture_feathers.png")
+    );
+
 
     private final AccessoryRenderer crownRenderer;
     private final AccessoryRenderer leafmaneRenderer;
@@ -94,6 +99,7 @@ public class WCAccesoriesLayer extends GeoRenderLayer<WCatEntity> {
     private final AccessoryRenderer tailLichenRenderer;
     private final AccessoryRenderer dandelionRenderer;
     private final AccessoryRenderer bodyFeathersRenderer;
+    private final AccessoryRenderer bodyVultureFeathersRenderer;
 
 
 
@@ -110,6 +116,7 @@ public class WCAccesoriesLayer extends GeoRenderLayer<WCatEntity> {
         this.dandelionRenderer = new AccessoryRenderer(context, dandelionModel);
 
         this.bodyFeathersRenderer = new AccessoryRenderer(context, bodyFeathersModelUp);
+        this.bodyVultureFeathersRenderer = new AccessoryRenderer(context, bodyVultureFeathersModelUp);
     }
 
     @Override
@@ -184,6 +191,10 @@ public class WCAccesoriesLayer extends GeoRenderLayer<WCatEntity> {
         boolean hasDrapedTailVines = animatable
                 .getItemBySlot(EquipmentSlot.LEGS)
                 .is(ModItems.DRAPED_TAIL_VINES.get());
+
+        boolean hasVultureFeathers = animatable
+                .getItemBySlot(EquipmentSlot.CHEST)
+                .is(ModItems.VULTURE_BODY_FEATHERS.get());
 
         if (bone.getName().equals("head")) {
 
@@ -785,149 +796,249 @@ public class WCAccesoriesLayer extends GeoRenderLayer<WCatEntity> {
         }
 
         if (animatable.getItemBySlot(EquipmentSlot.CHEST).getItem() instanceof FeathersArmorItem featherArmor) {
-            bodyFeathersModelUp.texture = AccessoryModel.FEATHER_TEXTURES[5];
-            bodyFeathersModelMid.texture = AccessoryModel.FEATHER_TEXTURES[5];
-            bodyFeathersModelDown.texture = AccessoryModel.FEATHER_TEXTURES[5];
+            if (featherArmor == ModItems.VULTURE_BODY_FEATHERS.get()) {
 
-            if (featherArmor == ModItems.BLUE_PARROT_BODY_FEATHERS.get()) {
-                bodyFeathersModelUp.texture = AccessoryModel.FEATHER_TEXTURES[3];
-                bodyFeathersModelMid.texture = AccessoryModel.FEATHER_TEXTURES[3];
-                bodyFeathersModelDown.texture = AccessoryModel.FEATHER_TEXTURES[3];
-            } else if (featherArmor == ModItems.LIGHTBLUE_PARROT_BODY_FEATHERS.get()) {
-                bodyFeathersModelUp.texture = AccessoryModel.FEATHER_TEXTURES[4];
-                bodyFeathersModelMid.texture = AccessoryModel.FEATHER_TEXTURES[4];
-                bodyFeathersModelDown.texture = AccessoryModel.FEATHER_TEXTURES[4];
-            } else if (featherArmor == ModItems.GRAY_PARROT_BODY_FEATHERS.get()) {
-                bodyFeathersModelUp.texture = AccessoryModel.FEATHER_TEXTURES[1];
-                bodyFeathersModelMid.texture = AccessoryModel.FEATHER_TEXTURES[1];
-                bodyFeathersModelDown.texture = AccessoryModel.FEATHER_TEXTURES[1];
-            } else if (featherArmor == ModItems.GREEN_PARROT_BODY_FEATHERS.get()) {
-                bodyFeathersModelUp.texture = AccessoryModel.FEATHER_TEXTURES[2];
-                bodyFeathersModelMid.texture = AccessoryModel.FEATHER_TEXTURES[2];
-                bodyFeathersModelDown.texture = AccessoryModel.FEATHER_TEXTURES[2];
-            } else if (featherArmor == ModItems.RED_PARROT_BODY_FEATHERS.get()) {
-                bodyFeathersModelUp.texture = AccessoryModel.FEATHER_TEXTURES[0];
-                bodyFeathersModelMid.texture = AccessoryModel.FEATHER_TEXTURES[0];
-                bodyFeathersModelDown.texture = AccessoryModel.FEATHER_TEXTURES[0];
+                if (bone.getName().equals("moreup")) {
+                    var bakedModel = bodyVultureFeathersModelUp.getBakedModel(bodyVultureFeathersModelUp.getModelResource(animatable));
+
+                    poseStack.pushPose();
+
+                    float scale = 1f;
+                    poseStack.translate(0.00D, -0.01D, 0.00D);
+
+                    poseStack.scale(scale, scale, scale);
+
+                    poseStack.mulPose(Axis.XP.rotationDegrees(0f));
+
+                    RenderUtils.translateMatrixToBone(poseStack, bone);
+
+                    RenderType accessoryRenderType = RenderType.entityCutout(bodyVultureFeathersModelUp.getTextureResource(animatable));
+
+                    VertexConsumer accessoryBuffer = bufferSource.getBuffer(accessoryRenderType);
+
+                    float interpolatedYaw = Mth.lerp(partialTick, animatable.yBodyRotO, animatable.yBodyRot);
+                    poseStack.mulPose(Axis.YP.rotationDegrees(interpolatedYaw + 180f));
+
+
+                    bodyVultureFeathersRenderer.reRender(
+                            bakedModel,
+                            poseStack,
+                            bufferSource,
+                            animatable,
+                            accessoryRenderType,
+                            accessoryBuffer,
+                            partialTick,
+                            packedLight,
+                            packedOverlay,
+                            1f, 1f, 1f, 1f
+                    );
+
+                    poseStack.popPose();
+
+                    buffer = bufferSource.getBuffer(renderType);
+                }
+                if (bone.getName().equals("up")) {
+                    var bakedModel = bodyVultureFeathersModelMid.getBakedModel(bodyVultureFeathersModelMid.getModelResource(animatable));
+
+                    poseStack.pushPose();
+
+                    float scale = 1f;
+                    poseStack.translate(0.00D, -0.01D, 0.00D);
+
+                    poseStack.scale(scale, scale, scale);
+
+                    poseStack.mulPose(Axis.XP.rotationDegrees(0f));
+
+                    RenderUtils.translateMatrixToBone(poseStack, bone);
+
+                    RenderType accessoryRenderType = RenderType.entityCutout(bodyVultureFeathersModelMid.getTextureResource(animatable));
+
+                    VertexConsumer accessoryBuffer = bufferSource.getBuffer(accessoryRenderType);
+
+                    float interpolatedYaw = Mth.lerp(partialTick, animatable.yBodyRotO, animatable.yBodyRot);
+                    poseStack.mulPose(Axis.YP.rotationDegrees(interpolatedYaw + 180f));
+
+
+                    bodyVultureFeathersRenderer.reRender(
+                            bakedModel,
+                            poseStack,
+                            bufferSource,
+                            animatable,
+                            accessoryRenderType,
+                            accessoryBuffer,
+                            partialTick,
+                            packedLight,
+                            packedOverlay,
+                            1f, 1f, 1f, 1f
+                    );
+
+                    poseStack.popPose();
+
+                    buffer = bufferSource.getBuffer(renderType);
+                }
+
+            } else {
+                bodyFeathersModelUp.texture = AccessoryModel.FEATHER_TEXTURES[5];
+                bodyFeathersModelMid.texture = AccessoryModel.FEATHER_TEXTURES[5];
+                bodyFeathersModelDown.texture = AccessoryModel.FEATHER_TEXTURES[5];
+
+                if (featherArmor == ModItems.BLUE_PARROT_BODY_FEATHERS.get()) {
+                    bodyFeathersModelUp.texture = AccessoryModel.FEATHER_TEXTURES[3];
+                    bodyFeathersModelMid.texture = AccessoryModel.FEATHER_TEXTURES[3];
+                    bodyFeathersModelDown.texture = AccessoryModel.FEATHER_TEXTURES[3];
+                } else if (featherArmor == ModItems.LIGHTBLUE_PARROT_BODY_FEATHERS.get()) {
+                    bodyFeathersModelUp.texture = AccessoryModel.FEATHER_TEXTURES[4];
+                    bodyFeathersModelMid.texture = AccessoryModel.FEATHER_TEXTURES[4];
+                    bodyFeathersModelDown.texture = AccessoryModel.FEATHER_TEXTURES[4];
+                } else if (featherArmor == ModItems.GRAY_PARROT_BODY_FEATHERS.get()) {
+                    bodyFeathersModelUp.texture = AccessoryModel.FEATHER_TEXTURES[1];
+                    bodyFeathersModelMid.texture = AccessoryModel.FEATHER_TEXTURES[1];
+                    bodyFeathersModelDown.texture = AccessoryModel.FEATHER_TEXTURES[1];
+                } else if (featherArmor == ModItems.GREEN_PARROT_BODY_FEATHERS.get()) {
+                    bodyFeathersModelUp.texture = AccessoryModel.FEATHER_TEXTURES[2];
+                    bodyFeathersModelMid.texture = AccessoryModel.FEATHER_TEXTURES[2];
+                    bodyFeathersModelDown.texture = AccessoryModel.FEATHER_TEXTURES[2];
+                } else if (featherArmor == ModItems.RED_PARROT_BODY_FEATHERS.get()) {
+                    bodyFeathersModelUp.texture = AccessoryModel.FEATHER_TEXTURES[0];
+                    bodyFeathersModelMid.texture = AccessoryModel.FEATHER_TEXTURES[0];
+                    bodyFeathersModelDown.texture = AccessoryModel.FEATHER_TEXTURES[0];
+                } else if (featherArmor == ModItems.PIGEON_BODY_FEATHERS.get()) {
+                    bodyFeathersModelUp.texture = AccessoryModel.FEATHER_TEXTURES[6];
+                    bodyFeathersModelMid.texture = AccessoryModel.FEATHER_TEXTURES[6];
+                    bodyFeathersModelDown.texture = AccessoryModel.FEATHER_TEXTURES[6];
+                } else if (featherArmor == ModItems.CROW_BODY_FEATHERS.get()) {
+                    bodyFeathersModelUp.texture = AccessoryModel.FEATHER_TEXTURES[7];
+                    bodyFeathersModelMid.texture = AccessoryModel.FEATHER_TEXTURES[7];
+                    bodyFeathersModelDown.texture = AccessoryModel.FEATHER_TEXTURES[7];
+                } else if (featherArmor == ModItems.GOLDFINCH_BODY_FEATHERS.get()) {
+                    bodyFeathersModelUp.texture = AccessoryModel.FEATHER_TEXTURES[8];
+                    bodyFeathersModelMid.texture = AccessoryModel.FEATHER_TEXTURES[8];
+                    bodyFeathersModelDown.texture = AccessoryModel.FEATHER_TEXTURES[8];
+                } else if (featherArmor == ModItems.CARDINAL_BODY_FEATHERS.get()) {
+                    bodyFeathersModelUp.texture = AccessoryModel.FEATHER_TEXTURES[9];
+                    bodyFeathersModelMid.texture = AccessoryModel.FEATHER_TEXTURES[9];
+                    bodyFeathersModelDown.texture = AccessoryModel.FEATHER_TEXTURES[9];
+                }
+
+                if (bone.getName().equals("moreup")) {
+                    var bakedModel = bodyFeathersModelUp.getBakedModel(bodyFeathersModelUp.getModelResource(animatable));
+
+                    poseStack.pushPose();
+
+                    float scale = 1f;
+                    poseStack.translate(0.00D, -0.01D, 0.00D);
+
+                    poseStack.scale(scale, scale, scale);
+
+                    poseStack.mulPose(Axis.XP.rotationDegrees(0f));
+
+                    RenderUtils.translateMatrixToBone(poseStack, bone);
+
+                    RenderType accessoryRenderType = RenderType.entityCutout(bodyFeathersModelUp.getTextureResource(animatable));
+
+                    VertexConsumer accessoryBuffer = bufferSource.getBuffer(accessoryRenderType);
+
+                    float interpolatedYaw = Mth.lerp(partialTick, animatable.yBodyRotO, animatable.yBodyRot);
+                    poseStack.mulPose(Axis.YP.rotationDegrees(interpolatedYaw + 180f));
+
+
+                    bodyFeathersRenderer.reRender(
+                            bakedModel,
+                            poseStack,
+                            bufferSource,
+                            animatable,
+                            accessoryRenderType,
+                            accessoryBuffer,
+                            partialTick,
+                            packedLight,
+                            packedOverlay,
+                            1f, 1f, 1f, 1f
+                    );
+
+                    poseStack.popPose();
+
+                    buffer = bufferSource.getBuffer(renderType);
+                }
+                if (bone.getName().equals("up")) {
+                    var bakedModel = bodyFeathersModelMid.getBakedModel(bodyFeathersModelMid.getModelResource(animatable));
+
+                    poseStack.pushPose();
+
+                    float scale = 1f;
+                    poseStack.translate(0.00D, -0.01D, 0.00D);
+
+                    poseStack.scale(scale, scale, scale);
+
+                    poseStack.mulPose(Axis.XP.rotationDegrees(0f));
+
+                    RenderUtils.translateMatrixToBone(poseStack, bone);
+
+                    RenderType accessoryRenderType = RenderType.entityCutout(bodyFeathersModelMid.getTextureResource(animatable));
+
+                    VertexConsumer accessoryBuffer = bufferSource.getBuffer(accessoryRenderType);
+
+                    float interpolatedYaw = Mth.lerp(partialTick, animatable.yBodyRotO, animatable.yBodyRot);
+                    poseStack.mulPose(Axis.YP.rotationDegrees(interpolatedYaw + 180f));
+
+
+                    bodyFeathersRenderer.reRender(
+                            bakedModel,
+                            poseStack,
+                            bufferSource,
+                            animatable,
+                            accessoryRenderType,
+                            accessoryBuffer,
+                            partialTick,
+                            packedLight,
+                            packedOverlay,
+                            1f, 1f, 1f, 1f
+                    );
+
+                    poseStack.popPose();
+
+                    buffer = bufferSource.getBuffer(renderType);
+                }
+                if (bone.getName().equals("bodydown2")) {
+                    var bakedModel = bodyFeathersModelDown.getBakedModel(bodyFeathersModelDown.getModelResource(animatable));
+
+                    poseStack.pushPose();
+
+                    float scale = 1f;
+                    poseStack.translate(0.00D, +0.50D, -0.32D);
+
+                    poseStack.scale(scale, scale, scale);
+
+                    poseStack.mulPose(Axis.XP.rotationDegrees(90f));
+
+                    RenderUtils.translateMatrixToBone(poseStack, bone);
+
+                    RenderType accessoryRenderType = RenderType.entityCutout(bodyFeathersModelDown.getTextureResource(animatable));
+
+                    VertexConsumer accessoryBuffer = bufferSource.getBuffer(accessoryRenderType);
+
+                    float interpolatedYaw = Mth.lerp(partialTick, animatable.yBodyRotO, animatable.yBodyRot);
+                    poseStack.mulPose(Axis.YP.rotationDegrees(interpolatedYaw + 180f));
+
+
+                    bodyFeathersRenderer.reRender(
+                            bakedModel,
+                            poseStack,
+                            bufferSource,
+                            animatable,
+                            accessoryRenderType,
+                            accessoryBuffer,
+                            partialTick,
+                            packedLight,
+                            packedOverlay,
+                            1f, 1f, 1f, 1f
+                    );
+
+                    poseStack.popPose();
+
+                    buffer = bufferSource.getBuffer(renderType);
+                }
             }
 
-            if (bone.getName().equals("moreup")) {
-                var bakedModel = bodyFeathersModelUp.getBakedModel(bodyFeathersModelUp.getModelResource(animatable));
-
-                poseStack.pushPose();
-
-                float scale = 1f;
-                poseStack.translate(0.00D, -0.01D, 0.00D);
-
-                poseStack.scale(scale, scale, scale);
-
-                poseStack.mulPose(Axis.XP.rotationDegrees(0f));
-
-                RenderUtils.translateMatrixToBone(poseStack, bone);
-
-                RenderType accessoryRenderType = RenderType.entityCutout(bodyFeathersModelUp.getTextureResource(animatable));
-
-                VertexConsumer accessoryBuffer = bufferSource.getBuffer(accessoryRenderType);
-
-                float interpolatedYaw = Mth.lerp(partialTick, animatable.yBodyRotO, animatable.yBodyRot);
-                poseStack.mulPose(Axis.YP.rotationDegrees(interpolatedYaw + 180f));
-
-
-                bodyFeathersRenderer.reRender(
-                        bakedModel,
-                        poseStack,
-                        bufferSource,
-                        animatable,
-                        accessoryRenderType,
-                        accessoryBuffer,
-                        partialTick,
-                        packedLight,
-                        packedOverlay,
-                        1f, 1f, 1f, 1f
-                );
-
-                poseStack.popPose();
-
-                buffer = bufferSource.getBuffer(renderType);
-            }
-            if (bone.getName().equals("up")) {
-                var bakedModel = bodyFeathersModelMid.getBakedModel(bodyFeathersModelMid.getModelResource(animatable));
-
-                poseStack.pushPose();
-
-                float scale = 1f;
-                poseStack.translate(0.00D, -0.01D, 0.00D);
-
-                poseStack.scale(scale, scale, scale);
-
-                poseStack.mulPose(Axis.XP.rotationDegrees(0f));
-
-                RenderUtils.translateMatrixToBone(poseStack, bone);
-
-                RenderType accessoryRenderType = RenderType.entityCutout(bodyFeathersModelMid.getTextureResource(animatable));
-
-                VertexConsumer accessoryBuffer = bufferSource.getBuffer(accessoryRenderType);
-
-                float interpolatedYaw = Mth.lerp(partialTick, animatable.yBodyRotO, animatable.yBodyRot);
-                poseStack.mulPose(Axis.YP.rotationDegrees(interpolatedYaw + 180f));
-
-
-                bodyFeathersRenderer.reRender(
-                        bakedModel,
-                        poseStack,
-                        bufferSource,
-                        animatable,
-                        accessoryRenderType,
-                        accessoryBuffer,
-                        partialTick,
-                        packedLight,
-                        packedOverlay,
-                        1f, 1f, 1f, 1f
-                );
-
-                poseStack.popPose();
-
-                buffer = bufferSource.getBuffer(renderType);
-            }
-            if (bone.getName().equals("bodydown2")) {
-                var bakedModel = bodyFeathersModelDown.getBakedModel(bodyFeathersModelDown.getModelResource(animatable));
-
-                poseStack.pushPose();
-
-                float scale = 1f;
-                poseStack.translate(0.00D, +0.50D, -0.32D);
-
-                poseStack.scale(scale, scale, scale);
-
-                poseStack.mulPose(Axis.XP.rotationDegrees(90f));
-
-                RenderUtils.translateMatrixToBone(poseStack, bone);
-
-                RenderType accessoryRenderType = RenderType.entityCutout(bodyFeathersModelDown.getTextureResource(animatable));
-
-                VertexConsumer accessoryBuffer = bufferSource.getBuffer(accessoryRenderType);
-
-                float interpolatedYaw = Mth.lerp(partialTick, animatable.yBodyRotO, animatable.yBodyRot);
-                poseStack.mulPose(Axis.YP.rotationDegrees(interpolatedYaw + 180f));
-
-
-                bodyFeathersRenderer.reRender(
-                        bakedModel,
-                        poseStack,
-                        bufferSource,
-                        animatable,
-                        accessoryRenderType,
-                        accessoryBuffer,
-                        partialTick,
-                        packedLight,
-                        packedOverlay,
-                        1f, 1f, 1f, 1f
-                );
-
-                poseStack.popPose();
-
-                buffer = bufferSource.getBuffer(renderType);
-            }
         }
 
     }

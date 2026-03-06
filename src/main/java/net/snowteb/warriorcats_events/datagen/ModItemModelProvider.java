@@ -58,12 +58,25 @@ public class ModItemModelProvider extends ItemModelProvider {
         simpleItem(ModItems.RED_PARROT_FEATHER);
         simpleItem(ModItems.GRAY_PARROT_FEATHER);
 
+        simpleItem(ModItems.BLACK_VULTURE_FEATHER);
+        simpleItem(ModItems.PIGEON_FEATHER);
+        simpleItem(ModItems.CROW_FEATHER);
+        simpleItem(ModItems.GOLDFINCH_FEATHER);
+        simpleItem(ModItems.CARDINAL_FEATHER);
+
         simpleItem(ModItems.GREEN_PARROT_BODY_FEATHERS);
         simpleItem(ModItems.BLUE_PARROT_BODY_FEATHERS);
         simpleItem(ModItems.LIGHTBLUE_PARROT_BODY_FEATHERS);
         simpleItem(ModItems.RED_PARROT_BODY_FEATHERS);
         simpleItem(ModItems.GRAY_PARROT_BODY_FEATHERS);
         simpleItem(ModItems.CHICKEN_BODY_FEATHERS);
+
+        simpleItem(ModItems.VULTURE_BODY_FEATHERS);
+        simpleItem(ModItems.PIGEON_BODY_FEATHERS);
+        simpleItem(ModItems.CROW_BODY_FEATHERS);
+        simpleItem(ModItems.GOLDFINCH_BODY_FEATHERS);
+        simpleItem(ModItems.CARDINAL_BODY_FEATHERS);
+
 
 
         simpleBlockItem(ModBlocks.LEAF_DOOR);

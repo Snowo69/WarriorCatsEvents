@@ -73,6 +73,9 @@ public class PlayerClanData {
 
     private WCGenetics mateGenetics = new WCGenetics();
 
+    private WCGenetics chimeraPlayerGenetics = new WCGenetics();
+    private WCGenetics.GeneticalChimeraVariants chimeraPlayerVariants = new WCGenetics.GeneticalChimeraVariants();
+
     public void setMateGenetics(WCGenetics mateGenetics) {
         this.mateGenetics = mateGenetics;
     }
@@ -104,6 +107,21 @@ public class PlayerClanData {
         this.blueRufousing = genetics.blueRufousing;
         this.noise = genetics.noise;
 
+    }
+
+
+    public void setPlayerChimeraVariants(WCGenetics.GeneticalChimeraVariants variants) {
+        this.chimeraPlayerVariants = variants;
+    }
+    public WCGenetics.GeneticalChimeraVariants getPlayerChimeraVariants() {
+        return chimeraPlayerVariants;
+    }
+
+    public void setPlayerChimeraGenetics(WCGenetics gens) {
+        this.chimeraPlayerGenetics = gens;
+    }
+    public WCGenetics getPlayerChimeraGenetics() {
+        return chimeraPlayerGenetics;
     }
 
     public void setPlayerGeneticalVariants(String eyesVariantLeft, String eyesVariantRight,
@@ -144,7 +162,7 @@ public class PlayerClanData {
     public WCGenetics getPlayerGenetics() {
         return new WCGenetics(bobtail, chestFur, bellyFur,
                 legsFur, headFur, cheekFur, tailFur, backFur, base, orangeBase, whiteRatio, albino,
-                dilute, agouti, tabbyStripes, eyesAnomaly, rufousing, blueRufousing, noise);
+                dilute, agouti, tabbyStripes, eyesAnomaly, rufousing, blueRufousing, noise, chimeraPlayerVariants.chimeraGene);
     }
 
     public WCGenetics.GeneticalVariants getPlayerGeneticalVariants() {
@@ -328,6 +346,9 @@ public class PlayerClanData {
         this.rightEyeVar = source.rightEyeVar;
         this.mateGenetics = source.mateGenetics;
 
+        this.chimeraPlayerVariants = source.chimeraPlayerVariants;
+        this.chimeraPlayerGenetics = source.chimeraPlayerGenetics;
+
     }
 
     public void reset() {
@@ -387,6 +408,9 @@ public class PlayerClanData {
         this.albinoVar = 0;
         this.leftEyeVar = 0;
         this.rightEyeVar = 0;
+
+        this.chimeraPlayerGenetics = new  WCGenetics();
+        this.chimeraPlayerVariants = new WCGenetics.GeneticalChimeraVariants();
     }
 
     public void tick() {
@@ -462,6 +486,23 @@ public class PlayerClanData {
         geneticsTag.putInt("EyeColorVariantRight", rightEyeVar);
         geneticsTag.putInt("Noise", noise);
         geneticsTag.putFloat("Size", size);
+
+        geneticsTag.putString("BaseChimera", chimeraPlayerGenetics.base);
+        geneticsTag.putString("OrangeBaseChimera", chimeraPlayerGenetics.orangeBase);
+        geneticsTag.putString("WhiteRatioChimera", chimeraPlayerGenetics.whiteRatio);
+        geneticsTag.putString("AlbinoChimera", chimeraPlayerGenetics.albino);
+        geneticsTag.putString("DiluteChimera", chimeraPlayerGenetics.dilute);
+        geneticsTag.putString("AgoutiChimera", chimeraPlayerGenetics.agouti);
+        geneticsTag.putString("TabbyStripesChimera", chimeraPlayerGenetics.tabbyStripes);
+
+        geneticsTag.putInt("RufousingChimera", chimeraPlayerGenetics.rufousing);
+        geneticsTag.putInt("BlueRufousingChimera", chimeraPlayerGenetics.blueRufousing);
+        geneticsTag.putInt("OrangeBaseVariantChimera", chimeraPlayerVariants.orangeVar);
+        geneticsTag.putInt("WhiteRatioVariantChimera", chimeraPlayerVariants.whiteVar);
+        geneticsTag.putInt("AlbinoVariantChimera", chimeraPlayerVariants.albinoVar);
+        geneticsTag.putInt("TabbyStripesVariantChimera", chimeraPlayerVariants.tabbyVar);
+        geneticsTag.putInt("NoiseChimera", chimeraPlayerVariants.noise);
+        geneticsTag.putString("ChimeraGene", chimeraPlayerGenetics.chimeraGene);
 
         nbt.put("Genetics", geneticsTag);
 
@@ -541,10 +582,39 @@ public class PlayerClanData {
 
                     geneticsTag.getInt("Rufousing"),
                     geneticsTag.getInt("BlueRufousing"),
-                    geneticsTag.getInt("Noise")
+                    geneticsTag.getInt("Noise"),
+                    geneticsTag.getString("ChimeraGene")
             );
 
             this.setPlayerGenetics(genetics);
+
+
+
+
+            WCGenetics chimeraGens = new  WCGenetics();
+
+            chimeraGens.base = geneticsTag.getString("BaseChimera");
+            chimeraGens.orangeBase = geneticsTag.getString("OrangeBaseChimera");
+            chimeraGens.whiteRatio = geneticsTag.getString("WhiteRatioChimera");
+            chimeraGens.albino = geneticsTag.getString("AlbinoChimera");
+            chimeraGens.dilute = geneticsTag.getString("DiluteChimera");
+            chimeraGens.agouti = geneticsTag.getString("AgoutiChimera");
+            chimeraGens.tabbyStripes = geneticsTag.getString("TabbyStripesChimera");
+            chimeraGens.chimeraGene = geneticsTag.getString("ChimeraGene");
+
+            this.setPlayerChimeraGenetics(chimeraGens);
+
+            WCGenetics.GeneticalChimeraVariants chimeraVariants = new WCGenetics.GeneticalChimeraVariants();
+
+            chimeraVariants.rufousingVariant = geneticsTag.getInt("RufousingChimera");
+            chimeraVariants.blueRufousingVariant = geneticsTag.getInt("BlueRufousingChimera");
+            chimeraVariants.orangeVar = geneticsTag.getInt("OrangeBaseVariantChimera");
+            chimeraVariants.whiteVar = geneticsTag.getInt("WhiteRatioVariantChimera");
+            chimeraVariants.albinoVar = geneticsTag.getInt("AlbinoVariantChimera");
+            chimeraVariants.tabbyVar = geneticsTag.getInt("TabbyStripesVariantChimera");
+            chimeraVariants.noise = geneticsTag.getInt("NoiseChimera");
+
+            this.setPlayerChimeraVariants(chimeraVariants);
 
 
             eyeColorLeft = geneticsTag.getString("EyeColorLeft");
@@ -583,7 +653,8 @@ public class PlayerClanData {
                     mateTag.getString("EyesAnomaly"),
                     mateTag.getInt("Rufousing"),
                     mateTag.getInt("BlueRufousing"),
-                    mateTag.getInt("Noise")
+                    mateTag.getInt("Noise"),
+                    mateTag.getString("ChimeraGene")
             );
         }
 
@@ -611,6 +682,7 @@ public class PlayerClanData {
         tag.putInt("Rufousing", genetics.rufousing);
         tag.putInt("BlueRufousing", genetics.blueRufousing);
         tag.putInt("Noise", genetics.noise);
+        tag.putString("ChimeraGene", genetics.chimeraGene);
 
     }
 }

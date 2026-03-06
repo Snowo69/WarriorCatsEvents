@@ -4,8 +4,10 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -16,10 +18,13 @@ import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.animal.Parrot;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.phys.Vec3;
+import net.snowteb.warriorcats_events.item.ModItems;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
@@ -257,6 +262,23 @@ public class PigeonEntity extends Parrot implements GeoEntity {
     }
 
 
+    @Override
+    protected void dropCustomDeathLoot(DamageSource pSource, int pLooting, boolean pRecentlyHit) {
+        ItemStack itemEarned = new ItemStack(ModItems.PIGEON_FEATHER.get());
+        if (itemEarned.isEmpty()) return;
+        ItemEntity drop = new ItemEntity(
+                this.level(),
+                this.getX(),
+                this.getY() + 0.2,
+                this.getZ(),
+                itemEarned.copyWithCount(this.getRandom().nextInt(4))
+        );
+        if (this.level() instanceof ServerLevel sLevel) {
+            sLevel.addFreshEntity(drop);
+        }
+
+        super.dropCustomDeathLoot(pSource, pLooting, pRecentlyHit);
+    }
 
     @Override
     public AnimatableInstanceCache getAnimatableInstanceCache() {

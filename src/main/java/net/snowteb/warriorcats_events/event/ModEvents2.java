@@ -191,6 +191,7 @@ public class ModEvents2 {
         ManageClanCommand.register(event.getDispatcher());
         ChangeMemberPermissionCommand.register(event.getDispatcher());
         OpenMorphCreateCommand.register(event.getDispatcher());
+        OpDeleteClanCommand.register(event.getDispatcher());
 
 
         ConfigCommand.register(event.getDispatcher());
@@ -684,9 +685,12 @@ public class ModEvents2 {
         CompoundTag data = player.getPersistentData();
         CompoundTag persistent;
 
+
         if (player instanceof ServerPlayer sPlayer) {
             ClanData clanData = ClanData.get(sPlayer.serverLevel());
             ServerLevel sLevel = sPlayer.serverLevel();
+
+            clanData.checkForEmptyClans(sLevel);
 
             UUID clanUUID = sPlayer.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
                     .map(PlayerClanData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID);
@@ -707,25 +711,6 @@ public class ModEvents2 {
                     cap.setClanName("None");
                 });
             }
-
-//                for (UUID playerUUID : clan.members.keySet()) {
-//
-//
-//                    ServerPlayer currentPlayer = sLevel.getServer().getPlayerList().getPlayer(playerUUID);
-//
-//                    if (currentPlayer != null) {
-//                        UUID currentClanUUID = currentPlayer.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
-//                                .map(PlayerClanData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID);
-//
-//                        if (!currentClanUUID.equals(clan.clanUUID)) {
-//                            clanData.removeMember(currentPlayer, clan.clanUUID);
-//                        }
-//                    }
-//
-//                }
-
-
-
 
             player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {
                 ModPackets.sendToPlayer(new S2CSyncClanDataPacket(cap), sPlayer);

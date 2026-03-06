@@ -9,7 +9,7 @@ public class ModFoodHerbs {
 
     // Traveling herb. Can also build up appetite and quench thirst.
     public static final FoodProperties SORREL = new FoodProperties.Builder().alwaysEat().fast()
-            .nutrition(1).saturationMod(10f)
+            .nutrition(1).saturationMod(5f)
             .effect(() -> new MobEffectInstance(MobEffects.CONFUSION,140,0),1f)
             .build();
 
@@ -71,10 +71,10 @@ public class ModFoodHerbs {
 
 
 
-    public static final FoodProperties MOUSE_FOOD = new FoodProperties.Builder()
-            .nutrition(6).saturationMod(6f).build();
-    public static final FoodProperties SQUIRREL_FOOD = new FoodProperties.Builder()
-            .nutrition(7).saturationMod(8f).build();
-    public static final FoodProperties PIGEON_FOOD = new FoodProperties.Builder()
-            .nutrition(8).saturationMod(10f).build();
+    public static final FoodProperties MOUSE_FOOD = new FoodProperties.Builder().meat()
+            .nutrition(7).saturationMod(1.0f).build();
+    public static final FoodProperties SQUIRREL_FOOD = new FoodProperties.Builder().meat()
+            .nutrition(9).saturationMod(1.1f).build();
+    public static final FoodProperties PIGEON_FOOD = new FoodProperties.Builder().meat()
+            .nutrition(10).saturationMod(1.3f).build();
 }

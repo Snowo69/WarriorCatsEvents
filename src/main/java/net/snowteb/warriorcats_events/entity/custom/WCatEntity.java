@@ -66,7 +66,6 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.network.NetworkHooks;
 import net.minecraftforge.network.PacketDistributor;
-import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.block.ModBlocks;
 import net.snowteb.warriorcats_events.block.custom.MossBedBlock;
 import net.snowteb.warriorcats_events.block.entity.MossBedBlockEntity;
@@ -332,6 +331,11 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
     private static final EntityDataAccessor<String> TAIL_FUR =
             SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.STRING);
 
+    private static final EntityDataAccessor<String> CHIMERA_GENE =
+            SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.STRING);
+    private static final EntityDataAccessor<Integer> CHIMERA_VARIANT =
+            SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.INT);
+
 
     private static final EntityDataAccessor<String> BASE =
             SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.STRING);
@@ -364,8 +368,6 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
             SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.INT);
     public static final EntityDataAccessor<Integer> ALBINO_VARIANT =
             SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.INT);
-    //    public static final EntityDataAccessor<Integer> DILUTE_VARIANT =
-//            SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.INT);
     public static final EntityDataAccessor<Integer> TABBY_STRIPES_VARIANT =
             SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.INT);
     public static final EntityDataAccessor<Integer> EYE_COLOR_VARIANT_LEFT =
@@ -374,6 +376,38 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
             SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.INT);
     public static final EntityDataAccessor<Integer> NOISE =
             SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.INT);
+
+
+    private static final EntityDataAccessor<String> BASE_CHIMERA =
+            SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.STRING);
+    private static final EntityDataAccessor<String> ORANGE_BASE_CHIMERA =
+            SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.STRING);
+    private static final EntityDataAccessor<String> WHITE_RATIO_CHIMERA =
+            SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.STRING);
+    private static final EntityDataAccessor<String> ALBINO_CHIMERA =
+            SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.STRING);
+    private static final EntityDataAccessor<String> DILUTE_CHIMERA =
+            SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.STRING);
+    private static final EntityDataAccessor<String> AGOUTI_CHIMERA =
+            SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.STRING);
+    private static final EntityDataAccessor<String> TABBY_STRIPES_CHIMERA =
+            SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.STRING);
+
+    public static final EntityDataAccessor<Integer> RUFOUSING_VARIANT_CHIMERA =
+            SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.INT);
+    public static final EntityDataAccessor<Integer> BLUE_RUFOUSING_VARIANT_CHIMERA =
+            SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.INT);
+    public static final EntityDataAccessor<Integer> ORANGE_BASE_VARIANT_CHIMERA =
+            SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.INT);
+    public static final EntityDataAccessor<Integer> WHITE_RATIO_VARIANT_CHIMERA =
+            SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.INT);
+    public static final EntityDataAccessor<Integer> ALBINO_VARIANT_CHIMERA =
+            SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.INT);
+    public static final EntityDataAccessor<Integer> TABBY_STRIPES_VARIANT_CHIMERA =
+            SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.INT);
+    public static final EntityDataAccessor<Integer> NOISE_CHIMERA =
+            SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.INT);
+
 
     public static final EntityDataAccessor<Float> SIZE =
             SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.FLOAT);
@@ -384,7 +418,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
     private WCGenetics storedFatherGenetics;
     public String textureKey;
-    private final String[] textureLayersPaths = new String[12];
+    private final String[] textureLayersPaths = new String[20];
 
     // GENETICS
 
@@ -3763,42 +3797,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         /**
          * If it has an owner, then send the owner a message with the coordinates where the cat died.
          */
-        if (this.getOwner() != null) {
-            ServerPlayer owner = (ServerPlayer) this.getOwner();
-            owner.sendSystemMessage(Component.literal(
-                    String.format("At: X=%.1f, Y=%.1f, Z=%.1f",
-                            this.getX(), this.getY(), this.getZ())
-            ).withStyle(ChatFormatting.GRAY));
 
-            Component message = Component.empty()
-                    .append(this.hasCustomName() ? this.getCustomName().copy() : Component.literal("null"))
-                    .append(" has died. At ")
-                    .append(Component.literal(String.format("X=%.1f, Y=%.1f, Z=%.1f",
-                            this.getX(), this.getY(), this.getZ())));
-            this.registerClanLog(message);
-
-            if (this.level() instanceof ServerLevel sLevel) {
-                if (!this.getClanUUID().equals(ClanData.EMPTY_UUID)) {
-                    ClanData data = ClanData.get(sLevel);
-                    data.removeClanCatFromAnyClan(this);
-                }
-
-                BlockPos homepos = this.getHomePosition();
-                if (homepos != null) {
-                    if (sLevel.getBlockState(homepos).getBlock() instanceof MossBedBlock) {
-                        BlockEntity bEntity = sLevel.getBlockEntity(homepos);
-                        if (bEntity instanceof MossBedBlockEntity mbEntity) {
-                            mbEntity.resetAssigned();
-                            mbEntity.setChanged();
-                            if (!sLevel.isClientSide()) {
-                                sLevel.sendBlockUpdated(homepos, sLevel.getBlockState(homepos),
-                                        sLevel.getBlockState(homepos), 3);
-                            }
-                        }
-                    }
-                }
-            }
-        }
 
         if (this.getMateUUID() != null) {
             Entity mate = ((ServerLevel) this.level()).getEntity(this.getMateUUID());
@@ -4137,6 +4136,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
                     });
 
+                    this.rewardGeneticsAdvancements();
 
                     mode = CatMode.FOLLOW;
                     sendModeMessage(pPlayer);
@@ -4932,6 +4932,9 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
             partner.setMate(this.getCustomName());
         }
 
+        ExperienceOrb.award(level, this.position(), random.nextInt(3) + 2);
+
+
         return null;
     }
 
@@ -5420,7 +5423,8 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                     fatherTag.getString("EyesAnomaly"),
                     fatherTag.getInt("Rufousing"),
                     fatherTag.getInt("BlueRufousing"),
-                    fatherTag.getInt("Noise")
+                    fatherTag.getInt("Noise"),
+                    fatherTag.getString("Chimera")
             );
         }
 
@@ -5932,6 +5936,12 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                 if (this.storedFatherGenetics != null) {
 
                     WCGenetics motherGenetics = this.getGenetics();
+                    if (WCGenetics.Chimerism.isChimera(this.entityData.get(CHIMERA_GENE))) {
+                        if (this.getRandom().nextBoolean()) {
+                            motherGenetics = this.getChimeraGenetics();
+                        }
+                    }
+
                     WCGenetics fatherGenetics = this.storedFatherGenetics;
 
                     kit.setOnGeneticalSkin(this.isOnGeneticalSkin());
@@ -5998,6 +6008,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                     owner.sendSystemMessage(messageKit);
                     this.registerClanLog(messageKit);
 
+                    kit.rewardGeneticsAdvancements();
 
                 }
 
@@ -6183,6 +6194,27 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         this.entityData.define(EYE_COLOR_VARIANT_RIGHT, 0);
         this.entityData.define(NOISE, 0);
 
+        //
+        this.entityData.define(CHIMERA_GENE, "C-C");
+        this.entityData.define(CHIMERA_VARIANT, 0);
+
+        this.entityData.define(BASE_CHIMERA, "B-b");
+        this.entityData.define(ORANGE_BASE_CHIMERA, "o-o");
+        this.entityData.define(WHITE_RATIO_CHIMERA, "w-w");
+        this.entityData.define(ALBINO_CHIMERA, "C-cs");
+        this.entityData.define(DILUTE_CHIMERA, "d-d");
+        this.entityData.define(AGOUTI_CHIMERA, "a-a");
+        this.entityData.define(TABBY_STRIPES_CHIMERA, "mc-mc");
+
+        this.entityData.define(RUFOUSING_VARIANT_CHIMERA, 0);
+        this.entityData.define(BLUE_RUFOUSING_VARIANT_CHIMERA, 0);
+        this.entityData.define(ORANGE_BASE_VARIANT_CHIMERA, 0);
+        this.entityData.define(WHITE_RATIO_VARIANT_CHIMERA, 0);
+        this.entityData.define(ALBINO_VARIANT_CHIMERA, 0);
+        this.entityData.define(TABBY_STRIPES_VARIANT_CHIMERA, 0);
+        this.entityData.define(NOISE_CHIMERA, 0);
+        //
+
         this.entityData.define(GENETICAL_SKIN, false);
 
         // GENETICS
@@ -6248,6 +6280,38 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         genetics.rufousing = (this.entityData.get(RUFOUSING_VARIANT));
         genetics.blueRufousing = (this.entityData.get(BLUE_RUFOUSING_VARIANT));
         genetics.noise = (this.entityData.get(NOISE));
+        genetics.chimeraGene = this.entityData.get(CHIMERA_GENE);
+
+
+        return genetics;
+    }
+
+
+    public WCGenetics getChimeraGenetics() {
+        WCGenetics genetics = new WCGenetics();
+
+        genetics.chestFur = (this.entityData.get(CHEST_FUR));
+        genetics.bellyFur = (this.entityData.get(BELLY_FUR));
+        genetics.legsFur = (this.entityData.get(LEGS_FUR));
+        genetics.headFur = (this.entityData.get(HEAD_FUR));
+        genetics.cheekFur = (this.entityData.get(CHEEK_FUR));
+        genetics.backFur = (this.entityData.get(BACK_FUR));
+        genetics.bobtail = (this.entityData.get(BOBTAIL));
+        genetics.tailFur = (this.entityData.get(TAIL_FUR));
+
+        genetics.base = (this.entityData.get(BASE_CHIMERA));
+        genetics.orangeBase = (this.entityData.get(ORANGE_BASE_CHIMERA));
+        genetics.whiteRatio = (this.entityData.get(WHITE_RATIO_CHIMERA));
+        genetics.albino = (this.entityData.get(ALBINO_CHIMERA));
+        genetics.dilute = (this.entityData.get(DILUTE_CHIMERA));
+        genetics.agouti = (this.entityData.get(AGOUTI_CHIMERA));
+        genetics.tabbyStripes = (this.entityData.get(TABBY_STRIPES_CHIMERA));
+        genetics.eyesAnomaly = (this.entityData.get(EYES_ANOMALY));
+        genetics.rufousing = (this.entityData.get(RUFOUSING_VARIANT_CHIMERA));
+        genetics.blueRufousing = (this.entityData.get(BLUE_RUFOUSING_VARIANT_CHIMERA));
+        genetics.noise = (this.entityData.get(NOISE_CHIMERA));
+        genetics.chimeraGene = this.entityData.get(CHIMERA_GENE);
+
 
 
         return genetics;
@@ -6275,6 +6339,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         this.entityData.set(RUFOUSING_VARIANT, genetics.rufousing);
         this.entityData.set(BLUE_RUFOUSING_VARIANT, genetics.blueRufousing);
         this.entityData.set(NOISE, genetics.noise);
+        this.entityData.set(CHIMERA_GENE, genetics.chimeraGene);
     }
 
     public void initializeGenetics() {
@@ -6292,49 +6357,105 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         this.entityData.set(BASE, WCGenetics.Base.generateAlelo(this.random) + "-" + WCGenetics.Base.generateAlelo(this.random));
 
         this.entityData.set(ORANGE_BASE, WCGenetics.OrangeBase.generateAlelo(this.random) + "-" + WCGenetics.OrangeBase.generateAlelo(this.random));
-        this.entityData.set(ORANGE_BASE_VARIANT, this.random.nextInt(7));
+        this.entityData.set(ORANGE_BASE_VARIANT, this.random.nextInt(WCGenetics.Values.MAX_ORANGE_VARIANTS));
 
         this.entityData.set(WHITE_RATIO, WCGenetics.WhiteRatio.generateAlelo(this.random) + "-" + WCGenetics.WhiteRatio.generateAlelo(this.random));
-        this.entityData.set(WHITE_RATIO_VARIANT, this.random.nextInt(17));
+        this.entityData.set(WHITE_RATIO_VARIANT, this.random.nextInt(WCGenetics.Values.MAX_WHITE_VARIANTS));
 
         this.entityData.set(ALBINO, WCGenetics.Albino.generateAlelo(this.random) + "-" + WCGenetics.Albino.generateAlelo(this.random));
-        this.entityData.set(ALBINO_VARIANT, this.random.nextInt(3));
+        this.entityData.set(ALBINO_VARIANT, this.random.nextInt(WCGenetics.Values.MAX_ALBINO_VARIANTS));
 
         this.entityData.set(DILUTE, WCGenetics.Dilute.generateAlelo(this.random) + "-" + WCGenetics.Dilute.generateAlelo(this.random));
 
         this.entityData.set(AGOUTI, WCGenetics.Agouti.generateAlelo(this.random) + "-" + WCGenetics.Agouti.generateAlelo(this.random));
 
         this.entityData.set(TABBY_STRIPES, WCGenetics.TabbyStripeTypes.generateAlelo(this.random) + "-" + WCGenetics.TabbyStripeTypes.generateAlelo(this.random));
-        this.entityData.set(TABBY_STRIPES_VARIANT, this.random.nextInt(5));
+        this.entityData.set(TABBY_STRIPES_VARIANT, this.random.nextInt(WCGenetics.Values.MAX_TABBY_VARIANTS));
 
         this.entityData.set(EYES_ANOMALY, WCGenetics.EyesAnomaly.generateAlelo(this.random) + "-" + WCGenetics.EyesAnomaly.generateAlelo(this.random));
 
         String leftEyeColor = WCGenetics.EyeColor.generateAlelo(this.random, this.entityData.get(WHITE_RATIO), this.entityData.get(ALBINO));
-        int eyeLeftVariant = this.random.nextInt(11);
+        int eyeLeftVariant = this.random.nextInt(WCGenetics.Values.MAX_EYE_VARIANTS);
 
         this.entityData.set(EYE_COLOR_LEFT, leftEyeColor);
         this.entityData.set(EYE_COLOR_VARIANT_LEFT, eyeLeftVariant);
 
         if (WCGenetics.EyesAnomaly.isHeteroChromic(this.entityData.get(EYES_ANOMALY))) {
             this.entityData.set(EYE_COLOR_RIGHT, WCGenetics.EyeColor.generateAlelo(this.random, this.entityData.get(WHITE_RATIO), this.entityData.get(ALBINO)));
-            this.entityData.set(EYE_COLOR_VARIANT_RIGHT, this.random.nextInt(11));
+            this.entityData.set(EYE_COLOR_VARIANT_RIGHT, this.random.nextInt(WCGenetics.Values.MAX_EYE_VARIANTS));
         } else {
             this.entityData.set(EYE_COLOR_RIGHT, leftEyeColor);
             this.entityData.set(EYE_COLOR_VARIANT_RIGHT, eyeLeftVariant);
         }
 
-        this.entityData.set(NOISE, this.random.nextInt(3));
+        this.entityData.set(NOISE, this.random.nextInt(WCGenetics.Values.MAX_NOISE_VARIANTS));
 
         if (WCGenetics.Base.isBlack(this.entityData.get(BASE))) {
             this.entityData.set(RUFOUSING_VARIANT, this.random.nextInt(3));
         } else {
-            this.entityData.set(RUFOUSING_VARIANT, this.random.nextInt(7));
+            this.entityData.set(RUFOUSING_VARIANT, this.random.nextInt(WCGenetics.Values.MAX_RUFOUSING_VARIANTS));
         }
 
         if (WCGenetics.Dilute.isDilute(this.entityData.get(DILUTE))) {
             this.entityData.set(BLUE_RUFOUSING_VARIANT, this.random.nextInt(3));
         } else {
-            this.entityData.set(BLUE_RUFOUSING_VARIANT, this.random.nextInt(7));
+            this.entityData.set(BLUE_RUFOUSING_VARIANT, this.random.nextInt(WCGenetics.Values.MAX_BLUE_RUFOUSING_VARIANTS));
+        }
+
+        this.entityData.set(CHIMERA_GENE, WCGenetics.Chimerism.generateAlelo(this.random) + "-" + WCGenetics.Chimerism.generateAlelo(this.random));
+        if (WCGenetics.Chimerism.isChimera(this.entityData.get(CHIMERA_GENE))) {
+            this.initializeChimeraGenetics();
+        }
+
+    }
+
+    public void initializeChimeraGenetics() {
+        this.entityData.set(BASE_CHIMERA, WCGenetics.Base.generateAlelo(this.random) + "-" + WCGenetics.Base.generateAlelo(this.random));
+
+        this.entityData.set(CHIMERA_VARIANT, this.random.nextInt(WCGenetics.Values.MAX_CHIMERISM_VARIANTS));
+
+        this.entityData.set(ORANGE_BASE_CHIMERA, WCGenetics.OrangeBase.generateAlelo(this.random) + "-" + WCGenetics.OrangeBase.generateAlelo(this.random));
+        this.entityData.set(ORANGE_BASE_VARIANT_CHIMERA, this.random.nextInt(WCGenetics.Values.MAX_ORANGE_VARIANTS));
+
+        this.entityData.set(WHITE_RATIO_CHIMERA, WCGenetics.WhiteRatio.generateAlelo(this.random) + "-" + WCGenetics.WhiteRatio.generateAlelo(this.random));
+        this.entityData.set(WHITE_RATIO_VARIANT_CHIMERA, this.random.nextInt(WCGenetics.Values.MAX_WHITE_VARIANTS));
+
+        this.entityData.set(ALBINO_CHIMERA, WCGenetics.Albino.generateAlelo(this.random) + "-" + WCGenetics.Albino.generateAlelo(this.random));
+        this.entityData.set(ALBINO_VARIANT_CHIMERA, this.random.nextInt(WCGenetics.Values.MAX_ALBINO_VARIANTS));
+
+        this.entityData.set(DILUTE_CHIMERA, WCGenetics.Dilute.generateAlelo(this.random) + "-" + WCGenetics.Dilute.generateAlelo(this.random));
+
+        this.entityData.set(AGOUTI_CHIMERA, WCGenetics.Agouti.generateAlelo(this.random) + "-" + WCGenetics.Agouti.generateAlelo(this.random));
+
+        this.entityData.set(TABBY_STRIPES_CHIMERA, WCGenetics.TabbyStripeTypes.generateAlelo(this.random) + "-" + WCGenetics.TabbyStripeTypes.generateAlelo(this.random));
+        this.entityData.set(TABBY_STRIPES_VARIANT_CHIMERA, this.random.nextInt(WCGenetics.Values.MAX_TABBY_VARIANTS));
+
+        this.entityData.set(EYES_ANOMALY, "h-h");
+        String leftEyeColor = WCGenetics.EyeColor.generateAlelo(this.random, this.entityData.get(WHITE_RATIO), this.entityData.get(ALBINO));
+        int eyeLeftVariant = this.random.nextInt(WCGenetics.Values.MAX_EYE_VARIANTS);
+        this.entityData.set(EYE_COLOR_LEFT, leftEyeColor);
+        this.entityData.set(EYE_COLOR_VARIANT_LEFT, eyeLeftVariant);
+
+        if (WCGenetics.EyesAnomaly.isHeteroChromic(this.entityData.get(EYES_ANOMALY))) {
+            this.entityData.set(EYE_COLOR_RIGHT, WCGenetics.EyeColor.generateAlelo(this.random, this.entityData.get(WHITE_RATIO_CHIMERA), this.entityData.get(ALBINO_CHIMERA)));
+            this.entityData.set(EYE_COLOR_VARIANT_RIGHT, this.random.nextInt(WCGenetics.Values.MAX_EYE_VARIANTS));
+        } else {
+            this.entityData.set(EYE_COLOR_RIGHT, leftEyeColor);
+            this.entityData.set(EYE_COLOR_VARIANT_RIGHT, eyeLeftVariant);
+        }
+
+        this.entityData.set(NOISE_CHIMERA, this.random.nextInt(WCGenetics.Values.MAX_NOISE_VARIANTS));
+
+        if (WCGenetics.Base.isBlack(this.entityData.get(BASE_CHIMERA))) {
+            this.entityData.set(RUFOUSING_VARIANT_CHIMERA, this.random.nextInt(3));
+        } else {
+            this.entityData.set(RUFOUSING_VARIANT_CHIMERA, this.random.nextInt(WCGenetics.Values.MAX_BLUE_RUFOUSING_VARIANTS));
+        }
+
+        if (WCGenetics.Dilute.isDilute(this.entityData.get(DILUTE_CHIMERA))) {
+            this.entityData.set(BLUE_RUFOUSING_VARIANT_CHIMERA, this.random.nextInt(3));
+        } else {
+            this.entityData.set(BLUE_RUFOUSING_VARIANT_CHIMERA, this.random.nextInt(WCGenetics.Values.MAX_BLUE_RUFOUSING_VARIANTS));
         }
 
     }
@@ -6377,6 +6498,27 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         geneticsTag.putInt("Noise", this.entityData.get(NOISE));
         geneticsTag.putFloat("Size", this.entityData.get(SIZE));
 
+
+        geneticsTag.putString("BaseChimera", this.entityData.get(BASE_CHIMERA));
+        geneticsTag.putString("OrangeBaseChimera", this.entityData.get(ORANGE_BASE_CHIMERA));
+        geneticsTag.putString("WhiteRatioChimera", this.entityData.get(WHITE_RATIO_CHIMERA));
+        geneticsTag.putString("AlbinoChimera", this.entityData.get(ALBINO_CHIMERA));
+        geneticsTag.putString("DiluteChimera", this.entityData.get(DILUTE_CHIMERA));
+        geneticsTag.putString("AgoutiChimera", this.entityData.get(AGOUTI_CHIMERA));
+        geneticsTag.putString("TabbyStripesChimera", this.entityData.get(TABBY_STRIPES_CHIMERA));
+
+        geneticsTag.putInt("RufousingChimera", this.entityData.get(RUFOUSING_VARIANT_CHIMERA));
+        geneticsTag.putInt("BlueRufousingChimera", this.entityData.get(BLUE_RUFOUSING_VARIANT_CHIMERA));
+        geneticsTag.putInt("OrangeBaseVariantChimera", this.entityData.get(ORANGE_BASE_VARIANT_CHIMERA));
+        geneticsTag.putInt("WhiteRatioVariantChimera", this.entityData.get(WHITE_RATIO_VARIANT_CHIMERA));
+        geneticsTag.putInt("AlbinoVariantChimera", this.entityData.get(ALBINO_VARIANT_CHIMERA));
+
+        geneticsTag.putInt("TabbyStripesVariantChimera", this.entityData.get(TABBY_STRIPES_VARIANT_CHIMERA));
+        geneticsTag.putInt("NoiseChimera", this.entityData.get(NOISE_CHIMERA));
+
+        geneticsTag.putString("Chimera", this.entityData.get(CHIMERA_GENE));
+        geneticsTag.putInt("ChimeraVariant", this.entityData.get(CHIMERA_VARIANT));
+
         tag.put("Genetics", geneticsTag);
     }
 
@@ -6408,11 +6550,40 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
                     geneticsTag.getInt("Rufousing"),
                     geneticsTag.getInt("BlueRufousing"),
-                    geneticsTag.getInt("Noise")
+                    geneticsTag.getInt("Noise"),
+                    geneticsTag.getString("Chimera")
+            );
+
+            WCGenetics geneticsChimera = new WCGenetics(
+                    geneticsTag.getString("Bobtail"),
+                    geneticsTag.getString("ChestFur"),
+                    geneticsTag.getString("BellyFur"),
+                    geneticsTag.getString("LegsFur"),
+                    geneticsTag.getString("HeadFur"),
+                    geneticsTag.getString("CheekFur"),
+                    geneticsTag.getString("TailFur"),
+                    geneticsTag.getString("BackFur"),
+
+                    geneticsTag.getString("BaseChimera"),
+                    geneticsTag.getString("OrangeBaseChimera"),
+                    geneticsTag.getString("WhiteRatioChimera"),
+                    geneticsTag.getString("AlbinoChimera"),
+                    geneticsTag.getString("DiluteChimera"),
+                    geneticsTag.getString("AgoutiChimera"),
+                    geneticsTag.getString("TabbyStripesChimera"),
+                    geneticsTag.getString("EyesAnomalyChimera"),
+
+                    geneticsTag.getInt("RufousingChimera"),
+                    geneticsTag.getInt("BlueRufousingChimera"),
+                    geneticsTag.getInt("NoiseChimera"),
+                    geneticsTag.getString("Chimera")
             );
 
             this.setGenetics(genetics);
 
+            this.setChimeraGenetics(geneticsChimera);
+
+            this.entityData.set(CHIMERA_VARIANT, geneticsTag.getInt("ChimeraVariant"));
 
             this.entityData.set(EYE_COLOR_LEFT, geneticsTag.getString("EyeColorLeft"));
             this.entityData.set(EYE_COLOR_RIGHT, geneticsTag.getString("EyeColorRight"));
@@ -6424,12 +6595,28 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
             this.entityData.set(EYE_COLOR_VARIANT_LEFT, geneticsTag.getInt("EyeColorVariantLeft"));
             this.entityData.set(EYE_COLOR_VARIANT_RIGHT, geneticsTag.getInt("EyeColorVariantRight"));
             this.entityData.set(SIZE, geneticsTag.getFloat("Size"));
+
+
+
+            this.entityData.set(ORANGE_BASE_VARIANT_CHIMERA, geneticsTag.getInt("OrangeBaseVariantChimera"));
+            this.entityData.set(WHITE_RATIO_VARIANT_CHIMERA, geneticsTag.getInt("WhiteRatioVariantChimera"));
+            this.entityData.set(ALBINO_VARIANT_CHIMERA, geneticsTag.getInt("AlbinoVariantChimera"));
+            this.entityData.set(TABBY_STRIPES_VARIANT_CHIMERA, geneticsTag.getInt("TabbyStripesVariantChimera"));
+
         }
     }
 
     public void setStoredFatherGenetics(WCatEntity father) {
         if (father.isOnGeneticalSkin()) {
-            this.storedFatherGenetics = father.getGenetics();
+            if (WCGenetics.Chimerism.isChimera(father.entityData.get(CHIMERA_GENE))) {
+                if (father.getRandom().nextBoolean()) {
+                    this.storedFatherGenetics = father.getChimeraGenetics();
+                } else {
+                    this.storedFatherGenetics = father.getGenetics();
+                }
+            } else {
+                this.storedFatherGenetics = father.getGenetics();
+            }
         } else {
             this.storedFatherGenetics = GeneticsForVariant.get(father.getVariant());
         }
@@ -6457,12 +6644,15 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         tag.putInt("Rufousing", genetics.rufousing);
         tag.putInt("BlueRufousing", genetics.blueRufousing);
         tag.putInt("Noise", genetics.noise);
+        tag.putString("Chimera", genetics.chimeraGene);
 
     }
 
     public static String inheritGenetics(String motherGene, String fatherGene, RandomSource random) {
         String[] motherAlleles = motherGene.split("-");
         String[] fatherAlleles = fatherGene.split("-");
+
+        if ((motherAlleles[0].equals("") || motherAlleles[1].equals("")) || (fatherAlleles[0].equals("") || fatherAlleles[1].equals(""))) return normalize("x-x");
 
         String motherAllele = motherAlleles[random.nextInt(2)];
         String fatherAllele = fatherAlleles[random.nextInt(2)];
@@ -6510,7 +6700,6 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
         String orangeBasePath = folderPath + "orange_base/";
         if (WCGenetics.OrangeBase.isOrange(this.entityData.get(ORANGE_BASE), this.entityData.get(GENDER))) {
-//            orangeBasePath += "orange";
 
             if (WCGenetics.TabbyStripeTypes.isMackerel(this.entityData.get(TABBY_STRIPES))) {
                 orangeBasePath += "orange_" + "mackerel_" + this.entityData.get(TABBY_STRIPES_VARIANT);// ORANGE_BASE -> 0-4
@@ -6519,7 +6708,6 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
             }
 
         } else if (WCGenetics.OrangeBase.isTortoiseshell(this.entityData.get(ORANGE_BASE))) {
-//            orangeBasePath += "tortie_" + this.entityData.get(ORANGE_BASE_VARIANT);// ORANGE_BASE -> 0-4
 
             if (WCGenetics.TabbyStripeTypes.isMackerel(this.entityData.get(TABBY_STRIPES))) {
                 orangeBasePath += "tortie_" + this.entityData.get(ORANGE_BASE_VARIANT) + "_mackerel_" + this.entityData.get(TABBY_STRIPES_VARIANT);// ORANGE_BASE -> 0-4
@@ -6542,8 +6730,6 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
             }
 
             if (WCGenetics.OrangeBase.isOrange(this.entityData.get(ORANGE_BASE), this.entityData.get(GENDER))) {
-//                orangeBasePath = folderPath + "orange_base/orange_to_cream";
-
                 if (WCGenetics.TabbyStripeTypes.isMackerel(this.entityData.get(TABBY_STRIPES))) {
                     orangeBasePath = folderPath + "orange_base/orange_to_cream_" + "mackerel_" + this.entityData.get(TABBY_STRIPES_VARIANT);// ORANGE_BASE -> 0-4
                 } else {
@@ -6551,7 +6737,6 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                 }
 
             } else if (WCGenetics.OrangeBase.isTortoiseshell(this.entityData.get(ORANGE_BASE))) {
-//                orangeBasePath = folderPath + "orange_base/tortie_to_cream_" + this.entityData.get(ORANGE_BASE_VARIANT);// ORANGE_BASE -> 0-4
 
                 if (WCGenetics.TabbyStripeTypes.isMackerel(this.entityData.get(TABBY_STRIPES))) {
                     orangeBasePath = folderPath + "orange_base/tortie_to_cream_" + this.entityData.get(ORANGE_BASE_VARIANT) + "_mackerel_" + this.entityData.get(TABBY_STRIPES_VARIANT);// ORANGE_BASE -> 0-4
@@ -6662,6 +6847,22 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
         String armorOverlay = folderPath + "details/armor";
 
+        String[] chimeraArray = defineTextureLayersChimera();
+
+        String extraChimeraKey = "";
+        if (WCGenetics.Chimerism.isChimera(this.entityData.get(CHIMERA_GENE))) {
+            extraChimeraKey = WCGenetics.encodeGene(this.entityData.get(BASE_CHIMERA)) + this.entityData.get(CHIMERA_VARIANT) +
+                    WCGenetics.encodeGene(this.entityData.get(ORANGE_BASE_CHIMERA)) + this.entityData.get(ORANGE_BASE_VARIANT_CHIMERA) +
+                    WCGenetics.encodeGene(this.entityData.get(AGOUTI_CHIMERA)) +
+                    WCGenetics.encodeGene(this.entityData.get(TABBY_STRIPES_CHIMERA)) + this.entityData.get(TABBY_STRIPES_VARIANT_CHIMERA) +
+                    WCGenetics.encodeGene(this.entityData.get(WHITE_RATIO_CHIMERA)) + this.entityData.get(WHITE_RATIO_VARIANT_CHIMERA) +
+                    WCGenetics.encodeGene(this.entityData.get(DILUTE_CHIMERA)) +
+                    WCGenetics.encodeGene(this.entityData.get(ALBINO_CHIMERA)) + this.entityData.get(ALBINO_VARIANT_CHIMERA) +
+                    this.entityData.get(BLUE_RUFOUSING_VARIANT_CHIMERA) + "ruf" + this.entityData.get(RUFOUSING_VARIANT_CHIMERA) +
+                    "noise_" + this.entityData.get(NOISE_CHIMERA);
+        }
+
+
         /**
          *  // BASE -> 0-4
          *  // ORANGE_BASE -> 0-4
@@ -6681,10 +6882,20 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         this.textureLayersPaths[5] = whiteMarks + ".png";
         this.textureLayersPaths[6] = albinoPath + ".png";
         this.textureLayersPaths[7] = noisePath + ".png";
-        this.textureLayersPaths[8] = skinDetails + ".png";
-        this.textureLayersPaths[9] = eyeColorLeft + ".png";
-        this.textureLayersPaths[10] = eyeColorRight + ".png";
-        this.textureLayersPaths[11] = armorOverlay + ".png";
+
+        this.textureLayersPaths[8] = chimeraArray[0];
+        this.textureLayersPaths[9] = chimeraArray[1];
+        this.textureLayersPaths[10] = chimeraArray[2];
+        this.textureLayersPaths[11] = chimeraArray[3];
+        this.textureLayersPaths[12] = chimeraArray[4];
+        this.textureLayersPaths[13] = chimeraArray[5];
+        this.textureLayersPaths[14] = chimeraArray[6];
+        this.textureLayersPaths[15] = chimeraArray[7];
+
+        this.textureLayersPaths[16] = skinDetails + ".png";
+        this.textureLayersPaths[17] = eyeColorLeft + ".png";
+        this.textureLayersPaths[18] = eyeColorRight + ".png";
+        this.textureLayersPaths[19] = armorOverlay + ".png";
 
         this.textureKey =
                 "wcat/" + WCGenetics.encodeGene(this.entityData.get(BASE)) +
@@ -6698,8 +6909,195 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                         this.entityData.get(EYE_COLOR_LEFT)  + this.entityData.get(EYE_COLOR_VARIANT_LEFT) + "eyer" +
                         this.entityData.get(EYE_COLOR_RIGHT) + this.entityData.get(EYE_COLOR_VARIANT_RIGHT) + "bruf" +
                         this.entityData.get(BLUE_RUFOUSING_VARIANT) + "ruf" + this.entityData.get(RUFOUSING_VARIANT) +
-                        "noise_" + this.entityData.get(NOISE);
+                        "noise_" + this.entityData.get(NOISE) + extraChimeraKey;
     }
+
+
+    @OnlyIn(Dist.CLIENT)
+    private String[] defineTextureLayersChimera() {
+        String folderPath = "warriorcats_events:textures/entity/wcat/genetics/genetics_chimera/";
+
+        String[] chimeraArray = new String[8];
+
+        chimeraArray[0] = folderPath + "empty.png";
+        chimeraArray[1] = folderPath + "empty.png";
+        chimeraArray[2] = folderPath + "empty.png";
+        chimeraArray[3] = folderPath + "empty.png";
+        chimeraArray[4] = folderPath + "empty.png";
+        chimeraArray[5] = folderPath + "empty.png";
+        chimeraArray[6] = folderPath + "empty.png";
+        chimeraArray[7] = folderPath + "empty.png";
+
+        if (!this.isOnGeneticalSkin()) return chimeraArray;
+        if (!WCGenetics.Chimerism.isChimera(this.entityData.get(CHIMERA_GENE))) return chimeraArray;
+
+        String basePath = folderPath + "base/";
+        if (WCGenetics.Base.isBlack(this.entityData.get(BASE_CHIMERA))) {
+            basePath += "black_" + this.entityData.get(CHIMERA_VARIANT);
+        } else if (WCGenetics.Base.isChocolate(this.entityData.get(BASE_CHIMERA))) {
+            basePath += "chocolate_" + this.entityData.get(CHIMERA_VARIANT);
+        } else if (WCGenetics.Base.isCinnamon(this.entityData.get(BASE_CHIMERA))) {
+            basePath += "cinnamon_" + this.entityData.get(CHIMERA_VARIANT);
+        } else {
+            basePath = folderPath + "empty";
+        }
+
+        String orangeBasePath = folderPath + "orange_base/";
+        if (WCGenetics.OrangeBase.isOrange(this.entityData.get(ORANGE_BASE_CHIMERA), this.entityData.get(GENDER))) {
+
+            if (WCGenetics.TabbyStripeTypes.isMackerel(this.entityData.get(TABBY_STRIPES_CHIMERA))) {
+                orangeBasePath += "orange_" + "mackerel_" + this.entityData.get(TABBY_STRIPES_VARIANT_CHIMERA);// ORANGE_BASE -> 0-4
+            } else {
+                orangeBasePath += "orange_" + "classic_" + this.entityData.get(TABBY_STRIPES_VARIANT_CHIMERA);// ORANGE_BASE -> 0-4
+            }
+
+        } else if (WCGenetics.OrangeBase.isTortoiseshell(this.entityData.get(ORANGE_BASE_CHIMERA))) {
+
+            if (WCGenetics.TabbyStripeTypes.isMackerel(this.entityData.get(TABBY_STRIPES_CHIMERA))) {
+                orangeBasePath += "tortie_" + this.entityData.get(ORANGE_BASE_VARIANT_CHIMERA) + "_mackerel_" + this.entityData.get(TABBY_STRIPES_VARIANT_CHIMERA);// ORANGE_BASE -> 0-4
+            } else {
+                orangeBasePath += "tortie_" + this.entityData.get(ORANGE_BASE_VARIANT_CHIMERA) + "_classic_" + this.entityData.get(TABBY_STRIPES_VARIANT_CHIMERA);// ORANGE_BASE -> 0-4
+            }
+
+        } else {
+            orangeBasePath = folderPath + "empty";
+        }
+
+
+        if (WCGenetics.Dilute.isDilute(this.entityData.get(DILUTE_CHIMERA))) {
+            if (WCGenetics.Base.isBlack(this.entityData.get(BASE_CHIMERA))) {
+                basePath = folderPath + "base/black_to_gray_" + this.entityData.get(CHIMERA_VARIANT);
+            } else if (WCGenetics.Base.isChocolate(this.entityData.get(BASE_CHIMERA))) {
+                basePath = folderPath + "base/chocolate_to_lilac_" + this.entityData.get(CHIMERA_VARIANT);
+            } else if (WCGenetics.Base.isCinnamon(this.entityData.get(BASE_CHIMERA))) {
+                basePath = folderPath + "base/cinnamon_to_fawn_" + this.entityData.get(CHIMERA_VARIANT);
+            }
+
+            if (WCGenetics.OrangeBase.isOrange(this.entityData.get(ORANGE_BASE_CHIMERA), this.entityData.get(GENDER))) {
+
+                if (WCGenetics.TabbyStripeTypes.isMackerel(this.entityData.get(TABBY_STRIPES_CHIMERA))) {
+                    orangeBasePath = folderPath + "orange_base/orange_to_cream_" + "mackerel_" + this.entityData.get(TABBY_STRIPES_VARIANT_CHIMERA);// ORANGE_BASE -> 0-4
+                } else {
+                    orangeBasePath = folderPath + "orange_base/orange_to_cream_" + "classic_" + this.entityData.get(TABBY_STRIPES_VARIANT_CHIMERA);// ORANGE_BASE -> 0-4
+                }
+
+            } else if (WCGenetics.OrangeBase.isTortoiseshell(this.entityData.get(ORANGE_BASE_CHIMERA))) {
+
+                if (WCGenetics.TabbyStripeTypes.isMackerel(this.entityData.get(TABBY_STRIPES_CHIMERA))) {
+                    orangeBasePath = folderPath + "orange_base/tortie_to_cream_" + this.entityData.get(ORANGE_BASE_VARIANT_CHIMERA) + "_mackerel_" + this.entityData.get(TABBY_STRIPES_VARIANT_CHIMERA);// ORANGE_BASE -> 0-4
+                } else {
+                    orangeBasePath = folderPath + "orange_base/tortie_to_cream_" + this.entityData.get(ORANGE_BASE_VARIANT_CHIMERA) + "_classic_" + this.entityData.get(TABBY_STRIPES_VARIANT_CHIMERA);// ORANGE_BASE -> 0-4
+                }
+
+            } else {
+                orangeBasePath = folderPath + "empty";
+            }
+
+        }
+
+        String albinoPath = folderPath + "albino/";
+        if (!WCGenetics.Albino.isNotAlbino(this.entityData.get(ALBINO_CHIMERA))) {
+            if (WCGenetics.Albino.isTrueAlbino(this.entityData.get(ALBINO_CHIMERA))) {
+                albinoPath += "full_albino_" + this.entityData.get(ALBINO_VARIANT_CHIMERA);
+            } else if (WCGenetics.Albino.isMink(this.entityData.get(ALBINO_CHIMERA))) {
+                albinoPath += "mink_" + this.entityData.get(ALBINO_VARIANT_CHIMERA);// ALBINO -> 0-2
+            } else if (WCGenetics.Albino.isSepia(this.entityData.get(ALBINO_CHIMERA))) {
+                albinoPath += "sepia_" + this.entityData.get(ALBINO_VARIANT_CHIMERA);// ALBINO -> 0-2
+            } else if (WCGenetics.Albino.isSiamese(this.entityData.get(ALBINO_CHIMERA))) {
+                albinoPath += "siamese_" + this.entityData.get(ALBINO_VARIANT_CHIMERA);// ALBINO -> 0-2
+            } else {
+                albinoPath = folderPath + "empty";
+            }
+        } else {
+            albinoPath = folderPath + "empty";
+        }
+
+        String whiteMarks = folderPath + "white_marks/";
+        if (WCGenetics.WhiteRatio.isWhite(this.entityData.get(WHITE_RATIO_CHIMERA))) {
+            whiteMarks += "full_white";
+        } else if (WCGenetics.WhiteRatio.isHighSpotted(this.entityData.get(WHITE_RATIO_CHIMERA))) {
+            whiteMarks += "high_spots_" + this.entityData.get(WHITE_RATIO_VARIANT_CHIMERA);// WHITE_MARKS -> 0-3
+        } else if (WCGenetics.WhiteRatio.isLowSpotted(this.entityData.get(WHITE_RATIO_CHIMERA))) {
+            whiteMarks += "low_spots_" + this.entityData.get(WHITE_RATIO_VARIANT_CHIMERA);// WHITE_MARKS -> 0-3
+        } else {
+            whiteMarks = folderPath + "empty";
+        }
+
+
+        String agoutiMarks = folderPath + "agouti_marks/";
+        if (WCGenetics.Agouti.isTabby(this.entityData.get(AGOUTI_CHIMERA))) {
+            String secondStripesKey = "";
+            if (WCGenetics.Base.isBlack(this.entityData.get(BASE_CHIMERA))) {
+                if (!WCGenetics.Dilute.isDilute(this.entityData.get(DILUTE_CHIMERA))) {
+                    basePath = folderPath + "base/black_to_darkbrown_" + this.entityData.get(CHIMERA_VARIANT);
+                }
+                secondStripesKey = "black_";
+            } else if (WCGenetics.Base.isChocolate(this.entityData.get(BASE_CHIMERA))) {
+                secondStripesKey = "darkbrown_";
+            } else if (WCGenetics.Base.isCinnamon(this.entityData.get(BASE_CHIMERA))) {
+                secondStripesKey = "mediumbrown_";
+            }
+
+
+            if (WCGenetics.TabbyStripeTypes.isMackerel(this.entityData.get(TABBY_STRIPES_CHIMERA))) {
+                if (WCGenetics.Dilute.isDilute(this.entityData.get(DILUTE_CHIMERA))) {
+                    agoutiMarks += "mackerel_dilute_" + secondStripesKey + this.entityData.get(TABBY_STRIPES_VARIANT_CHIMERA); // TABBY_MARKS -> 0-4
+                } else {
+                    agoutiMarks += "mackerel_" + secondStripesKey + this.entityData.get(TABBY_STRIPES_VARIANT_CHIMERA); // TABBY_MARKS -> 0-4
+                }
+            } else if (WCGenetics.TabbyStripeTypes.isClassic(this.entityData.get(TABBY_STRIPES_CHIMERA))) {
+                if (WCGenetics.Dilute.isDilute(this.entityData.get(DILUTE_CHIMERA))) {
+                    agoutiMarks += "classic_dilute_" + secondStripesKey + this.entityData.get(TABBY_STRIPES_VARIANT_CHIMERA); // TABBY_MARKS -> 0-4
+                } else {
+                    agoutiMarks += "classic_" + secondStripesKey + this.entityData.get(TABBY_STRIPES_VARIANT_CHIMERA); // TABBY_MARKS -> 0-4
+                }
+            } else {
+                agoutiMarks = folderPath + "empty";
+            }
+        } else {
+            agoutiMarks = folderPath + "empty";
+        }
+
+
+        String noisePath = folderPath + "details/noise_" + this.entityData.get(NOISE_CHIMERA);
+        if (WCGenetics.Base.isBlack(this.entityData.get(BASE)) && WCGenetics.Dilute.isDilute(this.entityData.get(DILUTE_CHIMERA))){
+            noisePath = folderPath + "details/noise_black_" + this.entityData.get(NOISE_CHIMERA);
+        }
+
+        int rufousingRatio = this.entityData.get(RUFOUSING_VARIANT_CHIMERA);
+        int rufousingIntKey = rufousingRatio * 5;
+        if (!WCGenetics.Albino.isNotAlbino(this.entityData.get(ALBINO_CHIMERA))) rufousingIntKey = 0;
+        String rufousing = folderPath + "details/rufousing_" + rufousingIntKey;
+
+        int bluerufousingRatio = this.entityData.get(BLUE_RUFOUSING_VARIANT_CHIMERA);
+        int bluerufousingIntKey = bluerufousingRatio * 5;
+        if (!WCGenetics.Albino.isNotAlbino(this.entityData.get(ALBINO_CHIMERA))) bluerufousingIntKey = 0;
+        String bluerufousing = folderPath + "details/blue_rufousing_" + bluerufousingIntKey;
+
+        /**
+         *  // BASE -> 0-4
+         *  // ORANGE_BASE -> 0-4
+         *  // WHITE_MARKS -> 0-3
+         *  // ALBINO -> 0-2
+         *  // DILUTE -> 0-4
+         *  // TABBY_MARKS -> 0-4
+         *  // EYES -> 0.4
+         *  // NOISE -> 0-2
+         */
+
+        chimeraArray[0] = basePath + ".png";
+        chimeraArray[1] = agoutiMarks + ".png";
+        chimeraArray[2] = orangeBasePath + ".png";
+        chimeraArray[3] = rufousing + ".png";
+        chimeraArray[4] = bluerufousing + ".png";
+        chimeraArray[5] = whiteMarks + ".png";
+        chimeraArray[6] = albinoPath + ".png";
+        chimeraArray[7] = noisePath + ".png";
+
+
+        return chimeraArray;
+    }
+
 
 
     @OnlyIn(Dist.CLIENT)
@@ -6711,6 +7109,8 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
     public void inheritGeneticsFromParents(WCGenetics mother, WCGenetics father) {
         WCGenetics childGenes = new WCGenetics();
+
+
 
         childGenes.chestFur = inheritGenetics(mother.chestFur, father.chestFur, random);
         childGenes.bellyFur = inheritGenetics(mother.bellyFur, father.bellyFur, random);
@@ -6729,27 +7129,72 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         childGenes.agouti = inheritGenetics(mother.agouti, father.agouti, random);
         childGenes.tabbyStripes = inheritGenetics(mother.tabbyStripes, father.tabbyStripes, random);
         childGenes.eyesAnomaly = inheritGenetics(mother.eyesAnomaly, father.eyesAnomaly, random);
+        childGenes.chimeraGene = inheritGenetics(mother.chimeraGene, father.chimeraGene, random);
+
 
         this.setGenetics(childGenes);
 
+
+        if (WCGenetics.Chimerism.isChimera(childGenes.chimeraGene)) {
+            WCGenetics chimeraChildGenes = new WCGenetics();
+            WCGenetics.GeneticalChimeraVariants chimeraChildVariants = new WCGenetics.GeneticalChimeraVariants();
+
+
+            WCGenetics toInheritFrom;
+            if (this.random.nextBoolean()) {
+                toInheritFrom = father;
+            } else {
+                toInheritFrom = mother;
+            }
+
+            chimeraChildGenes.chimeraGene = inheritGenetics(father.chimeraGene, mother.chimeraGene, random);
+
+            chimeraChildGenes.base = inheritGenetics(toInheritFrom.base, toInheritFrom.base, random);
+            chimeraChildGenes.orangeBase = inheritGenetics(toInheritFrom.orangeBase, toInheritFrom.orangeBase, random);
+            chimeraChildGenes.whiteRatio = inheritGenetics(toInheritFrom.whiteRatio, toInheritFrom.whiteRatio, random);
+            chimeraChildGenes.albino = inheritGenetics(toInheritFrom.albino, toInheritFrom.albino, random);
+            chimeraChildGenes.dilute = inheritGenetics(toInheritFrom.dilute, toInheritFrom.dilute, random);
+            chimeraChildGenes.agouti = inheritGenetics(toInheritFrom.agouti, toInheritFrom.agouti, random);
+            chimeraChildGenes.tabbyStripes = inheritGenetics(toInheritFrom.tabbyStripes, toInheritFrom.tabbyStripes, random);
+            chimeraChildGenes.rufousing = (father.rufousing + mother.rufousing)/2;
+            chimeraChildGenes.blueRufousing = (father.blueRufousing + mother.blueRufousing)/2;
+            chimeraChildGenes.noise = (father.noise + mother.noise)/2;
+
+            this.setChimeraGenetics(chimeraChildGenes);
+
+            chimeraChildVariants.chimeraVariant = this.random.nextInt(WCGenetics.Values.MAX_CHIMERISM_VARIANTS);
+            chimeraChildVariants.rufousingVariant = this.random.nextInt(WCGenetics.Values.MAX_RUFOUSING_VARIANTS);
+            chimeraChildVariants.blueRufousingVariant = this.random.nextInt(WCGenetics.Values.MAX_BLUE_RUFOUSING_VARIANTS);
+            chimeraChildVariants.orangeVar = this.random.nextInt(WCGenetics.Values.MAX_ORANGE_VARIANTS);
+            chimeraChildVariants.whiteVar = this.random.nextInt(WCGenetics.Values.MAX_WHITE_VARIANTS);
+            chimeraChildVariants.tabbyVar = this.random.nextInt(WCGenetics.Values.MAX_TABBY_VARIANTS);
+            chimeraChildVariants.albinoVar = this.random.nextInt(WCGenetics.Values.MAX_ALBINO_VARIANTS);
+            chimeraChildVariants.noise = this.random.nextInt(WCGenetics.Values.MAX_NOISE_VARIANTS);
+
+            this.setGeneticalVariantsChimera(chimeraChildVariants.chimeraVariant, chimeraChildVariants.rufousingVariant,
+                    chimeraChildVariants.blueRufousingVariant, chimeraChildVariants.orangeVar, chimeraChildVariants.whiteVar,
+                    chimeraChildVariants.tabbyVar, chimeraChildVariants.albinoVar, chimeraChildVariants.noise);
+
+        }
+
         String leftEyeColor = WCGenetics.EyeColor.generateAlelo(this.random, this.entityData.get(WHITE_RATIO), this.entityData.get(ALBINO));
-        int eyeLeftVariant = this.random.nextInt(11);
+        int eyeLeftVariant = this.random.nextInt(WCGenetics.Values.MAX_EYE_VARIANTS);
 
         this.entityData.set(EYE_COLOR_LEFT, leftEyeColor);
         this.entityData.set(EYE_COLOR_VARIANT_LEFT, eyeLeftVariant);
 
         if (WCGenetics.EyesAnomaly.isHeteroChromic(this.entityData.get(EYES_ANOMALY))) {
             this.entityData.set(EYE_COLOR_RIGHT, WCGenetics.EyeColor.generateAlelo(this.random, this.entityData.get(WHITE_RATIO), this.entityData.get(ALBINO)));
-            this.entityData.set(EYE_COLOR_VARIANT_RIGHT, this.random.nextInt(11));
+            this.entityData.set(EYE_COLOR_VARIANT_RIGHT, this.random.nextInt(WCGenetics.Values.MAX_EYE_VARIANTS));
         } else {
             this.entityData.set(EYE_COLOR_RIGHT, leftEyeColor);
             this.entityData.set(EYE_COLOR_VARIANT_RIGHT, eyeLeftVariant);
         }
 
-        this.entityData.set(ORANGE_BASE_VARIANT, this.random.nextInt(7));
-        this.entityData.set(WHITE_RATIO_VARIANT, this.random.nextInt(17));
-        this.entityData.set(ALBINO_VARIANT, this.random.nextInt(3));
-        this.entityData.set(TABBY_STRIPES_VARIANT, this.random.nextInt(5));
+        this.entityData.set(ORANGE_BASE_VARIANT, this.random.nextInt(WCGenetics.Values.MAX_ORANGE_VARIANTS));
+        this.entityData.set(WHITE_RATIO_VARIANT, this.random.nextInt(WCGenetics.Values.MAX_WHITE_VARIANTS));
+        this.entityData.set(ALBINO_VARIANT, this.random.nextInt(WCGenetics.Values.MAX_ALBINO_VARIANTS));
+        this.entityData.set(TABBY_STRIPES_VARIANT, this.random.nextInt(WCGenetics.Values.MAX_TABBY_VARIANTS));
 
         int rufousingVar = (mother.rufousing + father.rufousing)/2;
         int blueRufousingVar = (mother.blueRufousing + father.blueRufousing)/2;
@@ -6774,17 +7219,50 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
         this.entityData.set(EYE_COLOR_LEFT, eyesVariantLeft);
         this.entityData.set(EYE_COLOR_RIGHT, eyesVariantRight);
-        this.entityData.set(RUFOUSING_VARIANT, Math.min(rufVar, 6));
-        this.entityData.set(BLUE_RUFOUSING_VARIANT, Math.min(blueRufVar, 6));
-        this.entityData.set(ORANGE_BASE_VARIANT, Math.min(orangeVar, 6));
-        this.entityData.set(WHITE_RATIO_VARIANT, Math.min(16, whiteVar));
-        this.entityData.set(TABBY_STRIPES_VARIANT, Math.min(tabbyVar, 4));
-        this.entityData.set(ALBINO_VARIANT, Math.min(albinoVar, 2));
-        this.entityData.set(EYE_COLOR_VARIANT_LEFT, Math.min(leftEyeVar, 10));
-        this.entityData.set(EYE_COLOR_VARIANT_RIGHT, Math.min(rightEyeVar, 10));
-        this.entityData.set(NOISE, Math.min(noise, 2));
+        this.entityData.set(RUFOUSING_VARIANT, Math.min(rufVar, WCGenetics.Values.MAX_RUFOUSING_VARIANTS-1));
+        this.entityData.set(BLUE_RUFOUSING_VARIANT, Math.min(blueRufVar, WCGenetics.Values.MAX_BLUE_RUFOUSING_VARIANTS-1));
+        this.entityData.set(ORANGE_BASE_VARIANT, Math.min(orangeVar, WCGenetics.Values.MAX_ORANGE_VARIANTS-1));
+        this.entityData.set(WHITE_RATIO_VARIANT, Math.min(WCGenetics.Values.MAX_WHITE_VARIANTS-1, whiteVar));
+        this.entityData.set(TABBY_STRIPES_VARIANT, Math.min(tabbyVar, WCGenetics.Values.MAX_TABBY_VARIANTS-1));
+        this.entityData.set(ALBINO_VARIANT, Math.min(albinoVar, WCGenetics.Values.MAX_ALBINO_VARIANTS-1));
+        this.entityData.set(EYE_COLOR_VARIANT_LEFT, Math.min(leftEyeVar, WCGenetics.Values.MAX_EYE_VARIANTS-1));
+        this.entityData.set(EYE_COLOR_VARIANT_RIGHT, Math.min(rightEyeVar, WCGenetics.Values.MAX_EYE_VARIANTS-1));
+        this.entityData.set(NOISE, Math.min(noise, WCGenetics.Values.MAX_NOISE_VARIANTS-1));
         this.entityData.set(SIZE, size);
 
+    }
+
+    public void setGeneticalVariantsChimera(int chimeraVariant, int rufVar, int blueRufVar,
+                                            int orangeVar, int whiteVar, int tabbyVar,
+                                            int albinoVar, int noise) {
+
+        this.entityData.set(CHIMERA_VARIANT, Math.min(chimeraVariant, WCGenetics.Values.MAX_CHIMERISM_VARIANTS-1));
+
+        this.entityData.set(RUFOUSING_VARIANT_CHIMERA, Math.min(rufVar, WCGenetics.Values.MAX_RUFOUSING_VARIANTS-1));
+        this.entityData.set(BLUE_RUFOUSING_VARIANT_CHIMERA, Math.min(blueRufVar, WCGenetics.Values.MAX_BLUE_RUFOUSING_VARIANTS-1));
+        this.entityData.set(ORANGE_BASE_VARIANT_CHIMERA, Math.min(orangeVar, WCGenetics.Values.MAX_ORANGE_VARIANTS-1));
+        this.entityData.set(WHITE_RATIO_VARIANT_CHIMERA, Math.min(WCGenetics.Values.MAX_WHITE_VARIANTS-1, whiteVar));
+        this.entityData.set(TABBY_STRIPES_VARIANT_CHIMERA, Math.min(tabbyVar, WCGenetics.Values.MAX_TABBY_VARIANTS-1));
+        this.entityData.set(ALBINO_VARIANT_CHIMERA, Math.min(albinoVar, WCGenetics.Values.MAX_ALBINO_VARIANTS-1));
+        this.entityData.set(NOISE_CHIMERA, Math.min(noise, WCGenetics.Values.MAX_NOISE_VARIANTS-1));
+
+    }
+
+    public void setChimeraGenetics(WCGenetics genetics) {
+
+        this.entityData.set(CHIMERA_GENE, genetics.chimeraGene);
+
+        this.entityData.set(BASE_CHIMERA, genetics.base);
+        this.entityData.set(ORANGE_BASE_CHIMERA, genetics.orangeBase);
+        this.entityData.set(WHITE_RATIO_CHIMERA, genetics.whiteRatio);
+        this.entityData.set(ALBINO_CHIMERA, genetics.albino);
+        this.entityData.set(DILUTE_CHIMERA, genetics.dilute);
+        this.entityData.set(AGOUTI_CHIMERA, genetics.agouti);
+        this.entityData.set(TABBY_STRIPES_CHIMERA, genetics.tabbyStripes);
+
+        this.entityData.set(RUFOUSING_VARIANT_CHIMERA, genetics.rufousing);
+        this.entityData.set(BLUE_RUFOUSING_VARIANT_CHIMERA, genetics.blueRufousing);
+        this.entityData.set(NOISE_CHIMERA, genetics.noise);
     }
 
     public void setSize(float value) {
@@ -6793,6 +7271,40 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
     public float getSize() {
         return this.entityData.get(SIZE);
+    }
+
+    public void rewardGeneticsAdvancements() {
+        if (this.getOwner() instanceof ServerPlayer serverPlayer) {
+            MinecraftServer server = serverPlayer.getServer();
+            if (server != null) {
+
+                if (WCGenetics.Chimerism.isChimera(this.entityData.get(CHIMERA_GENE))) {
+                    Advancement adv = server.getAdvancements()
+                            .getAdvancement(new ResourceLocation("warriorcats_events:chimera_obtained"));
+                    if (adv != null) {
+                        serverPlayer.getAdvancements().award(adv, "chimera_obtained");
+                    }
+                }
+
+                if (WCGenetics.EyesAnomaly.isHeteroChromic(this.entityData.get(EYES_ANOMALY))) {
+                    Advancement adv = server.getAdvancements()
+                            .getAdvancement(new ResourceLocation("warriorcats_events:heterochromic_obtained"));
+                    if (adv != null) {
+                        serverPlayer.getAdvancements().award(adv, "heterochromic_obtained");
+                    }
+                }
+
+                if (WCGenetics.Albino.isTrueAlbino(this.entityData.get(ALBINO)) || WCGenetics.Albino.isTrueAlbino(this.entityData.get(ALBINO_CHIMERA))) {
+                    Advancement adv = server.getAdvancements()
+                            .getAdvancement(new ResourceLocation("warriorcats_events:albino_obtained"));
+                    if (adv != null) {
+                        serverPlayer.getAdvancements().award(adv, "albino_obtained");
+                    }
+                }
+
+
+            }
+        }
     }
 
 
@@ -7570,4 +8082,49 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
             }
         }
     }
+
+    @Override
+    public void die(DamageSource pCause) {
+
+        if (this.isTame()) {
+            if (this.getOwner() instanceof ServerPlayer owner) {
+                owner.sendSystemMessage(Component.literal(
+                        String.format("At: X=%.0f, Y=%.0f, Z=%.0f",
+                                this.getX(), this.getY(), this.getZ())
+                ).withStyle(ChatFormatting.GRAY));
+            }
+        }
+
+        Component message = Component.empty()
+                .append(pCause.getLocalizedDeathMessage(this).copy())
+                .append(". At: ")
+                .append(Component.literal(String.format("X=%.0f, Y=%.0f, Z=%.0f",
+                        this.getX(), this.getY(), this.getZ())));
+        this.registerClanLog(message);
+
+        if (this.level() instanceof ServerLevel sLevel) {
+            if (!this.getClanUUID().equals(ClanData.EMPTY_UUID)) {
+                ClanData data = ClanData.get(sLevel);
+                data.removeClanCatFromAnyClan(this);
+            }
+
+            BlockPos homepos = this.getHomePosition();
+            if (homepos != null) {
+                if (sLevel.getBlockState(homepos).getBlock() instanceof MossBedBlock) {
+                    BlockEntity bEntity = sLevel.getBlockEntity(homepos);
+                    if (bEntity instanceof MossBedBlockEntity mbEntity) {
+                        mbEntity.resetAssigned();
+                        mbEntity.setChanged();
+                        if (!sLevel.isClientSide()) {
+                            sLevel.sendBlockUpdated(homepos, sLevel.getBlockState(homepos),
+                                    sLevel.getBlockState(homepos), 3);
+                        }
+                    }
+                }
+            }
+        }
+
+        super.die(pCause);
+    }
+
 }

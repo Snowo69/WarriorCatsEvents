@@ -11,9 +11,7 @@ import net.minecraft.util.FastColor;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * Credit for this class goes to Mnesikos.
@@ -78,12 +76,16 @@ import java.util.List;
 
 public class LayerTexture extends AbstractTexture {
     private final String[] texturePaths;
+    private final Set<PixelCoords> blockedPixels = new HashSet<>();
+
+    public record PixelCoords(int x, int y) {}
 
     public LayerTexture(String[] texturePaths) {
         if (texturePaths.length == 0)
             throw new IllegalStateException("No textures provided.");
         this.texturePaths = texturePaths;
     }
+
 
 
     @Override
@@ -133,9 +135,37 @@ public class LayerTexture extends AbstractTexture {
     }
 
     public void blendLayer(NativeImage base, NativeImage image) {
+
+        boolean baseChimeraVariantOn = (image.getPixelRGBA(63, 63) == 0xFFFFFFFF ||
+                image.getPixelRGBA(63, 63) == 0xFEFFFFFF);
+
+        boolean chimeraSubPatternOn = (image.getPixelRGBA(0, 63) == 0xFFFFFFFF ||
+                image.getPixelRGBA(0, 63) == 0xFEFFFFFF);
+
         for (int i = 0; i < image.getHeight(); ++i) {
             for (int j = 0; j < image.getWidth(); ++j) {
                 int color = image.getPixelRGBA(j, i);
+
+
+
+                if (baseChimeraVariantOn) {
+//                    System.out.println("Chimera Variant Detected");
+
+                    if (color == 0x00000000 || color == 0x00FFFFFF) {
+                        blockedPixels.add(new PixelCoords(j, i));
+//                        System.out.println("Chimera Variant Pixel blocked");
+                    }
+                }
+
+                if (chimeraSubPatternOn) {
+//                    System.out.println("Chimera Pattern Variant Detected");
+
+                    if (blockedPixels.contains(new PixelCoords(j, i))) {
+//                        System.out.println("Pixel skipped");
+                      continue;
+                    }
+                }
+
                 blendPixel(base, j, i, FastColor.ABGR32.color(FastColor.ABGR32.alpha(color), FastColor.ABGR32.blue(color), FastColor.ABGR32.green(color), FastColor.ABGR32.red(color)));
             }
         }

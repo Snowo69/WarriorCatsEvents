@@ -12,7 +12,6 @@ import net.snowteb.warriorcats_events.clan.PlayerClanDataProvider;
 import net.snowteb.warriorcats_events.entity.ModEntities;
 import net.snowteb.warriorcats_events.entity.custom.WCGenetics;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
-import net.snowteb.warriorcats_events.zconfig.WCEServerConfig;
 import tocraft.walkers.api.PlayerShape;
 
 import java.util.function.Supplier;
@@ -118,6 +117,14 @@ public class CtSSwitchShape {
                 cat.setGeneticalVariants(variants.eyeColorLeft, variants.eyeColorRight, variants.rufousingVariant
                         ,variants.blueRufousingVariant, variants.orangeVar, variants.whiteVar, variants.tabbyVar
                         ,variants.albinoVar, variants.leftEyeVar, variants.rightEyeVar, variants.noise, variants.size);
+
+                cat.setChimeraGenetics(cap.getPlayerChimeraGenetics());
+
+                WCGenetics.GeneticalChimeraVariants variantsChimera = cap.getPlayerChimeraVariants();
+                cat.setGeneticalVariantsChimera(variantsChimera.chimeraVariant, variantsChimera.rufousingVariant,
+                        variantsChimera.blueRufousingVariant, variantsChimera.orangeVar, variantsChimera.whiteVar, variantsChimera.tabbyVar
+                        , variantsChimera.albinoVar, variantsChimera.noise);
+
                 cat.setOnGeneticalSkin(true);
                 cat.setGender(1);
             }

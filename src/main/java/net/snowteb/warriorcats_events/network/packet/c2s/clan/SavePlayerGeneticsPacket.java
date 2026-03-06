@@ -4,7 +4,6 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.network.NetworkEvent;
 import net.snowteb.warriorcats_events.clan.PlayerClanData;
@@ -14,7 +13,6 @@ import net.snowteb.warriorcats_events.entity.custom.WCGenetics;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.network.ModPackets;
 import net.snowteb.warriorcats_events.network.packet.s2c.clan.S2CSyncClanDataPacket;
-import net.snowteb.warriorcats_events.zconfig.WCEServerConfig;
 import tocraft.walkers.api.PlayerShape;
 
 import java.util.function.Supplier;
@@ -23,12 +21,19 @@ public class SavePlayerGeneticsPacket {
 
     private final WCGenetics genetics;
     private final WCGenetics.GeneticalVariants variants;
+
+    private final WCGenetics chimeraGenetics;
+    private final WCGenetics.GeneticalChimeraVariants chimeraVariants;
+
     private final boolean onGeneticalSkin;
     private final int defaultVariant;
 
-    public SavePlayerGeneticsPacket(boolean geneticalSkin, WCGenetics genetics, WCGenetics.GeneticalVariants variants, int defaultVariant) {
+    public SavePlayerGeneticsPacket(boolean geneticalSkin, WCGenetics genetics, WCGenetics.GeneticalVariants variants,
+                                    WCGenetics chimeraGens, WCGenetics.GeneticalChimeraVariants chimeraVariants, int defaultVariant) {
         this.genetics = genetics;
         this.variants = variants;
+        this.chimeraGenetics = chimeraGens;
+        this.chimeraVariants = chimeraVariants;
         this.onGeneticalSkin = geneticalSkin;
         this.defaultVariant = defaultVariant;
     }
@@ -40,9 +45,12 @@ public class SavePlayerGeneticsPacket {
         WCGenetics genetics = WCGenetics.decode(buf);
         WCGenetics.GeneticalVariants variants = WCGenetics.GeneticalVariants.decode(buf);
 
+        WCGenetics chimeraGens = WCGenetics.decode(buf);
+        WCGenetics.GeneticalChimeraVariants chimeraVariants = WCGenetics.GeneticalChimeraVariants.decode(buf);
+
         int defaultVariant = buf.readInt();
 
-        return new SavePlayerGeneticsPacket(geneticalSkin, genetics, variants, defaultVariant);
+        return new SavePlayerGeneticsPacket(geneticalSkin, genetics, variants, chimeraGens, chimeraVariants, defaultVariant);
     }
 
     public static void encode(SavePlayerGeneticsPacket packet, FriendlyByteBuf buf) {
@@ -51,6 +59,8 @@ public class SavePlayerGeneticsPacket {
 
         packet.genetics.encode(buf);
         packet.variants.encode(buf);
+        packet.chimeraGenetics.encode(buf);
+        packet.chimeraVariants.encode(buf);
 
         buf.writeInt(packet.defaultVariant);
     }
@@ -72,6 +82,8 @@ public class SavePlayerGeneticsPacket {
                         packet.variants.noise, packet.variants.size);
                 cap.setOnGeneticalSkin(packet.onGeneticalSkin);
                 cap.setVariantData(packet.defaultVariant);
+                cap.setPlayerChimeraGenetics(packet.chimeraGenetics);
+                cap.setPlayerChimeraVariants(packet.chimeraVariants);
 
                 ModPackets.sendToPlayer(new S2CSyncClanDataPacket(cap), player);
             });
@@ -169,6 +181,13 @@ public class SavePlayerGeneticsPacket {
                 cat.setGeneticalVariants(variants.eyeColorLeft, variants.eyeColorRight, variants.rufousingVariant
                         ,variants.blueRufousingVariant, variants.orangeVar, variants.whiteVar, variants.tabbyVar
                         ,variants.albinoVar, variants.leftEyeVar, variants.rightEyeVar, variants.noise, variants.size);
+                cat.setChimeraGenetics(cap.getPlayerChimeraGenetics());
+
+                WCGenetics.GeneticalChimeraVariants variantsChimera = cap.getPlayerChimeraVariants();
+                cat.setGeneticalVariantsChimera(variantsChimera.chimeraVariant, variantsChimera.rufousingVariant,
+                        variantsChimera.blueRufousingVariant, variantsChimera.orangeVar, variantsChimera.whiteVar, variantsChimera.tabbyVar
+                , variantsChimera.albinoVar, variantsChimera.noise);
+
                 cat.setOnGeneticalSkin(true);
                 cat.setGender(1);
             }

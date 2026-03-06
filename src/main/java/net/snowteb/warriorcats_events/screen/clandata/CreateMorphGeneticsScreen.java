@@ -33,20 +33,23 @@ public class CreateMorphGeneticsScreen extends Screen {
     private float menuX = 0;
 
 
-    private String eyeColorLeft = "yellow";
-    private String eyeColorRight = "yellow";
+    private static String eyeColorLeft = "yellow";
+    private static String eyeColorRight = "yellow";
 
-    private int rufousingVariant = 0;
-    private int blueRufousingVariant = 0;
+    private static int rufousingVariant = 0;
+    private static int blueRufousingVariant = 0;
 
-    private int orangeBaseVariant = 0;
-    private int whiteRatioVariant = 0;
-    private int tabbyStripesVariant = 0;
-    private int albinoVariant = 0;
-    private int eyeColorVariantLeft = 0;
-    private int eyeColorVariantRight = 0;
-    private int noise = 0;
-    private float size = 0;
+    private static int orangeBaseVariant = 0;
+    private static int whiteRatioVariant = 0;
+    private static int tabbyStripesVariant = 0;
+    private static int albinoVariant = 0;
+    private static int eyeColorVariantLeft = 0;
+    private static int eyeColorVariantRight = 0;
+    private static int noise = 0;
+    private static float size = 0;
+
+    private String chimeraGene = setNotChimera;
+
 
     // BASE SECTION
     // ORANGE SECTION
@@ -69,6 +72,10 @@ public class CreateMorphGeneticsScreen extends Screen {
     private GradientToggleButton eyesAndAnomalySection;
     private GradientToggleButton furBobtailNoiseSection;
     private GradientToggleButton extraSection;
+
+    private GradientToggleButton chimeraSection;
+    private GradientSwitchButton chimeraSwitch;
+    private GradientToggleButton editChimera;
 
 
     private GradientSwitchButton bobtailSwitch;
@@ -122,11 +129,13 @@ public class CreateMorphGeneticsScreen extends Screen {
     private GradientToggleButton setLeftEyeBlueButton;
     private GradientToggleButton setLeftEyeGreenButton;
     private GradientToggleButton setLeftEyeYellowButton;
+    private GradientToggleButton setLeftEyeRedButton;
     private VariantScrollList leftEyeVariantList;
 
     private GradientToggleButton setRightEyeBlueButton;
     private GradientToggleButton setRightEyeGreenButton;
     private GradientToggleButton setRightEyeYellowButton;
+    private GradientToggleButton setRightEyeRedButton;
     private VariantScrollList rightEyeVariantList;
 
 
@@ -190,11 +199,16 @@ public class CreateMorphGeneticsScreen extends Screen {
     private static final String setEyeBlue = "blue";
     private static final String setEyeYellow = "yellow";
     private static final String setEyeGreen = "green";
+    private static final String setEyeRed = "red";
     // 1 SCROLL MENUS FOR EACH EYE
 
     // 1 SWITCH BUTTON
     private static final String setHeteroChromia = "h-h";
     private static final String setNonHeteroChromia = "H-h";
+
+    private static final String setChimera = "c-c";
+    private static final String setNotChimera = "C-C";
+
 
 
     private boolean onGeneticalSkin = false;
@@ -204,9 +218,84 @@ public class CreateMorphGeneticsScreen extends Screen {
 
 
     WCGenetics genetics = new WCGenetics();
+    WCGenetics geneticsChimera = new WCGenetics();
+    WCGenetics.GeneticalChimeraVariants variantsChimera = new WCGenetics.GeneticalChimeraVariants();
 
     public CreateMorphGeneticsScreen() {
         super(Component.literal("Create Morph Genetics"));
+    }
+
+    private boolean comingBackFromChimeraMenu = false;
+    private boolean goingToChimeraMenu = false;
+
+
+    private String chestFur = setShortFur;
+    private String bellyFur = setShortFur;
+    private String legsFur = setShortFur;
+    private String headFur = setShortFur;
+    private String cheekFur = setShortFur;
+    private String backFur = setShortFur;
+    private String tailFur = setShortFur;
+
+    private String bobtail = setFulltail;
+
+    private String base = setBlack;
+    private String orangeBase = setNotOrange;
+    private String whiteRatio = setNotWhite;
+    private String albino = setNotAlbino;
+    private String dilute = setNonDilute;
+    private String agouti = setNonAgoutiTabby;
+    private String tabbyStripes = setTabbyStripesMackerel;
+    private String eyesAnomaly = setNonHeteroChromia;
+    private int rufousing = 0;
+    private int blueRufousing = 0;
+    private int storedNoise = 0;
+
+
+    public CreateMorphGeneticsScreen(boolean isOnGeneticalSkin, WCGenetics genetics, WCGenetics.GeneticalVariants variants,
+        WCGenetics chimeraGenetics, WCGenetics.GeneticalChimeraVariants chimeraVariants) {
+        super(Component.literal("Create Morph Genetics"));
+        onGeneticalSkin = isOnGeneticalSkin;
+
+        chestFur = genetics.chestFur;
+        bellyFur = genetics.bellyFur;
+        legsFur = genetics.legsFur;
+        headFur = genetics.headFur;
+        cheekFur = genetics.cheekFur;
+        backFur = genetics.backFur;
+        tailFur = genetics.tailFur;
+        bobtail = genetics.bobtail;
+        base = genetics.base;
+        orangeBase = genetics.orangeBase;
+        whiteRatio = genetics.whiteRatio;
+        albino = genetics.albino;
+        dilute = genetics.dilute;
+        agouti = genetics.agouti;
+        tabbyStripes = genetics.tabbyStripes;
+        eyesAnomaly = genetics.eyesAnomaly;
+        rufousing = genetics.rufousing;
+        blueRufousing = genetics.blueRufousing;
+        storedNoise = genetics.noise;
+
+        comingBackFromChimeraMenu = true;
+
+        eyeColorLeft = variants.eyeColorLeft;
+        eyeColorRight = variants.eyeColorRight;
+        rufousingVariant = variants.rufousingVariant;
+        blueRufousingVariant = variants.blueRufousingVariant;
+        orangeBaseVariant = variants.whiteVar;
+        tabbyStripesVariant = variants.tabbyVar;
+        albinoVariant = variants.albinoVar;
+        eyeColorVariantLeft = variants.leftEyeVar;
+        eyeColorVariantRight = variants.rightEyeVar;
+        storedNoise = variants.noise;
+        size = variants.size;
+
+        geneticsChimera = chimeraGenetics;
+        variantsChimera = chimeraVariants;
+
+        chimeraGene = setChimera;
+
     }
 
     @Override
@@ -312,6 +401,29 @@ public class CreateMorphGeneticsScreen extends Screen {
         genetics.blueRufousing = 0;
         genetics.noise = 0;
 
+        if (comingBackFromChimeraMenu) {
+            genetics.chestFur = chestFur;
+            genetics.bellyFur = bellyFur;
+            genetics.legsFur = legsFur;
+            genetics.headFur = headFur;
+            genetics.cheekFur = cheekFur;
+            genetics.backFur = backFur;
+            genetics.tailFur = tailFur;
+            genetics.bobtail = bobtail;
+            genetics.base = base;
+            genetics.orangeBase = orangeBase;
+            genetics.whiteRatio = whiteRatio;
+            genetics.albino = albino;
+            genetics.dilute = dilute;
+            genetics.agouti = agouti;
+            genetics.tabbyStripes = tabbyStripes;
+            genetics.eyesAnomaly = eyesAnomaly;
+            genetics.rufousing = rufousing;
+            genetics.blueRufousing = blueRufousing;
+            genetics.noise = noise;
+            noise = storedNoise;
+        }
+
         setOnGeneticalSkinButton = new GradientToggleButton(
                 150, 10,
                 90, 20,
@@ -367,18 +479,9 @@ public class CreateMorphGeneticsScreen extends Screen {
             this.leftEyeVariantList.setRenderTopAndBottom(false);
             this.leftEyeVariantList.setLeftPos(((centerX + 120)));
 
-            leftEyeVariantList.addOption("Color 1", 0);
-            leftEyeVariantList.addOption("Color 2", 1);
-            leftEyeVariantList.addOption("Color 3", 2);
-            leftEyeVariantList.addOption("Color 4", 3);
-            leftEyeVariantList.addOption("Color 5", 4);
-            leftEyeVariantList.addOption("Color 6", 5);
-            leftEyeVariantList.addOption("Color 7", 6);
-            leftEyeVariantList.addOption("Color 8", 7);
-            leftEyeVariantList.addOption("Color 9", 8);
-            leftEyeVariantList.addOption("Color 10", 9);
-            leftEyeVariantList.addOption("Color 11", 10);
-
+            for (int i = 0; i < WCGenetics.Values.MAX_EYE_VARIANTS; i++) {
+                leftEyeVariantList.addOption("Color " + (i + 1), i);
+            }
 
 
             int top2 = centerY + 45;
@@ -394,25 +497,20 @@ public class CreateMorphGeneticsScreen extends Screen {
             this.rightEyeVariantList.setRenderTopAndBottom(false);
             this.rightEyeVariantList.setLeftPos(((centerX + 120)));
 
-            rightEyeVariantList.addOption("Color 1", 0);
-            rightEyeVariantList.addOption("Color 2", 1);
-            rightEyeVariantList.addOption("Color 3", 2);
-            rightEyeVariantList.addOption("Color 4", 3);
-            rightEyeVariantList.addOption("Color 5", 4);
-            rightEyeVariantList.addOption("Color 6", 5);
-            rightEyeVariantList.addOption("Color 7", 6);
-            rightEyeVariantList.addOption("Color 8", 7);
-            rightEyeVariantList.addOption("Color 9", 8);
-            rightEyeVariantList.addOption("Color 10", 9);
-            rightEyeVariantList.addOption("Color 11", 10);
+            for (int i = 0; i < WCGenetics.Values.MAX_EYE_VARIANTS; i++) {
+                rightEyeVariantList.addOption("Color " + (i + 1), i);
+            }
         }
 
         // SECTION BUTTONS
         {
             int buttonHeight = centerY - 80;
 
+
+            int xOffset1 = -35;
+
             baseSection = new GradientToggleButton(
-                    centerX - 135, buttonHeight, 60, 16,
+                    centerX - 135 + xOffset1, buttonHeight, 60, 16,
                     Component.literal("Base"),
                     btn -> {
                         selectMainSection(baseSection);
@@ -422,7 +520,7 @@ public class CreateMorphGeneticsScreen extends Screen {
             );
 
             orangeSection = new GradientToggleButton(
-                    centerX - 65, buttonHeight, 60, 16,
+                    centerX - 65 + xOffset1, buttonHeight, 60, 16,
                     Component.literal("Orange"),
                     btn -> {
                         selectMainSection(orangeSection);
@@ -435,7 +533,7 @@ public class CreateMorphGeneticsScreen extends Screen {
             );
 
             whiteSection = new GradientToggleButton(
-                    centerX + 5, buttonHeight, 60, 16,
+                    centerX + 5 + xOffset1, buttonHeight, 60, 16,
                     Component.literal("White"),
                     btn -> {
                         selectMainSection(whiteSection);
@@ -448,7 +546,7 @@ public class CreateMorphGeneticsScreen extends Screen {
             );
 
             albinoSection = new GradientToggleButton(
-                    centerX + 75, buttonHeight, 60, 16,
+                    centerX + 75 + xOffset1, buttonHeight, 60, 16,
                     Component.literal("Albinism"),
                     btn -> {
                         selectMainSection(albinoSection);
@@ -461,9 +559,20 @@ public class CreateMorphGeneticsScreen extends Screen {
                     80, 20, 1f, 0xFFFFFFFF
             );
 
+            chimeraSection = new GradientToggleButton(
+                    centerX + 145 + xOffset1, buttonHeight, 60, 16,
+                    Component.literal("Chimerism"),
+                    btn -> {
+                        selectMainSection(chimeraSection);
+                        mainSectionActiveMenu = "chimera";
+
+                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    80, 20, 1f, 0xFFFFFFFF
+            );
+
             buttonHeight += 20;
 
-            int xOffset = -30;
+            int xOffset = -35;
 
             diluteSection = new GradientToggleButton(
                     centerX - 135 + xOffset, buttonHeight, 60, 16,
@@ -613,13 +722,10 @@ public class CreateMorphGeneticsScreen extends Screen {
             this.orangeVariantList.setRenderTopAndBottom(false);
             this.orangeVariantList.setLeftPos(((centerX + 120)));
 
-            orangeVariantList.addOption("Tortie 1", 0);
-            orangeVariantList.addOption("Tortie 2", 1);
-            orangeVariantList.addOption("Tortie 3", 2);
-            orangeVariantList.addOption("Tortie 4", 3);
-            orangeVariantList.addOption("Tortie 5", 4);
-            orangeVariantList.addOption("Tortie 6", 5);
-            orangeVariantList.addOption("Tortie 7", 6);
+            for (int i = 0; i < WCGenetics.Values.MAX_ORANGE_VARIANTS; i++) {
+                orangeVariantList.addOption("Tortie " + (i + 1), i);
+            }
+
         }
 
         // WHITE BUTTONS
@@ -682,26 +788,12 @@ public class CreateMorphGeneticsScreen extends Screen {
                     20
             );
             this.whiteVariantList.setRenderTopAndBottom(false);
-//            this.orangeVariantList.setRenderBackground(false);
             this.whiteVariantList.setLeftPos(((centerX + 120)));
 
-            whiteVariantList.addOption("Spots 1", 0);
-            whiteVariantList.addOption("Spots 2", 1);
-            whiteVariantList.addOption("Spots 3", 2);
-            whiteVariantList.addOption("Spots 4", 3);
-            whiteVariantList.addOption("Spots 5", 4);
-            whiteVariantList.addOption("Spots 6", 5);
-            whiteVariantList.addOption("Spots 7", 6);
-            whiteVariantList.addOption("Spots 8", 7);
-            whiteVariantList.addOption("Spots 9", 8);
-            whiteVariantList.addOption("Spots 10", 9);
-            whiteVariantList.addOption("Spots 11", 10);
-            whiteVariantList.addOption("Spots 12", 11);
-            whiteVariantList.addOption("Spots 13", 12);
-            whiteVariantList.addOption("Spots 14", 13);
-            whiteVariantList.addOption("Spots 15", 14);
-            whiteVariantList.addOption("Spots 16", 15);
-            whiteVariantList.addOption("Spots 17", 16);
+            for (int i = 0; i < WCGenetics.Values.MAX_WHITE_VARIANTS; i++) {
+                whiteVariantList.addOption("Spots " + (i + 1), i);
+            }
+
         }
 
         // ALBINO BUTTONS
@@ -781,9 +873,9 @@ public class CreateMorphGeneticsScreen extends Screen {
 //            this.orangeVariantList.setRenderBackground(false);
             this.albinoVariantList.setLeftPos(((centerX + 120)));
 
-            albinoVariantList.addOption("Albino 1", 0);
-            albinoVariantList.addOption("Albino 2", 1);
-            albinoVariantList.addOption("Albino 3", 2);
+            for (int i = 0; i < WCGenetics.Values.MAX_ALBINO_VARIANTS; i++) {
+                albinoVariantList.addOption("Albino " + (i + 1), i);
+            }
         }
 
         // DILUTE SWITCH
@@ -855,11 +947,10 @@ public class CreateMorphGeneticsScreen extends Screen {
             this.tabbyVariantList.setRenderTopAndBottom(false);
             this.tabbyVariantList.setLeftPos(((centerX + 120)));
 
-            tabbyVariantList.addOption("Tabby 1", 0);
-            tabbyVariantList.addOption("Tabby 2", 1);
-            tabbyVariantList.addOption("Tabby 3", 2);
-            tabbyVariantList.addOption("Tabby 4", 3);
-            tabbyVariantList.addOption("Tabby 5", 4);
+            for (int i = 0; i < WCGenetics.Values.MAX_TABBY_VARIANTS; i++) {
+                tabbyVariantList.addOption("Tabby " + (i + 1), i);
+            }
+
         }
 
         // EYES
@@ -891,7 +982,7 @@ public class CreateMorphGeneticsScreen extends Screen {
             );
 
             setLeftEyeGreenButton = new GradientToggleButton(
-                    30, centerY + 45, 40, 16,
+                    30, centerY + 35, 40, 16,
                     Component.literal("Green"),
                     btn -> {
                         selectLeftEye(setLeftEyeGreenButton);
@@ -901,11 +992,21 @@ public class CreateMorphGeneticsScreen extends Screen {
                     80, 20, 1f, 0xFFFFFFFF
             );
             setLeftEyeYellowButton = new GradientToggleButton(
-                    30, centerY + 75, 40, 16,
+                    30, centerY + 55, 40, 16,
                     Component.literal("Yellow"),
                     btn -> {
                         selectLeftEye(setLeftEyeYellowButton);
                         eyeColorRight = setEyeYellow;
+
+                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    80, 20, 1f, 0xFFFFFFFF
+            );
+            setLeftEyeRedButton = new GradientToggleButton(
+                    30, centerY + 75, 40, 16,
+                    Component.literal("Red"),
+                    btn -> {
+                        selectLeftEye(setLeftEyeRedButton);
+                        eyeColorRight = setEyeRed;
 
                     }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
                     80, 20, 1f, 0xFFFFFFFF
@@ -924,7 +1025,7 @@ public class CreateMorphGeneticsScreen extends Screen {
             );
 
             setRightEyeGreenButton = new GradientToggleButton(
-                    80, centerY + 45, 40, 16,
+                    80, centerY + 35, 40, 16,
                     Component.literal("Green"),
                     btn -> {
                         selectRightEye(setRightEyeGreenButton);
@@ -934,11 +1035,21 @@ public class CreateMorphGeneticsScreen extends Screen {
                     80, 20, 1f, 0xFFFFFFFF
             );
             setRightEyeYellowButton = new GradientToggleButton(
-                    80, centerY + 75, 40, 16,
+                    80, centerY + 55, 40, 16,
                     Component.literal("Yellow"),
                     btn -> {
                         selectRightEye(setRightEyeYellowButton);
                         eyeColorLeft = setEyeYellow;
+
+                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    80, 20, 1f, 0xFFFFFFFF
+            );
+            setRightEyeRedButton = new GradientToggleButton(
+                    80, centerY + 75, 40, 16,
+                    Component.literal("Red"),
+                    btn -> {
+                        selectRightEye(setRightEyeRedButton);
+                        eyeColorLeft = setEyeRed;
 
                     }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
                     80, 20, 1f, 0xFFFFFFFF
@@ -1064,9 +1175,10 @@ public class CreateMorphGeneticsScreen extends Screen {
             this.noiseList.setRenderTopAndBottom(false);
             this.noiseList.setLeftPos(((centerX + 120)));
 
-            noiseList.addOption("Noise 1", 0);
-            noiseList.addOption("Noise 2", 1);
-            noiseList.addOption("Noise 3", 2);
+            for (int i = 0; i < WCGenetics.Values.MAX_NOISE_VARIANTS; i++) {
+                noiseList.addOption("Noise " + (i + 1), i);
+            }
+
         }
 
         // EXTRA
@@ -1078,6 +1190,34 @@ public class CreateMorphGeneticsScreen extends Screen {
             blueRufousingSlider = new IntSliderButton(36, centerY + 45,
                     80, 20,
                     0, 6, 0);
+        }
+
+        // CHIMERISM
+        {
+            editChimera = new GradientToggleButton(
+                    40, centerY +15,
+                    70, 20,
+                    Component.literal("Edit Chimera"),
+                    btn -> {
+                        closing = true;
+                        animationTime = 0f;
+                        goingToChimeraMenu = true;
+                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    60, 20, 1f, 0xFFFFFFFF
+            );
+
+            chimeraSwitch = new GradientSwitchButton(
+                    35, centerY - 15, 80, 16,
+                    "Chimera",
+                    false,
+                    btn -> {
+                        if (chimeraSwitch.getValue()) {
+                            chimeraGene = setChimera;
+                        } else {
+                            chimeraGene = setNotChimera;
+                        }
+                    }, 0xFFFFFFFF
+            );
         }
 
         this.addRenderableWidget(bobtailSwitch);
@@ -1094,9 +1234,11 @@ public class CreateMorphGeneticsScreen extends Screen {
         this.addRenderableWidget(setLeftEyeYellowButton);
         this.addRenderableWidget(setLeftEyeBlueButton);
         this.addRenderableWidget(setLeftEyeGreenButton);
+        this.addRenderableWidget(setLeftEyeRedButton);
         this.addRenderableWidget(setRightEyeYellowButton);
         this.addRenderableWidget(setRightEyeGreenButton);
         this.addRenderableWidget(setRightEyeBlueButton);
+        this.addRenderableWidget(setRightEyeRedButton);
 
         this.addRenderableWidget(agoutiSwitch);
         this.addRenderableWidget(setClassicButton);
@@ -1123,10 +1265,14 @@ public class CreateMorphGeneticsScreen extends Screen {
         this.addRenderableWidget(setChocolateButton);
         this.addRenderableWidget(setCinnamonButton);
 
+        this.addRenderableWidget(chimeraSwitch);
+        this.addRenderableWidget(editChimera);
+
         this.addRenderableWidget(baseSection);
         this.addRenderableWidget(orangeSection);
         this.addRenderableWidget(whiteSection);
         this.addRenderableWidget(albinoSection);
+        this.addRenderableWidget(chimeraSection);
         this.addRenderableWidget(diluteSection);
         this.addRenderableWidget(agoutiAndTabbySection);
         this.addRenderableWidget(eyesAndAnomalySection);
@@ -1138,6 +1284,7 @@ public class CreateMorphGeneticsScreen extends Screen {
         this.addRenderableWidget(saveButton);
 
         menuX = 500;
+        if (comingBackFromChimeraMenu) menuX = -500;
 
     }
 
@@ -1161,9 +1308,16 @@ public class CreateMorphGeneticsScreen extends Screen {
                 saveAndNext();
             }
         } else {
-            if (menuX > 0) {
-                menuX -= (menuX) * 0.03f;
-                if (menuX < 0) menuX = 0;
+            if (comingBackFromChimeraMenu) {
+                if (menuX < 0) {
+                    menuX -= (menuX) * 0.03f;
+                    if (menuX > 0) menuX = 0;
+                }
+            } else {
+                if (menuX > 0) {
+                    menuX -= (menuX) * 0.03f;
+                    if (menuX < 0) menuX = 0;
+                }
             }
         }
 
@@ -1200,6 +1354,7 @@ public class CreateMorphGeneticsScreen extends Screen {
         eyesAndAnomalySection.visible = false;
         furBobtailNoiseSection.visible = false;
         extraSection.visible = false;
+        chimeraSection.visible = false;
         agoutiAndTabbySection.visible = false;
         setBlackButton.visible = false;
         setChocolateButton.visible = false;
@@ -1230,6 +1385,8 @@ public class CreateMorphGeneticsScreen extends Screen {
         setRightEyeGreenButton.visible = false;
         setLeftEyeBlueButton.visible = false;
         setRightEyeBlueButton.visible = false;
+        setLeftEyeRedButton.visible = false;
+        setRightEyeRedButton.visible = false;
         bobtailSwitch.visible = false;
         chestFurSwitch.visible = false;
         bellyFurSwitch.visible = false;
@@ -1238,6 +1395,8 @@ public class CreateMorphGeneticsScreen extends Screen {
         headFurSwitch.visible = false;
         backFurSwitch.visible = false;
         tailFurSwitch.visible = false;
+        editChimera.visible = false;
+        chimeraSwitch.visible = false;
         if (onGeneticalSkin) {
             baseSection.visible = true;
             orangeSection.visible = true;
@@ -1247,6 +1406,7 @@ public class CreateMorphGeneticsScreen extends Screen {
             eyesAndAnomalySection.visible = true;
             furBobtailNoiseSection.visible = true;
             extraSection.visible = true;
+            chimeraSection.visible = true;
             agoutiAndTabbySection.visible = true;
 
             if (mainSectionActiveMenu.equals("base")) {
@@ -1321,10 +1481,12 @@ public class CreateMorphGeneticsScreen extends Screen {
                 setLeftEyeYellowButton.visible = true;
                 setLeftEyeGreenButton.visible = true;
                 setLeftEyeBlueButton.visible = true;
+                setLeftEyeRedButton.visible = true;
 
                 setRightEyeYellowButton.visible = true;
                 setRightEyeGreenButton.visible = true;
                 setRightEyeBlueButton.visible = true;
+                setRightEyeRedButton.visible = true;
 
 
                 if (heterochromiaSwitch.getValue()) {
@@ -1393,8 +1555,29 @@ public class CreateMorphGeneticsScreen extends Screen {
 
             }
 
+            if (mainSectionActiveMenu.equals("chimera")) {
+                if (chimeraSwitch.getValue()) {
+                    editChimera.visible = true;
+                }
+                chimeraSwitch.visible = true;
+
+                pGuiGraphics.drawCenteredString(font, "Chimerism", 76, centerY - 30, 0xFFFFFFFF);
+            }
+
+        } else {
+
+
+//            chestFurSwitch.visible = true;
+//            tailFurSwitch.visible = true;
+//            headFurSwitch.visible = true;
+//            legsFurSwitch.visible = true;
+//            cheekFurSwitch.visible = true;
+//            bellyFurSwitch.visible = true;
+//            backFurSwitch.visible = true;
+//            bobtailSwitch.visible = true;
         }
 
+//        if (!onGeneticalSkin) centerX += -15;
         if (!onGeneticalSkin) centerX += -50;
 
         WCatEntity entityToRender = new WCatEntity(ModEntities.WCAT.get(), Minecraft.getInstance().level);
@@ -1405,6 +1588,12 @@ public class CreateMorphGeneticsScreen extends Screen {
         entityToRender.setGeneticalVariants(eyeColorLeft, eyeColorRight, rufousingVariant, blueRufousingVariant,
                 orangeBaseVariant, whiteRatioVariant, tabbyStripesVariant, albinoVariant, eyeColorVariantLeft,
                 eyeColorVariantRight, noise, size);
+
+        geneticsChimera.chimeraGene = chimeraGene;
+        entityToRender.setChimeraGenetics(geneticsChimera);
+        entityToRender.setGeneticalVariantsChimera(variantsChimera.chimeraVariant, variantsChimera.rufousingVariant,
+                variantsChimera.blueRufousingVariant, variantsChimera.orangeVar, variantsChimera.whiteVar, variantsChimera.tabbyVar,
+                variantsChimera.albinoVar, variantsChimera.noise);
 
         entityToRender.setOnGround(true);
         if (variantScrollList.getSelectedEntry() != null) {
@@ -1466,6 +1655,7 @@ public class CreateMorphGeneticsScreen extends Screen {
         eyesAndAnomalySection.setSelected(false);
         furBobtailNoiseSection.setSelected(false);
         extraSection.setSelected(false);
+        chimeraSection.setSelected(false);
 
         this.removeWidget(orangeVariantList);
         this.removeWidget(whiteVariantList);
@@ -1527,6 +1717,7 @@ public class CreateMorphGeneticsScreen extends Screen {
         setLeftEyeYellowButton.setSelected(false);
         setLeftEyeBlueButton.setSelected(false);
         setLeftEyeGreenButton.setSelected(false);
+        setLeftEyeRedButton.setSelected(false);
 
         button.setSelected(true);
     }
@@ -1535,11 +1726,14 @@ public class CreateMorphGeneticsScreen extends Screen {
         setRightEyeYellowButton.setSelected(false);
         setRightEyeBlueButton.setSelected(false);
         setRightEyeGreenButton.setSelected(false);
+        setRightEyeRedButton.setSelected(false);
 
         button.setSelected(true);
     }
 
     private void saveAndNext() {
+
+
 
         WCGenetics.GeneticalVariants variants =
                 new WCGenetics.GeneticalVariants(eyeColorLeft, eyeColorRight,
@@ -1549,7 +1743,17 @@ public class CreateMorphGeneticsScreen extends Screen {
         int defaultVariant = 0;
         if (variantScrollList.getSelectedEntry() != null) defaultVariant = variantScrollList.getSelectedEntry().getId();
 
-        ModPackets.sendToServer(new SavePlayerGeneticsPacket(onGeneticalSkin, genetics, variants, defaultVariant));
+        geneticsChimera.chimeraGene = chimeraGene;
+        genetics.chimeraGene = chimeraGene;
+
+        if (goingToChimeraMenu) {
+            this.minecraft.setScreen(new CreateChimeraMorphGeneticsScreen(onGeneticalSkin, genetics, variants, geneticsChimera, variantsChimera));
+            return;
+        }
+
+
+
+        ModPackets.sendToServer(new SavePlayerGeneticsPacket(onGeneticalSkin, genetics, variants, geneticsChimera, variantsChimera, defaultVariant));
 
         this.minecraft.setScreen(null);
         if (!ClientClanData.get().isFirstLoginHandled()){

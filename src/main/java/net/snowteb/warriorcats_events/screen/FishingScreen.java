@@ -87,6 +87,7 @@ public class FishingScreen extends Screen {
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
 
         int guiX = ((width - imageWidth) / 2);
+        int centerX = (this.width / 2);
         int guiY = ((height - imageHeight - 145 + WCEClientConfig.CLIENT.FISHING_SCREEN_Y_OFFSET.get()) / 2);
 
         int scissorX = guiX + 2;
@@ -95,6 +96,7 @@ public class FishingScreen extends Screen {
         int scissorY2 = guiY + 46;
 
 
+        guiGraphics.setColor(0.6f,0.6f,0.9f,1f);
         guiGraphics.blit(TEXTUREBACKGROUND, guiX, guiY, 0, 0, imageWidth, imageHeight, 176, 48);
         guiGraphics.enableScissor(
                 scissorX,
@@ -102,6 +104,8 @@ public class FishingScreen extends Screen {
                 scissorX2,
                 scissorY2
         );
+        guiGraphics.setColor(1f,1f,1f,1f);
+
         guiGraphics.blit(TEXTUREWAVES, guiX + offsetWaves + 176, guiY, 0, 0, imageWidth, imageHeight, 176, 48);
         guiGraphics.blit(TEXTUREWAVES, guiX + offsetWaves2, guiY, 0, 0, imageWidth, imageHeight, 176, 48);
         guiGraphics.blit(currentFishTexture, guiX + (int) (offset + 176), guiY + this.randomYOffset, 0, 0, imageWidth, imageHeight, 176, 48);
@@ -110,20 +114,17 @@ public class FishingScreen extends Screen {
 
         guiGraphics.disableScissor();
 
-        guiGraphics.drawString(
-                this.font,
-                "Fishing",
-                guiX + 71,
-                guiY - 11,
-                0xFFFFFF
-        );
-        guiGraphics.drawString(
+        guiGraphics.pose().pushPose();
+        guiGraphics.pose().translate(centerX, guiY + 51, 0);
+        guiGraphics.pose().scale(0.83f,0.83f,0);
+        guiGraphics.drawCenteredString(
                 this.font,
                 "Click any part of the screen to grab fish",
-                guiX + 9,
-                guiY + 51,
-                0xe0dcd1
+                0,
+                0,
+                0x88FFFFFF
         );
+        guiGraphics.pose().popPose();
 
         if (pPlayer.tickCount % 2 == 0) {
             this.offsetWaves--;

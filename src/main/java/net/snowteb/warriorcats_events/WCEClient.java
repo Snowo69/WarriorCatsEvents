@@ -1,12 +1,16 @@
 package net.snowteb.warriorcats_events;
 
-import com.mojang.authlib.minecraft.client.MinecraftClient;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.ConfigScreenHandler;
+import net.minecraftforge.fml.ModLoadingContext;
+import net.snowteb.warriorcats_events.screen.WCEConfigScreen;
 import net.snowteb.warriorcats_events.sound.ModSounds;
 import org.lwjgl.glfw.GLFW;
 
@@ -76,6 +80,7 @@ public class WCEClient {
 
     }
 
+    @OnlyIn(Dist.CLIENT)
     public static void playLocalSound(SoundEvent sound, SoundSource soundSource, float volume, float pitch) {
         Minecraft mc = Minecraft.getInstance();
         mc.level.playLocalSound(mc.player.getX(), mc.player.getY(), mc.player.getZ(),

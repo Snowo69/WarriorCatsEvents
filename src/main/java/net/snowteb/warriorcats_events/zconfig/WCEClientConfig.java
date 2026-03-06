@@ -19,6 +19,8 @@ public class WCEClientConfig {
         public final ForgeConfigSpec.BooleanValue LEAP;
         public final ForgeConfigSpec.BooleanValue OWN_MORPH_NAME;
         public final ForgeConfigSpec.BooleanValue AMBIENT_MUSIC;
+        public final ForgeConfigSpec.BooleanValue MORPH_CHAT_BUBBLES;
+        public final ForgeConfigSpec.BooleanValue OWN_CHAT_BUBBLES;
 
         public Client(ForgeConfigSpec.Builder builder) {
             builder.push("wce_client");
@@ -38,6 +40,15 @@ public class WCEClientConfig {
             AMBIENT_MUSIC = builder
                     .comment("Whether ambient music from the mod will play for you")
                     .define("cuteAmbientMusic", true);
+
+            MORPH_CHAT_BUBBLES = builder
+                    .comment("Whether other player's morphs will display their chat messages")
+                    .define("entityChatBubbles", true);
+
+            OWN_CHAT_BUBBLES = builder
+                    .comment("Whether your own chat bubble will display")
+                    .define("ownChatBubbles", true);
+
 
 
             builder.pop();

@@ -161,7 +161,7 @@ public class ClanData extends SavedData {
         public int color;
         UUID leader;
         public String leaderName;
-        String normalizedName;
+        public String normalizedName;
         public Map<UUID, ClanPlayerRank> members = new HashMap<>();
         public Map<UUID, ClanPermissions> memberPerms = new HashMap<>();
         public Map<UUID, ClanCat> clanCats = new HashMap<>();
@@ -253,6 +253,10 @@ public class ClanData extends SavedData {
 //        if (cat.level() instanceof ServerLevel serverLevel) {
 //            this.registerLog(serverLevel, clan.clanUUID, catLeftClanLog);
 //        }
+
+        for (Clan clan2 : clans.values()) {
+            clan2.clanCats.remove(cat.getUUID());
+        }
 
         clan.clanCats.remove(cat.getUUID());
         setDirty();
@@ -786,6 +790,29 @@ public class ClanData extends SavedData {
             }
         }
         return null;
+    }
+
+    public void checkForEmptyClans(ServerLevel serverLevel){
+        for (Clan clan : clans.values()) {
+            Iterator<UUID> iterator = clan.members.keySet().iterator();
+            while (iterator.hasNext()) {
+                UUID uuid = iterator.next();
+                ServerPlayer player = serverLevel.getServer().getPlayerList().getPlayer(uuid);
+                if (player != null) {
+                    UUID playerClanUUID = player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
+                            .map(PlayerClanData::getCurrentClanUUID)
+                            .orElse(ClanData.EMPTY_UUID);
+
+                    if (!playerClanUUID.equals(clan.clanUUID)) {
+                        iterator.remove();
+                    }
+                }
+            }
+
+            if (clan.members.isEmpty()) {
+                deleteClan(serverLevel, clan.clanUUID);
+            }
+        }
     }
 
 }

@@ -8,7 +8,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.network.NetworkEvent;
 import net.snowteb.warriorcats_events.entity.custom.WCGenetics;
@@ -19,7 +18,6 @@ import net.snowteb.warriorcats_events.clan.PlayerClanDataProvider;
 import net.snowteb.warriorcats_events.entity.ModEntities;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.network.ModPackets;
-import net.snowteb.warriorcats_events.zconfig.WCEServerConfig;
 import tocraft.walkers.api.PlayerShape;
 
 import java.util.UUID;
@@ -65,6 +63,12 @@ public class SaveClanDataPacket {
             WCGenetics currentGenetics = player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
                     .map(PlayerClanData::getPlayerGenetics).orElse(new WCGenetics());
 
+            WCGenetics currentChimeraGens = player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
+                    .map(PlayerClanData::getPlayerChimeraGenetics).orElse(new WCGenetics());
+
+            WCGenetics.GeneticalChimeraVariants currentChimeraVariants = player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
+                    .map(PlayerClanData::getPlayerChimeraVariants).orElse(new WCGenetics.GeneticalChimeraVariants());
+
             boolean onGeneticalSkn = player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
                             .map(PlayerClanData::isOnGeneticalSkin).orElse(false);
 
@@ -74,6 +78,9 @@ public class SaveClanDataPacket {
 
                 cap.setPlayerGenetics(currentGenetics);
                 cap.setPlayerGeneticalVariants(currentGeneticVariants);
+                cap.setPlayerChimeraGenetics(currentChimeraGens);
+                cap.setPlayerChimeraVariants(currentChimeraVariants);
+
                 cap.setOnGeneticalSkin(onGeneticalSkn);
             });
 
@@ -210,6 +217,11 @@ public class SaveClanDataPacket {
                         ,variants.blueRufousingVariant, variants.orangeVar, variants.whiteVar, variants.tabbyVar
                         ,variants.albinoVar, variants.leftEyeVar, variants.rightEyeVar, variants.noise, variants.size);
                 cat.setOnGeneticalSkin(true);
+                cat.setChimeraGenetics(cap.getPlayerChimeraGenetics());
+                WCGenetics.GeneticalChimeraVariants variantsChimera = cap.getPlayerChimeraVariants();
+                cat.setGeneticalVariantsChimera(variantsChimera.chimeraVariant, variantsChimera.rufousingVariant,
+                        variantsChimera.blueRufousingVariant, variantsChimera.orangeVar, variantsChimera.whiteVar, variantsChimera.tabbyVar
+                        , variantsChimera.albinoVar, variantsChimera.noise);
                 cat.setGender(1);
             }
         });

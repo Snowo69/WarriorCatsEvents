@@ -1,10 +1,13 @@
 package net.snowteb.warriorcats_events.network.packet.c2s.cats;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.advancements.Advancement;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -193,6 +196,18 @@ public class CtSCreateAndSpawnKitPacket {
                             .append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GRAY))
                             .append(Component.literal(")").withStyle(ChatFormatting.GRAY));
                     kit.registerClanLog(messageLog);
+
+
+                        MinecraftServer mcServer = player.getServer();
+                        if (mcServer != null) {
+                            Advancement adv = mcServer.getAdvancements()
+                                    .getAdvancement(new ResourceLocation("warriorcats_events:kit_generated"));
+                            if (adv != null) {
+                                sPlayer.getAdvancements().award(adv, "kit_generated");
+                            }
+                        }
+
+
                 }
 
 

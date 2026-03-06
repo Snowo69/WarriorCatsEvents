@@ -8,6 +8,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -70,6 +71,8 @@ public class CtSFishSuccesful {
                     0.2,
                     random.nextGaussian() * 0.05
             );
+
+            ExperienceOrb.award(level, player.position(), random.nextInt(4) + 2);
 
             level.addFreshEntity(drop);
 

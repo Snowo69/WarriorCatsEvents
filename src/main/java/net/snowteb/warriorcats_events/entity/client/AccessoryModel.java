@@ -21,6 +21,11 @@ public class AccessoryModel extends GeoModel<WCatEntity> {
             new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/blue_parrot_feathers.png"),
             new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/light_blue_parrot_feathers.png"),
             new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/chicken_feathers.png"),
+
+            new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/pigeon_feathers.png"),
+            new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/crow_feathers.png"),
+            new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/american_goldfinch_feathers.png"),
+            new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/red_cardinal_feathers.png"),
     };
 
     public AccessoryModel(ResourceLocation model,

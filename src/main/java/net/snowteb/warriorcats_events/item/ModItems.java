@@ -249,6 +249,17 @@ public static final RegistryObject<Item> FLOWER_CROWN = ITEMS.register("flower_c
     public static final RegistryObject<Item> GRAY_PARROT_FEATHER = ITEMS.register("gray_parrot_feather",
             () -> new Item(new Item.Properties().stacksTo(16)));
 
+    public static final RegistryObject<Item> BLACK_VULTURE_FEATHER = ITEMS.register("black_vulture_feather",
+            () -> new Item(new Item.Properties().stacksTo(16)));
+    public static final RegistryObject<Item> PIGEON_FEATHER = ITEMS.register("pigeon_feather",
+            () -> new Item(new Item.Properties().stacksTo(16)));
+    public static final RegistryObject<Item> CROW_FEATHER = ITEMS.register("crow_feather",
+            () -> new Item(new Item.Properties().stacksTo(16)));
+    public static final RegistryObject<Item> GOLDFINCH_FEATHER = ITEMS.register("goldfinch_feather",
+            () -> new Item(new Item.Properties().stacksTo(16)));
+    public static final RegistryObject<Item> CARDINAL_FEATHER = ITEMS.register("cardinal_feather",
+            () -> new Item(new Item.Properties().stacksTo(16)));
+
     public static final RegistryObject<Item> GREEN_PARROT_BODY_FEATHERS = ITEMS.register("green_parrot_body_feathers",
             () -> new FeathersArmorItem());
     public static final RegistryObject<Item> RED_PARROT_BODY_FEATHERS = ITEMS.register("red_parrot_body_feathers",
@@ -262,6 +273,17 @@ public static final RegistryObject<Item> FLOWER_CROWN = ITEMS.register("flower_c
     public static final RegistryObject<Item> CHICKEN_BODY_FEATHERS = ITEMS.register("chicken_body_feathers",
             () -> new FeathersArmorItem());
 
+
+    public static final RegistryObject<Item> VULTURE_BODY_FEATHERS = ITEMS.register("vulture_body_feathers",
+            () -> new FeathersArmorItem());
+    public static final RegistryObject<Item> PIGEON_BODY_FEATHERS = ITEMS.register("pigeon_body_feathers",
+            () -> new FeathersArmorItem());
+    public static final RegistryObject<Item> CROW_BODY_FEATHERS = ITEMS.register("crow_body_feathers",
+            () -> new FeathersArmorItem());
+    public static final RegistryObject<Item> GOLDFINCH_BODY_FEATHERS = ITEMS.register("goldfinch_body_feathers",
+            () -> new FeathersArmorItem());
+    public static final RegistryObject<Item> CARDINAL_BODY_FEATHERS = ITEMS.register("cardinal_body_feathers",
+            () -> new FeathersArmorItem());
 
 
 

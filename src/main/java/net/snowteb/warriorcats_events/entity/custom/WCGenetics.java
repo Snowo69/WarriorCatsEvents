@@ -5,6 +5,20 @@ import net.minecraft.util.RandomSource;
 
 public class WCGenetics {
 
+
+    public class Values {
+        public static final int MAX_ORANGE_VARIANTS = 11;
+        public static final int MAX_WHITE_VARIANTS = 21;
+        public static final int MAX_ALBINO_VARIANTS = 3;
+        public static final int MAX_TABBY_VARIANTS = 5;
+        public static final int MAX_EYE_VARIANTS = 11;
+        public static final int MAX_NOISE_VARIANTS = 3;
+        public static final int MAX_RUFOUSING_VARIANTS = 7;
+        public static final int MAX_BLUE_RUFOUSING_VARIANTS = 7;
+
+        public static final int MAX_CHIMERISM_VARIANTS = 8;
+    }
+
     public String chestFur = "s-s";
     public String bellyFur = "s-s";
     public String legsFur = "s-s";
@@ -27,6 +41,7 @@ public class WCGenetics {
     public int blueRufousing = 0;
     public int noise = 0;
 
+    public String chimeraGene = "C-C";
 
 
 
@@ -35,7 +50,7 @@ public class WCGenetics {
                       String tailFur, String backFur, String base,
                       String orangeBase, String whiteRatio, String albino, String dilute,
                       String agouti, String tabbyStripes, String eyesAnomaly,
-                      int rufousing, int blueRufousing, int noise) {
+                      int rufousing, int blueRufousing, int noise, String chimeraGene) {
         this.chestFur = chestFur;
         this.bellyFur = bellyFur;
         this.legsFur = legsFur;
@@ -56,6 +71,8 @@ public class WCGenetics {
         this.rufousing = rufousing;
         this.blueRufousing = blueRufousing;
         this.noise = noise;
+
+        this.chimeraGene = chimeraGene;
     }
 
     public WCGenetics() {
@@ -84,6 +101,8 @@ public class WCGenetics {
         buf.writeInt(this.rufousing);
         buf.writeInt(this.blueRufousing);
         buf.writeInt(this.noise);
+
+        buf.writeUtf(this.chimeraGene);
     }
 
     public static WCGenetics decode(FriendlyByteBuf buf) {
@@ -108,7 +127,8 @@ public class WCGenetics {
 
                 buf.readInt(),
                 buf.readInt(),
-                buf.readInt()
+                buf.readInt(),
+                buf.readUtf()
         );
     }
 
@@ -180,6 +200,64 @@ public class WCGenetics {
                     buf.readInt(),
                     buf.readInt(),
                     buf.readFloat()
+            );
+        }
+    }
+
+    public static class GeneticalChimeraVariants {
+        public int rufousingVariant = 0;
+        public int blueRufousingVariant = 0;
+        public int orangeVar = 0;
+        public int whiteVar = 0;
+        public int tabbyVar = 0;
+        public int albinoVar = 0;
+        public int noise = 0;
+
+        public int chimeraVariant = 0;
+
+        public String chimeraGene = "C-C";
+
+        public GeneticalChimeraVariants() {
+
+        }
+
+        public GeneticalChimeraVariants(int chimeraVariant ,int rufousingVariant,
+                                        int blueRufousingVariant, int orangeVar, int whiteVar,
+                                        int tabbyVar, int albinoVar, int noise, String chimeraGene) {
+            this.rufousingVariant = rufousingVariant;
+            this.blueRufousingVariant = blueRufousingVariant;
+            this.orangeVar = orangeVar;
+            this.whiteVar = whiteVar;
+            this.chimeraVariant = chimeraVariant;
+            this.tabbyVar = tabbyVar;
+            this.albinoVar = albinoVar;
+            this.noise = noise;
+            this.chimeraGene = chimeraGene;
+        }
+
+        public void encode(FriendlyByteBuf buf) {
+            buf.writeInt(this.chimeraVariant);
+            buf.writeInt(this.rufousingVariant);
+            buf.writeInt(this.blueRufousingVariant);
+            buf.writeInt(this.orangeVar);
+            buf.writeInt(this.whiteVar);
+            buf.writeInt(this.tabbyVar);
+            buf.writeInt(this.albinoVar);
+            buf.writeInt(this.noise);
+            buf.writeUtf(this.chimeraGene);
+
+        }
+        public static GeneticalChimeraVariants decode(FriendlyByteBuf buf) {
+            return new GeneticalChimeraVariants(
+                    buf.readInt(),
+                    buf.readInt(),
+                    buf.readInt(),
+                    buf.readInt(),
+                    buf.readInt(),
+                    buf.readInt(),
+                    buf.readInt(),
+                    buf.readInt(),
+                    buf.readUtf()
             );
         }
     }
@@ -524,7 +602,6 @@ public class WCGenetics {
         }
 
         public static String generateAlelo(RandomSource random, String whiteGenotype, String albinoGenotype) {
-            float chance = random.nextFloat();
 
             if (Albino.isTrueAlbino(albinoGenotype)) {
                 return RED.getAlelo();
@@ -618,6 +695,38 @@ public class WCGenetics {
 
         public static boolean isHeteroChromic(String genotype) {
             return genotype.equals("h-h");
+        }
+
+    }
+
+    public enum Chimerism {
+        CHIMERA("c"),
+        NORMAL("C")
+
+        ;
+        private String alelo;
+
+        Chimerism(String alelo) {
+            this.alelo = alelo;
+        }
+
+        public String getAlelo() {
+            return alelo;
+        }
+
+        public static String generateAlelo(RandomSource random) {
+            float chance = random.nextFloat();
+
+            if (chance < 0.1f) {
+                return CHIMERA.getAlelo();
+            } else {
+                return  NORMAL.getAlelo();
+            }
+        }
+
+
+        public static boolean isChimera(String genotype) {
+            return genotype.equals("c-c");
         }
 
     }

@@ -5,12 +5,14 @@
   "refmap": "mixins.warriorcats_events.refmap.json",
   "minVersion": "0.8",
   "client": [
+    "ClientChatPacketMixin",
     "GameRendererHitMixin"
   ],
   "injectors": {
     "defaultRequire": 1
   },
   "mixins": [
+    "EntityDiscardMixin",
     "ParrotDeathLootMobMixin"
   ]
 }

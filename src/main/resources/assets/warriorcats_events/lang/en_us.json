@@ -148,10 +148,22 @@
   "item.warriorcats_events.lightblue_parrot_feather": "Light Blue Parrot Feather",
   "item.warriorcats_events.gray_parrot_feather": "Gray Parrot Feather",
 
+  "item.warriorcats_events.black_vulture_feather": "Black Vulture Feather",
+  "item.warriorcats_events.pigeon_feather": "Pigeon Feather",
+  "item.warriorcats_events.crow_feather": "Crow Feather",
+  "item.warriorcats_events.goldfinch_feather": "Goldfinch Feather",
+  "item.warriorcats_events.cardinal_feather": "Cardinal Feather",
+
   "item.warriorcats_events.green_parrot_body_feathers": "Green Parrot Body Feathers",
   "item.warriorcats_events.red_parrot_body_feathers": "Red Parrot Body Feathers",
   "item.warriorcats_events.blue_parrot_body_feathers": "Blue Parrot Body Feathers",
   "item.warriorcats_events.lightblue_parrot_body_feathers": "Light Blue Parrot Body Feathers",
   "item.warriorcats_events.gray_parrot_body_feathers": "Gray Parrot Body Feathers",
-  "item.warriorcats_events.chicken_body_feathers": "Chicken Body Feathers"
+  "item.warriorcats_events.chicken_body_feathers": "Chicken Body Feathers",
+
+  "item.warriorcats_events.vulture_body_feathers": "Black Vulture Body Feathers",
+  "item.warriorcats_events.pigeon_body_feathers": "Pigeon Body Feathers",
+  "item.warriorcats_events.crow_body_feathers": "Crow Body Feathers",
+  "item.warriorcats_events.goldfinch_body_feathers": "Goldfinch Body Feathers",
+  "item.warriorcats_events.cardinal_body_feathers": "Cardinal Body Feathers"
 }

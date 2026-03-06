@@ -1,19 +1,26 @@
 package net.snowteb.warriorcats_events.entity.client;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.util.FormattedCharSequence;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.clan.ClanData;
 import net.snowteb.warriorcats_events.client.AnimationClientData;
+import net.snowteb.warriorcats_events.client.EntityChatBubbleManager;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.zconfig.WCEClientConfig;
 import org.jetbrains.annotations.Nullable;
@@ -23,7 +30,10 @@ import software.bernie.geckolib.renderer.GeoEntityRenderer;
 import tocraft.walkers.api.PlayerShape;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class WCRenderer extends GeoEntityRenderer<WCatEntity> {
 
@@ -31,6 +41,12 @@ public class WCRenderer extends GeoEntityRenderer<WCatEntity> {
 
     private static final ResourceLocation PLAYER_MORPH_TEXTURE =
             new ResourceLocation("warriorcats_events", "textures/hud/player_morph_icon.png");
+
+    private static final ResourceLocation PLAYER_TEXT_BUBBLE =
+            new ResourceLocation("warriorcats_events", "textures/hud/player_text_bubble.png");
+
+    private static final ResourceLocation BIG_PLAYER_TEXT_BUBBLE =
+            new ResourceLocation("warriorcats_events", "textures/hud/big_player_text_bubble.png");
 
     public WCRenderer(EntityRendererProvider.Context context) {
         super(context, new WCModel());
@@ -49,7 +65,6 @@ public class WCRenderer extends GeoEntityRenderer<WCatEntity> {
 //        int variant = entity.getVariant();
 //        return WCModel.TEXTURES[Math.max(0, Math.min(variant, WCModel.TEXTURES.length - 1))];
 //    }
-
     @Override
     public ResourceLocation getTextureLocation(WCatEntity cat) {
 
@@ -63,7 +78,7 @@ public class WCRenderer extends GeoEntityRenderer<WCatEntity> {
 
         String key = cat.getCatTextureKey();
 
-        ResourceLocation texture =TEXTURE_CACHE.get(key);
+        ResourceLocation texture = TEXTURE_CACHE.get(key);
 
         if (texture == null) {
             LayerTexture skin = new LayerTexture(layers);
@@ -83,7 +98,310 @@ public class WCRenderer extends GeoEntityRenderer<WCatEntity> {
     public void preRender(PoseStack poseStack, WCatEntity animatable, BakedGeoModel model, MultiBufferSource bufferSource, VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
 
 
-        float scale = switch (animatable.getVariant()) {
+        float scale = this.getVisualScale(animatable);
+
+        poseStack.scale(scale, scale, scale);
+        if (animatable.hasCustomName() && animatable.getCustomName().getString().contains("squished")) {
+            poseStack.scale(scale, 0.1f, scale);
+            this.shadowRadius = 0.0F;
+        } else {
+            this.shadowRadius = 0.4f;
+            this.shadowStrength = 0.5F;
+        }
+        super.preRender(poseStack, animatable, model, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
+    }
+
+    @Override
+    public void render(WCatEntity entity, float entityYaw, float partialTick,
+                       PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
+
+
+        /**
+         * If the entity is the entity the player is playing as (The one the player is morphed into), then set isPlayerShape.
+         */
+        if (entity == PlayerShape.getCurrentShape(Minecraft.getInstance().player)) {
+            AnimationClientData.isPlayerShape = true;
+        } else {
+            AnimationClientData.isPlayerShape = false;
+        }
+
+//        if (entity != PlayerShape.getCurrentShape(Minecraft.getInstance().player)) {
+//            float ageMoons = entity.getAgeInMoons();
+//            float percentage = ageMoons / 12.0F;
+//            float scale = (float) (0.4 + (percentage * 0.6));
+//            poseStack.scale(scale, scale, scale);
+//        } else {
+//            if (entity.isBaby()) {
+//                poseStack.scale(0.4f, 0.4f, 0.4f);
+//            }
+//            if (entity.isAppScale() && entity.isBaby()) {
+//                poseStack.scale(1.75f, 1.75f, 1.75f);
+//            }
+//        }
+
+
+
+
+
+        if (entity.isBaby()) {
+            poseStack.scale(0.4f, 0.4f, 0.4f);
+        }
+        if (entity.isAppScale() && entity.isBaby()) {
+            poseStack.scale(1.75f, 1.75f, 1.75f);
+        }
+
+        super.render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
+
+
+        if (entity.shouldShowMorphName()) {
+            if (Minecraft.getInstance().player != null) {
+                if (!entity.getPlayerBoundUuid().equals(ClanData.EMPTY_UUID)) {
+
+                    boolean canShowThisName = true;
+                    boolean canShowThisMessage = true;
+
+                    if (entity == PlayerShape.getCurrentShape(Minecraft.getInstance().player)) {
+                        if (!WCEClientConfig.CLIENT.OWN_CHAT_BUBBLES.get()) {
+                            canShowThisMessage = false;
+                        }
+                        if (!WCEClientConfig.CLIENT.OWN_MORPH_NAME.get()) {
+                            canShowThisName = false;
+                        }
+                    }
+
+
+                    poseStack.pushPose();
+
+                    float size = 16f;
+                    int alpha = 255;
+
+                    int color = 0xFFFFFFFF;
+                    float yOffset = 0;
+
+                    if (entity.isDiscrete()) {
+                        alpha = 50;
+                        color = 0x33FFFFFF;
+                        yOffset = 0.07f;
+                    }
+
+                    poseStack.translate(0.0D, 1.0D - yOffset + getVisualScale(entity)*0.5, 0.0D);
+                    poseStack.mulPose(this.entityRenderDispatcher.cameraOrientation());
+
+                    poseStack.scale(-0.010F, -0.010F, 1F);
+
+                    VertexConsumer buffer = bufferSource.getBuffer(RenderType.entityTranslucent(PLAYER_MORPH_TEXTURE));
+                    Matrix4f matrix = poseStack.last().pose();
+
+                    int redRGB = 255;
+                    int greenRGB = 255;
+                    int blueRGB = 255;
+
+                    if (canShowThisName) {
+                        buffer.vertex(matrix, -size, -size, 0)
+                                .color(redRGB, greenRGB, blueRGB, alpha)
+                                .uv(0, 0)
+                                .overlayCoords(OverlayTexture.NO_OVERLAY)
+                                .uv2(packedLight)
+                                .normal(0, 1, 0)
+                                .endVertex();
+
+                        buffer.vertex(matrix, -size, size, 0)
+                                .color(redRGB, greenRGB, blueRGB, alpha)
+                                .uv(0, 1)
+                                .overlayCoords(OverlayTexture.NO_OVERLAY)
+                                .uv2(packedLight)
+                                .normal(0, 1, 0)
+                                .endVertex();
+
+                        buffer.vertex(matrix, size, size, 0)
+                                .color(redRGB, greenRGB, blueRGB, alpha)
+                                .uv(1, 1)
+                                .overlayCoords(OverlayTexture.NO_OVERLAY)
+                                .uv2(packedLight)
+                                .normal(0, 1, 0)
+                                .endVertex();
+
+                        buffer.vertex(matrix, size, -size, 0)
+                                .color(redRGB, greenRGB, blueRGB, alpha)
+                                .uv(1, 0)
+                                .overlayCoords(OverlayTexture.NO_OVERLAY)
+                                .uv2(packedLight)
+                                .normal(0, 1, 0)
+                                .endVertex();
+                    }
+
+                    String morphName = entity.hasCustomName() ? entity.getCustomName().getString() : "Unnamed cat";
+                    poseStack.translate(0.0D, -1.7D, 0.0D);
+
+                    poseStack.scale(2.5f, 2.5f, 1F);
+
+                    float x = -Minecraft.getInstance().font.width(morphName) / 2f;
+
+                    if (canShowThisName) {
+                        Minecraft.getInstance().font.drawInBatch(morphName, x, 10, color,
+                                false, matrix, bufferSource, Font.DisplayMode.NORMAL, 0x44000000, packedLight);
+                    }
+
+                    poseStack.scale(1/2.5f, 1/2.5f, 1);
+
+
+                    if (WCEClientConfig.CLIENT.MORPH_CHAT_BUBBLES.get()) {
+                        EntityChatBubbleManager.ChatBubble bubble = EntityChatBubbleManager.bubbles.get(entity.getPlayerBoundUuid());
+                        if (bubble != null && Minecraft.getInstance().cameraEntity.distanceTo(entity) < 15) {
+                            Font font = Minecraft.getInstance().font;
+
+                            Component message = bubble.message;
+                            message = formatOriginalMessage(message);
+
+                            poseStack.translate(0.0D, -20D, 0.0D);
+                            if (!canShowThisName) {
+                                poseStack.translate(0.0D, 50D, 0.0D);
+                            }
+
+                            poseStack.scale(1.2f, 1.2f, 1.2F);
+
+                            List<FormattedCharSequence> lines = font.split(message, 160);
+
+
+                            int textHeight = lines.size() * 9;
+                            int bubbleHeight = textHeight + 10 * 2;
+
+                            int bubbleWidth = 170;
+
+                            int theSize = 0;
+                            for (FormattedCharSequence line : lines) {
+                                if (font.width(line) > theSize) {
+                                    theSize = font.width(line);
+                                }
+                            }
+                            bubbleWidth = Math.max(theSize + 20, 80);
+                            if (lines.size() == 1) {
+                                bubbleHeight = 28;
+                            }
+
+                            VertexConsumer bubbleBuffer = bufferSource.getBuffer(RenderType.entitySmoothCutout(PLAYER_TEXT_BUBBLE));
+                            if (lines.size() >= 5) {
+                                bubbleBuffer = bufferSource.getBuffer(RenderType.entitySmoothCutout(BIG_PLAYER_TEXT_BUBBLE));
+                            }
+                            int alphaTextBubble = 255;
+                            if (entity.isDiscrete()) {
+                                bubbleBuffer = bufferSource.getBuffer(RenderType.entityTranslucent(PLAYER_TEXT_BUBBLE));
+                                if (lines.size() >= 5) {
+                                    bubbleBuffer = bufferSource.getBuffer(RenderType.entityTranslucent(BIG_PLAYER_TEXT_BUBBLE));
+                                }
+                                alphaTextBubble = 100;
+                                redRGB = 180;
+                                greenRGB = 180;
+                                blueRGB = 180;
+                            }
+
+                            Matrix4f pose = poseStack.last().pose();
+
+                            float left = -bubbleWidth / 2f;
+                            float right = bubbleWidth / 2f;
+
+                            float top = -bubbleHeight;
+                            float bottom = -1;
+
+                            if (canShowThisMessage) {
+
+                                bubbleBuffer.vertex(pose, left, top, -0.01f)
+                                        .color(redRGB, greenRGB, blueRGB, alphaTextBubble)
+                                        .uv(0, 0)
+                                        .overlayCoords(OverlayTexture.NO_OVERLAY)
+                                        .uv2(255)
+                                        .normal(0, 1, 0)
+                                        .endVertex();
+
+                                bubbleBuffer.vertex(pose, left, bottom + 8, -0.01f)
+                                        .color(redRGB, greenRGB, blueRGB, alphaTextBubble)
+                                        .uv(0, 1)
+                                        .overlayCoords(OverlayTexture.NO_OVERLAY)
+                                        .uv2(255)
+                                        .normal(0, 1, 0)
+                                        .endVertex();
+
+                                bubbleBuffer.vertex(pose, right, bottom + 8, -0.01f)
+                                        .color(redRGB, greenRGB, blueRGB, alphaTextBubble)
+                                        .uv(1, 1)
+                                        .overlayCoords(OverlayTexture.NO_OVERLAY)
+                                        .uv2(255)
+                                        .normal(0, 1, 0)
+                                        .endVertex();
+
+                                bubbleBuffer.vertex(pose, right, top, -0.01f)
+                                        .color(redRGB, greenRGB, blueRGB, alphaTextBubble)
+                                        .uv(1, 0)
+                                        .overlayCoords(OverlayTexture.NO_OVERLAY)
+                                        .uv2(255)
+                                        .normal(0, 1, 0)
+                                        .endVertex();
+
+
+                                int y = (int) (top + 12);
+                                poseStack.translate(0.0D, 0.0D, -0.02D);
+                                for (FormattedCharSequence line : lines) {
+
+                                    float x1 = -font.width(line) / 2f;
+
+                                    font.drawInBatch(
+                                            line,
+                                            x1,
+                                            y,
+                                            color,
+                                            false,
+                                            matrix,
+                                            bufferSource,
+                                            Font.DisplayMode.NORMAL,
+                                            0x00000000,
+                                            255
+                                    );
+
+                                    y += 8.2;
+                                }
+
+
+                            }
+
+                        }
+                    }
+
+                    poseStack.popPose();
+
+
+                }
+            }
+        }
+
+    }
+
+    @Override
+    public RenderType getRenderType(WCatEntity animatable, ResourceLocation texture, @Nullable MultiBufferSource bufferSource, float partialTick) {
+        return super.getRenderType(animatable, texture, bufferSource, partialTick);
+    }
+
+    @Override
+    protected void renderNameTag(WCatEntity pEntity, Component pDisplayName, PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight) {
+
+        if (Minecraft.getInstance().player != null) {
+            if (!WCEClientConfig.CLIENT.OWN_MORPH_NAME.get() && PlayerShape.getCurrentShape(Minecraft.getInstance().player) == pEntity) {
+                return;
+            }
+        }
+
+        if (!pEntity.getPlayerBoundUuid().equals(ClanData.EMPTY_UUID)) {
+            return;
+        }
+
+        super.renderNameTag(pEntity, pDisplayName, pPoseStack, pBuffer, pPackedLight);
+
+
+    }
+
+
+    private float getVisualScale(WCatEntity pEntity) {
+        float scale;
+        scale = switch (pEntity.getVariant()) {
             case 0 -> 0.8f;
             case 1 -> 1.0f;
             case 2 -> 1.0f;
@@ -141,212 +459,45 @@ public class WCRenderer extends GeoEntityRenderer<WCatEntity> {
             default -> 0.8f;
         };
 
-        if (animatable.getSize() > 0.4) {
-            scale = animatable.getSize();
+        if (pEntity.getSize() > 0.4) {
+            scale = pEntity.getSize();
         }
 
-        poseStack.scale(scale, scale, scale);
-        if (animatable.hasCustomName() && animatable.getCustomName().getString().contains("squished")) {
-            poseStack.scale(scale, 0.1f, scale);
-            this.shadowRadius = 0.0F;
-        } else {
-            this.shadowRadius = 0.4f;
-            this.shadowStrength = 0.5F;
-        }
-        super.preRender(poseStack, animatable, model, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
+        return scale;
     }
 
-    @Override
-    public void render(WCatEntity entity, float entityYaw, float partialTick,
-                       PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
 
+    public static Component formatOriginalMessage(Component original) {
 
+        String text = original.getString();
 
-        /**
-         * If the entity is the entity the player is playing as (The one the player is morphed into), then set isPlayerShape.
-         */
-        if (entity == PlayerShape.getCurrentShape(Minecraft.getInstance().player)) {
-            AnimationClientData.isPlayerShape = true;
-        } else {
-            AnimationClientData.isPlayerShape = false;
-        }
+        MutableComponent result = Component.empty();
 
-//        if (entity != PlayerShape.getCurrentShape(Minecraft.getInstance().player)) {
-//            float ageMoons = entity.getAgeInMoons();
-//            float percentage = ageMoons / 12.0F;
-//            float scale = (float) (0.4 + (percentage * 0.6));
-//            poseStack.scale(scale, scale, scale);
-//        } else {
-//            if (entity.isBaby()) {
-//                poseStack.scale(0.4f, 0.4f, 0.4f);
-//            }
-//            if (entity.isAppScale() && entity.isBaby()) {
-//                poseStack.scale(1.75f, 1.75f, 1.75f);
-//            }
-//        }
+        Matcher matcher = Pattern.compile("\\*(.*?)\\*").matcher(text);
 
-        if (entity.shouldShowMorphName()) {
-            if (Minecraft.getInstance().player != null) {
-                if (!entity.getPlayerBoundUuid().equals(ClanData.EMPTY_UUID)
-                        && entity != PlayerShape.getCurrentShape(Minecraft.getInstance().player) ) {
-                    poseStack.pushPose();
+        int lastEnd = 0;
 
-                    float size = 16f;
-                    int alpha = 255;
+        while (matcher.find()) {
 
-                    int color = 0xFFFFFFFF;
-                    float yOffset = 0;
-
-                    if (entity.isDiscrete()) {
-                        alpha = 50;
-                        color = 0x33FFFFFF;
-                        yOffset = 0.07f;
-                    }
-
-                    poseStack.translate(0.0D, 1.7D - yOffset, 0.0D);
-                    poseStack.mulPose(this.entityRenderDispatcher.cameraOrientation());
-
-                    poseStack.scale(-0.010F, -0.010F, 1F);
-
-                    VertexConsumer buffer = bufferSource.getBuffer(RenderType.entityTranslucent(PLAYER_MORPH_TEXTURE));
-                    Matrix4f matrix = poseStack.last().pose();
-
-
-
-
-                    buffer.vertex(matrix, -size, -size, 0)
-                            .color(255, 255, 255, alpha)
-                            .uv(0, 0)
-                            .overlayCoords(OverlayTexture.NO_OVERLAY)
-                            .uv2(packedLight)
-                            .normal(0, 1, 0)
-                            .endVertex();
-
-                    buffer.vertex(matrix, -size, size, 0)
-                            .color(255, 255, 255, alpha)
-                            .uv(0, 1)
-                            .overlayCoords(OverlayTexture.NO_OVERLAY)
-                            .uv2(packedLight)
-                            .normal(0, 1, 0)
-                            .endVertex();
-
-                    buffer.vertex(matrix, size, size, 0)
-                            .color(255, 255, 255, alpha)
-                            .uv(1, 1)
-                            .overlayCoords(OverlayTexture.NO_OVERLAY)
-                            .uv2(packedLight)
-                            .normal(0, 1, 0)
-                            .endVertex();
-
-                    buffer.vertex(matrix, size, -size, 0)
-                            .color(255, 255, 255, alpha)
-                            .uv(1, 0)
-                            .overlayCoords(OverlayTexture.NO_OVERLAY)
-                            .uv2(packedLight)
-                            .normal(0, 1, 0)
-                            .endVertex();
-
-                    String morphName = entity.hasCustomName() ? entity.getCustomName().getString() : "Unnamed cat";
-                    poseStack.translate(0.0D, -1.7D, 0.0D);
-
-                    poseStack.scale(2.5f,2.5f,1F);
-
-                    float x = -Minecraft.getInstance().font.width(morphName) / 2f;
-
-                    Minecraft.getInstance().font.drawInBatch(morphName, x, 10, color,
-                            false, matrix, bufferSource, Font.DisplayMode.NORMAL, 0x44000000, packedLight);
-
-
-                    poseStack.popPose();
-                }
+            if (matcher.start() > lastEnd) {
+                result.append(Component.literal(text.substring(lastEnd, matcher.start())));
             }
+
+            String part = matcher.group(1);
+
+            result.append(Component.literal(part).withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.GRAY));
+
+            lastEnd = matcher.end();
         }
 
-        if (entity.isBaby()) {
-            poseStack.scale(0.4f, 0.4f, 0.4f);
-        }
-        if (entity.isAppScale() && entity.isBaby()) {
-            poseStack.scale(1.75f, 1.75f, 1.75f);
+        if (lastEnd < text.length()) {
+            result.append(Component.literal(text.substring(lastEnd)));
         }
 
-        super.render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
+        return result;
     }
 
-    @Override
-    public RenderType getRenderType(WCatEntity animatable, ResourceLocation texture, @Nullable MultiBufferSource bufferSource, float partialTick) {
-        return super.getRenderType(animatable, texture, bufferSource, partialTick);
-    }
 
-    @Override
-    protected void renderNameTag(WCatEntity pEntity, Component pDisplayName, PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight) {
-
-//        if (Minecraft.getInstance().player != null) {
-//            if (!pEntity.getPlayerBoundUuid().equals(ClanData.EMPTY_UUID)
-//                    && pEntity != PlayerShape.getCurrentShape(Minecraft.getInstance().player)) {
-//                pPoseStack.pushPose();
-//
-//                pPoseStack.translate(0.0D, 1.4D, 0.0D);
-//                pPoseStack.mulPose(this.entityRenderDispatcher.cameraOrientation());
-//
-//                pPoseStack.scale(-0.010F, -0.010F, 0F);
-//
-//                VertexConsumer buffer = pBuffer.getBuffer(RenderType.entityTranslucent(PLAYER_MORPH_TEXTURE));
-//                Matrix4f matrix = pPoseStack.last().pose();
-//
-//
-//                float size = 16f;
-//                int alpha = 255;
-//
-//                buffer.vertex(matrix, -size, -size, 0)
-//                        .color(255, 255, 255, alpha)
-//                        .uv(0, 0)
-//                        .overlayCoords(OverlayTexture.NO_OVERLAY)
-//                        .uv2(pPackedLight)
-//                        .normal(0, 1, 0)
-//                        .endVertex();
-//
-//                buffer.vertex(matrix, -size, size, 0)
-//                        .color(255, 255, 255, alpha)
-//                        .uv(0, 1)
-//                        .overlayCoords(OverlayTexture.NO_OVERLAY)
-//                        .uv2(pPackedLight)
-//                        .normal(0, 1, 0)
-//                        .endVertex();
-//
-//                buffer.vertex(matrix, size, size, 0)
-//                        .color(255, 255, 255, alpha)
-//                        .uv(1, 1)
-//                        .overlayCoords(OverlayTexture.NO_OVERLAY)
-//                        .uv2(pPackedLight)
-//                        .normal(0, 1, 0)
-//                        .endVertex();
-//
-//                buffer.vertex(matrix, size, -size, 0)
-//                        .color(255, 255, 255, alpha)
-//                        .uv(1, 0)
-//                        .overlayCoords(OverlayTexture.NO_OVERLAY)
-//                        .uv2(pPackedLight)
-//                        .normal(0, 1, 0)
-//                        .endVertex();
-//
-//                pPoseStack.popPose();
-//            }
-//        }
-
-        if (Minecraft.getInstance().player != null) {
-            if (!WCEClientConfig.CLIENT.OWN_MORPH_NAME.get() && PlayerShape.getCurrentShape(Minecraft.getInstance().player) == pEntity) {
-                return;
-            }
-        }
-
-        if (!pEntity.getPlayerBoundUuid().equals(ClanData.EMPTY_UUID)) {
-            return;
-        }
-
-        super.renderNameTag(pEntity, pDisplayName, pPoseStack, pBuffer, pPackedLight);
-
-
-    }
 }
 
 
