@@ -34,7 +34,7 @@ public class WCatIntegration extends AbstractIntegration {
 //        EntityUpdaters.register(ModEntities.WCAT.get(), new EntityUpdater<WCatEntity>() {
 //            @Override
 //            public void update(Player from, WCatEntity to) {
-//                if (from.onClimbable()) to.setAnimIndex(3);
+//                to.setPos(from.getX(), from.getY(), from.getZ());
 //            }
 //        });
 

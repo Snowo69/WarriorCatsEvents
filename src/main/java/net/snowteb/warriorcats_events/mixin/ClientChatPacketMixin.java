@@ -10,6 +10,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import tocraft.walkers.api.PlayerShape;
 
 import java.util.UUID;
 
@@ -25,13 +26,11 @@ public class ClientChatPacketMixin {
         Minecraft mc = Minecraft.getInstance();
 
         if (mc.level != null) {
-            Player player = mc.level.getPlayerByUUID(sender);
 
             int time = (int) (200 + message.getString().length()*0.7f);
 
-            if(player != null) {
-                EntityChatBubbleManager.add(sender, message, time);
-            }
+            EntityChatBubbleManager.add(sender, message, time);
+
         }
     }
 }

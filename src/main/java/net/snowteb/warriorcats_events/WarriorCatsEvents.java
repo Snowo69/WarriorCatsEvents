@@ -34,7 +34,7 @@ import java.util.UUID;
 @Mod(WarriorCatsEvents.MODID)
 public class WarriorCatsEvents {
     public static final String MODID = "warriorcats_events";
-    public static final String MOD_VERSION = "1.4.2";
+    public static final String MOD_VERSION = "1.4.2.1";
     public static final Logger LOGGER = LogUtils.getLogger();
 
 

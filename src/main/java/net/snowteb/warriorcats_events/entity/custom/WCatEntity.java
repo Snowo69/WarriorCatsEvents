@@ -7526,7 +7526,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                 this.setRandomMood(this.random);
             }
 
-            if (this.tickCount % 100 == 0) {
+            if (this.tickCount % 20 == 0) {
                 if (this.getTarget() != null) {
                     if (!this.getTarget().isAlive()) {
                         this.setTarget(null);

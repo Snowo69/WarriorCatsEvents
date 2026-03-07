@@ -8,6 +8,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -17,6 +18,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
+import net.minecraft.world.entity.player.Player;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.clan.ClanData;
 import net.snowteb.warriorcats_events.client.AnimationClientData;
@@ -32,6 +34,7 @@ import tocraft.walkers.api.PlayerShape;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -125,7 +128,7 @@ public class WCRenderer extends GeoEntityRenderer<WCatEntity> {
             AnimationClientData.isPlayerShape = false;
         }
 
-//        if (entity != PlayerShape.getCurrentShape(Minecraft.getInstance().player)) {
+//        if (entity.getPlayerBoundUuid().equals(ClanData.EMPTY_UUID)) {
 //            float ageMoons = entity.getAgeInMoons();
 //            float percentage = ageMoons / 12.0F;
 //            float scale = (float) (0.4 + (percentage * 0.6));
@@ -138,9 +141,6 @@ public class WCRenderer extends GeoEntityRenderer<WCatEntity> {
 //                poseStack.scale(1.75f, 1.75f, 1.75f);
 //            }
 //        }
-
-
-
 
 
         if (entity.isBaby()) {
@@ -156,6 +156,8 @@ public class WCRenderer extends GeoEntityRenderer<WCatEntity> {
         if (entity.shouldShowMorphName()) {
             if (Minecraft.getInstance().player != null) {
                 if (!entity.getPlayerBoundUuid().equals(ClanData.EMPTY_UUID)) {
+
+                    UUID boundUuid =  entity.getPlayerBoundUuid();
 
                     boolean canShowThisName = true;
                     boolean canShowThisMessage = true;
@@ -246,8 +248,12 @@ public class WCRenderer extends GeoEntityRenderer<WCatEntity> {
 
 
                     if (WCEClientConfig.CLIENT.MORPH_CHAT_BUBBLES.get()) {
-                        EntityChatBubbleManager.ChatBubble bubble = EntityChatBubbleManager.bubbles.get(entity.getPlayerBoundUuid());
-                        if (bubble != null && Minecraft.getInstance().cameraEntity.distanceTo(entity) < 15) {
+                        EntityChatBubbleManager.ChatBubble bubble = EntityChatBubbleManager.bubbles.get(boundUuid);
+
+                        Player owner = Minecraft.getInstance().level.getPlayerByUUID(boundUuid);
+
+                        if (bubble != null && (owner != null && Minecraft.getInstance().player.distanceTo(owner) < 15)) {
+
                             Font font = Minecraft.getInstance().font;
 
                             Component message = bubble.message;

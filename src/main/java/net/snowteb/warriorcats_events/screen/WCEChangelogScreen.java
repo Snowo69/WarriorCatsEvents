@@ -163,7 +163,7 @@ public class WCEChangelogScreen extends Screen {
         line15 = "- Added 4 more advancements";
         line16 = "- Added an admin command to force delete clans in the server";
         line17 = "- Other minor adjustments";
-        line18 = "";
+        line18 = "- 1.4.2.1 : Fixed the chat bubbles not appearing and other minor adjustements";
     }
 
 //    private void defineChangelogLines() {

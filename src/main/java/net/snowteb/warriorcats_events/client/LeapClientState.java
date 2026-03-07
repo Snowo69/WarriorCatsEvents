@@ -10,6 +10,9 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
+import net.minecraft.world.item.AxeItem;
+import net.minecraft.world.item.PickaxeItem;
+import net.minecraft.world.item.ShovelItem;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
@@ -42,7 +45,12 @@ public class LeapClientState {
 
         if (Minecraft.getInstance().player != null) {
             if (!(PlayerShape.getCurrentShape(Minecraft.getInstance().player) instanceof Animal)) return;
+            if (Minecraft.getInstance().player.getItemInHand(InteractionHand.MAIN_HAND).getItem() instanceof PickaxeItem
+            || Minecraft.getInstance().player.getItemInHand(InteractionHand.MAIN_HAND).getItem() instanceof AxeItem
+            || Minecraft.getInstance().player.getItemInHand(InteractionHand.MAIN_HAND).getItem() instanceof ShovelItem) return;
+
         }
+
 
         if (shifting && Minecraft.getInstance().player.onGround() ) {
 
