@@ -17,6 +17,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.TickTask;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.level.TicketType;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -24,13 +25,17 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
+import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraftforge.network.NetworkEvent;
+import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.item.ModItems;
+import net.snowteb.warriorcats_events.zconfig.WCEServerConfig;
 
-import javax.annotation.Nullable;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 public class CtSTeleportToLocationPacket {
@@ -56,78 +61,57 @@ public class CtSTeleportToLocationPacket {
             if (player == null) return;
 
             ServerLevel level = (ServerLevel) player.level();
-            BlockPos destination = player.blockPosition();
             int type = packet.data;
 
-
-            if (type == 32) {
-                destination = player.blockPosition();
-            }
-            if (type == 0){
-                destination = player.blockPosition();
-            }
-            if (type == 1){
-                destination = locateBiome(level,
-                        level.registryAccess().registryOrThrow(Registries.BIOME).getHolderOrThrow(Biomes.TAIGA),
-                        player.blockPosition()
-                );
-            }
-            if (type == 2){
-                destination = locateBiome(level,
-                        level.registryAccess().registryOrThrow(Registries.BIOME).getHolderOrThrow(Biomes.PLAINS),
-                        player.blockPosition()
-                );
-            }
-            if (type == 3){
-                destination = locateBiome(level,
-                        level.registryAccess().registryOrThrow(Registries.BIOME).getHolderOrThrow(Biomes.SAVANNA),
-                        player.blockPosition()
-                );
-            }
-            if (type == 4){
-                destination = locateBiome(level,
-                        level.registryAccess().registryOrThrow(Registries.BIOME).getHolderOrThrow(Biomes.FOREST),
-                        player.blockPosition()
-                );
-            }
-            if (type == 5) {
-                destination = locateStructure(
-                        level,
-                        getStructure(level, "minecraft:village_taiga"),
-                        player.blockPosition()
-                );
-            }
-            if (type == 6){
-                destination = locateStructure(
-                        level,
-                        getStructure(level, "minecraft:village_plains"),
-                        player.blockPosition()
-                );
-            }
-            if (type == 7){
-                destination = locateStructure(
-                        level,
-                        getStructure(level, "minecraft:village_savanna"),
-                        player.blockPosition()
-                );
-            }
-            if (type == 8){
-                destination = locateStructure(
-                        level,
-                        getStructure(level, "minecraft:jungle_pyramid"),
-                        player.blockPosition()
-                );
-            }
-
-            if (destination != null) {
-                if (type != 32) {
-                    player.sendSystemMessage(Component.literal("Teleporting...").withStyle(ChatFormatting.DARK_GRAY));
-                    teleportPlayer(player, destination);
-                    player.addEffect(new MobEffectInstance(MobEffects.SLOW_FALLING, 300));
-
+            if (WCEServerConfig.SERVER.TELEPORT_WHEN_JOIN.get()) {
+                if (type == 1){
+                    locateBiomeAsync(level, player,
+                            level.registryAccess().registryOrThrow(Registries.BIOME).getHolderOrThrow(Biomes.TAIGA)
+                    );
                 }
-            } else {
-                player.sendSystemMessage(Component.literal("Couldn't find a nearby appropiate location.").withStyle(ChatFormatting.RED));
+                if (type == 2){
+                    locateBiomeAsync(level, player,
+                            level.registryAccess().registryOrThrow(Registries.BIOME).getHolderOrThrow(Biomes.PLAINS)
+                    );
+                }
+                if (type == 3){
+                    locateBiomeAsync(level, player,
+                            level.registryAccess().registryOrThrow(Registries.BIOME).getHolderOrThrow(Biomes.SAVANNA)
+                    );
+                }
+                if (type == 4){
+                    locateBiomeAsync(level, player,
+                            level.registryAccess().registryOrThrow(Registries.BIOME).getHolderOrThrow(Biomes.FOREST)
+                    );
+                }
+                if (type == 5) {
+                    locateStructureAsync(
+                            level,
+                            getStructure(level, "minecraft:village_taiga"),
+                            player
+                    );
+                }
+                if (type == 6){
+                    locateStructureAsync(
+                            level,
+                            getStructure(level, "minecraft:village_plains"),
+                            player
+                    );
+                }
+                if (type == 7){
+                    locateStructureAsync(
+                            level,
+                            getStructure(level, "minecraft:village_savanna"),
+                            player
+                    );
+                }
+                if (type == 8){
+                    locateStructureAsync(
+                            level,
+                            getStructure(level, "minecraft:jungle_pyramid"),
+                            player
+                    );
+                }
             }
 
             CompoundTag persistent;
@@ -155,43 +139,42 @@ public class CtSTeleportToLocationPacket {
                 persistent.putBoolean("warriorcats_events.starting_items", true);
             }
 
-            MinecraftServer server = level.getServer();
-            int delay = 140;
-
-            server.tell(new TickTask(
-                    server.getTickCount() + delay,
-                    () -> {
-                        level.getChunkAt(player.blockPosition());
-                        level.playSound(null, player.blockPosition() ,SoundEvents.CAT_STRAY_AMBIENT, SoundSource.MASTER);
-
-                        level.sendParticles(
-                                ParticleTypes.CLOUD,
-                                player.getX(),
-                                player.getY() - 6,
-                                player.getZ(),
-                                1200,
-                                0.1, 1.5, 0.1,
-                                0.2
-                        );
-                        level.sendParticles(
-                                ParticleTypes.CAMPFIRE_SIGNAL_SMOKE,
-                                player.getX(),
-                                player.getY() - 6,
-                                player.getZ(),
-                                1000,
-                                0.3, 1.5, 0.3,
-                                0.2
-                        );
-                    }
-            ));
-
-
-
-
-
         });
 
         ctx.get().setPacketHandled(true);
+    }
+
+    private static void summonParticles(ServerLevel level, ServerPlayer player) {
+
+        MinecraftServer server = level.getServer();
+        int delay = 140;
+
+        server.tell(new TickTask(
+                server.getTickCount() + delay,
+                () -> {
+                    level.getChunkAt(player.blockPosition());
+                    level.playSound(null, player.blockPosition() ,SoundEvents.CAT_STRAY_AMBIENT, SoundSource.MASTER);
+
+                    level.sendParticles(
+                            ParticleTypes.CLOUD,
+                            player.getX(),
+                            player.getY() - 6,
+                            player.getZ(),
+                            1200,
+                            0.1, 1.5, 0.1,
+                            0.2
+                    );
+                    level.sendParticles(
+                            ParticleTypes.CAMPFIRE_SIGNAL_SMOKE,
+                            player.getX(),
+                            player.getY() - 6,
+                            player.getZ(),
+                            1000,
+                            0.3, 1.5, 0.3,
+                            0.2
+                    );
+                }
+        ));
     }
 
     public static Holder<Structure> getStructure(ServerLevel level, String id) {
@@ -204,47 +187,89 @@ public class CtSTeleportToLocationPacket {
                 );
     }
 
-    @Nullable
-    public static BlockPos locateBiome(ServerLevel level, Holder<Biome> biome, BlockPos origin) {
-        Pair<BlockPos, Holder<Biome>> pair =
-                level.findClosestBiome3d(
-                        b -> b == biome,
-                        origin,
-                        6400,
-                        32,
-                        64
-                );
+    public static void teleportPlayer(ServerPlayer player, BlockPos pos) {
 
-        return pair != null ? pair.getFirst() : null;
+        ServerLevel level = player.serverLevel();
+
+        level.getChunkAt(pos);
+
+        pos = level.getHeightmapPos(Heightmap.Types.WORLD_SURFACE, pos);
+
+        ChunkPos chunkPos = new ChunkPos(pos);
+
+        level.getChunkSource().addRegionTicket(TicketType.POST_TELEPORT, chunkPos, 1, player.getId());
+
+        player.connection.teleport(pos.getX() + 0.5, pos.getY() + 30, pos.getZ() + 0.5,
+                player.getYRot(), player.getXRot());
+
+        player.addEffect(new MobEffectInstance(MobEffects.SLOW_FALLING, 200));
+
     }
 
-    @Nullable
-    public static BlockPos locateStructure(ServerLevel level, Holder<Structure> structure, BlockPos origin) {
-        Pair<BlockPos, Holder<Structure>> pair =
-                level.getChunkSource()
-                        .getGenerator()
-                        .findNearestMapStructure(
-                                level,
-                                HolderSet.direct(structure),
-                                origin,
-                                100,
-                                false
+
+    public static void locateStructureAsync(ServerLevel level, Holder<Structure> structure, ServerPlayer player) {
+
+        BlockPos origin = player.blockPosition();
+
+        WarriorCatsEvents.teleportExecutor.execute(() -> {
+            Optional<BlockPos> optional = findStructure(level, origin, structure, 100);
+            level.getServer().execute(() -> optional.ifPresentOrElse(
+                    pos -> {
+                        teleportPlayer(player, pos);
+                        summonParticles(level, player);
+                    },
+                    () -> player.sendSystemMessage(Component.literal("Couldn't find a nearby location.").withStyle(ChatFormatting.RED))
+            ));
+        });
+
+    }
+    public static void locateBiomeAsync(ServerLevel level, ServerPlayer player, Holder<Biome> biome) {
+
+        BlockPos origin = player.blockPosition();
+
+        player.sendSystemMessage(Component.literal("Teleporting...").withStyle(ChatFormatting.DARK_GRAY));
+
+        WarriorCatsEvents.teleportExecutor.execute(() -> {
+            Optional<BlockPos> optional = findBiome(level, origin, biome, 4000);
+            level.getServer().execute(() -> optional.ifPresentOrElse(
+                    pos -> {
+
+                        teleportPlayer(player, pos);
+                        summonParticles(level, player);
+                    },
+                    () -> player.sendSystemMessage(Component.literal("Couldn't find a nearby location.").withStyle(ChatFormatting.RED))
+            ));
+        });
+
+    }
+
+    public static Optional<BlockPos> findStructure(ServerLevel level, BlockPos origin, Holder<Structure> structure, int radius) {
+
+        HolderSet<Structure> set = HolderSet.direct(structure);
+
+        Pair<BlockPos, Holder<Structure>> result = level.getChunkSource().getGenerator()
+                        .findNearestMapStructure(level, set, origin, radius, false);
+
+        if (result == null) return Optional.empty();
+
+        return Optional.of(result.getFirst());
+    }
+    public static Optional<BlockPos> findBiome(ServerLevel level, BlockPos origin, Holder<Biome> biome, int radius) {
+
+        Pair<BlockPos, Holder<Biome>> result =
+                level.getChunkSource().getGenerator().getBiomeSource()
+                        .findClosestBiome3d(origin, radius,
+                                64, 32,
+                                holder -> holder.equals(biome),
+                                level.getChunkSource().randomState().sampler(),
+                                level
                         );
 
-        return pair != null ? pair.getFirst() : null;
+        if (result == null) return Optional.empty();
+
+        return Optional.of(result.getFirst());
     }
-
-
-
-    public static void teleportPlayer(ServerPlayer player, BlockPos pos) {
-        player.teleportTo(
-                player.serverLevel(),
-                pos.getX() + 0.5,
-                player.getY() + 45,
-                pos.getZ() + 0.5,
-                player.getYRot(),
-                player.getXRot()
-        );
-    }
-
 }
+
+
+

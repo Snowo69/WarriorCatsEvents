@@ -41,6 +41,7 @@ import net.snowteb.warriorcats_events.item.ModItems;
 import net.snowteb.warriorcats_events.network.ModPackets;
 import net.snowteb.warriorcats_events.network.packet.c2s.clan.EmoteMorphPacket;
 import net.snowteb.warriorcats_events.network.packet.c2s.others.CtSSwitchShape;
+import net.snowteb.warriorcats_events.network.packet.c2s.others.CtSTeleportToLocationPacket;
 import net.snowteb.warriorcats_events.network.packet.s2c.cats.OpenCatDataScreenPacket;
 import net.snowteb.warriorcats_events.network.packet.s2c.clan.OpenClanSetupScreenPacket;
 import net.snowteb.warriorcats_events.network.packet.c2s.others.CtSHissPacket;
@@ -163,6 +164,9 @@ public class ClientEvents {
             } else {
                 waterPressed = false;
             }
+//            if (ModKeybinds.SKILLMENU_KEY.isDown()) {
+//                ModPackets.sendToServer(new CtSTeleportToLocationPacket(player.getRandom().nextInt(9)));
+//            }
 
 
             if (EMOTES_HUD_MENU_KEY.consumeClick()) {
@@ -247,6 +251,7 @@ public class ClientEvents {
             event.register(ModKeybinds.HISSING_KEY);
             event.register(ModKeybinds.WATERDRINK_KEY);
             event.register(WCEClient.EMOTES_HUD_MENU_KEY);
+//            event.register(ModKeybinds.SKILLMENU_KEY);
         }
 
         @SubscribeEvent

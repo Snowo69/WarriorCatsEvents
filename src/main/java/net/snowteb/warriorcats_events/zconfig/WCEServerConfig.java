@@ -25,6 +25,7 @@ public class WCEServerConfig {
         public final ForgeConfigSpec.BooleanValue LEAP_SERVER;
         public final ForgeConfigSpec.BooleanValue SKILL_TREE_SERVER;
         public final ForgeConfigSpec.BooleanValue VANILLA_MEAT_BONUS;
+        public final ForgeConfigSpec.BooleanValue TELEPORT_WHEN_JOIN;
 
         public final ForgeConfigSpec.DoubleValue SKILL_SPEED_MULTIPLIER;
         public final ForgeConfigSpec.DoubleValue SKILL_HP_MULTIPLIER;
@@ -76,6 +77,10 @@ public class WCEServerConfig {
             VANILLA_MEAT_BONUS = builder
                     .comment("Whether eating raw meats will feed you better")
                     .define("rawFoodBonus", true);
+
+            TELEPORT_WHEN_JOIN = builder
+                    .comment("Whether players can choose where to spawn when they join the world")
+                    .define("allowTeleport", true);
 
             builder.push("wce_skills");
 

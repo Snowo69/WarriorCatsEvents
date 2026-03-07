@@ -5519,6 +5519,10 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                             .then("animation.wcat.fall_death", Animation.LoopType.PLAY_ONCE)
                             .then("animation.wcat.death_idle", Animation.LoopType.LOOP));
                     animPlayed = true;
+                } else if (animIndex == 11) {
+                    state.getController().setAnimation(RawAnimation.begin()
+                            .then("animation.wcat.roll", Animation.LoopType.PLAY_ONCE));
+                    animPlayed = true;
                 }
 
             }

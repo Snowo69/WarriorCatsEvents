@@ -128,27 +128,27 @@ public class WCRenderer extends GeoEntityRenderer<WCatEntity> {
             AnimationClientData.isPlayerShape = false;
         }
 
-//        if (entity.getPlayerBoundUuid().equals(ClanData.EMPTY_UUID)) {
-//            float ageMoons = entity.getAgeInMoons();
-//            float percentage = ageMoons / 12.0F;
-//            float scale = (float) (0.4 + (percentage * 0.6));
-//            poseStack.scale(scale, scale, scale);
-//        } else {
-//            if (entity.isBaby()) {
-//                poseStack.scale(0.4f, 0.4f, 0.4f);
-//            }
-//            if (entity.isAppScale() && entity.isBaby()) {
-//                poseStack.scale(1.75f, 1.75f, 1.75f);
-//            }
+        if (entity.getPlayerBoundUuid().equals(ClanData.EMPTY_UUID)) {
+            float ageMoons = entity.getAgeInMoons();
+            float percentage = ageMoons / 12.0F;
+            float scale = (float) (0.4 + (percentage * 0.6));
+            poseStack.scale(scale, scale, scale);
+        } else {
+            if (entity.isBaby()) {
+                poseStack.scale(0.4f, 0.4f, 0.4f);
+            }
+            if (entity.isAppScale() && entity.isBaby()) {
+                poseStack.scale(1.75f, 1.75f, 1.75f);
+            }
+        }
+
+
+//        if (entity.isBaby()) {
+//            poseStack.scale(0.4f, 0.4f, 0.4f);
 //        }
-
-
-        if (entity.isBaby()) {
-            poseStack.scale(0.4f, 0.4f, 0.4f);
-        }
-        if (entity.isAppScale() && entity.isBaby()) {
-            poseStack.scale(1.75f, 1.75f, 1.75f);
-        }
+//        if (entity.isAppScale() && entity.isBaby()) {
+//            poseStack.scale(1.75f, 1.75f, 1.75f);
+//        }
 
         super.render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
 

@@ -30,12 +30,16 @@ import tocraft.walkers.integrations.Integrations;
 
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Mod(WarriorCatsEvents.MODID)
 public class WarriorCatsEvents {
     public static final String MODID = "warriorcats_events";
-    public static final String MOD_VERSION = "1.4.2.1";
+    public static final String MOD_VERSION = "1.4.4";
     public static final Logger LOGGER = LogUtils.getLogger();
+
+    public static final ExecutorService teleportExecutor = Executors.newSingleThreadExecutor();
 
 
     public static class Devs {

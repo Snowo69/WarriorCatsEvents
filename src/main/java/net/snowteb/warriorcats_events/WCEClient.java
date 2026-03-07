@@ -17,7 +17,7 @@ import org.lwjgl.glfw.GLFW;
 public class WCEClient {
     public static boolean isRenderingEmoteMenu = false;
     public static int emoteOffset = 0;
-    public static final int MAX_EMOTES = 10;
+    public static final int MAX_EMOTES = 11;
     public static final KeyMapping EMOTES_HUD_MENU_KEY = new KeyMapping("key.warriorcats_events.emotes", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_Y, "key.category.warriorcats_events.key");
 
 
@@ -39,6 +39,7 @@ public class WCEClient {
         private static final ResourceLocation ICON_BACKFLIP = new ResourceLocation(WarriorCatsEvents.MODID, "textures/hud/emotes/backflip_icon.png");
         private static final ResourceLocation ICON_SLEEP = new ResourceLocation(WarriorCatsEvents.MODID, "textures/hud/emotes/sleep_icon.png");
         private static final ResourceLocation ICON_DEAD = new ResourceLocation(WarriorCatsEvents.MODID, "textures/hud/emotes/dead_icon.png");
+        private static final ResourceLocation ICON_ROLL = new ResourceLocation(WarriorCatsEvents.MODID, "textures/hud/emotes/roll_icon.png");
 
         public static ResourceLocation getIcon(int index) {
             return switch (index) {
@@ -55,6 +56,7 @@ public class WCEClient {
                 case 8 -> ICON_LOAF;
                 case 9 -> ICON_SLEEP;
                 case 10 -> ICON_DEAD;
+                case 11 -> ICON_ROLL;
                 default -> ICON_NONE;
             };
         }
@@ -74,6 +76,7 @@ public class WCEClient {
                 case 8 -> "Loaf";
                 case 9 -> "Sleep";
                 case 10 -> "Play dead";
+                case 11 -> "Roll";
                 default -> "Unnamed";
             };
         }
