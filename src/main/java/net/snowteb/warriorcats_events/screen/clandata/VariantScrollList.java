@@ -35,6 +35,11 @@ public class VariantScrollList extends AbstractSelectionList<VariantScrollList.V
 
     }
 
+    @Override
+    public boolean mouseDragged(double pMouseX, double pMouseY, int pButton, double pDragX, double pDragY) {
+        return super.mouseDragged(pMouseX, pMouseY, pButton, pDragX, pDragY);
+    }
+
     public void addOption(String name, int id) {
         this.addEntry(new VariantEntry(name, id));
     }
@@ -66,6 +71,7 @@ public class VariantScrollList extends AbstractSelectionList<VariantScrollList.V
         @Override
         public boolean mouseClicked(double mouseX, double mouseY, int button) {
             VariantScrollList.this.setSelected(this);
+            VariantScrollList.this.setFocused(this);
             return true;
         }
 
@@ -77,8 +83,8 @@ public class VariantScrollList extends AbstractSelectionList<VariantScrollList.V
             pGuiGraphics.drawString(
                     Minecraft.getInstance().font,
                     name,
-                    pLeft + 6,
-                    pTop + 6,
+                    pLeft + 5,
+                    pTop + 5,
                     color
             );
         }

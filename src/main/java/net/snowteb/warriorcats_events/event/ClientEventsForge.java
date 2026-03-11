@@ -155,13 +155,17 @@ public class ClientEventsForge {
                         .getBlockState(bedPos)
                         .getBlock() instanceof MossBedBlock) {
 
-                    event.getPoseStack().popPose();
+                    if (PlayerShape.getCurrentShape(player) instanceof Animal) {
+                        event.getPoseStack().popPose();
+                    }
 
                 } else if (player.level()
                         .getBlockState(bedPos)
                         .getBlock() instanceof BedBlock) {
 
-                    event.getPoseStack().popPose();
+                    if (PlayerShape.getCurrentShape(player) instanceof Animal) {
+                        event.getPoseStack().popPose();
+                    }
                 }
             });
         }
@@ -230,8 +234,58 @@ public class ClientEventsForge {
             new EmoteMenu().render(event.getGuiGraphics());
         }
 
+        if (LeapClientState.getSprintingCounter() > 100) {
+            GuiGraphics guiGraphics = event.getGuiGraphics();
+            int width = mcinstance.getWindow().getGuiScaledWidth();
+            int height = mcinstance.getWindow().getGuiScaledHeight();
+
+            ResourceLocation emptyBar = new ResourceLocation(WarriorCatsEvents.MODID,
+                    "textures/hud/sprintbar_empty.png");
+            ResourceLocation fillBar = new ResourceLocation(WarriorCatsEvents.MODID,
+                    "textures/hud/sprintbar_fill.png");
+            ResourceLocation readyBar = new ResourceLocation(WarriorCatsEvents.MODID,
+                    "textures/hud/sprintbar_ready.png");
+
+
+            guiGraphics.blit(
+                    emptyBar,
+                    width - 16, height - 106,
+                    0, 0,
+                    14, 103,
+                    14, 103
+            );
+
+            int centerX = width / 2;
+            int centerY = height / 2;
+            int sprintPower = LeapClientState.getSprintingCounter() - 100;
+
+            float sprintPowerPercentage = (float) sprintPower / 200;
+
+            guiGraphics.enableScissor(width - 16, (int) (height - (106 * sprintPowerPercentage)), width - 2, height);
+            guiGraphics.blit(
+                    fillBar,
+                    width - 16, height - 106,
+                    0, 0,
+                    14, 103,
+                    14, 103
+            );
+            guiGraphics.disableScissor();
+
+            if (sprintPowerPercentage >= 0.9) {
+                guiGraphics.blit(
+                        readyBar,
+                        width - 16, height - 106,
+                        0, 0,
+                        14, 103,
+                        14, 103
+                );
+            }
+
+        }
+
         if (LeapClientState.getLeapPowerCounter() <= 0) return;
         if (!LeapClientState.isLeapActive()) return;
+        if (LeapClientState.getSprintingCounter() > 200) return;
 
         GuiGraphics guiGraphics = event.getGuiGraphics();
 

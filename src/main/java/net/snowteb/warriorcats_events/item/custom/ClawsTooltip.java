@@ -6,7 +6,10 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.HoverEvent;
+import net.minecraft.network.chat.Style;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -34,10 +37,14 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ToolAction;
 import net.minecraftforge.common.ToolActions;
+import net.snowteb.warriorcats_events.clan.PlayerClanData;
+import net.snowteb.warriorcats_events.clan.PlayerClanDataProvider;
+import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.item.ModItems;
 import net.snowteb.warriorcats_events.network.ModPackets;
 import net.snowteb.warriorcats_events.network.packet.s2c.others.StCFishingScreenPacket;
 import net.snowteb.warriorcats_events.sound.ModSounds;
+import net.snowteb.warriorcats_events.util.CarryPlayerRequestManager;
 import org.jetbrains.annotations.Nullable;
 import tocraft.walkers.api.PlayerShape;
 
@@ -141,59 +148,57 @@ public class ClawsTooltip extends ShearsItem {
         ItemStack itemstack = pContext.getItemInHand();
         Optional<BlockState> optional3 = Optional.empty();
 
-            if (optional.isPresent()) {
-                level.playSound(player, blockpos, SoundEvents.CROSSBOW_QUICK_CHARGE_3, SoundSource.BLOCKS, 0.7F, 1.2F);
-                level.playSound(player, blockpos, ModSounds.SCRAPING_WOOD.get(), SoundSource.BLOCKS, 0.5F, 1F);
-                optional3 = optional;
+        if (optional.isPresent()) {
+            level.playSound(player, blockpos, SoundEvents.CROSSBOW_QUICK_CHARGE_3, SoundSource.BLOCKS, 0.7F, 1.2F);
+            level.playSound(player, blockpos, ModSounds.SCRAPING_WOOD.get(), SoundSource.BLOCKS, 0.5F, 1F);
+            optional3 = optional;
+        }
+
+        if (optional3.isPresent()) {
+            if (player instanceof ServerPlayer) {
+                CriteriaTriggers.ITEM_USED_ON_BLOCK.trigger((ServerPlayer) player, blockpos, itemstack);
+                level.playSound(player, blockpos, SoundEvents.CHERRY_WOOD_FALL, SoundSource.BLOCKS, 0.7F, 1.0F);
+
             }
 
-            if (optional3.isPresent()) {
-                if (player instanceof ServerPlayer) {
-                    CriteriaTriggers.ITEM_USED_ON_BLOCK.trigger((ServerPlayer)player, blockpos, itemstack);
-                    level.playSound(player, blockpos, SoundEvents.CHERRY_WOOD_FALL, SoundSource.BLOCKS, 0.7F, 1.0F);
+            if (player != null) {
+                itemstack.hurtAndBreak(-3, player, (p) -> {
 
-                }
+                    p.broadcastBreakEvent(pContext.getHand());
+                });
 
-                if (player != null) {
-                    itemstack.hurtAndBreak(-3, player, (p) -> {
-
-                        p.broadcastBreakEvent(pContext.getHand());
-                    });
-
-                    if (!level.isClientSide() && level.getRandom().nextFloat() < 0.006F) {
-                        ItemStack itemstack1 = Items.MOSS_BLOCK.asItem().getDefaultInstance();
-                        if (level.getRandom().nextFloat() < 0.05F) {
-                            itemstack1 = Items.BROWN_DYE.asItem().getDefaultInstance();
-                            itemstack1.setHoverName(Component.empty()
-                                    .append("Fox dung")
-                                    .append(Component.literal(" (Really stinky)").withStyle(ChatFormatting.GRAY)));
-                        }
-                        ItemEntity itemEntity = new ItemEntity(level, blockpos.getX(), blockpos.getY(), blockpos.getZ(), itemstack1);
-                        itemEntity.setItem(itemstack1.copyWithCount(level.random.nextInt(2) + 1));
-
-                        Vec3 spawnPos = Vec3.atCenterOf(blockpos);
-
-                        Vec3 direction = player.position().subtract(spawnPos)
-                                .normalize().scale(0.35);
-
-                        itemEntity.setDeltaMovement(direction);
-                        level.addFreshEntity(itemEntity);
-
+                if (!level.isClientSide() && level.getRandom().nextFloat() < 0.006F) {
+                    ItemStack itemstack1 = Items.MOSS_BLOCK.asItem().getDefaultInstance();
+                    if (level.getRandom().nextFloat() < 0.05F) {
+                        itemstack1 = Items.BROWN_DYE.asItem().getDefaultInstance();
+                        itemstack1.setHoverName(Component.empty()
+                                .append("Fox dung")
+                                .append(Component.literal(" (Really stinky)").withStyle(ChatFormatting.GRAY)));
                     }
+                    ItemEntity itemEntity = new ItemEntity(level, blockpos.getX(), blockpos.getY(), blockpos.getZ(), itemstack1);
+                    itemEntity.setItem(itemstack1.copyWithCount(level.random.nextInt(2) + 1));
+
+                    Vec3 spawnPos = Vec3.atCenterOf(blockpos);
+
+                    Vec3 direction = player.position().subtract(spawnPos)
+                            .normalize().scale(0.35);
+
+                    itemEntity.setDeltaMovement(direction);
+                    level.addFreshEntity(itemEntity);
+
                 }
-
-                if (!level.isClientSide() && level.getRandom().nextInt(40) == 0) {
-                    level.setBlock(blockpos, optional.get(), 11);
-                    level.gameEvent(GameEvent.BLOCK_CHANGE, blockpos, GameEvent.Context.of(player, optional3.get()));
-                }
-
-                return InteractionResult.sidedSuccess(level.isClientSide);
-            } else {
-
-                return InteractionResult.PASS;
             }
 
+            if (!level.isClientSide() && level.getRandom().nextInt(40) == 0) {
+                level.setBlock(blockpos, optional.get(), 11);
+                level.gameEvent(GameEvent.BLOCK_CHANGE, blockpos, GameEvent.Context.of(player, optional3.get()));
+            }
 
+            return InteractionResult.sidedSuccess(level.isClientSide);
+        } else {
+
+            return InteractionResult.PASS;
+        }
 
 
     }
@@ -340,6 +345,101 @@ public class ClawsTooltip extends ShearsItem {
         return 72000;
     }
 
+    @Override
+    public InteractionResult interactLivingEntity(ItemStack stack, Player playerIn, LivingEntity entity, InteractionHand hand) {
 
+        if (playerIn.isShiftKeyDown() && entity instanceof Player targetPlayer) {
+            if ((playerIn.level() instanceof ServerLevel)) {
+
+                PlayerClanData.Age targetAge = targetPlayer.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
+                        .map(PlayerClanData::getMorphAge).orElse(PlayerClanData.Age.ADULT);
+
+                PlayerClanData.Age playerAge = playerIn.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
+                        .map(PlayerClanData::getMorphAge).orElse(PlayerClanData.Age.ADULT);
+
+                if (playerAge == PlayerClanData.Age.ADULT && (targetAge == PlayerClanData.Age.KIT || targetAge == PlayerClanData.Age.APPRENTICE)) {
+
+                    if (PlayerShape.getCurrentShape(targetPlayer) instanceof WCatEntity && PlayerShape.getCurrentShape(playerIn) instanceof WCatEntity) {
+                        String morphName = playerIn.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
+                                .map(PlayerClanData::getMorphName).orElse(playerIn.getName().getString());
+
+                        String morphNameTarget = targetPlayer.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
+                                .map(PlayerClanData::getMorphName).orElse(playerIn.getName().getString());
+
+                        CarryPlayerRequestManager.request((ServerPlayer) targetPlayer, (ServerPlayer) playerIn);
+
+                        playerIn.sendSystemMessage(
+                                Component.empty()
+                                        .append("Carry request sent to ")
+                                        .append(Component.literal(morphNameTarget).withStyle(ChatFormatting.AQUA)
+                                                .append(Component.literal( "(" + targetPlayer.getName().getString() + ")").withStyle(ChatFormatting.GRAY))
+                        ));
+
+                        targetPlayer.sendSystemMessage(
+                                Component.empty()
+                                        .append(Component.literal(morphName).withStyle(ChatFormatting.AQUA)
+                                                .append(Component.literal( "(" + playerIn.getName().getString() + ")").withStyle(ChatFormatting.GRAY))
+                                        .append(" wants to carry you ")
+                        ));
+
+                        targetPlayer.sendSystemMessage(
+                                Component.empty()
+                                        .append(
+                                                Component.literal("[ACCEPT]")
+                                                        .withStyle(style -> style
+                                                                .withColor(ChatFormatting.GREEN)
+                                                                .withItalic(true)
+                                                                .withUnderlined(true)
+                                                                .withClickEvent(
+                                                                        new ClickEvent(
+                                                                                ClickEvent.Action.RUN_COMMAND,
+                                                                                "/wce carryRequest accept"
+                                                                        )
+                                                                )
+                                                                .withHoverEvent(
+                                                                        new HoverEvent(
+                                                                                HoverEvent.Action.SHOW_TEXT,
+                                                                                Component.literal("Allow carry")
+                                                                                        .withStyle(ChatFormatting.GREEN)
+                                                                        )
+                                                                )
+                                                        )
+                                        )
+
+                                        .append("       ")
+
+                                        .append(
+                                                Component.literal("[DENY]")
+                                                        .withStyle(style -> style
+                                                                .withColor(ChatFormatting.RED)
+                                                                .withItalic(true)
+                                                                .withUnderlined(true)
+                                                                .withClickEvent(
+                                                                        new ClickEvent(
+                                                                                ClickEvent.Action.RUN_COMMAND,
+                                                                                "/wce carryRequest deny"
+                                                                        )
+                                                                )
+                                                                .withHoverEvent(
+                                                                        new HoverEvent(
+                                                                                HoverEvent.Action.SHOW_TEXT,
+                                                                                Component.literal("Decline carry")
+                                                                                        .withStyle(ChatFormatting.RED)
+                                                                        )
+                                                                )
+                                                        )
+                                        )
+                        );
+
+                        return InteractionResult.SUCCESS;
+
+                    }
+
+                }
+            }
+        }
+
+        return super.interactLivingEntity(stack, playerIn, entity, hand);
+    }
 }
 

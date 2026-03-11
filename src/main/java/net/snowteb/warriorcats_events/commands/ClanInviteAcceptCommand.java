@@ -45,12 +45,24 @@ public class ClanInviteAcceptCommand {
             return 0;
         }
 
+        UUID currentClanUUID = player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
+                .map(PlayerClanData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID);
+
+        ClanData data = ClanData.get(player.serverLevel());
+        ClanData.Clan clan = data.getClan(currentClanUUID);
+        if (clan != null) {
+            player.sendSystemMessage(
+                    Component.literal("You are already in a clan.")
+                            .withStyle(ChatFormatting.RED)
+            );
+            return 0;
+        }
+
         UUID clanUUID = invite.clanUUID;
         ClanInviteManager.clear(player);
 
-        ClanData clanData = ClanData.get(player.serverLevel());
 
-        boolean joined = clanData.addMember(
+        boolean joined = data.addMember(
                 player,
                 clanUUID,
                 ClanData.ClanPlayerRank.WARRIOR
@@ -64,7 +76,7 @@ public class ClanInviteAcceptCommand {
             return 0;
         }
 
-        ClanData.Clan targetClan = clanData.getClan(clanUUID);
+        ClanData.Clan targetClan = data.getClan(clanUUID);
         if (targetClan != null) {
 
             String invitedPlayerMorphName = player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)

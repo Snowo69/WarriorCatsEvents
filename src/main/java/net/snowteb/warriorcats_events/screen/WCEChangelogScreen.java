@@ -146,24 +146,24 @@ public class WCEChangelogScreen extends Screen {
     }
 
     private void defineChangelogLines() {
-        line1 = "- Added chimerism!";
-        line2 = "- Adjustements to some GUIs";
-        line3 = "- Added XP drop to fishing";
-        line4 = "- Own morph name should now display correctly";
-        line5 = "- Warrior's Guide updated";
-        line6 = "- Adjustments to feather drops";
-        line7 = "- Added a config GUI, accessed through the \"Mods\" section";
-        line8 = "- Added more white spot variants!";
-        line9 = "- Added chat bubbles! (configurable and disableable)";
-        line10 = "- Added more tortie variants!";
-        line11 = "- Added a changelog GUI, accessed through the config GUI";
-        line12 = "- Added more types of feather and body feathers accessory";
-        line13 = "- Added red eyes to the create morph menu";
-        line14 = "- Prey items balanced";
-        line15 = "- Added 4 more advancements";
-        line16 = "- Added an admin command to force delete clans in the server";
-        line17 = "- Other minor adjustments";
-        line18 = "- Optimized the spawn location choice for highly loaded multiplayer servers";
+        line1 = "- Fixed an issue that crashed the game when using beds without a shape";
+        line2 = "- Added new mechanic to Leap. You can now sprint and after sprinting for a while, you'll be able to leap without having to charge the leap.";
+        line3 = "- You can now carry other players. Use shift + claws to request carry";
+        line4 = "- Added size slider and fur to presets in the create morph screen. You can now have custom size and fur with a preset.";
+        line5 = "- Adjustements to the clan system";
+        line6 = "- Added a configurable list of items that should be considered as prey and a bonus should be applied.";
+        line7 = "- Added the Non-binary button to the info setup ";
+        line8 = "- Chat bubbles can now display emotes in Markdown format. Such as typing :cat: ";
+        line9 = "- Fixed the unlocking for all the recipes";
+        line10 = "- Added a recipe to convert a Warrior Nametag to a vanilla Nametag";
+        line11 = "- Minor adjustements and fixes";
+        line12 = "";
+        line13 = "";
+        line14 = "";
+        line15 = "";
+        line16 = "";
+        line17 = "";
+        line18 = "";
     }
 
 //    private void defineChangelogLines() {

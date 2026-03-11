@@ -20,6 +20,7 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.AbstractSkeleton;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
@@ -48,6 +49,7 @@ import net.snowteb.warriorcats_events.network.ModPackets;
 import net.snowteb.warriorcats_events.network.packet.s2c.others.ThirstDataSyncStCPacket;
 import net.snowteb.warriorcats_events.skills.PlayerSkillProvider;
 import net.snowteb.warriorcats_events.thirst.PlayerThirstProvider;
+import net.snowteb.warriorcats_events.zconfig.WCEPreyItemsConfig;
 import net.snowteb.warriorcats_events.zconfig.WCEServerConfig;
 import tocraft.walkers.api.PlayerShape;
 
@@ -136,8 +138,8 @@ public class ModEventsForge {
     public static void onFoodEaten(LivingEntityUseItemEvent.Finish event) {
         if (!(event.getEntity() instanceof Player player)) return;
         ItemStack stack = event.getItem();
-
         if (!stack.isEdible()) return;
+        if (player.level().isClientSide()) return;
 
         player.getCapability(PlayerThirstProvider.PLAYER_THIRST).ifPresent(thirst -> {
 
@@ -176,6 +178,14 @@ public class ModEventsForge {
                     if (!stack.is(Items.SWEET_BERRIES)) {
                         player.getFoodData().eat(3, 0.84f);
                     }
+                }
+            }
+
+            for (Item item : WCEPreyItemsConfig.PREY_ITEMS) {
+                if (stack.getItem() == item) {
+                    int randomThirst = 1 + player.getRandom().nextInt(1);
+                    thirst.addThirst(randomThirst);
+                    player.getFoodData().eat(4, 0.84f);
                 }
             }
 
@@ -389,6 +399,19 @@ public class ModEventsForge {
     public static void onAttackEntity(AttackEntityEvent event) {
         Player player = event.getEntity();
         Entity target = event.getTarget();
+
+        if (target instanceof ServerPlayer serverPlayer) {
+
+            UUID targetUUID = serverPlayer.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA).map(PlayerClanData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID);
+            UUID thisUUID = player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA).map(PlayerClanData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID);
+
+            if (!targetUUID.equals(thisUUID)) {
+                return;
+            }
+            if (!player.isShiftKeyDown()) {
+                event.setCanceled(true);
+            }
+        }
 
         if (!(target instanceof WCatEntity wcat)) {
             return;

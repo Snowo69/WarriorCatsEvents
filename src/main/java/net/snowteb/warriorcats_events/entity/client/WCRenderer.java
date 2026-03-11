@@ -128,7 +128,7 @@ public class WCRenderer extends GeoEntityRenderer<WCatEntity> {
             AnimationClientData.isPlayerShape = false;
         }
 
-        if (entity.getPlayerBoundUuid().equals(ClanData.EMPTY_UUID)) {
+        if (entity.getPlayerBoundUuid().equals(ClanData.EMPTY_UUID) && !entity.isAnImage()) {
             float ageMoons = entity.getAgeInMoons();
             float percentage = ageMoons / 12.0F;
             float scale = (float) (0.4 + (percentage * 0.6));
@@ -476,6 +476,22 @@ public class WCRenderer extends GeoEntityRenderer<WCatEntity> {
     public static Component formatOriginalMessage(Component original) {
 
         String text = original.getString();
+
+        text = text.replace(":sob:", "\uD83D\uDE2D");
+        text = text.replace(":cry:", "\uD83D\uDE2D");
+        text = text.replace(":sparkles:", "✨");
+        text = text.replace(":sparkle:", "✨");
+        text = text.replace(":cat:", "\uD83D\uDC08");
+        text = text.replace(":cat2:", "\uD83D\uDC31");
+        text = text.replace(":plead:", "\uD83E\uDD79");
+        text = text.replace(":pleading:", "\uD83E\uDD79");
+        text = text.replace(":wilted_rose:", "\uD83E\uDD40");
+        text = text.replace(":wil_rose:", "\uD83E\uDD40");
+        text = text.replace(":heart:", "❤");
+        text = text.replace(":fire:", "\uD83D\uDD25");
+        text = text.replace(":flame:", "\uD83D\uDD25");
+        text = text.replace(":smile:", "\uD83D\uDE3A");
+
 
         MutableComponent result = Component.empty();
 

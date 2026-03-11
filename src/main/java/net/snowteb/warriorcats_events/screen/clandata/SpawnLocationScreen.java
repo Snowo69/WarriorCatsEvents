@@ -94,10 +94,11 @@ public class SpawnLocationScreen extends Screen {
         }
 
         pGuiGraphics.pose().pushPose();
+        pGuiGraphics.pose().translate(centerX, centerY - 35, 0);
         pGuiGraphics.pose().scale(1.2f, 1.2f, 1.2f);
-        pGuiGraphics.drawString(Minecraft.getInstance().font,
+        pGuiGraphics.drawCenteredString(Minecraft.getInstance().font,
                 morphName + " began " + genderWord + " journey at...",
-                centerX - 125, centerY - 55, 0xFFFFFFFF);
+                0, 0, 0xFFFFFFFF);
         pGuiGraphics.pose().popPose();
 
         if (textCooldown > 0) {

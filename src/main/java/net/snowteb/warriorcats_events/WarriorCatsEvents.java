@@ -23,6 +23,7 @@ import net.snowteb.warriorcats_events.sound.ModSounds;
 import net.snowteb.warriorcats_events.util.ModAttributes;
 import net.snowteb.warriorcats_events.zconfig.WCEClientConfig;
 import net.snowteb.warriorcats_events.zconfig.WCEConfig;
+import net.snowteb.warriorcats_events.zconfig.WCEPreyItemsConfig;
 import net.snowteb.warriorcats_events.zconfig.WCEServerConfig;
 import org.slf4j.Logger;
 import software.bernie.geckolib.GeckoLib;
@@ -36,7 +37,7 @@ import java.util.concurrent.Executors;
 @Mod(WarriorCatsEvents.MODID)
 public class WarriorCatsEvents {
     public static final String MODID = "warriorcats_events";
-    public static final String MOD_VERSION = "1.4.4";
+    public static final String MOD_VERSION = "1.4.5";
     public static final Logger LOGGER = LogUtils.getLogger();
 
     public static final ExecutorService teleportExecutor = Executors.newSingleThreadExecutor();
@@ -46,7 +47,9 @@ public class WarriorCatsEvents {
         private static final Set<UUID> DEVS = Set.of(
                 UUID.fromString("76754682-2435-4a2e-b2b5-c3ee99782812"),
                 UUID.fromString("380df991-f603-344c-a090-369bad2a924a"),
-                UUID.fromString("bd10cd3b-b641-4db7-839b-691339fcbfaf")
+                UUID.fromString("bd10cd3b-b641-4db7-839b-691339fcbfaf"),
+                UUID.fromString("02c910cd-3367-4ce8-80d3-04e803bf580a"),
+                UUID.fromString("cead1fe2-b208-4886-a17c-f486ba511d63")
         );
 
         public static boolean isDev(UUID uuid) {
@@ -59,9 +62,9 @@ public class WarriorCatsEvents {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         GeckoLib.initialize();
         
-        ModLoadingContext.get().registerConfig(
-                ModConfig.Type.COMMON, WCEConfig.COMMON_SPEC,
-                MODID + "-common.toml");
+//        ModLoadingContext.get().registerConfig(
+//                ModConfig.Type.COMMON, WCEConfig.COMMON_SPEC,
+//                MODID + "-common.toml");
 
         ModLoadingContext.get().registerConfig(
                 ModConfig.Type.SERVER, WCEServerConfig.SPEC,
@@ -70,6 +73,10 @@ public class WarriorCatsEvents {
         ModLoadingContext.get().registerConfig(
                 ModConfig.Type.CLIENT, WCEClientConfig.SPEC,
                 MODID + "-client.toml");
+
+        ModLoadingContext.get().registerConfig(
+                ModConfig.Type.COMMON, WCEPreyItemsConfig.SPEC,
+                MODID + "-prey_items-common.toml");
 
         ModSounds.register(modEventBus);
         ModItems.register(modEventBus);

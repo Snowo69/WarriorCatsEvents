@@ -16,6 +16,8 @@ import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.util.GradientToggleButton;
 import net.snowteb.warriorcats_events.util.IntSliderButton;
 
+import java.util.UUID;
+
 import static net.snowteb.warriorcats_events.screen.clandata.CreateClanScreen.BANNER;
 import static net.snowteb.warriorcats_events.screen.clandata.CreateClanScreen.BG_TEXTURE;
 
@@ -920,6 +922,9 @@ public class CreateChimeraMorphGeneticsScreen extends Screen {
         if (!onGeneticalSkin) centerX += -50;
 
         WCatEntity entityToRender = new WCatEntity(ModEntities.WCAT.get(), Minecraft.getInstance().level);
+
+        entityToRender.setPlayerBoundUuid(UUID.nameUUIDFromBytes(ModEntities.WCAT.get().toString().getBytes()));
+        entityToRender.setShowMorphName(false);
 
         entityToRender.setOnGeneticalSkin(onGeneticalSkin);
         entityToRender.setGenetics(genetics);

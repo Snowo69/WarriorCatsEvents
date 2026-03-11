@@ -53,6 +53,7 @@ import net.snowteb.warriorcats_events.stealth.PlayerStealth;
 import net.snowteb.warriorcats_events.stealth.PlayerStealthProvider;
 import net.snowteb.warriorcats_events.thirst.PlayerThirst;
 import net.snowteb.warriorcats_events.thirst.PlayerThirstProvider;
+import net.snowteb.warriorcats_events.util.CarryPlayerRequestManager;
 import net.snowteb.warriorcats_events.util.ClanInviteManager;
 import net.snowteb.warriorcats_events.util.ModAttributes;
 import net.snowteb.warriorcats_events.zconfig.WCEServerConfig;
@@ -78,6 +79,7 @@ public class ModEvents2 {
         if (server != null) {
             for (ServerPlayer player : server.getPlayerList().getPlayers()) {
                 ClanInviteManager.tick(player);
+                CarryPlayerRequestManager.tick(player);
             }
         }
 
@@ -192,6 +194,8 @@ public class ModEvents2 {
         ChangeMemberPermissionCommand.register(event.getDispatcher());
         OpenMorphCreateCommand.register(event.getDispatcher());
         OpDeleteClanCommand.register(event.getDispatcher());
+        CarryRequestAcceptCommand.register(event.getDispatcher());
+        CarryRequestDenyCommand.register(event.getDispatcher());
 
 
         ConfigCommand.register(event.getDispatcher());
@@ -391,6 +395,13 @@ public class ModEvents2 {
         if (event.side == LogicalSide.SERVER && event.phase == TickEvent.Phase.END) {
 
             ServerPlayer player = (ServerPlayer) event.player;
+
+            if (player.getFirstPassenger() != null) {
+                if (player.getFirstPassenger() instanceof Player rider) {
+                    if (player.isShiftKeyDown()) rider.stopRiding();
+                }
+            }
+
             int endTick = event.player.getPersistentData().getInt("wcat_animation_playing");
             if (endTick != 0) {
                 if (player.server.getTickCount() >= endTick) {
@@ -690,14 +701,14 @@ public class ModEvents2 {
             ClanData clanData = ClanData.get(sPlayer.serverLevel());
             ServerLevel sLevel = sPlayer.serverLevel();
 
-            clanData.checkForEmptyClans(sLevel);
+//            clanData.checkForEmptyClans(sLevel);
 
             UUID clanUUID = sPlayer.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
                     .map(PlayerClanData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID);
             ClanData.Clan clan =   clanData.getClan(clanUUID);
 
             if (clan != null) {
-                if (!clan.clanUUID.equals(clanUUID) || !clan.members.containsKey(sPlayer.getUUID())) {
+                if (!clan.members.containsKey(sPlayer.getUUID())) {
                     sPlayer.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {
                         cap.setCurrentClanUUID(ClanData.EMPTY_UUID);
                         cap.setClanName("None");

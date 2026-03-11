@@ -22,6 +22,10 @@ import net.snowteb.warriorcats_events.clan.ClanData;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.network.ModPackets;
 import net.snowteb.warriorcats_events.network.packet.c2s.skilltree.CtSPerformLeapPacket;
+import net.snowteb.warriorcats_events.network.packet.s2c.skilltree.SyncSkillDataPacket;
+import net.snowteb.warriorcats_events.skills.ISkillData;
+import net.snowteb.warriorcats_events.skills.PlayerSkill;
+import net.snowteb.warriorcats_events.skills.PlayerSkillProvider;
 import net.snowteb.warriorcats_events.sound.ModSounds;
 import net.snowteb.warriorcats_events.zconfig.WCEClientConfig;
 import tocraft.walkers.api.PlayerShape;
@@ -33,6 +37,8 @@ public class LeapClientState {
     private static int shiftKeyDownCounter = 0;
     private static int leapPowerCounter = 0;
     private static boolean attackWasDown = false;
+
+    private static int sprintingCounter = 0;
 
     @Nullable
     private static Entity lockedLookEntity = null;
@@ -50,7 +56,6 @@ public class LeapClientState {
             || Minecraft.getInstance().player.getItemInHand(InteractionHand.MAIN_HAND).getItem() instanceof ShovelItem) return;
 
         }
-
 
         if (shifting && Minecraft.getInstance().player.onGround() ) {
 
@@ -107,35 +112,54 @@ public class LeapClientState {
             attackWasDown = attackDown;
 
         } else {
-            lockedLookEntity = null;
-            wasLookKeyDown = false;
-            lockingTarget = false;
-            leapPowerCounter = 0;
-            shiftKeyDownCounter = 0;
+            LocalPlayer localPlayer = Minecraft.getInstance().player;
+            int runSkillLevel = 0;
+            if (localPlayer != null) {
+                runSkillLevel = localPlayer.getCapability(PlayerSkillProvider.SKILL_DATA)
+                        .map(ISkillData::getSpeedLevel).orElse(0);
+            }
+
+            if (runSkillLevel > 8) {
+                if (PlayerShape.getCurrentShape(localPlayer) instanceof WCatEntity) {
+                    sprintingCounter = Math.min(sprintingCounter, 300);
+
+                    if (localPlayer.isSprinting() && localPlayer.onGround() && localPlayer.getDeltaMovement().length() > 0.17) {
+                        sprintingCounter++;
+
+                        if (sprintingCounter >= 280) {
+                            leapPowerCounter = 100;
+
+                            if (Minecraft.getInstance().options.keyAttack.isDown()) {
+                                sprintingCounter -= 10;
+                                ModPackets.sendToServer(new CtSPerformLeapPacket(leapPowerCounter));
+                            }
+                        }
+
+                    } else {
+                        leapPowerCounter = 0;
+                        if (sprintingCounter > 0) sprintingCounter -=2;
+                    }
+                } else {
+                    lockedLookEntity = null;
+                    wasLookKeyDown = false;
+                    lockingTarget = false;
+                    leapPowerCounter = 0;
+                    shiftKeyDownCounter = 0;
+                }
+            } else {
+                lockedLookEntity = null;
+                wasLookKeyDown = false;
+                lockingTarget = false;
+                leapPowerCounter = 0;
+                shiftKeyDownCounter = 0;
+            }
+
 
         }
 
 
 
     }
-
-
-//    public static Component buildLeapPowerBar(int leapPowerCounter) {
-//        int greenCount = Mth.clamp(leapPowerCounter/2, 0, 50);
-//
-//        MutableComponent bar = Component.empty();
-//
-//        for (int i = 0; i < greenCount; i++) {
-//            bar.append(STICK_GREEN);
-//        }
-//
-//        for (int i = greenCount; i < 50; i++) {
-//            bar.append(STICK_GRAY);
-//        }
-//
-//        return bar;
-//    }
-
 
     @Nullable
     public static Entity getEntityPlayerIsLookingAtClient(LocalPlayer player, double range) {
@@ -207,6 +231,10 @@ public class LeapClientState {
 
     public static int getLeapPowerCounter() {
         return leapPowerCounter;
+    }
+
+    public static int getSprintingCounter() {
+        return sprintingCounter;
     }
 
     public static boolean isLeapActive() {

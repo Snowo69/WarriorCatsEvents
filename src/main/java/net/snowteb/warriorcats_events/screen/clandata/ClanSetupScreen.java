@@ -33,6 +33,7 @@ public class ClanSetupScreen extends Screen {
 
     private ToggleButton genderMale;
     private ToggleButton genderFemale;
+    private ToggleButton genderNone;
 
     private Button saveButton;
 
@@ -355,14 +356,19 @@ public class ClanSetupScreen extends Screen {
         );
 
         genderMale = new ToggleButton(
-                centerX - 195, centerY + 45, 60, 20,
+                centerX - 230, centerY + 45, 70, 20,
                 "Tom-cat",
                 btn -> selectGender(genderMale)
         );
         genderFemale = new ToggleButton(
-                centerX - 115, centerY + 45, 60, 20,
+                centerX - 155, centerY + 45, 70, 20,
                 "She-cat",
                 btn -> selectGender(genderFemale)
+        );
+        genderNone = new ToggleButton(
+                centerX - 80, centerY + 45, 70, 20,
+                "Non-binary",
+                btn -> selectGender(genderNone)
         );
 
 
@@ -371,6 +377,7 @@ public class ClanSetupScreen extends Screen {
 
         this.addRenderableWidget(genderMale);
         this.addRenderableWidget(genderFemale);
+        this.addRenderableWidget(genderNone);
 
         this.addRenderableWidget(ageKit);
         this.addRenderableWidget(ageApprentice);

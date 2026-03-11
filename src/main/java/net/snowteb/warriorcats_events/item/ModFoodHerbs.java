@@ -9,7 +9,7 @@ public class ModFoodHerbs {
 
     // Traveling herb. Can also build up appetite and quench thirst.
     public static final FoodProperties SORREL = new FoodProperties.Builder().alwaysEat().fast()
-            .nutrition(1).saturationMod(5f)
+            .nutrition(1).saturationMod(1f)
             .effect(() -> new MobEffectInstance(MobEffects.CONFUSION,140,0),1f)
             .build();
 

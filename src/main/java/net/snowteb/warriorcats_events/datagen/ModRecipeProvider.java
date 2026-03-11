@@ -35,7 +35,7 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .pattern("ABA")
                 .define('A', ItemTags.SAPLINGS)
                 .define('B', Items.COBBLESTONE)
-                .unlockedBy("has_item", has(Items.AIR))
+                .unlockedBy("has_item", has(Items.COBBLESTONE))
                 .save(pWriter);
 
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.MYSTIC_FLOWERS_BOUQUET.get())
@@ -120,19 +120,19 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .requires(ModTags.Items.HERBS)
                 .requires(Items.SUGAR_CANE)
                 .requires(ItemTags.SAPLINGS)
-                .unlockedBy("has_item", has(Items.AIR))
+                .unlockedBy("has_item", has(Items.SUGAR_CANE))
                 .save(pWriter);
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.WHISKERS.get(), 1)
                 .requires(ItemTags.SAPLINGS)
                 .requires(Items.WHEAT_SEEDS)
                 .requires(ModTags.Items.HERBS)
                 .requires(Items.LEATHER)
-                .unlockedBy("has_item", has(Items.AIR))
+                .unlockedBy("has_item", has(ModTags.Items.HERBS))
                 .save(pWriter);
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.CLAWS.get(), 1)
                 .requires(ItemTags.LOGS)
                 .requires(Items.LEATHER)
-                .unlockedBy("has_item", has(Items.AIR))
+                .unlockedBy("has_item", has(Items.LEATHER))
                 .save(pWriter);
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.ANCIENT_STICK.get())
                 .pattern("CDB")
@@ -152,12 +152,12 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .requires(ModTags.Items.HERBS)
                 .requires(ModTags.Items.PREY)
                 .requires(ModItems.DOCK_LEAVES.get())
-                .unlockedBy("has_item", has(Items.AIR))
+                .unlockedBy("has_item", has(ModTags.Items.PREY))
                 .save(pWriter);
 
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.DOCK_POULTICE.get(), 1)
                 .requires(ModItems.DOCK_LEAVES.get())
-                .unlockedBy("has_item", has(Items.AIR))
+                .unlockedBy("has_item", has(ModItems.DOCK_LEAVES.get()))
                 .save(pWriter);
 
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.LEAF_DOOR.get(), 2)
@@ -182,7 +182,7 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .define('B', ItemTags.LEAVES)
                 .define('C', Items.FEATHER)
                 .define('D', Items.MOSS_BLOCK)
-                .unlockedBy("has_item", has(Items.AIR))
+                .unlockedBy("has_item", has(Items.MOSS_BLOCK))
                 .save(pWriter);
 
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.HAY_BED.get(), 2)
@@ -192,7 +192,7 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .define('B', Items.WHEAT)
                 .define('C', Items.FEATHER)
                 .define('D', Blocks.HAY_BLOCK)
-                .unlockedBy("has_item", has(Items.AIR))
+                .unlockedBy("has_item", has(Items.HAY_BLOCK))
                 .save(pWriter);
 
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.FRESHKILL_PILE.get(), 1)
@@ -202,7 +202,7 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .define('A', Items.STICK)
                 .define('B', Blocks.COBBLESTONE)
                 .define('D', ModItems.DOCK_LEAVES.get())
-                .unlockedBy("has_item", has(Items.AIR))
+                .unlockedBy("has_item", has(Items.COBBLESTONE))
                 .save(pWriter);
 
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.STONE_CRAFTING_TABLE.get(), 1)
@@ -221,7 +221,7 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .define('A', ModTags.Items.HERBS)
                 .define('B', Items.LEATHER)
                 .define('C', ItemTags.LEAVES)
-                .unlockedBy("has_item", has(Items.AIR))
+                .unlockedBy("has_item", has(Items.LEATHER))
                 .save(pWriter);
 
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.BLUE_CAT_SOCKS.get(), 1)
@@ -447,5 +447,21 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .unlockedBy("has_item", has(ModTags.Items.FEATHERS))
                 .save(pWriter);
 
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.GENERATIONS_MUSIC_DISC.get(), 1)
+                .pattern("ABA")
+                .pattern("BCB")
+                .pattern("ABA")
+                .define('A', ModTags.Items.HERBS)
+                .define('B', Items.DIAMOND_BLOCK)
+                .define('C', ItemTags.MUSIC_DISCS)
+                .unlockedBy("has_item", has(ItemTags.MUSIC_DISCS))
+                .save(pWriter);
+
+
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Items.NAME_TAG, 1)
+                .requires(ModItems.WARRIOR_NAMETAG.get())
+                .unlockedBy("has_item", has(ModItems.WARRIOR_NAMETAG.get()))
+                .save(pWriter, new ResourceLocation(WarriorCatsEvents.MODID, "nametag_from_warriortag"));
     }
 }

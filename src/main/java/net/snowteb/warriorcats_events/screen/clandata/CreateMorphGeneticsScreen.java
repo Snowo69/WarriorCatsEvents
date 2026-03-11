@@ -19,6 +19,8 @@ import net.snowteb.warriorcats_events.util.FloatSliderButton;
 import net.snowteb.warriorcats_events.util.GradientToggleButton;
 import net.snowteb.warriorcats_events.util.IntSliderButton;
 
+import java.util.UUID;
+
 import static net.snowteb.warriorcats_events.screen.clandata.CreateClanScreen.BANNER;
 import static net.snowteb.warriorcats_events.screen.clandata.CreateClanScreen.BG_TEXTURE;
 
@@ -61,6 +63,8 @@ public class CreateMorphGeneticsScreen extends Screen {
     // FUR AND BOBTAIL AND NOISE SECTION
 
     private VariantScrollList variantScrollList;
+    private FloatSliderButton sizeSliderPreset;
+
 
     private String mainSectionActiveMenu = "";
     private GradientToggleButton baseSection;
@@ -318,7 +322,7 @@ public class CreateMorphGeneticsScreen extends Screen {
                     20
             );
             this.variantScrollList.setRenderTopAndBottom(false);
-            this.variantScrollList.setLeftPos(((this.width - 160)));
+            this.variantScrollList.setLeftPos(((this.width - 140)));
 
             variantScrollList.addOption("Calico", 0);
             variantScrollList.addOption("Siamese", 1);
@@ -430,7 +434,8 @@ public class CreateMorphGeneticsScreen extends Screen {
                 Component.literal("Custom morph"),
                 btn -> {
                     onGeneticalSkin = true;
-                    this.removeWidget(this.variantScrollList);
+                    this.removeWidget(variantScrollList);
+                    this.removeWidget(sizeSliderPreset);
                     selectMode(setOnGeneticalSkinButton);
                     mainSectionActiveMenu = "base";
                     if (!baseSection.isSelected()) selectMainSection(baseSection);
@@ -446,6 +451,8 @@ public class CreateMorphGeneticsScreen extends Screen {
                     onGeneticalSkin = false;
                     this.removeWidget(this.variantScrollList);
                     this.addRenderableWidget(this.variantScrollList);
+                    this.removeWidget(sizeSliderPreset);
+                    this.addRenderableWidget(sizeSliderPreset);
                     selectMode(setOnPresetSkinButton);
                     mainSectionActiveMenu = "base";
                     selectMainSection(baseSection);
@@ -1162,6 +1169,10 @@ public class CreateMorphGeneticsScreen extends Screen {
                     100, 20,
                     0.6f, 1.2f, 0.9f);
 
+            sizeSliderPreset = new FloatSliderButton(centerX - 50, centerY - 65,
+                    100, 20,
+                    0.6f, 1.2f, 0.9f);
+
             int top = centerY - 10;
             int bottom = centerY + 110;
             this.noiseList = new VariantScrollList(
@@ -1219,6 +1230,10 @@ public class CreateMorphGeneticsScreen extends Screen {
                     }, 0xFFFFFFFF
             );
         }
+
+
+        rufousingSlider.setValue(rufousingVariant);
+        blueRufousingSlider.setValue(blueRufousingVariant);
 
         this.addRenderableWidget(bobtailSwitch);
         this.addRenderableWidget(chestFurSwitch);
@@ -1493,10 +1508,12 @@ public class CreateMorphGeneticsScreen extends Screen {
                     setRightEyeYellowButton.active = true;
                     setRightEyeGreenButton.active = true;
                     setRightEyeBlueButton.active = true;
+                    setRightEyeRedButton.active = true;
                 } else {
                     setRightEyeYellowButton.active = false;
                     setRightEyeGreenButton.active = false;
                     setRightEyeBlueButton.active = false;
+                    setRightEyeRedButton.active = false;
 
                     eyeColorLeft = eyeColorRight;
                 }
@@ -1566,21 +1583,26 @@ public class CreateMorphGeneticsScreen extends Screen {
 
         } else {
 
+            bobtailSwitch.visible = true;
+            chestFurSwitch.visible = true;
+            bellyFurSwitch.visible = true;
+            legsFurSwitch.visible = true;
+            headFurSwitch.visible = true;
+            backFurSwitch.visible = true;
+            cheekFurSwitch.visible = true;
+            tailFurSwitch.visible = true;
 
-//            chestFurSwitch.visible = true;
-//            tailFurSwitch.visible = true;
-//            headFurSwitch.visible = true;
-//            legsFurSwitch.visible = true;
-//            cheekFurSwitch.visible = true;
-//            bellyFurSwitch.visible = true;
-//            backFurSwitch.visible = true;
-//            bobtailSwitch.visible = true;
+            size = sizeSliderPreset.getActualValue();
+
         }
 
-//        if (!onGeneticalSkin) centerX += -15;
-        if (!onGeneticalSkin) centerX += -50;
+//        if (!onGeneticalSkin) centerX += 38;
+        if (!onGeneticalSkin) centerX += -0;
 
         WCatEntity entityToRender = new WCatEntity(ModEntities.WCAT.get(), Minecraft.getInstance().level);
+
+        entityToRender.setPlayerBoundUuid(UUID.nameUUIDFromBytes(ModEntities.WCAT.get().toString().getBytes()));
+        entityToRender.setShowMorphName(false);
 
         entityToRender.setOnGeneticalSkin(onGeneticalSkin);
         entityToRender.setGenetics(genetics);
@@ -1611,7 +1633,7 @@ public class CreateMorphGeneticsScreen extends Screen {
 
         pGuiGraphics.pose().translate(centerX, centerY + 90, 0);
 
-        float scale = 3.0f;
+        float scale = 2.0f;
         if (this.variantScrollList.getSelectedEntry() != null && !onGeneticalSkin) {
             scale = 2.0f;
         } else if (this.variantScrollList.getSelectedEntry() != null && onGeneticalSkin) {
@@ -1769,5 +1791,13 @@ public class CreateMorphGeneticsScreen extends Screen {
             }
         }
         return super.keyPressed(keyCode, scanCode, modifiers);
+    }
+
+    @Override
+    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
+        if (variantScrollList.mouseDragged(mouseX, mouseY, button, dragX, dragY)) {
+            return true;
+        }
+        return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
     }
 }

@@ -127,6 +127,8 @@ public class CtSSwitchShape {
 
                 cat.setOnGeneticalSkin(true);
                 cat.setGender(1);
+            } else {
+                cat.setNonGeneticalValues(cap.getPlayerGenetics(), cap.getPlayerGeneticalVariants().size);
             }
         });
 

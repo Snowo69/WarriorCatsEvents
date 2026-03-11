@@ -234,6 +234,17 @@ public class SpecificClanScreen extends Screen {
 
         if (clan.canManage) pGuiGraphics.drawString(Minecraft.getInstance().font,
                 Component.literal("Manager").withStyle(ChatFormatting.GRAY), 2, 2, 0xFFFFFF);
+        if (Minecraft.getInstance().player != null) {
+            if (WarriorCatsEvents.Devs.isDev(Minecraft.getInstance().player.getUUID())) {
+                pGuiGraphics.pose().pushPose();
+                pGuiGraphics.pose().translate(centerX, this.height-8, 0);
+                pGuiGraphics.pose().scale(0.7f,0.7f,0.8f);
+                pGuiGraphics.drawCenteredString(Minecraft.getInstance().font,
+                        Component.literal(clan.uuid.toString()).withStyle(ChatFormatting.GRAY), 0, 0, 0x99FFFFFF);
+                pGuiGraphics.pose().popPose();
+            }
+        }
+
 
 
 
@@ -257,7 +268,9 @@ public class SpecificClanScreen extends Screen {
             if (cat != null) {
 
                 WCatEntity entityToRender = new WCatEntity(ModEntities.WCAT.get(), Minecraft.getInstance().level);
-                entityToRender.setAnImage(false);
+                entityToRender.setAnImage(true);
+                entityToRender.setPlayerBoundUuid(UUID.nameUUIDFromBytes(ModEntities.WCAT.get().toString().getBytes()));
+                entityToRender.setShowMorphName(false);
                 entityToRender.setVariant(cat.variant);
                 entityToRender.setOnGround(true);
                 entityToRender.setYRot(0);

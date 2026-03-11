@@ -266,6 +266,7 @@ public class ClientEvents {
             event.registerEntityRenderer(ModEntities.WCAT.get(), WCRenderer::new);
             event.registerEntityRenderer(ModEntities.PIGEON.get(), PigeonRenderer::new);
             event.registerEntityRenderer(ModEntities.BADGER.get(), BadgerRenderer::new);
+//            event.registerEntityRenderer(ModEntities.EAGLE.get(), EagleRenderer::new);
 
         }
 

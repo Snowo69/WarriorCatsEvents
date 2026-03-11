@@ -24,6 +24,7 @@ import org.joml.Quaternionf;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.List;
+import java.util.UUID;
 
 public class ManageClanScreen extends Screen {
 
@@ -233,7 +234,9 @@ public class ManageClanScreen extends Screen {
 
 
             WCatEntity entityToRender = new WCatEntity(ModEntities.WCAT.get(), Minecraft.getInstance().level);
-            entityToRender.setAnImage(false);
+            entityToRender.setAnImage(true);
+            entityToRender.setPlayerBoundUuid(UUID.nameUUIDFromBytes(ModEntities.WCAT.get().toString().getBytes()));
+            entityToRender.setShowMorphName(false);
             entityToRender.setVariant(selectedMember.getVariantData());
             entityToRender.setOnGround(true);
             entityToRender.setYRot(0);

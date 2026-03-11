@@ -212,16 +212,6 @@ public class ClanData extends SavedData {
         if (clan == null) return false;
         if (cat == null) return false;
 
-//        Component catJoinedClanLog = Component.empty()
-//                .append(cat.hasCustomName() ? cat.getCustomName().copy() : Component.literal("A Cat"))
-//                .append(" has joined ")
-//                .append(Component.literal(clan.name).withStyle(Style.EMPTY.withColor(clan.color)))
-//                .append("!");
-//
-//        if (cat.level() instanceof ServerLevel serverLevel) {
-//            this.registerLog(serverLevel, clan.clanUUID, catJoinedClanLog);
-//        }
-
         ClanCat clanCat = ClanCat.buildCat(cat);
 
         clan.clanCats.put(cat.getUUID(), clanCat);
@@ -245,20 +235,10 @@ public class ClanData extends SavedData {
         Clan clan = getClan(cat.getClanUUID());
         if (clan == null) return false;
 
-//        Component catLeftClanLog = Component.empty()
-//                .append(cat.hasCustomName() ? cat.getCustomName().copy() : Component.literal("A Cat"))
-//                .append(" has left ")
-//                .append(Component.literal(clan.name).withStyle(Style.EMPTY.withColor(clan.color)));
-//
-//        if (cat.level() instanceof ServerLevel serverLevel) {
-//            this.registerLog(serverLevel, clan.clanUUID, catLeftClanLog);
-//        }
-
         for (Clan clan2 : clans.values()) {
             clan2.clanCats.remove(cat.getUUID());
         }
 
-        clan.clanCats.remove(cat.getUUID());
         setDirty();
         return true;
     }
@@ -343,6 +323,7 @@ public class ClanData extends SavedData {
                 if (entity instanceof WCatEntity cat) {
                     if (cat.isOwnedBy(player)) {
                         cat.setClanUUID(clan.clanUUID);
+                        addClanCat(clan, cat);
                     }
                 }
             }
@@ -792,8 +773,13 @@ public class ClanData extends SavedData {
         return null;
     }
 
-    public void checkForEmptyClans(ServerLevel serverLevel){
-        for (Clan clan : clans.values()) {
+    public void checkForEmptyClans(ServerLevel serverLevel) {
+
+        Iterator<Clan> clanIterator = clans.values().iterator();
+
+        while(clanIterator.hasNext()){
+            Clan clan = clanIterator.next();
+
             Iterator<UUID> iterator = clan.members.keySet().iterator();
             while (iterator.hasNext()) {
                 UUID uuid = iterator.next();
@@ -809,8 +795,8 @@ public class ClanData extends SavedData {
                 }
             }
 
-            if (clan.members.isEmpty()) {
-                deleteClan(serverLevel, clan.clanUUID);
+            if(clan.members.isEmpty()){
+                clanIterator.remove();
             }
         }
     }

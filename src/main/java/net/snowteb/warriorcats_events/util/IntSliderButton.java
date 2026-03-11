@@ -32,4 +32,11 @@ public class IntSliderButton extends AbstractSliderButton {
     public int getActualValue() {
         return (int) (min + (float)value * (max - min));
     }
+
+    public void setValue(int value) {
+        this.value = (double)(value - min) / (max - min);
+        this.value = Math.max(0.0, Math.min(1.0, this.value));
+        updateMessage();
+    }
+
 }
