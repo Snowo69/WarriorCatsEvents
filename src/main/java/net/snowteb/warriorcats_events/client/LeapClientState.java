@@ -58,6 +58,7 @@ public class LeapClientState {
         }
 
         if (shifting && Minecraft.getInstance().player.onGround() ) {
+            sprintingCounter = 0;
 
             if (shiftKeyDownCounter > 142 || !Minecraft.getInstance().player.onGround()) return;
 
@@ -120,10 +121,10 @@ public class LeapClientState {
             }
 
             if (runSkillLevel > 8) {
-                if (PlayerShape.getCurrentShape(localPlayer) instanceof WCatEntity) {
+                if (PlayerShape.getCurrentShape(localPlayer) instanceof WCatEntity && localPlayer.isSprinting()) {
                     sprintingCounter = Math.min(sprintingCounter, 300);
 
-                    if (localPlayer.isSprinting() && localPlayer.onGround() && localPlayer.getDeltaMovement().length() > 0.17) {
+                    if (localPlayer.onGround() && localPlayer.getDeltaMovement().length() > 0.17) {
                         sprintingCounter++;
 
                         if (sprintingCounter >= 280) {
@@ -138,6 +139,11 @@ public class LeapClientState {
                     } else {
                         leapPowerCounter = 0;
                         if (sprintingCounter > 0) sprintingCounter -=2;
+
+                        lockedLookEntity = null;
+                        wasLookKeyDown = false;
+                        lockingTarget = false;
+                        shiftKeyDownCounter = 0;
                     }
                 } else {
                     lockedLookEntity = null;
@@ -145,6 +151,8 @@ public class LeapClientState {
                     lockingTarget = false;
                     leapPowerCounter = 0;
                     shiftKeyDownCounter = 0;
+                    if (sprintingCounter > 0) sprintingCounter -=2;
+
                 }
             } else {
                 lockedLookEntity = null;
@@ -152,6 +160,8 @@ public class LeapClientState {
                 lockingTarget = false;
                 leapPowerCounter = 0;
                 shiftKeyDownCounter = 0;
+                if (sprintingCounter > 0) sprintingCounter -=2;
+
             }
 
 
