@@ -135,7 +135,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
     public boolean kitBorn = false;
     boolean animPlayed;
     public CatMode mode = CatMode.WANDER;
-    public CatMode lastMode;
+    public CatMode lastMode = CatMode.WANDER;
     public BlockPos wanderCenter = null;
     int maxVariants = WCModel.TEXTURES.length;
     private boolean wasBaby = this.isBaby();
@@ -3554,11 +3554,18 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
         ListTag list = new ListTag();
 
-        for (var entry : friendshipMap.entrySet()) {
-            CompoundTag t = new CompoundTag();
-            t.putUUID("Player", entry.getKey());
-            t.putInt("Level", entry.getValue());
-            list.add(t);
+        if (friendshipMap != null){
+            for (var entry : friendshipMap.entrySet()) {
+                UUID player = entry.getKey();
+                Integer level = entry.getValue();
+
+                if (player != null && level != null) {
+                    CompoundTag t = new CompoundTag();
+                    t.putUUID("Player", player);
+                    t.putInt("Level", level);
+                    list.add(t);
+                }
+            }
         }
 
         tag.put("Friendships", list);
@@ -3581,7 +3588,8 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
             tag.put("FeetArmor", this.entityData.get(FEET_ARMOR).save(new CompoundTag()));
         }
 
-        tag.putInt("Personality", this.getPersonality().ordinal());
+        var personality = this.getPersonality();
+        tag.putInt("Personality", personality == null ? 0 : personality.ordinal());
 
         if (this.getClan() != null) {
             tag.putString("Clan", Component.Serializer.toJson(this.getClan()));
@@ -3590,13 +3598,20 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         tag.putInt("KittingInteractCooldown", this.getKittingInteractCooldown());
 
 
-        tag.putInt("WCatMode", mode.ordinal());
+        if (this.mode == null) {
+            this.mode = CatMode.WANDER;
+        }
+        tag.putInt("WCatMode", this.mode.ordinal());
         tag.putInt("Variant", this.getVariant());
         tag.putInt("KittingTicks", this.getKittingTicks());
-        tag.putInt("Rank", this.getRank().ordinal());
+        if (this.getRank() != null){
+            tag.putInt("Rank", this.getRank().ordinal());
+        }
         tag.putBoolean("kitBorn", kitBorn);
         tag.putBoolean("AppScale", this.isAppScale());
-        tag.put("Inventory", inventory.createTag());
+        if (inventory != null){
+            tag.put("Inventory", inventory.createTag());
+        }
 
         tag.putBoolean("ReturningHome", this.returnHomeFlag);
 
@@ -3647,7 +3662,9 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
             tag.putUUID("ForbiddenP", this.getForbiddenPlayer());
         }
 
-        tag.putUUID("ClanUUID", this.getClanUUID());
+        if (this.getClanUUID() != null){
+            tag.putUUID("ClanUUID", this.getClanUUID());
+        }
 
         this.saveGeneticsNBT(tag);
         if (this.storedFatherGenetics != null) {
@@ -3656,7 +3673,9 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
             tag.put("StoredFatherGenetics", fatherTag);
         }
 
-        tag.putUUID("PlayerBoundUUID", this.getPlayerBoundUuid());
+        if (this.getPlayerBoundUuid() != null){
+            tag.putUUID("PlayerBoundUUID", this.getPlayerBoundUuid());
+        }
         tag.putInt("AnimIndex", this.entityData.get(ANIM_INDEX));
         tag.putBoolean("ShowMorphName", this.entityData.get(SHOW_MORPH_NAME));
 
@@ -3711,7 +3730,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
         if (tag.contains("Rank")) {
             int value = tag.getInt("Rank");
-            this.setRank(values()[value]);
+            this.setRank(Rank.values()[value]);
         }
 
         if (tag.contains("Personality")) {
@@ -3776,7 +3795,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
         if (tag.contains("WCatMode")) {
             int modeIndex = tag.getInt("WCatMode");
-            this.mode = CatMode.values()[modeIndex];
+            this.mode = CatMode.values()[modeIndex] != null ? CatMode.values()[modeIndex] : CatMode.WANDER;
         }
 
 
