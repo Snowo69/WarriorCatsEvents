@@ -6,9 +6,11 @@ ___
 
 **Warrior Cats Events** is a non official mod for Minecraft that promises to turn the vanilla survival experience into a true Warrior Cats experience compatible with both single-player and multi-player experience, for both Survival and Roleplay purposes.
 
-Warrior Cats Events was originally created and developed by **Klyonstar** aka Snowo, Snowstar, Mapple. Later on, the community itself who loved the project decided to lovingly contribute with ideas and assets for this project, until Warrior Cats Events became a project by the community and for the community.
+Warrior Cats Events was originally created and developed by **Klyonstar** aka Snowo/Snowstar/Mapple. Later on, the community itself who loved the project decided to lovingly contribute with ideas and assets for this project, until Warrior Cats Events became a project by the community and for the community.
 
 WCE introduces plenty of mechanics, blocks, items, and systems, all mainly focused on inmersion and taking a good care of aesthetics in order to offer a book-loyal experience to anyone.
+
+## [Wiki](https://github.com/Snowo69/WarriorCatsEvents/wiki)
 ___
 
 ![img](https://github.com/Snowo69/WarriorCatsEvents/blob/443a60abf39028499b34548f527fe71c9a92e84a/assets/2026-03-07_22.23.22.png)
