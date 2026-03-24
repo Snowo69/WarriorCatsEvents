@@ -11,6 +11,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.TamableAnimal;
@@ -40,6 +41,8 @@ import net.snowteb.warriorcats_events.clan.ClanData;
 import net.snowteb.warriorcats_events.clan.PlayerClanData;
 import net.snowteb.warriorcats_events.clan.PlayerClanDataProvider;
 import net.snowteb.warriorcats_events.commands.*;
+import net.snowteb.warriorcats_events.effect.ModEffects;
+import net.snowteb.warriorcats_events.entity.custom.EagleEntity;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.item.ModItems;
 import net.snowteb.warriorcats_events.network.ModPackets;
@@ -47,6 +50,7 @@ import net.snowteb.warriorcats_events.network.packet.s2c.clan.OpenClanSetupScree
 import net.snowteb.warriorcats_events.network.packet.s2c.clan.S2CSyncClanDataPacket;
 import net.snowteb.warriorcats_events.network.packet.s2c.skilltree.SyncSkillDataPacket;
 import net.snowteb.warriorcats_events.network.packet.s2c.others.ThirstDataSyncStCPacket;
+import net.snowteb.warriorcats_events.particles.WCEParticles;
 import net.snowteb.warriorcats_events.skills.PlayerSkill;
 import net.snowteb.warriorcats_events.skills.PlayerSkillProvider;
 import net.snowteb.warriorcats_events.stealth.PlayerStealth;
@@ -56,6 +60,7 @@ import net.snowteb.warriorcats_events.thirst.PlayerThirstProvider;
 import net.snowteb.warriorcats_events.util.CarryPlayerRequestManager;
 import net.snowteb.warriorcats_events.util.ClanInviteManager;
 import net.snowteb.warriorcats_events.util.ModAttributes;
+import net.snowteb.warriorcats_events.util.ServerPlayerMorphsCache;
 import net.snowteb.warriorcats_events.zconfig.WCEServerConfig;
 import tocraft.walkers.api.PlayerShape;
 
@@ -63,7 +68,6 @@ import java.util.*;
 
 @Mod.EventBusSubscriber(modid = WarriorCatsEvents.MODID)
 public class ModEvents2 {
-    private int conditionDropedItems = 0;
 
     private static final List<Task> tasks = new ArrayList<>();
 
@@ -93,6 +97,8 @@ public class ModEvents2 {
                 it.remove();
             }
         }
+
+        ServerPlayerMorphsCache.tick();
     }
 
     private static boolean isDiamond(ItemStack stack) {
@@ -402,6 +408,20 @@ public class ModEvents2 {
                 }
             }
 
+            if (player.isSleeping()) {
+                if (PlayerShape.getCurrentShape(player) instanceof WCatEntity) {
+                    if (player.level() instanceof ServerLevel sLevel && player.tickCount % 10 == 0) {
+
+                        Vec3 position = player.blockPosition().getCenter();
+
+                        sLevel.sendParticles(
+                                WCEParticles.SLEEP.get(),
+                                position.x, position.y + 0.3, position.z,
+                                1, 0, 0, 0,0.005);
+                    }
+                }
+            }
+
             int endTick = event.player.getPersistentData().getInt("wcat_animation_playing");
             if (endTick != 0) {
                 if (player.server.getTickCount() >= endTick) {
@@ -544,7 +564,20 @@ public class ModEvents2 {
 
                     float damage = ((float) (5.0F + ((float) cap.getDMGLevel() /1.25)*damagePowerMultiplier))*finalMultiplier;
                     if (event.player.hasLineOfSight(target)) {
-                        if (!(target instanceof TamableAnimal cat && cat.isTame() && cat.getOwner() == event.player)) {
+                        boolean isAClanmate = false;
+
+                        if (target instanceof Player playerTarget) {
+                            UUID targetClan = playerTarget.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
+                                    .map(PlayerClanData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID);
+                            UUID thisClan = playerTarget.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
+                                    .map(PlayerClanData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID);
+
+                            if (targetClan.equals(thisClan)) {
+                                isAClanmate = true;
+                            }
+                        }
+
+                        if (!((target instanceof TamableAnimal cat && cat.isTame() && cat.getOwner() == event.player) || (target instanceof EagleEntity eagle && eagle.getOwner() == event.player) || isAClanmate)) {
                             BlockParticleOption particle = new BlockParticleOption(ParticleTypes.BLOCK,
                                     Blocks.REDSTONE_BLOCK.defaultBlockState());
 
@@ -613,6 +646,12 @@ public class ModEvents2 {
     public static void onPlayerJoinWorld(EntityJoinLevelEvent event) {
         if(!event.getLevel().isClientSide()) {
             if(event.getEntity() instanceof ServerPlayer player) {
+
+                player.getCapability(PlayerSkillProvider.SKILL_DATA).ifPresent(cap -> {
+                   ModPackets.sendToPlayer(new SyncSkillDataPacket(cap.getSpeedLevel(), cap.getHPLevel(),
+                           cap.getDMGLevel(), cap.getJumpLevel(), cap.getArmorLevel()), player);
+                });
+
                 player.getCapability(PlayerThirstProvider.PLAYER_THIRST).ifPresent(thirst -> {
                     ModPackets.sendToPlayer(new ThirstDataSyncStCPacket(thirst.getThirst()), player);
                 });
@@ -624,6 +663,8 @@ public class ModEvents2 {
                 player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {
 
                     UUID clanUUID = cap.getCurrentClanUUID();
+
+
                     if (clanUUID == null || clanUUID.equals(ClanData.EMPTY_UUID)) {
                         cap.setCurrentClanUUID(ClanData.EMPTY_UUID);
                         return;
@@ -631,14 +672,17 @@ public class ModEvents2 {
 
                     ClanData data;
                     try {
-                        data = ClanData.get(player.serverLevel());
+                        data = ClanData.get(player.serverLevel().getServer().overworld());
                     } catch (Exception e) {
                         cap.setCurrentClanUUID(ClanData.EMPTY_UUID);
+                        WarriorCatsEvents.LOGGER.debug("Could not get ClanData from overworld, resetting clan for: {}", player.getName().getString());
                         return;
                     }
 
-                    if (data == null || data.clans == null || !data.clans.containsKey(clanUUID)) {
+                    if (data.clans == null || !data.clans.containsKey(clanUUID)) {
                         cap.setCurrentClanUUID(ClanData.EMPTY_UUID);
+                        player.sendSystemMessage(Component.literal("You have been removed from your clan.").withStyle(ChatFormatting.YELLOW));
+                        WarriorCatsEvents.LOGGER.debug("Could not find a clan with UUID \"{}\", resetting clan for: {}", clanUUID, player.getName().getString());
                     }
 
                     ModPackets.sendToPlayer(new S2CSyncClanDataPacket(cap), player);
@@ -648,24 +692,6 @@ public class ModEvents2 {
             }
         }
     }
-
-    /**
-     * This is useless and i should remove it but i might need it one day
-     */
-//    @SubscribeEvent
-//    public static void onWorldLoad(LevelEvent.Load event) {
-//        if (!event.getLevel().isClientSide() && event.getLevel() instanceof ServerLevel serverWorld) {
-//            Scoreboard scoreboard = serverWorld.getServer().getScoreboard();
-//
-//            Objective objective = scoreboard.getObjective("Lives");
-//            if (objective == null) {
-//                scoreboard.addObjective("Lives", ObjectiveCriteria.DUMMY,
-//                        net.minecraft.network.chat.Component.literal("Leader's Lives"),
-//                        ObjectiveCriteria.RenderType.INTEGER
-//                );
-//            }
-//        }
-//    }
 
     /**
      * Every time and entity jumps, if it is a player, then modify its jump depending on the custom Attribute.
@@ -698,10 +724,7 @@ public class ModEvents2 {
 
 
         if (player instanceof ServerPlayer sPlayer) {
-            ClanData clanData = ClanData.get(sPlayer.serverLevel());
-            ServerLevel sLevel = sPlayer.serverLevel();
-
-//            clanData.checkForEmptyClans(sLevel);
+            ClanData clanData = ClanData.get(sPlayer.serverLevel().getServer().overworld());
 
             UUID clanUUID = sPlayer.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
                     .map(PlayerClanData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID);

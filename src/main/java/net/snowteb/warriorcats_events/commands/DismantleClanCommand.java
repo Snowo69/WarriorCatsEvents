@@ -28,7 +28,7 @@ public class DismantleClanCommand {
 
     private static int method(CommandSourceStack source, ServerPlayer player) {
 
-        ServerLevel level = player.serverLevel();
+        ServerLevel level = player.serverLevel().getServer().overworld();
         ClanData data = ClanData.get(level);
 
         UUID clanUUID = player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)

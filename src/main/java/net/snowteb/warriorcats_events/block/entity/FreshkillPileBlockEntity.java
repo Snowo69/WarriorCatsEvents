@@ -15,7 +15,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -156,7 +155,32 @@ public class FreshkillPileBlockEntity extends BlockEntity implements MenuProvide
         return list;
     }
 
+    public boolean putItem(ItemStack itemStack) {
+        for (int i = 0; i < itemHandler.getSlots(); i++) {
+            ItemStack stackInSlot = itemHandler.getStackInSlot(i);
 
+            if (stackInSlot.isEmpty()) {
+                itemHandler.setStackInSlot(i, itemStack);
+                return true;
 
+            } else if (ItemStack.isSameItemSameTags(stackInSlot, itemStack) && stackInSlot.getCount() + itemStack.getCount() <= stackInSlot.getMaxStackSize()) {
+                stackInSlot.grow(itemStack.getCount());
+                itemHandler.setStackInSlot(i, stackInSlot);
+                return true;
 
+            } else if (ItemStack.isSameItemSameTags(stackInSlot, itemStack) && stackInSlot.getCount() < stackInSlot.getMaxStackSize()) {
+                int spaceAvailable = stackInSlot.getMaxStackSize() - stackInSlot.getCount();
+                stackInSlot.grow(spaceAvailable);
+                itemStack.shrink(spaceAvailable);
+                itemHandler.setStackInSlot(i, stackInSlot);
+                return true;
+            }
+        }
+
+        return itemStack.isEmpty();
+    }
+
+    public ItemStackHandler getItemHandler() {
+        return itemHandler;
+    }
 }

@@ -31,6 +31,12 @@ public class ModBlockEntities {
                             .build(null)
             );
 
+    public static final RegistryObject<BlockEntityType<StoneCraftingTableBlockEntity>> STONE_TABLE =
+            BLOCK_ENTITIES.register("stone_table", () ->
+                    BlockEntityType.Builder.of(StoneCraftingTableBlockEntity::new,
+                            ModBlocks.STONE_CRAFTING_TABLE.get()).build(null)
+            );
+
 
 
     public static void register(IEventBus eventBus) {

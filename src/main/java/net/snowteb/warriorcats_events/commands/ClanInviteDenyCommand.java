@@ -46,7 +46,7 @@ public class ClanInviteDenyCommand {
 
             ClanInviteManager.clear(player);
 
-            ClanData data = ClanData.get(player.serverLevel());
+            ClanData data = ClanData.get(player.serverLevel().getServer().overworld());
             ClanData.Clan clan = data.getClan(clanUUID);
 
             String deniedPlayerName = player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)

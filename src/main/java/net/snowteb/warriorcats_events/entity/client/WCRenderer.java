@@ -1,27 +1,20 @@
 package net.snowteb.warriorcats_events.entity.client;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.player.Player;
-import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.clan.ClanData;
-import net.snowteb.warriorcats_events.client.AnimationClientData;
 import net.snowteb.warriorcats_events.client.EntityChatBubbleManager;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.zconfig.WCEClientConfig;
@@ -122,11 +115,6 @@ public class WCRenderer extends GeoEntityRenderer<WCatEntity> {
         /**
          * If the entity is the entity the player is playing as (The one the player is morphed into), then set isPlayerShape.
          */
-        if (entity == PlayerShape.getCurrentShape(Minecraft.getInstance().player)) {
-            AnimationClientData.isPlayerShape = true;
-        } else {
-            AnimationClientData.isPlayerShape = false;
-        }
 
         if (entity.getPlayerBoundUuid().equals(ClanData.EMPTY_UUID) && !entity.isAnImage()) {
             float ageMoons = entity.getAgeInMoons();
@@ -352,15 +340,10 @@ public class WCRenderer extends GeoEntityRenderer<WCatEntity> {
 
                                     font.drawInBatch(
                                             line,
-                                            x1,
-                                            y,
-                                            color,
-                                            false,
-                                            matrix,
-                                            bufferSource,
-                                            Font.DisplayMode.NORMAL,
-                                            0x00000000,
-                                            255
+                                            x1, y,
+                                            color, false,
+                                            matrix, bufferSource, Font.DisplayMode.NORMAL,
+                                            0x00000000, 255
                                     );
 
                                     y += 8.2;

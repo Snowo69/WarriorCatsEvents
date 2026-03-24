@@ -1,6 +1,7 @@
 package net.snowteb.warriorcats_events.worldgen;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstapContext;
 import net.minecraft.data.worldgen.features.FeatureUtils;
@@ -8,11 +9,13 @@ import net.minecraft.data.worldgen.placement.PlacementUtils;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.util.random.SimpleWeightedRandomList;
 import net.minecraft.util.valueproviders.ConstantInt;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SweetBerryBushBlock;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.levelgen.blockpredicates.BlockPredicate;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
@@ -24,6 +27,7 @@ import net.minecraft.world.level.levelgen.feature.foliageplacers.CherryFoliagePl
 import net.minecraft.world.level.levelgen.feature.foliageplacers.PineFoliagePlacer;
 import net.minecraft.world.level.levelgen.feature.foliageplacers.SpruceFoliagePlacer;
 import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvider;
+import net.minecraft.world.level.levelgen.feature.stateproviders.WeightedStateProvider;
 import net.minecraft.world.level.levelgen.feature.trunkplacers.*;
 import net.minecraft.world.level.levelgen.placement.BlockPredicateFilter;
 import net.minecraft.world.level.levelgen.structure.templatesystem.BlockMatchTest;
@@ -32,6 +36,7 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.TagMatchTest;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.block.ModBlocks;
 import net.snowteb.warriorcats_events.block.custom.GenericBushBlock;
+import net.snowteb.warriorcats_events.block.custom.LavenderPetalsBlock;
 
 import java.util.List;
 
@@ -47,8 +52,10 @@ public class ModConfiguredFeatures {
     public static final ResourceKey<ConfiguredFeature<?,?>> GLOWSHROOM_KEY = registerKey("glowshroom");
     public static final ResourceKey<ConfiguredFeature<?,?>> YARROW_KEY = registerKey("yarrow");
 
-    public static final ResourceKey<ConfiguredFeature<?,?>> DARKTREE_KEY = registerKey("darktree_key");
-    public static final ResourceKey<ConfiguredFeature<?,?>> STARRYTREE_KEY = registerKey("starrytree_key");
+    public static final ResourceKey<ConfiguredFeature<?,?>> LAVENDER_KEY = registerKey("lavender");
+
+//    public static final ResourceKey<ConfiguredFeature<?,?>> DARKTREE_KEY = registerKey("darktree_key");
+//    public static final ResourceKey<ConfiguredFeature<?,?>> STARRYTREE_KEY = registerKey("starrytree_key");
 
 
     public static void bootstrap(BootstapContext<ConfiguredFeature<?, ?>> context) {
@@ -261,6 +268,27 @@ public class ModConfiguredFeatures {
                                 Feature.SIMPLE_BLOCK,
                                 new SimpleBlockConfiguration(
                                         BlockStateProvider.simple(ModBlocks.GLOWSHROOM.get())))));
+
+
+        register(context, LAVENDER_KEY, Feature.RANDOM_PATCH,
+                new RandomPatchConfiguration(
+                        1800,
+                        16,
+                        2,
+                        PlacementUtils.onlyWhenEmpty(
+                                Feature.SIMPLE_BLOCK,
+                                new SimpleBlockConfiguration(
+                                        new WeightedStateProvider(
+                                                SimpleWeightedRandomList.<BlockState>builder()
+                                                        .add(ModBlocks.LAVENDER.get().defaultBlockState(), 7)
+                                                        .add(ModBlocks.LAVENDER_PETALS.get().defaultBlockState().setValue(LavenderPetalsBlock.AMOUNT, 1).setValue(LavenderPetalsBlock.FACING, Direction.EAST), 1)
+                                                        .add(ModBlocks.LAVENDER_PETALS.get().defaultBlockState().setValue(LavenderPetalsBlock.AMOUNT, 2).setValue(LavenderPetalsBlock.FACING, Direction.WEST), 1)
+                                                        .add(ModBlocks.LAVENDER_PETALS.get().defaultBlockState().setValue(LavenderPetalsBlock.AMOUNT, 3).setValue(LavenderPetalsBlock.FACING, Direction.SOUTH), 1)
+                                                        .add(ModBlocks.LAVENDER_PETALS.get().defaultBlockState().setValue(LavenderPetalsBlock.AMOUNT, 4).setValue(LavenderPetalsBlock.FACING, Direction.NORTH), 1)
+                                                        .add(Blocks.ALLIUM.defaultBlockState(), 1)
+                                                        .build()
+                                        )))));
+
 
 
 

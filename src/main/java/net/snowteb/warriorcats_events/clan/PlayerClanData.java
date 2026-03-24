@@ -17,12 +17,12 @@ public class PlayerClanData {
     private int genderData;
     private boolean firstLoginHandled = false;
     private boolean useSufixes = true;
-    private UUID mateUUID = UUID.fromString("00000000-0000-0000-0000-000000000000");
+    private UUID mateUUID = ClanData.EMPTY_UUID;
     private BlockPos tempClickedPosData;
     private Component mateName = Component.literal("Undefined");
     private int sleepingCooldown = 0;
 
-    private UUID currentClanUUID = UUID.fromString("00000000-0000-0000-0000-000000000000");
+    private UUID currentClanUUID = ClanData.EMPTY_UUID;
 
 
     public enum Age {
@@ -361,7 +361,7 @@ public class PlayerClanData {
         this.sufix = "None";
         this.prefix = "None";
         this.useSufixes = true;
-        this.mateUUID = UUID.fromString("00000000-0000-0000-0000-000000000000");
+        this.mateUUID = ClanData.EMPTY_UUID;
         this.mateName = Component.literal("Undefined");
         this.tempClickedPosData = null;
         this.sleepingCooldown = 0;

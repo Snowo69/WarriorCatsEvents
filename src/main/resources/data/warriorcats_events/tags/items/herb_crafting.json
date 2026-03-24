@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "#warriorcats_events:herbs",
+    "#warriorcats_events:prey",
+    "#minecraft:small_flowers",
+    "#minecraft:tall_flowers",
+    "#minecraft:flowers"
+  ]
+}

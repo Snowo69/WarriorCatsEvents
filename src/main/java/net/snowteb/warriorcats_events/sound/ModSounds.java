@@ -58,6 +58,9 @@ public class ModSounds {
     public static final RegistryObject<SoundEvent> LEADER_CALL =
             registerSoundEvents("leader.cat_call");
 
+    public static final RegistryObject<SoundEvent> COLLAR_BELL =
+            registerSoundEvents("entity.collar_bell");
+
 
     public static final RegistryObject<SoundEvent> MENU_BUTTON =
             registerSoundEvents("menu.button");
@@ -72,6 +75,17 @@ public class ModSounds {
     public static final RegistryObject<SoundEvent> MENU_ACCEPT =
             registerSoundEvents("menu.accept");
 
+
+    public static final RegistryObject<SoundEvent> EAGLE_AMBIENT =
+            registerSoundEvents("entity.eagle.ambient");
+    public static final RegistryObject<SoundEvent> EAGLE_HURT =
+            registerSoundEvents("entity.eagle.hurt");
+    public static final RegistryObject<SoundEvent> EAGLE_DEATH =
+            registerSoundEvents("entity.eagle.death");
+    public static final RegistryObject<SoundEvent> EAGLE_ATTACK =
+            registerSoundEvents("entity.eagle.attack");
+    public static final RegistryObject<SoundEvent> EAGLE_CALL =
+            registerSoundEvents("entity.eagle.call");
 
 
     private static RegistryObject<SoundEvent> registerSoundEvents(String name) {

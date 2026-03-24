@@ -1,6 +1,7 @@
 package net.snowteb.warriorcats_events.block.custom;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
@@ -16,6 +17,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SweetBerryBushBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -23,6 +25,7 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
+import net.snowteb.warriorcats_events.particles.WCEParticles;
 
 import java.util.function.Supplier;
 
@@ -113,5 +116,40 @@ public class GenericBushBlock extends SweetBerryBushBlock {
         }
     }
 
+    @Override
+    public boolean isValidBonemealTarget(LevelReader pLevel, BlockPos pPos, BlockState pState, boolean pIsClient) {
+        return super.isValidBonemealTarget(pLevel, pPos, pState, pIsClient);
+    }
+
+    @Override
+    public boolean isBonemealSuccess(Level pLevel, RandomSource pRandom, BlockPos pPos, BlockState pState) {
+        return super.isBonemealSuccess(pLevel, pRandom, pPos, pState);
+    }
+
+    @Override
+    public void performBonemeal(ServerLevel pLevel, RandomSource pRandom, BlockPos pPos, BlockState pState) {
+
+        if (pRandom.nextFloat() < 0.018F) {
+            for (int i = 0; i < 16; i++) {
+
+                BlockPos target = pPos.offset(
+                        pRandom.nextInt(5) - 2,
+                        pRandom.nextInt(3) - 1,
+                        pRandom.nextInt(5) - 2
+                );
+
+                if (pLevel.isEmptyBlock(target) && pState.canSurvive(pLevel, target)) {
+                    pLevel.setBlock(target, this.defaultBlockState(), 3);
+                    Vec3 position = target.getCenter();
+                    pLevel.sendParticles(
+                            ParticleTypes.HAPPY_VILLAGER,
+                            position.x, target.getY() + 0.2, position.z,
+                            15, 0.4, 0.0, 0.4,0.005);                }
+            }
+            return;
+        }
+
+        super.performBonemeal(pLevel, pRandom, pPos, pState);
+    }
 
 }

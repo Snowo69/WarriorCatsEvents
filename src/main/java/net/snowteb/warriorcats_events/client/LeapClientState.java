@@ -1,5 +1,6 @@
 package net.snowteb.warriorcats_events.client;
 
+import com.eliotlash.mclib.math.functions.limit.Min;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -38,7 +39,9 @@ public class LeapClientState {
     private static int leapPowerCounter = 0;
     private static boolean attackWasDown = false;
 
-    private static int sprintingCounter = 0;
+    private static float sprintingCounter = 0;
+
+    private static int sprintCounterThreshold = 8;
 
     @Nullable
     private static Entity lockedLookEntity = null;
@@ -56,6 +59,7 @@ public class LeapClientState {
             || Minecraft.getInstance().player.getItemInHand(InteractionHand.MAIN_HAND).getItem() instanceof ShovelItem) return;
 
         }
+
 
         if (shifting && Minecraft.getInstance().player.onGround() ) {
             sprintingCounter = 0;
@@ -101,8 +105,8 @@ public class LeapClientState {
                         wasLookKeyDown = false;
                         lockingTarget = false;
                         ModPackets.sendToServer(new CtSPerformLeapPacket(leapPowerCounter));
-                        Minecraft.getInstance().player.displayClientMessage(
-                                Component.literal("Leap!").withStyle(ChatFormatting.GRAY).withStyle(ChatFormatting.ITALIC), true);
+//                        Minecraft.getInstance().player.displayClientMessage(
+//                                Component.literal("Leap!").withStyle(ChatFormatting.GRAY).withStyle(ChatFormatting.ITALIC), true);
                         leapPowerCounter = 0;
                         shiftKeyDownCounter = 0;
                     }
@@ -120,25 +124,37 @@ public class LeapClientState {
                         .map(ISkillData::getSpeedLevel).orElse(0);
             }
 
-            if (runSkillLevel > 8) {
+            if (runSkillLevel >= 8) {
                 if (PlayerShape.getCurrentShape(localPlayer) instanceof WCatEntity && localPlayer.isSprinting()) {
                     sprintingCounter = Math.min(sprintingCounter, 300);
 
                     if (localPlayer.onGround() && localPlayer.getDeltaMovement().length() > 0.17) {
                         sprintingCounter++;
+                        sprintCounterThreshold = 10;
+
+                        if (sprintingCounter >= 200 && runSkillLevel > 9) {
+                            localPlayer.setMaxUpStep(1.2f);
+                        } else {
+                            localPlayer.setMaxUpStep(0.6f);
+                        }
 
                         if (sprintingCounter >= 280) {
                             leapPowerCounter = 100;
 
                             if (Minecraft.getInstance().options.keyAttack.isDown()) {
-                                sprintingCounter -= 10;
+                                sprintingCounter -= 40;
                                 ModPackets.sendToServer(new CtSPerformLeapPacket(leapPowerCounter));
                             }
                         }
 
                     } else {
                         leapPowerCounter = 0;
-                        if (sprintingCounter > 0) sprintingCounter -=2;
+                        if (sprintCounterThreshold > 0) sprintCounterThreshold--;
+                        if (sprintCounterThreshold <= 0) {
+                            if (sprintingCounter > 0) sprintingCounter -= 1.7f;
+                        }
+                        localPlayer.setMaxUpStep(0.6f);
+
 
                         lockedLookEntity = null;
                         wasLookKeyDown = false;
@@ -151,8 +167,12 @@ public class LeapClientState {
                     lockingTarget = false;
                     leapPowerCounter = 0;
                     shiftKeyDownCounter = 0;
-                    if (sprintingCounter > 0) sprintingCounter -=2;
+                    if (sprintCounterThreshold > 0) sprintCounterThreshold--;
+                    if (sprintCounterThreshold <= 0) {
+                        if (sprintingCounter > 0) sprintingCounter -= 1.7f;
+                    }
 
+                    localPlayer.setMaxUpStep(0.6f);
                 }
             } else {
                 lockedLookEntity = null;
@@ -160,8 +180,10 @@ public class LeapClientState {
                 lockingTarget = false;
                 leapPowerCounter = 0;
                 shiftKeyDownCounter = 0;
-                if (sprintingCounter > 0) sprintingCounter -=2;
+                if (sprintCounterThreshold > 0) sprintCounterThreshold--;
+                if (sprintingCounter > 0) sprintingCounter -= 1.7f;
 
+                localPlayer.setMaxUpStep(0.6f);
             }
 
 
@@ -231,7 +253,6 @@ public class LeapClientState {
 
 
         player.setYRot(Mth.lerp(0.25F, player.getYRot(), yaw));
-//        player.setXRot(Mth.lerp(0.25F, player.getXRot(), pitch));
         player.yRotO = yaw;
         player.xRotO = pitch;
     }
@@ -243,7 +264,7 @@ public class LeapClientState {
         return leapPowerCounter;
     }
 
-    public static int getSprintingCounter() {
+    public static float getSprintingCounter() {
         return sprintingCounter;
     }
 
@@ -270,5 +291,9 @@ public class LeapClientState {
     @OnlyIn(Dist.CLIENT)
     public static void setCanceled(){
         shiftKeyDownCounter = 150;
+    }
+
+    public static int getSprintCounterThreshold() {
+        return sprintCounterThreshold;
     }
 }

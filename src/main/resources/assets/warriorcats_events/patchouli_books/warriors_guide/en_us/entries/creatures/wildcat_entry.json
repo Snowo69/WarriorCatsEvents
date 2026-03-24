@@ -7,7 +7,7 @@
   "pages": [
     {
       "type": "patchouli:entity",
-      "entity": "warriorcats_events:warrior_cat{Variant:3,OnGround:1b}",
+      "entity": "warriorcats_events:warrior_cat{Variant:3,OnGround:1b,IsAnImage:1b}",
       "rotate": false,
       "default_rotation": -30,
       "text": "This is us! I hope you already know everything about our species... You do, right?"
@@ -16,7 +16,7 @@
       "type": "patchouli:text",
       "title": "About the Wild Cat",
       "rotate": false,
-      "text": "Wild Cats can be found in every biome as long as it's not too cold or too hot. As you might know, we all have different colors and fur patterns that makes us unique. Some look like flames, some like stone, others have colorful spots! $(br2)Wild Cats have also their own unique size, so don't be afraid if you find a cat bigger than you, true strength comes only from experience."
+      "text": "Wild Cats can be found in every biome. As you might know, we all have different colors and fur patterns that makes us unique. Some look like flames, some like stone, others have colorful spots! $(br2)Wild Cats have also their own unique size, so don't be afraid if you find a cat bigger than you, true strength comes only from experience."
     },
     {
       "type": "patchouli:text",
@@ -153,6 +153,11 @@
       "item": "warriorcats_events:rare_flowers_bouquet",
       "title": "Finding Your Soulmate",
       "text": "Once you feel ready, and they feel ready too... The next step is to show them you would do anything for them. $(br2)Something pretty and meaningful might do it, something that shows you would give up all you have and all you value the most for them.$(br)"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Hangout Zones",
+      "text": "The scent of lavender... Always so pleasing. Most cats love to be around a meow and share tongues nearby some lavender petals. These are quite necessary in every camp and territory after a long stressful day!$(br)"
     }
 
 

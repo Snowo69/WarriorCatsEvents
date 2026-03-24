@@ -148,7 +148,7 @@ public class BadgerEntity extends Animal implements GeoEntity {
 
     @Override
     public int getExperienceReward() {
-        return 150 + 10*this.random.nextInt(5);
+        return 80 + 10*this.random.nextInt(5);
     }
 
 

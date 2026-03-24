@@ -120,6 +120,12 @@ public class ModBlocks {
     public static final RegistryObject<Block> FRESHKILL_PILE = registerBlock("fresh_kill_pile",
             () -> new FreshkillPileBlock());
 
+    public static  final RegistryObject<DoublePlantBlock> LAVENDER = registerBlock("lavender",
+            () -> new DoublePlantBlock(BlockBehaviour.Properties.copy(Blocks.ROSE_BUSH)));
+
+    public static  final RegistryObject<LavenderPetalsBlock> LAVENDER_PETALS = registerBlock("lavender_petals",
+            () -> new LavenderPetalsBlock(BlockBehaviour.Properties.copy(Blocks.PINK_PETALS)));
+
 
 //    public static final RegistryObject<Block> DARK_LOG = registerBlock("dark_log",
 //            () -> new ModFlammableRotatedPillarBlock(BlockBehaviour.Properties.copy(Blocks.DARK_OAK_LOG).strength(3f).noLootTable()));

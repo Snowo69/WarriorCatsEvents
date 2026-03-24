@@ -1,30 +1,40 @@
 package net.snowteb.warriorcats_events.event;
 
+import com.eliotlash.mclib.math.functions.limit.Min;
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.*;
 import com.mojang.math.Axis;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BedBlock;
-import net.minecraft.world.level.block.entity.BedBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
-import net.minecraftforge.client.event.RenderGuiOverlayEvent;
-import net.minecraftforge.client.event.RenderPlayerEvent;
-import net.minecraftforge.client.event.ScreenEvent;
+import net.minecraftforge.client.event.*;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.snowteb.warriorcats_events.WCEClient;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.block.custom.MossBedBlock;
 import net.snowteb.warriorcats_events.client.LeapClientState;
@@ -32,10 +42,13 @@ import net.snowteb.warriorcats_events.network.ModPackets;
 import net.snowteb.warriorcats_events.network.packet.c2s.skilltree.ReqSkillDataPacket;
 import net.snowteb.warriorcats_events.screen.EmoteMenu;
 import net.snowteb.warriorcats_events.screen.SkillScreen;
+import net.snowteb.warriorcats_events.screen.clandata.PlaySoundMenu;
+import net.snowteb.warriorcats_events.sound.ModSounds;
 import net.snowteb.warriorcats_events.stealth.PlayerStealthProvider;
 import tocraft.walkers.api.PlayerShape;
 
-import static net.snowteb.warriorcats_events.WCEClient.isRenderingEmoteMenu;
+import static net.minecraft.client.renderer.LevelRenderer.getLightColor;
+import static net.snowteb.warriorcats_events.WCEClient.*;
 
 @Mod.EventBusSubscriber(modid = WarriorCatsEvents.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public class ClientEventsForge {
@@ -75,12 +88,6 @@ public class ClientEventsForge {
     }
 
     @SubscribeEvent
-    public static void onClientLogin(ClientPlayerNetworkEvent.LoggingIn event) {
-
-        ModPackets.sendToServer(new ReqSkillDataPacket());
-    }
-
-    @SubscribeEvent
     public static void onRenderPlayerPre(RenderPlayerEvent.Pre event) {
         Player player = event.getEntity();
 
@@ -94,7 +101,7 @@ public class ClientEventsForge {
                     PoseStack poseStack = event.getPoseStack();
                     poseStack.pushPose();
                     poseStack.scale(0.95F, 0.95F, 0.95F);
-                    poseStack.translate(0.0D, 0.1D, -0.3D);
+                    poseStack.translate(0.0D, 0.0D, -0.0D);
 
                     if (PlayerShape.getCurrentShape(player) instanceof Animal) {
                         if (player != Minecraft.getInstance().player) {
@@ -102,7 +109,7 @@ public class ClientEventsForge {
                             player.setOnGround(true);
                         }
                         poseStack.mulPose(Axis.ZP.rotationDegrees(90.0F));
-                        poseStack.mulPose(Axis.YP.rotationDegrees(90.0F));
+                        poseStack.mulPose(Axis.YP.rotationDegrees(180f));
 
                         player.swinging = false;
                     }
@@ -160,9 +167,7 @@ public class ClientEventsForge {
                         .getBlockState(bedPos)
                         .getBlock() instanceof MossBedBlock) {
 
-                    if (PlayerShape.getCurrentShape(player) instanceof Animal) {
-                        event.getPoseStack().popPose();
-                    }
+                    event.getPoseStack().popPose();
 
                 } else if (player.level()
                         .getBlockState(bedPos)
@@ -175,6 +180,8 @@ public class ClientEventsForge {
             });
         }
     }
+
+
 
 
     @SubscribeEvent
@@ -237,6 +244,57 @@ public class ClientEventsForge {
 
         if (isRenderingEmoteMenu) {
             new EmoteMenu().render(event.getGuiGraphics());
+        } else if (isRenderingSoundMenu) {
+            new PlaySoundMenu().render(event.getGuiGraphics());
+        }
+
+        if (isBeingLatched && setFreeCounter < 199) {
+            mcinstance.player.displayClientMessage(Component.literal(""), true);
+            GuiGraphics guiGraphics = event.getGuiGraphics();
+            int width = mcinstance.getWindow().getGuiScaledWidth();
+            int height = mcinstance.getWindow().getGuiScaledHeight();
+            int centerX = width / 2;
+            int centerY = height / 2 + 10;
+
+            ResourceLocation emptyBar = new ResourceLocation(WarriorCatsEvents.MODID,
+                    "textures/hud/escape_bar_empty.png");
+            ResourceLocation fillBar = new ResourceLocation(WarriorCatsEvents.MODID,
+                    "textures/hud/escape_bar_fill.png");
+
+            int toFill = centerX - 100 + setFreeCounter;
+
+            RenderSystem.enableBlend();
+            RenderSystem.defaultBlendFunc();
+            guiGraphics.blit(emptyBar,centerX-105, centerY + 20, 0,0,210, 24, 210, 24);
+            RenderSystem.disableBlend();
+
+
+            guiGraphics.enableScissor(centerX - 100, centerY + 23, toFill, centerY + 43);
+            guiGraphics.blit(fillBar,centerX-100, centerY + 23, 0,0,200, 18,200, 18);
+            guiGraphics.disableScissor();
+
+            guiGraphics.drawCenteredString(Minecraft.getInstance().font,"Press 'Left Shift' to unlatch", centerX, centerY + 28, 0xFFFFFF );
+
+        }
+
+        if (!lookingAtParticle.isEmpty()) {
+            GuiGraphics guiGraphics = event.getGuiGraphics();
+            int width = mcinstance.getWindow().getGuiScaledWidth();
+            int height = mcinstance.getWindow().getGuiScaledHeight();
+            int centerX = width / 2;
+            int centerY = height / 2;
+
+            Component text = Component.literal("The footprint smells like " + lookingAtParticle).withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.GRAY);
+
+            float scale = 1f;
+
+            guiGraphics.pose().pushPose();
+            guiGraphics.pose().translate(centerX, height - 70, 0);
+            guiGraphics.pose().scale(scale, scale, scale);
+            guiGraphics.drawCenteredString(Minecraft.getInstance().font, text, 0, 0, 0);
+            guiGraphics.pose().popPose();
+
+            if (newParticleTime <= 0) lookingAtParticle = "";
         }
 
         if (LeapClientState.getSprintingCounter() > 100) {
@@ -252,6 +310,7 @@ public class ClientEventsForge {
                     "textures/hud/sprintbar_ready.png");
 
 
+
             guiGraphics.blit(
                     emptyBar,
                     width - 16, height - 106,
@@ -262,7 +321,7 @@ public class ClientEventsForge {
 
             int centerX = width / 2;
             int centerY = height / 2;
-            int sprintPower = LeapClientState.getSprintingCounter() - 100;
+            int sprintPower = (int) (LeapClientState.getSprintingCounter() - 100);
 
             float sprintPowerPercentage = (float) sprintPower / 200;
 
@@ -383,5 +442,136 @@ public class ClientEventsForge {
             );
         }
 
+    }
+
+
+
+    @SubscribeEvent
+    public static void renderWind(RenderLevelStageEvent event) {
+
+        if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_WEATHER) return;
+
+        if (LeapClientState.getSprintingCounter() < 200) return;
+
+        Camera cam = Minecraft.getInstance().gameRenderer.getMainCamera();
+        Vec3 pos = cam.getPosition();
+
+        renderWindEffect(Minecraft.getInstance().gameRenderer.lightTexture(),
+                event.getPartialTick(), pos.x, pos.y, pos.z);
+    }
+
+    private static final ResourceLocation WIND = new ResourceLocation(WarriorCatsEvents.MODID, "textures/environment/wind.png");
+
+    private static final float[] windSizeX = new float[1024];
+    private static final float[] windSizeZ = new float[1024];
+
+    static {
+        for (int i = 0; i < 32; ++i) {
+            for (int j = 0; j < 32; ++j) {
+                float f = j - 16;
+                float f1 = i - 16;
+                float f2 = Mth.sqrt(f * f + f1 * f1);
+
+                windSizeX[i << 5 | j] = -f1 / f2;
+                windSizeZ[i << 5 | j] =  f  / f2;
+            }
+        }
+    }
+
+    private static double smoothSpeed = 0;
+
+    private static void renderWindEffect(LightTexture pLightTexture, float pPartialTick, double pCamX, double pCamY, double pCamZ) {
+        Minecraft minecraft = Minecraft.getInstance();
+        int ticks = Minecraft.getInstance().player.tickCount;
+
+        float f = ((LeapClientState.getSprintingCounter()-200) / 100f);
+
+        if (LeapClientState.getSprintCounterThreshold() < 5 && minecraft.player.onGround()) {
+            f = (float) LeapClientState.getSprintCounterThreshold() /8;
+        }
+
+        WCEClient.playLocalSound(ModSounds.STEALTH_WOOSH.get(), SoundSource.AMBIENT, f*0.10f, f*minecraft.player.getRandom().nextFloat());
+
+        if (!(f <= 0.0f)) {
+            pLightTexture.turnOnLightLayer();
+            Level level = minecraft.level;
+            int i = Mth.floor(pCamX);
+            int j = Mth.floor(pCamY);
+            int k = Mth.floor(pCamZ);
+            Tesselator tesselator = Tesselator.getInstance();
+            BufferBuilder bufferbuilder = tesselator.getBuilder();
+            RenderSystem.disableCull();
+            RenderSystem.enableBlend();
+            RenderSystem.defaultBlendFunc();
+            RenderSystem.enableDepthTest();
+            int l = 2;
+
+            RenderSystem.depthMask(Minecraft.useShaderTransparency());
+            int i1 = -1;
+            float f1 = (float)ticks + pPartialTick;
+            RenderSystem.setShader(GameRenderer::getParticleShader);
+            BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos();
+
+            double targetSpeed = minecraft.player.getDeltaMovement().length() * 10.0;
+            smoothSpeed = Mth.lerp(pPartialTick, smoothSpeed, targetSpeed);
+
+            for(int j1 = k - l; j1 <= k + l; ++j1) {
+                for(int k1 = i - l; k1 <= i + l; ++k1) {
+                    int l1 = (j1 - k + 16) * 32 + k1 - i + 16;
+                    double d0 = (double)windSizeX[l1] * 0.5D;
+                    double d1 = (double)windSizeZ[l1] * 0.5D;
+                    blockpos$mutableblockpos.set(k1, pCamY, j1);
+
+                    int j2 = j - l;
+                    int k2 = j + l;
+                    int l2 = j;
+
+                        if (j2 != k2) {
+                            RandomSource randomsource = RandomSource.create((long)(k1 * k1 * 3121 + k1 * 45238971 ^ j1 * j1 * 418711 + j1 * 13761));
+                            blockpos$mutableblockpos.set(k1, j2, j1);
+
+                            {
+                                if (i1 != 1) {
+                                    if (i1 >= 0) {
+                                        tesselator.end();
+                                    }
+
+                                    i1 = 1;
+                                    RenderSystem.setShaderTexture(0, WIND);
+                                    bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.PARTICLE);
+                                }
+
+                                float f5 = 0.0F;
+
+                                float f6 = 0;
+                                float f7 = (float)(randomsource.nextDouble() + (double)(f1) * (minecraft.player.getDeltaMovement().length() > 0.15 ? -0.01D : -0.0005D));
+                                double d3 = (double)k1 + 0.5D - pCamX;
+                                double d5 = (double)j1 + 0.5D - pCamZ;
+                                float f8 = (float)Math.sqrt(d3 * d3 + d5 * d5) / (float)l;
+                                float f9 = ((1.0F - f8 * f8) * 0.3F + 0.5F) * f;
+                                blockpos$mutableblockpos.set(k1, l2, j1);
+                                int k3 = getLightColor(level, blockpos$mutableblockpos);
+                                int l3 = k3 >> 16 & '\uffff';
+                                int i4 = k3 & '\uffff';
+                                int j4 = (l3 * 3 + 240) / 4;
+                                int k4 = (i4 * 3 + 240) / 4;
+                                bufferbuilder.vertex((double)k1 - pCamX - d0 + 0.5D, (double)k2 - pCamY, (double)j1 - pCamZ - d1 + 0.5D).uv(0.0F + f6, (float)j2 * 0.25F + f5 + f7).color(1.0F, 1.0F, 1.0F, f9).uv2(k4, j4).endVertex();
+                                bufferbuilder.vertex((double)k1 - pCamX + d0 + 0.5D, (double)k2 - pCamY, (double)j1 - pCamZ + d1 + 0.5D).uv(1.0F + f6, (float)j2 * 0.25F + f5 + f7).color(1.0F, 1.0F, 1.0F, f9).uv2(k4, j4).endVertex();
+                                bufferbuilder.vertex((double)k1 - pCamX + d0 + 0.5D, (double)j2 - pCamY, (double)j1 - pCamZ + d1 + 0.5D).uv(1.0F + f6, (float)k2 * 0.25F + f5 + f7).color(1.0F, 1.0F, 1.0F, f9).uv2(k4, j4).endVertex();
+                                bufferbuilder.vertex((double)k1 - pCamX - d0 + 0.5D, (double)j2 - pCamY, (double)j1 - pCamZ - d1 + 0.5D).uv(0.0F + f6, (float)k2 * 0.25F + f5 + f7).color(1.0F, 1.0F, 1.0F, f9).uv2(k4, j4).endVertex();
+                            }
+                        }
+
+                }
+            }
+
+            if (i1 >= 0) {
+                tesselator.end();
+            }
+
+            RenderSystem.enableCull();
+            RenderSystem.disableBlend();
+            pLightTexture.turnOffLightLayer();
+        }
     }
 }

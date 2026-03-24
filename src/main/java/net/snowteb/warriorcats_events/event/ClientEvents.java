@@ -11,9 +11,9 @@ import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.FoliageColor;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.ConfigScreenHandler;
@@ -24,37 +24,44 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.registries.RegistryObject;
 import net.snowteb.warriorcats_events.WCEClient;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.block.ModBlocks;
 import net.snowteb.warriorcats_events.block.entity.FreshkillPileRenderer;
 import net.snowteb.warriorcats_events.block.entity.ModBlockEntities;
 import net.snowteb.warriorcats_events.block.entity.MossBedRenderer;
+import net.snowteb.warriorcats_events.block.entity.StoneTableRenderer;
+import net.snowteb.warriorcats_events.client.ClientStoredMorphs;
 import net.snowteb.warriorcats_events.client.EntityChatBubbleManager;
 import net.snowteb.warriorcats_events.client.LeapClientState;
 import net.snowteb.warriorcats_events.client.ThirstHUD;
 import net.snowteb.warriorcats_events.entity.ModEntities;
 import net.snowteb.warriorcats_events.entity.client.*;
 //import net.snowteb.warriorcats_events.entity.custom.ModModelLayers;
+import net.snowteb.warriorcats_events.entity.custom.EagleEntity;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.item.ModItems;
 import net.snowteb.warriorcats_events.network.ModPackets;
 import net.snowteb.warriorcats_events.network.packet.c2s.clan.EmoteMorphPacket;
+import net.snowteb.warriorcats_events.network.packet.c2s.others.CtSDismountEaglePacket;
+import net.snowteb.warriorcats_events.network.packet.c2s.others.CtSPlayCatSoundPacket;
 import net.snowteb.warriorcats_events.network.packet.c2s.others.CtSSwitchShape;
-import net.snowteb.warriorcats_events.network.packet.c2s.others.CtSTeleportToLocationPacket;
 import net.snowteb.warriorcats_events.network.packet.s2c.cats.OpenCatDataScreenPacket;
 import net.snowteb.warriorcats_events.network.packet.s2c.clan.OpenClanSetupScreenPacket;
-import net.snowteb.warriorcats_events.network.packet.c2s.others.CtSHissPacket;
 import net.snowteb.warriorcats_events.network.packet.s2c.others.StCFishingScreenPacket;
 import net.snowteb.warriorcats_events.network.packet.c2s.others.WaterPacket;
+import net.snowteb.warriorcats_events.particles.*;
 import net.snowteb.warriorcats_events.screen.*;
 import net.snowteb.warriorcats_events.screen.clandata.CatDataScreen;
 import net.snowteb.warriorcats_events.screen.clandata.ClanSetupScreen;
-import net.snowteb.warriorcats_events.screen.clandata.CreateMorphGeneticsScreen;
 import net.snowteb.warriorcats_events.skills.StealthClientState;
 import net.snowteb.warriorcats_events.sound.ModSounds;
 import net.snowteb.warriorcats_events.stealth.PlayerStealthProvider;
 import net.snowteb.warriorcats_events.util.ModKeybinds;
+import org.lwjgl.glfw.GLFW;
+
+import java.util.Arrays;
 
 import static net.snowteb.warriorcats_events.WCEClient.*;
 
@@ -68,18 +75,14 @@ public class ClientEvents {
     @Mod.EventBusSubscriber(modid = WarriorCatsEvents.MODID, value = Dist.CLIENT)
     public static class ClientForgeEvents {
 
-
         @SubscribeEvent
         public static void onKeyInput(InputEvent.Key event) {
 
-//            if (ModKeybinds.SKILLMENU_KEY.consumeClick()) {
-//                Minecraft.getInstance().setScreen(new PauseAnimationScreen());
-////                Minecraft.getInstance().setScreen(new CreateMorphGeneticsScreen());
-//            }
-
-//            if (ModKeybinds.EMOTES_KEY.consumeClick()) {
-//                Minecraft.getInstance().setScreen(new EmoteWheelScreen());
-//            }
+            if ((event.getKey() == GLFW.GLFW_KEY_LEFT_SHIFT || event.getKey() == GLFW.GLFW_KEY_RIGHT_SHIFT) && event.getAction() == GLFW.GLFW_PRESS) {
+                if (isBeingLatched) {
+                    setFreeCounter+=16;
+                }
+            }
 
         }
 
@@ -110,8 +113,19 @@ public class ClientEvents {
                 WCEClient.playLocalSound(ModSounds.MENU_CLICK.get(), SoundSource.NEUTRAL, 0.1f,1.3f);
 
                 event.setCanceled(true);
+            } else if (isRenderingSoundMenu && mc.screen == null) {
+                soundOffset -= (int) event.getScrollDelta();
+
+                soundOffset = Mth.clamp(soundOffset, 0, MAX_SOUNDS);
+
+
+                WCEClient.playLocalSound(ModSounds.MENU_CLICK.get(), SoundSource.NEUTRAL, 0.1f,1.3f);
+
+                event.setCanceled(true);
             }
         }
+
+        private static boolean wasJumpPressed = false;
 
         @SubscribeEvent
         public static void onClientTick(TickEvent.ClientTickEvent event) {
@@ -124,6 +138,8 @@ public class ClientEvents {
              * If the skill is unlocked and on, and the player is shifting, send the info to the StealthClientState.
              */
 
+            if (newParticleTime > 0) newParticleTime--;
+
             EntityChatBubbleManager.tick();
 
             player.getCapability(PlayerStealthProvider.STEALTH_MODE).ifPresent(cap -> {
@@ -132,6 +148,41 @@ public class ClientEvents {
                 boolean shifting = mc.options.keyShift.isDown();
                 StealthClientState.tick(shifting);
             });
+
+            {
+                if (player.getVehicle() != null) {
+                    if (player.getVehicle() instanceof EagleEntity eagle && !eagle.isOwnedBy(player)) {
+                        if (!isBeingLatched) {
+                            isBeingLatched = true;
+                            setFreeCounter = 60;
+                        }
+                    } else {
+                        isBeingLatched = false;
+                    }
+                } else {
+                    if (isBeingLatched) isBeingLatched = false;
+                }
+
+                boolean isJumpPressed = mc.options.keyJump.isDown();
+
+                if (!isBeingLatched) {
+                    setFreeCounter = 0;
+                } else {
+
+                    if (setFreeCounter >= 199) {
+                        isBeingLatched = false;
+                        setFreeCounter = 0;
+                        ModPackets.sendToServer(new CtSDismountEaglePacket());
+
+                    }
+
+                    if (setFreeCounter > 0) {
+                        setFreeCounter--;
+                    }
+                }
+
+                wasJumpPressed = isJumpPressed;
+            }
 
 
             boolean shifting = mc.options.keyShift.isDown();
@@ -145,15 +196,15 @@ public class ClientEvents {
             if (hissCooldown > 0) hissCooldown--;
             if (waterCooldown > 0) waterCooldown--;
 
-            if (ModKeybinds.HISSING_KEY.isDown() && hissCooldown == 0) {
-                if (!hissPressed) {
-                    ModPackets.sendToServer(new CtSHissPacket());
-                    hissPressed = true;
-                    hissCooldown = 30;
-                }
-            } else {
-                hissPressed = false;
-            }
+//            if (ModKeybinds.HISSING_KEY.isDown() && hissCooldown == 0) {
+//                if (!hissPressed) {
+//                    ModPackets.sendToServer(new CtSPlayCatSoundPacket());
+//                    hissPressed = true;
+//                    hissCooldown = 30;
+//                }
+//            } else {
+//                hissPressed = false;
+//            }
 
             if (ModKeybinds.WATERDRINK_KEY.isDown() && waterCooldown == 0) {
                 if (!waterPressed) {
@@ -185,13 +236,38 @@ public class ClientEvents {
                     WCEClient.playLocalSound(ModSounds.MENU_OPEN.get(), SoundSource.NEUTRAL, 0.4f,1f);
                 }
 
+                if (isRenderingSoundMenu) isRenderingSoundMenu = false;
+
+
                 emoteOffset = 0;
                 isRenderingEmoteMenu = !isRenderingEmoteMenu;
             }
 
+            if (ModKeybinds.HISSING_KEY.consumeClick()) {
+                if (isRenderingSoundMenu) {
+                    int selected = soundOffset;
+                    if (selected != 0) {
+                        ModPackets.sendToServer(new CtSPlayCatSoundPacket(selected));
+                    }
+                } else {
+                    WCEClient.playLocalSound(ModSounds.MENU_OPEN.get(), SoundSource.NEUTRAL, 0.4f,1f);
+                }
+
+                if (isRenderingEmoteMenu) isRenderingEmoteMenu = false;
+
+                soundOffset = 0;
+                isRenderingSoundMenu = !isRenderingSoundMenu;
+            }
+
+
             if (isRenderingEmoteMenu && (mc.screen != null || mc.player == null)) {
                 isRenderingEmoteMenu = false;
                 emoteOffset = 0;
+            }
+
+            if (isRenderingSoundMenu && (mc.screen != null || mc.player == null)) {
+                isRenderingSoundMenu = false;
+                soundOffset = 0;
             }
 
         }
@@ -244,6 +320,7 @@ public class ClientEvents {
         public static void registerBER(EntityRenderersEvent.RegisterRenderers event) {
             event.registerBlockEntityRenderer(ModBlockEntities.FRESH_KILL_PILE.get(), FreshkillPileRenderer::new);
             event.registerBlockEntityRenderer(ModBlockEntities.MOSS_BED.get(), MossBedRenderer::new);
+            event.registerBlockEntityRenderer(ModBlockEntities.STONE_TABLE.get(), StoneTableRenderer::new);
         }
 
         @SubscribeEvent
@@ -266,8 +343,17 @@ public class ClientEvents {
             event.registerEntityRenderer(ModEntities.WCAT.get(), WCRenderer::new);
             event.registerEntityRenderer(ModEntities.PIGEON.get(), PigeonRenderer::new);
             event.registerEntityRenderer(ModEntities.BADGER.get(), BadgerRenderer::new);
-//            event.registerEntityRenderer(ModEntities.EAGLE.get(), EagleRenderer::new);
+            event.registerEntityRenderer(ModEntities.EAGLE.get(), EagleRenderer::new);
 
+        }
+
+        @SubscribeEvent
+        public static void registerParticles(RegisterParticleProvidersEvent event) {
+            event.registerSpriteSet(WCEParticles.SLEEP.get(), ParticleSleep.Factory::new);
+            event.registerSpriteSet(WCEParticles.LAVENDER.get(), ParticleLavender.Factory::new);
+            event.registerSpriteSet(WCEParticles.HERBS.get(), ParticleHerbs.Factory::new);
+            event.registerSpriteSet(WCEParticles.HERBS_FALL.get(), ParticleHerbsFall.Factory::new);
+            event.registerSpriteSet(WCEParticles.FOOTPRINT.get(), ParticleFootprint.Factory::new);
         }
 
         /**
@@ -293,12 +379,14 @@ public class ClientEvents {
             MenuScreens.register(ModMenuTypes.WCAT_INVENTORY.get(), WCatScreen::new);
             UpdateCheck.checkForUpdates();
 
+            ClientStoredMorphs.load();
+
 
             ModLoadingContext.get().registerExtensionPoint(
                     ConfigScreenHandler.ConfigScreenFactory.class,
                     () -> new ConfigScreenHandler.ConfigScreenFactory(
                             (mc, parent) -> {
-                                WCEClient.playLocalSound(ModSounds.MENU_OPEN.get(), SoundSource.NEUTRAL, 1.0f,1.3f);
+                                WCEClient.playLocalSound(ModSounds.MENU_OPEN.get(), SoundSource.NEUTRAL, 1.0f, 1.3f);
                                 return new WCEConfigScreen(parent);
                             }
                     )
@@ -313,6 +401,28 @@ public class ClientEvents {
                         return 0.0F;
                     }
             );
+
+
+            {
+                for (RegistryObject<Item> collar : Arrays.asList(
+                        ModItems.BLACK_CAT_COLLAR, ModItems.BROWN_CAT_COLLAR, ModItems.WHITE_CAT_COLLAR,
+                        ModItems.PINK_CAT_COLLAR, ModItems.ORANGE_CAT_COLLAR, ModItems.RED_CAT_COLLAR,
+                        ModItems.BLUE_CAT_COLLAR, ModItems.PURPLE_CAT_COLLAR)) {
+
+                    ItemProperties.register(collar.get(),
+                            new ResourceLocation("warriorcats_events", "has_bell"),
+                            (stack, level, entity, seed) -> stack.getTag() != null && stack.getTag().getBoolean("HasBell") ? 1f : 0f);
+
+                    ItemProperties.register(collar.get(),
+                            new ResourceLocation("warriorcats_events", "has_spikes"),
+                            (stack, level, entity, seed) -> stack.getTag() != null && stack.getTag().getBoolean("HasSpikes") ? 1f : 0f);
+
+                    ItemProperties.register(collar.get(),
+                            new ResourceLocation("warriorcats_events", "has_glow"),
+                            (stack, level, entity, seed) -> stack.getTag() != null && stack.getTag().getBoolean("HasGlow") ? 1f : 0f);
+                }
+            }
+
 
 
             ModPackets.INSTANCE.registerMessage(

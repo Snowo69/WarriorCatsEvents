@@ -42,7 +42,7 @@ public class CtSRegisterLogPacket {
             ServerPlayer player = ctx.get().getSender();
             if (player == null) return;
 
-            ServerLevel level = player.serverLevel();
+            ServerLevel level = player.serverLevel().getServer().overworld();
             ClanData data = ClanData.get(level);
 
             ClanData.Clan clan = data.getClan(packet.clanuuid);
@@ -56,7 +56,7 @@ public class CtSRegisterLogPacket {
                                 .append(Component.literal("] ").withStyle(ChatFormatting.DARK_GRAY))
                         .append(parseColoredText(packet.message, data).copy());
 
-                data.registerLog(player.serverLevel(), clan.clanUUID, finalMessage);
+                data.registerLog(player.serverLevel().getServer().overworld(), clan.clanUUID, finalMessage);
 
                 player.displayClientMessage(Component.literal("Log successfully registered").withStyle(ChatFormatting.GREEN), false);
 

@@ -52,7 +52,7 @@ public class C2SRegisterClanPacket {
             ServerPlayer player = ctx.get().getSender();
             if (player == null) return;
 
-            ServerLevel level = player.serverLevel();
+            ServerLevel level = player.serverLevel().getServer().overworld();
             ClanData data = ClanData.get(level);
 
             if (packet.name.isEmpty()) return;

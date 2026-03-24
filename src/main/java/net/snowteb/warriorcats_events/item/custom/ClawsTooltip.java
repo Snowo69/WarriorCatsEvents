@@ -9,7 +9,6 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
-import net.minecraft.network.chat.Style;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -30,6 +29,7 @@ import net.minecraft.world.item.*;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.BlockHitResult;
@@ -37,8 +37,11 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ToolAction;
 import net.minecraftforge.common.ToolActions;
+import net.snowteb.warriorcats_events.block.custom.StoneCraftingTable;
+import net.snowteb.warriorcats_events.block.entity.StoneCraftingTableBlockEntity;
 import net.snowteb.warriorcats_events.clan.PlayerClanData;
 import net.snowteb.warriorcats_events.clan.PlayerClanDataProvider;
+import net.snowteb.warriorcats_events.entity.custom.EagleEntity;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.item.ModItems;
 import net.snowteb.warriorcats_events.network.ModPackets;
@@ -219,6 +222,8 @@ public class ClawsTooltip extends ShearsItem {
      * Every time you hurt an entity, damage the tool.
      */
     public boolean hurtEnemy(ItemStack pStack, LivingEntity pTarget, LivingEntity pAttacker) {
+        if (pAttacker instanceof Player player && player.getAbilities().instabuild) return true;
+
         damageTool(pStack, 1, pAttacker);
         return true;
     }

@@ -8,18 +8,13 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.ConfigScreenHandler;
-import net.minecraftforge.fml.ModLoadingContext;
-import net.snowteb.warriorcats_events.screen.WCEConfigScreen;
-import net.snowteb.warriorcats_events.sound.ModSounds;
 import org.lwjgl.glfw.GLFW;
 
 public class WCEClient {
     public static boolean isRenderingEmoteMenu = false;
     public static int emoteOffset = 0;
-    public static final int MAX_EMOTES = 11;
+    public static final int MAX_EMOTES = 12;
     public static final KeyMapping EMOTES_HUD_MENU_KEY = new KeyMapping("key.warriorcats_events.emotes", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_Y, "key.category.warriorcats_events.key");
-
 
     public static final ResourceLocation WCE_TITLE = new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/wce_title_hd.png");
 
@@ -40,6 +35,7 @@ public class WCEClient {
         private static final ResourceLocation ICON_SLEEP = new ResourceLocation(WarriorCatsEvents.MODID, "textures/hud/emotes/sleep_icon.png");
         private static final ResourceLocation ICON_DEAD = new ResourceLocation(WarriorCatsEvents.MODID, "textures/hud/emotes/dead_icon.png");
         private static final ResourceLocation ICON_ROLL = new ResourceLocation(WarriorCatsEvents.MODID, "textures/hud/emotes/roll_icon.png");
+        private static final ResourceLocation ICON_SCARED = new ResourceLocation(WarriorCatsEvents.MODID, "textures/hud/emotes/scared_icon.png");
 
         public static ResourceLocation getIcon(int index) {
             return switch (index) {
@@ -57,6 +53,7 @@ public class WCEClient {
                 case 9 -> ICON_SLEEP;
                 case 10 -> ICON_DEAD;
                 case 11 -> ICON_ROLL;
+                case 12 -> ICON_SCARED;
                 default -> ICON_NONE;
             };
         }
@@ -77,6 +74,7 @@ public class WCEClient {
                 case 9 -> "Sleep";
                 case 10 -> "Play dead";
                 case 11 -> "Roll";
+                case 12 -> "Scared";
                 default -> "Unnamed";
             };
         }
@@ -86,8 +84,38 @@ public class WCEClient {
     @OnlyIn(Dist.CLIENT)
     public static void playLocalSound(SoundEvent sound, SoundSource soundSource, float volume, float pitch) {
         Minecraft mc = Minecraft.getInstance();
-        mc.level.playLocalSound(mc.player.getX(), mc.player.getY(), mc.player.getZ(),
-                sound, soundSource, volume,pitch, false);
+        if (mc.level != null) {
+            mc.level.playLocalSound(mc.player.getX(), mc.player.getY(), mc.player.getZ(),
+                    sound, soundSource, volume,pitch, false);
+        }
     }
 
+
+    public static boolean isBeingLatched = false;
+    public static int setFreeCounter = 0;
+
+    public static String lookingAtParticle = "";
+    public static int newParticleTime = 0;
+
+    public static boolean isRenderingSoundMenu = false;
+    public static int soundOffset = 0;
+    public static final int MAX_SOUNDS = 7;
+
+    public static class SoundIndexData {
+
+        public static String getText(int index) {
+            return switch (index) {
+                case 0 -> "";
+                case 1 -> "Hiss";
+                case 2 -> "Meow";
+                case 3 -> "Purr";
+                case 4 -> "Purreow";
+                case 5 -> "Pitiful Meow";
+                case 6 -> "Cry";
+                case 7 -> "Dramatic cry";
+                default -> "Unnamed";
+            };
+        }
+
+    }
 }

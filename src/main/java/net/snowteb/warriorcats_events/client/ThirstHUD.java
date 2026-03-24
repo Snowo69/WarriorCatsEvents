@@ -5,6 +5,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.ChatScreen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.client.gui.overlay.IGuiOverlay;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
 
@@ -37,6 +38,16 @@ public class ThirstHUD {
          */
 
         if (player.getAirSupply() < player.getMaxAirSupply()) {y -= 9;}
+        if (player.getVehicle() != null) {
+            if (player.getVehicle() instanceof LivingEntity entity) {
+                if (entity.getMaxHealth() > 20) {
+                    y -= 11;
+                }
+                if (entity.getMaxHealth() > 40) {
+                    y -= 11;
+                }
+            }
+        }
 
         int thirst = ClientThirstData.getPlayerThirst();
         int iconCount = 10;

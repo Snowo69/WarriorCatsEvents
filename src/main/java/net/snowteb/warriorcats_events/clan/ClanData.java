@@ -277,7 +277,7 @@ public class ClanData extends SavedData {
                 .append(" has been made ")
                 .append(Component.literal(permissions.name()).withStyle(ChatFormatting.RED));
 
-        this.registerLog(player.serverLevel(), clan.clanUUID, playerJoinedLog);
+        this.registerLog(player.serverLevel().getServer().overworld(), clan.clanUUID, playerJoinedLog);
 
         player.sendSystemMessage(
                 Component.empty()
@@ -339,7 +339,7 @@ public class ClanData extends SavedData {
                     .append(Component.literal(clan.name).withStyle(Style.EMPTY.withColor(clan.color)))
                     .append("!");
 
-            this.registerLog(player.serverLevel(), clan.clanUUID, playerJoinedLog);
+            this.registerLog(player.serverLevel().getServer().overworld(), clan.clanUUID, playerJoinedLog);
         });
         player.sendSystemMessage(Component.empty()
                 .append("You now belong to ")
@@ -388,12 +388,12 @@ public class ClanData extends SavedData {
                     .append(" has left ")
                     .append(Component.literal(clan.name).withStyle(Style.EMPTY.withColor(clan.color)));
 
-            this.registerLog(player.serverLevel(), clan.clanUUID, playerLeftLog);
+            this.registerLog(player.serverLevel().getServer().overworld(), clan.clanUUID, playerLeftLog);
         });
         player.sendSystemMessage(Component.literal("You have been removed from your clan.").withStyle(ChatFormatting.YELLOW));
 
         if (clan.members.isEmpty()) {
-            deleteClan(player.serverLevel(), clanUUID);
+            deleteClan(player.serverLevel().getServer().overworld(), clanUUID);
         }
 
         setDirty();
@@ -435,7 +435,7 @@ public class ClanData extends SavedData {
                 .append(" has been made a ")
                 .append(Component.literal(newRank.name()).withStyle(ChatFormatting.GOLD));
 
-        this.registerLog(player.serverLevel(), clan.clanUUID, playerRankChangeLog);
+        this.registerLog(player.serverLevel().getServer().overworld(), clan.clanUUID, playerRankChangeLog);
 
         clan.members.put(playerUUID, newRank);
         setDirty();

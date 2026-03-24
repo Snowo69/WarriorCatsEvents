@@ -25,6 +25,8 @@ public class ModBiomeModifiers {
     public static final ResourceKey<BiomeModifier> ADD_GLOWSHROOM = registerKey("add_glowshroom");
     public static final ResourceKey<BiomeModifier> ADD_YARROW = registerKey("add_yarrow");
 
+    public static final ResourceKey<BiomeModifier> ADD_LAVENDER = registerKey("add_lavender");
+
 
 
     public static void bootstrap(BootstapContext<BiomeModifier> context) {
@@ -74,6 +76,11 @@ public class ModBiomeModifiers {
         context.register(ADD_GLOWSHROOM, new ForgeBiomeModifiers.AddFeaturesBiomeModifier(
                 biomes.getOrThrow(BiomeTags.IS_OVERWORLD),
                 HolderSet.direct(placedFeatures.getOrThrow(ModPlacedFeatures.GLOWSHROOM_PLACED_KEY)),
+                GenerationStep.Decoration.VEGETAL_DECORATION));
+
+        context.register(ADD_LAVENDER, new ForgeBiomeModifiers.AddFeaturesBiomeModifier(
+                biomes.getOrThrow(BiomeTags.IS_OVERWORLD),
+                HolderSet.direct(placedFeatures.getOrThrow(ModPlacedFeatures.LAVENDER_PLACED_KEY)),
                 GenerationStep.Decoration.VEGETAL_DECORATION));
 
 

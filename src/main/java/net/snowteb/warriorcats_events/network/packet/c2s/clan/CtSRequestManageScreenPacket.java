@@ -39,7 +39,7 @@ public class CtSRequestManageScreenPacket {
             ServerPlayer player = ctx.get().getSender();
             if (player == null) return;
 
-            ServerLevel level = player.serverLevel();
+            ServerLevel level = player.serverLevel().getServer().overworld();
             ClanData data = ClanData.get(level);
 
             ClanData.Clan clan = data.getClan(packet.clanuuid);

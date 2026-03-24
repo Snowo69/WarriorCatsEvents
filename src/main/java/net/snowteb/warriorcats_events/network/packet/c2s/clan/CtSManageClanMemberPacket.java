@@ -50,7 +50,7 @@ public class CtSManageClanMemberPacket {
             ServerPlayer player = ctx.get().getSender();
             if (player == null) return;
 
-            ServerLevel level = player.serverLevel();
+            ServerLevel level = player.serverLevel().getServer().overworld();
             ClanData data = ClanData.get(level);
 
             ClanData.Clan clan = data.getClan(player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
@@ -183,7 +183,7 @@ public class CtSManageClanMemberPacket {
                     .append(" has been made a ")
                     .append(Component.literal(rank.name()).withStyle(ChatFormatting.GOLD)));
 
-            data.registerLog(leader.serverLevel(), clan.clanUUID, playerRankChangeLog);
+            data.registerLog(leader.serverLevel().getServer().overworld(), clan.clanUUID, playerRankChangeLog);
 
             data.setDirty();
         }
@@ -233,7 +233,7 @@ public class CtSManageClanMemberPacket {
                         .append(" has been kicked from ")
                         .append(Component.literal(clan.name).withStyle(Style.EMPTY.withColor(clan.color)));
 
-                data.registerLog(leader.serverLevel(), clan.clanUUID, playerLeftLog);
+                data.registerLog(leader.serverLevel().getServer().overworld(), clan.clanUUID, playerLeftLog);
             }
             data.setDirty();
 
@@ -268,7 +268,7 @@ public class CtSManageClanMemberPacket {
                         .append(" has been made ")
                         .append(Component.literal(perms.name()).withStyle(ChatFormatting.RED));
 
-                data.registerLog(leader.serverLevel(), clan.clanUUID, playerJoinedLog);
+                data.registerLog(leader.serverLevel().getServer().overworld(), clan.clanUUID, playerJoinedLog);
             }
             data.setDirty();
 

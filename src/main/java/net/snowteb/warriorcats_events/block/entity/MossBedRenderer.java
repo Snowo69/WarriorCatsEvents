@@ -54,7 +54,7 @@ public class MossBedRenderer implements BlockEntityRenderer<MossBedBlockEntity> 
 
         Component occupiedText = pBlockEntity.getAssignedUUID().equals(ClanData.EMPTY_UUID) ?
                 Component.literal("Free").withStyle(ChatFormatting.GREEN)
-                : Component.literal("Occupied").withStyle(ChatFormatting.RED);
+                : Component.literal("Occupied").withStyle(ChatFormatting.GOLD);
         String text = pBlockEntity.getCatName();
 
         float x = -font.width(text) / 2f;

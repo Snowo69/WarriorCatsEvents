@@ -12,6 +12,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.event.level.NoteBlockEvent;
 import net.minecraftforge.network.NetworkEvent;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
+import net.snowteb.warriorcats_events.entity.client.WCRenderer;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import tocraft.walkers.api.PlayerShape;
 

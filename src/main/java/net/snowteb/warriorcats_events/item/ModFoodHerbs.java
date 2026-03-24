@@ -77,4 +77,10 @@ public class ModFoodHerbs {
             .nutrition(9).saturationMod(1.1f).build();
     public static final FoodProperties PIGEON_FOOD = new FoodProperties.Builder().meat()
             .nutrition(10).saturationMod(1.3f).build();
+
+    public static final FoodProperties EAGLE_MEAT_FOOD = new FoodProperties.Builder().meat()
+            .nutrition(5).saturationMod(0.8f).build();
+
+    public static final FoodProperties SHREDDED_MEAT = new FoodProperties.Builder().meat()
+            .nutrition(4).saturationMod(0.7f).build();
 }

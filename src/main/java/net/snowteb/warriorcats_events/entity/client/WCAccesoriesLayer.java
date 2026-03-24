@@ -9,6 +9,9 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
@@ -16,6 +19,7 @@ import net.snowteb.warriorcats_events.entity.custom.WCGenetics;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.item.ModItems;
 import net.snowteb.warriorcats_events.item.custom.CatSocksArmorItem;
+import net.snowteb.warriorcats_events.item.custom.CollarArmorItem;
 import net.snowteb.warriorcats_events.item.custom.FeathersArmorItem;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.renderer.GeoRenderer;
@@ -89,6 +93,16 @@ public class WCAccesoriesLayer extends GeoRenderLayer<WCatEntity> {
             new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/black_vulture_feathers.png")
     );
 
+    private final AccessoryModel collarModel = new AccessoryModel(
+            new ResourceLocation(WarriorCatsEvents.MODID, "geo/wcat.collar.geo.json"),
+            new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/collar_0.png")
+    );
+
+    private final AccessoryModel berryModel = new AccessoryModel(
+            new ResourceLocation(WarriorCatsEvents.MODID, "geo/wcat.head_berry.geo.json"),
+            new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/head_sweetberry.png")
+    );
+
 
     private final AccessoryRenderer crownRenderer;
     private final AccessoryRenderer leafmaneRenderer;
@@ -100,8 +114,8 @@ public class WCAccesoriesLayer extends GeoRenderLayer<WCatEntity> {
     private final AccessoryRenderer dandelionRenderer;
     private final AccessoryRenderer bodyFeathersRenderer;
     private final AccessoryRenderer bodyVultureFeathersRenderer;
-
-
+    private final AccessoryRenderer collarRenderer;
+    private final AccessoryRenderer berryRenderer;
 
 
     public WCAccesoriesLayer(GeoRenderer<WCatEntity> entityRendererIn, EntityRendererProvider.Context context) {
@@ -117,6 +131,10 @@ public class WCAccesoriesLayer extends GeoRenderLayer<WCatEntity> {
 
         this.bodyFeathersRenderer = new AccessoryRenderer(context, bodyFeathersModelUp);
         this.bodyVultureFeathersRenderer = new AccessoryRenderer(context, bodyVultureFeathersModelUp);
+
+        this.collarRenderer = new AccessoryRenderer(context, collarModel);
+
+        this.berryRenderer = new AccessoryRenderer(context, berryModel);
     }
 
     @Override
@@ -195,6 +213,13 @@ public class WCAccesoriesLayer extends GeoRenderLayer<WCatEntity> {
         boolean hasVultureFeathers = animatable
                 .getItemBySlot(EquipmentSlot.CHEST)
                 .is(ModItems.VULTURE_BODY_FEATHERS.get());
+
+
+        boolean hasBerry = animatable
+                .getItemBySlot(EquipmentSlot.HEAD)
+                .is(ModItems.HEAD_SWEETBERRY.get()) || animatable
+                .getItemBySlot(EquipmentSlot.HEAD)
+                .is(ModItems.HEAD_GLOWBERRY.get());
 
         if (bone.getName().equals("head")) {
 
@@ -333,6 +358,49 @@ public class WCAccesoriesLayer extends GeoRenderLayer<WCatEntity> {
                         accessoryBuffer,
                         partialTick,
                         packedLight,
+                        packedOverlay,
+                        1f, 1f, 1f, 1f
+                );
+
+                poseStack.popPose();
+                buffer = bufferSource.getBuffer(renderType);
+
+            } else if (hasBerry) {
+                ItemStack stack = animatable.getItemBySlot(EquipmentSlot.HEAD);
+
+                int light = packedLight;
+
+                if (stack.is(ModItems.HEAD_GLOWBERRY.get())) {
+                    berryModel.texture = AccessoryModel.BERRY_TEXTURES[1];
+                    light = 255;
+                }
+                else berryModel.texture = AccessoryModel.BERRY_TEXTURES[0];
+
+                var bakedModel = berryModel.getBakedModel(berryModel.getModelResource(animatable));
+
+                poseStack.pushPose();
+
+                poseStack.translate(0.17D, 0.55D, -0.50D);
+
+                float scale = 1.00f;
+                poseStack.scale(scale, scale, scale);
+
+                RenderType accessoryRenderType = RenderType.entityCutout(berryModel.getTextureResource(animatable));
+
+                VertexConsumer accessoryBuffer = bufferSource.getBuffer(accessoryRenderType);
+
+                float interpolatedYaw = Mth.lerp(partialTick, animatable.yBodyRotO, animatable.yBodyRot);
+                poseStack.mulPose(Axis.YP.rotationDegrees(interpolatedYaw + 180f));
+
+                berryRenderer.reRender(
+                        bakedModel,
+                        poseStack,
+                        bufferSource,
+                        animatable,
+                        accessoryRenderType,
+                        accessoryBuffer,
+                        partialTick,
+                        light,
                         packedOverlay,
                         1f, 1f, 1f, 1f
                 );
@@ -1039,6 +1107,96 @@ public class WCAccesoriesLayer extends GeoRenderLayer<WCatEntity> {
                 }
             }
 
+        }
+
+        if (bone.getName().equals("moreup")) {
+
+            boolean hasCollar = false;
+            boolean hasSpikes;
+            boolean hasBell;
+
+            int light = packedLight;
+
+            if (animatable.getItemBySlot(EquipmentSlot.CHEST).getItem() instanceof CollarArmorItem collar) {
+                ItemStack stack = animatable.getItemBySlot(EquipmentSlot.CHEST);
+
+                hasCollar = true;
+
+                if (collar.hasSpikes(stack)) {
+                    hasSpikes = true;
+                } else {
+                    hasSpikes = false;
+                }
+
+                if (collar.hasBell(stack)) {
+                    hasBell = true;
+                } else {
+                    hasBell = false;
+                }
+
+                if (collar.hasGlow(stack)) {
+                    light = 255;
+                }
+
+
+                if (collar == ModItems.BLACK_CAT_COLLAR.get()) {
+                    collarModel.texture = AccessoryModel.COLLAR_TEXTURES[0];
+                } else if (collar == ModItems.BROWN_CAT_COLLAR.get()) {
+                    collarModel.texture = AccessoryModel.COLLAR_TEXTURES[1];
+                } else if (collar == ModItems.WHITE_CAT_COLLAR.get()) {
+                    collarModel.texture = AccessoryModel.COLLAR_TEXTURES[2];
+                } else if (collar == ModItems.PINK_CAT_COLLAR.get()) {
+                    collarModel.texture = AccessoryModel.COLLAR_TEXTURES[3];
+                } else if (collar == ModItems.ORANGE_CAT_COLLAR.get()) {
+                    collarModel.texture = AccessoryModel.COLLAR_TEXTURES[4];
+                } else if (collar == ModItems.RED_CAT_COLLAR.get()) {
+                    collarModel.texture = AccessoryModel.COLLAR_TEXTURES[5];
+                } else if (collar == ModItems.BLUE_CAT_COLLAR.get()) {
+                    collarModel.texture = AccessoryModel.COLLAR_TEXTURES[6];
+                } else if (collar == ModItems.PURPLE_CAT_COLLAR.get()) {
+                    collarModel.texture = AccessoryModel.COLLAR_TEXTURES[7];
+                }
+
+
+            } else {
+                hasSpikes = false;
+                hasBell = false;
+            }
+
+            if (hasCollar) {
+
+                var bakedModel = collarModel.getBakedModel(collarModel.getModelResource(animatable));
+
+                collarModel.getBone("bell").ifPresent(bell -> { bell.setHidden(!hasBell);});
+                collarModel.getBone("spikes").ifPresent(spikes -> { spikes.setHidden(!hasSpikes);});
+
+                poseStack.pushPose();
+
+                poseStack.translate(0.0D, 0.30D, -0.44D);
+                poseStack.mulPose(Axis.ZP.rotationDegrees(0f));
+                poseStack.mulPose(Axis.YP.rotationDegrees(0f));
+                poseStack.mulPose(Axis.XP.rotationDegrees(0f));
+
+                float scale = 1f;
+                poseStack.scale(scale, scale, scale);
+
+                RenderType accessoryRenderType = RenderType.entityCutoutNoCull(collarModel.getTextureResource(animatable));
+
+                VertexConsumer accessoryBuffer = bufferSource.getBuffer(accessoryRenderType);
+
+                float interpolatedYaw = Mth.lerp(partialTick, animatable.yBodyRotO, animatable.yBodyRot);
+                poseStack.mulPose(Axis.YP.rotationDegrees(interpolatedYaw + 180f));
+
+                collarRenderer.reRender(
+                        bakedModel,
+                        poseStack, bufferSource, animatable, accessoryRenderType, accessoryBuffer,
+                        partialTick, light, packedOverlay,
+                        1f, 1f, 1f, 1f
+                );
+
+                poseStack.popPose();
+                buffer = bufferSource.getBuffer(renderType);
+            }
         }
 
     }

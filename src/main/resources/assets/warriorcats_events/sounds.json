@@ -167,7 +167,58 @@
     "sounds": [
       { "name": "warriorcats_events:menu/section_accept", "volume": 0.9, "pitch": 1.0 }
     ]
+  },
+
+
+
+
+  "entity.eagle.ambient": {
+    "sounds": [
+      { "name": "warriorcats_events:entity/eagle/eagle_call_1", "volume": 0.7, "pitch": 0.9 },
+      { "name": "warriorcats_events:entity/eagle/eagle_call_2", "volume": 0.7, "pitch": 0.9 },
+      { "name": "warriorcats_events:entity/eagle/eagle_call_3", "volume": 0.7, "pitch": 0.9 },
+      { "name": "warriorcats_events:entity/eagle/eagle_ambient_0", "volume": 0.7, "pitch": 1.0 }
+    ]
+  },
+
+  "entity.eagle.hurt": {
+    "sounds": [
+      { "name": "warriorcats_events:entity/eagle/eagle_hurt_0", "volume": 0.7, "pitch": 1.0 },
+      { "name": "warriorcats_events:entity/eagle/eagle_hurt_1", "volume": 0.7, "pitch": 1.0 },
+      { "name": "warriorcats_events:entity/eagle/eagle_hurt_2", "volume": 0.7, "pitch": 1.0 },
+      { "name": "warriorcats_events:entity/eagle/eagle_call_1", "volume": 0.7, "pitch": 1.0 },
+      { "name": "warriorcats_events:entity/eagle/eagle_call_2", "volume": 0.7, "pitch": 1.0 },
+      { "name": "warriorcats_events:entity/eagle/eagle_call_3", "volume": 0.7, "pitch": 1.0 }
+    ]
+  },
+  "entity.eagle.death": {
+    "sounds": [
+      { "name": "warriorcats_events:entity/eagle/eagle_death_0", "volume": 0.7, "pitch": 1.0 },
+      { "name": "warriorcats_events:entity/eagle/eagle_death_1", "volume": 0.7, "pitch": 1.0 }
+    ]
+  },
+
+  "entity.eagle.attack": {
+    "sounds": [
+      { "name": "warriorcats_events:entity/eagle/eagle_attack_0", "volume": 0.7, "pitch": 1.0 },
+      { "name": "warriorcats_events:entity/eagle/eagle_attack_1", "volume": 0.7, "pitch": 1.0 },
+      { "name": "warriorcats_events:entity/eagle/eagle_attack_2", "volume": 0.7, "pitch": 1.0 }
+    ]
+  },
+  "entity.eagle.call": {
+    "sounds": [
+      { "name": "warriorcats_events:entity/eagle/eagle_call_1", "volume": 0.7, "pitch": 0.9 },
+      { "name": "warriorcats_events:entity/eagle/eagle_call_2", "volume": 0.7, "pitch": 0.9 },
+      { "name": "warriorcats_events:entity/eagle/eagle_call_3", "volume": 0.7, "pitch": 0.9 }
+    ]
+  },
+
+  "entity.collar_bell": {
+    "sounds": [
+      { "name": "warriorcats_events:collar/bell_0", "volume": 1.0, "pitch": 1.0 },
+      { "name": "warriorcats_events:collar/bell_1", "volume": 1.0, "pitch": 1.0 },
+      { "name": "warriorcats_events:collar/bell_2", "volume": 1.0, "pitch": 1.0 },
+      { "name": "warriorcats_events:collar/bell_3", "volume": 1.0, "pitch": 1.0 }
+    ]
   }
-
-
 }

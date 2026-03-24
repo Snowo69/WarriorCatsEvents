@@ -18,6 +18,8 @@ import net.snowteb.warriorcats_events.integration.WCatIntegration;
 import net.snowteb.warriorcats_events.item.ModItems;
 import net.snowteb.warriorcats_events.loot.ModLootModifiers;
 import net.snowteb.warriorcats_events.network.ModPackets;
+import net.snowteb.warriorcats_events.particles.WCEParticles;
+import net.snowteb.warriorcats_events.recipes.WCERecipes;
 import net.snowteb.warriorcats_events.screen.ModMenuTypes;
 import net.snowteb.warriorcats_events.sound.ModSounds;
 import net.snowteb.warriorcats_events.util.ModAttributes;
@@ -37,7 +39,7 @@ import java.util.concurrent.Executors;
 @Mod(WarriorCatsEvents.MODID)
 public class WarriorCatsEvents {
     public static final String MODID = "warriorcats_events";
-    public static final String MOD_VERSION = "1.4.6";
+    public static final String MOD_VERSION = "1.5.0";
     public static final Logger LOGGER = LogUtils.getLogger();
 
     public static final ExecutorService teleportExecutor = Executors.newSingleThreadExecutor();
@@ -61,10 +63,6 @@ public class WarriorCatsEvents {
     public WarriorCatsEvents() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         GeckoLib.initialize();
-        
-//        ModLoadingContext.get().registerConfig(
-//                ModConfig.Type.COMMON, WCEConfig.COMMON_SPEC,
-//                MODID + "-common.toml");
 
         ModLoadingContext.get().registerConfig(
                 ModConfig.Type.SERVER, WCEServerConfig.SPEC,
@@ -88,6 +86,8 @@ public class WarriorCatsEvents {
         ModAttributes.ATTRIBUTES.register(modEventBus);
         ModLootModifiers.register(modEventBus);
         WCECreativeTab.CREATIVE_TABS.register(modEventBus);
+        WCEParticles.register(modEventBus);
+        WCERecipes.register(modEventBus);
 
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(this::addCreative);

@@ -8,6 +8,7 @@ import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.item.ModItems;
 import net.snowteb.warriorcats_events.item.custom.FlowerArmorItem;
+import software.bernie.geckolib.core.animation.AnimationState;
 import software.bernie.geckolib.model.GeoModel;
 
 public class AccessoryModel extends GeoModel<WCatEntity> {
@@ -26,6 +27,22 @@ public class AccessoryModel extends GeoModel<WCatEntity> {
             new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/crow_feathers.png"),
             new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/american_goldfinch_feathers.png"),
             new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/red_cardinal_feathers.png"),
+    };
+
+    public static final ResourceLocation[] COLLAR_TEXTURES = {
+            new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/collar_black.png"),
+            new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/collar_brown.png"),
+            new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/collar_white.png"),
+            new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/collar_pink.png"),
+            new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/collar_orange.png"),
+            new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/collar_red.png"),
+            new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/collar_blue.png"),
+            new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/collar_purple.png"),
+    };
+
+    public static final ResourceLocation[] BERRY_TEXTURES = {
+            new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/head_sweetberry.png"),
+            new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/head_glowberry.png")
     };
 
     public AccessoryModel(ResourceLocation model,
@@ -49,4 +66,8 @@ public class AccessoryModel extends GeoModel<WCatEntity> {
         return new ResourceLocation(WarriorCatsEvents.MODID, "animations/empty.animation.json");
     }
 
+    @Override
+    public void setCustomAnimations(WCatEntity animatable, long instanceId, AnimationState<WCatEntity> animationState) {
+        super.setCustomAnimations(animatable, instanceId, animationState);
+    }
 }

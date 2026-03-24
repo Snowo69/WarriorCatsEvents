@@ -1,11 +1,15 @@
 package net.snowteb.warriorcats_events.client;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.snowteb.warriorcats_events.entity.custom.EagleEntity;
+import net.snowteb.warriorcats_events.entity.custom.WCGenetics;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.screen.AncientStickScreen;
+import net.snowteb.warriorcats_events.screen.SaveChatMorphScreen;
 import net.snowteb.warriorcats_events.screen.clandata.*;
 
 import java.util.List;
@@ -34,7 +38,7 @@ public class ClientPacketHandles {
         mc.setScreen(new KitCreateScreen());
     }
 
-    public static void openAncientStickScreen(List<Integer> entityIds) {
+    public static void openAncientStickScreen(List<Integer> entityIds, List<Integer> eagleIds) {
             Minecraft.getInstance().execute(() -> {
                 Level level = Minecraft.getInstance().level;
                 if (level == null) return;
@@ -45,7 +49,13 @@ public class ClientPacketHandles {
                         .map(e -> (WCatEntity) e)
                         .toList();
 
-                Minecraft.getInstance().setScreen(new AncientStickScreen(cats));
+                List<EagleEntity> eagles = eagleIds.stream()
+                        .map(level::getEntity)
+                        .filter(e -> e instanceof EagleEntity)
+                        .map(e -> (EagleEntity) e)
+                        .toList();
+
+                Minecraft.getInstance().setScreen(new AncientStickScreen(cats, eagles));
             });
 
     }
@@ -84,6 +94,17 @@ public class ClientPacketHandles {
             if (mc.level == null) return;
 
             mc.setScreen(new CreateMorphGeneticsScreen());
+        });
+
+    }
+
+    public static void openSaveMorphScreen(String key ,WCGenetics genetics, WCGenetics.GeneticalVariants variants, WCGenetics chimeraGenetics, WCGenetics.GeneticalChimeraVariants chimeraVariants) {
+        Minecraft.getInstance().execute(() -> {
+            Minecraft mc = Minecraft.getInstance();
+            if (mc.level == null) return;
+
+
+            mc.setScreen(new SaveChatMorphScreen(key ,genetics, variants, chimeraGenetics, chimeraVariants));
         });
 
     }

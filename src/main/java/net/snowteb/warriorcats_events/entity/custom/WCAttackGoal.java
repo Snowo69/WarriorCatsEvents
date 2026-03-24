@@ -114,6 +114,17 @@ public class WCAttackGoal extends MeleeAttackGoal {
 
     }
 
+    @Override
+    public boolean canUse() {
+        if (this.mob instanceof WCatEntity cat) {
+            if (cat.mode == WCatEntity.CatMode.SIT) return false;
+            if (cat.isResting()) return false;
+        }
+
+        if (this.mob.getVehicle() != null & this.mob.getVehicle() instanceof EagleEntity) return false;
+
+        return super.canUse();
+    }
 
     @Override
     public void stop() {

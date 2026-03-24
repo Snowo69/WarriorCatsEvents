@@ -74,6 +74,9 @@ public class ModItems {
     public static final RegistryObject<Item> BADGER_SPAWN_EGG = ITEMS.register("badger_spawn_egg",
             () -> new ForgeSpawnEggItem(ModEntities.BADGER,0x4a4946, 0xe3e2e1,
                     new Item.Properties()));
+    public static final RegistryObject<Item> GOLDEN_EAGLE_SPAWN_EGG = ITEMS.register("golden_eagle_spawn_egg",
+            () -> new ForgeSpawnEggItem(ModEntities.EAGLE,0x33281c, 0x795925,
+                    new Item.Properties()));
 
     public static final RegistryObject<Item> WARRIORS_GUIDE = ITEMS.register("warriors_guide",
             () -> new Item(new Item.Properties().stacksTo(1)) {
@@ -189,8 +192,10 @@ public static final RegistryObject<Item> FLOWER_CROWN = ITEMS.register("flower_c
             () -> new Item(new Item.Properties().food(ModFoodHerbs.SQUIRREL_FOOD)));
     public static final RegistryObject<Item> PIGEON_FOOD = ITEMS.register("pigeon",
             () -> new Item(new Item.Properties().food(ModFoodHerbs.PIGEON_FOOD)));
-
-
+    public static final RegistryObject<Item> EAGLE_MEAT_FOOD = ITEMS.register("golden_eagle_meat",
+            () -> new Item(new Item.Properties().food(ModFoodHerbs.EAGLE_MEAT_FOOD)));
+    public static final RegistryObject<Item> SHREDDED_MEAT = ITEMS.register("shredded_meat",
+            () -> new Item(new Item.Properties().food(ModFoodHerbs.SHREDDED_MEAT)));
 
     public static final RegistryObject<Item> WHISKERS = ITEMS.register("whiskers",
             () -> new ItemWithToolTip(new Item.Properties().stacksTo(1).durability(400),
@@ -286,8 +291,33 @@ public static final RegistryObject<Item> FLOWER_CROWN = ITEMS.register("flower_c
             () -> new FeathersArmorItem());
 
 
+    public static final RegistryObject<Item> BLACK_CAT_COLLAR = ITEMS.register("black_cat_collar",
+            () -> new CollarArmorItem());
+    public static final RegistryObject<Item> BROWN_CAT_COLLAR = ITEMS.register("brown_cat_collar",
+            () -> new CollarArmorItem());
+    public static final RegistryObject<Item> WHITE_CAT_COLLAR = ITEMS.register("white_cat_collar",
+            () -> new CollarArmorItem());
+    public static final RegistryObject<Item> PINK_CAT_COLLAR = ITEMS.register("pink_cat_collar",
+            () -> new CollarArmorItem());
+    public static final RegistryObject<Item> ORANGE_CAT_COLLAR = ITEMS.register("orange_cat_collar",
+            () -> new CollarArmorItem());
+    public static final RegistryObject<Item> RED_CAT_COLLAR = ITEMS.register("red_cat_collar",
+            () -> new CollarArmorItem());
+    public static final RegistryObject<Item> BLUE_CAT_COLLAR = ITEMS.register("blue_cat_collar",
+            () -> new CollarArmorItem());
+    public static final RegistryObject<Item> PURPLE_CAT_COLLAR = ITEMS.register("purple_cat_collar",
+            () -> new CollarArmorItem());
+
+    public static final RegistryObject<Item> COLLAR_BELL = ITEMS.register("collar_bell",
+            () -> new Item(new Item.Properties().stacksTo(16)));
+
+    public static final RegistryObject<Item> HEAD_GLOWBERRY = ITEMS.register("head_glowberry",
+            () -> new PlantHeadArmorItem());
+    public static final RegistryObject<Item> HEAD_SWEETBERRY = ITEMS.register("head_sweetberry",
+            () -> new PlantHeadArmorItem());
 
     public static void register(IEventBus modEventBus) {
         ITEMS.register(modEventBus);
     }
+
 }

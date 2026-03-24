@@ -2,12 +2,16 @@ package net.snowteb.warriorcats_events.event;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.stats.Stats;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -26,6 +30,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
@@ -37,16 +42,21 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.block.custom.MossBedBlock;
+import net.snowteb.warriorcats_events.block.custom.StoneCraftingTable;
+import net.snowteb.warriorcats_events.block.entity.StoneCraftingTableBlockEntity;
 import net.snowteb.warriorcats_events.clan.ClanData;
 import net.snowteb.warriorcats_events.clan.PlayerClanData;
 import net.snowteb.warriorcats_events.clan.PlayerClanDataProvider;
+import net.snowteb.warriorcats_events.client.LeapClientState;
 import net.snowteb.warriorcats_events.effect.ModEffects;
+import net.snowteb.warriorcats_events.entity.custom.EagleEntity;
 import net.snowteb.warriorcats_events.entity.custom.WCatAvoidGoal;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.item.ModFoodHerbs;
 import net.snowteb.warriorcats_events.item.ModItems;
 import net.snowteb.warriorcats_events.network.ModPackets;
 import net.snowteb.warriorcats_events.network.packet.s2c.others.ThirstDataSyncStCPacket;
+import net.snowteb.warriorcats_events.particles.WCEParticles;
 import net.snowteb.warriorcats_events.skills.PlayerSkillProvider;
 import net.snowteb.warriorcats_events.thirst.PlayerThirstProvider;
 import net.snowteb.warriorcats_events.zconfig.WCEPreyItemsConfig;
@@ -58,6 +68,52 @@ import java.util.UUID;
 
 @Mod.EventBusSubscriber(modid = WarriorCatsEvents.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ModEventsForge {
+
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public static void onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
+        if (event.isCanceled()) return;
+        Level level = event.getLevel();
+        Player player = event.getEntity();
+        InteractionHand hand = event.getHand();
+        if (hand != InteractionHand.MAIN_HAND) return;
+
+        BlockPos pos = event.getPos();
+        BlockState blockState = level.getBlockState(pos);
+
+        if (!(blockState.getBlock() instanceof StoneCraftingTable table)) return;
+        if (!(PlayerShape.getCurrentShape(player) instanceof Animal)) return;
+        if (!player.isShiftKeyDown()) return;
+
+        if (level.isClientSide()) {
+            LeapClientState.setCanceled();
+            return;
+        }
+
+        if (table.handleHerbsRecipeCraftingBlockState(blockState, level, pos, player, hand)) {
+            if (level instanceof ServerLevel sLevel) {
+                Vec3 position = pos.getCenter();
+
+                Direction facing = blockState.getValue(StoneCraftingTable.FACING);
+
+                position = switch (facing) {
+                    case NORTH -> position.add(0,0,0.1);
+                    case SOUTH -> position.add(0,0,-0.1);
+                    case WEST -> position.add(0.1,0,0);
+                    case EAST -> position.add(-0.1,0,0);
+                    default -> position;
+                };
+
+                sLevel.sendParticles(
+                        WCEParticles.HERBS_FALL.get(),
+                        position.x, position.y - 0.1, position.z,
+                        10, 0.1, 0.0, 0.1, 0.005);
+            }
+
+            event.setCanceled(true);
+            event.setCancellationResult(InteractionResult.SUCCESS);
+        }
+
+    }
 
     @SubscribeEvent
     public static void canPlayerSleep(SleepingTimeCheckEvent event) {
@@ -127,6 +183,14 @@ public class ModEventsForge {
                     state.setValue(MossBedBlock.OCCUPIED, false),
                     3
             );
+
+            if (level instanceof ServerLevel) {
+                ModEvents2.schedule(1, () -> {
+                    Vec3 exactPos = sleepingPos.getCenter().add(0, 0.1, 0);
+                    player.teleportTo(exactPos.x, exactPos.y, exactPos.z);
+                });
+
+            }
         }
     }
 
@@ -400,12 +464,18 @@ public class ModEventsForge {
         Player player = event.getEntity();
         Entity target = event.getTarget();
 
+        if (target instanceof EagleEntity eagle) {
+            if (player.getVehicle() == eagle) {
+                event.setCanceled(true);
+            }
+        }
+
         if (target instanceof ServerPlayer serverPlayer) {
 
             UUID targetUUID = serverPlayer.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA).map(PlayerClanData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID);
             UUID thisUUID = player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA).map(PlayerClanData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID);
 
-            if (!targetUUID.equals(thisUUID)) {
+            if (!targetUUID.equals(thisUUID) || (targetUUID.equals(ClanData.EMPTY_UUID) || thisUUID.equals(ClanData.EMPTY_UUID))) {
                 return;
             }
             if (!player.isShiftKeyDown()) {
@@ -439,7 +509,7 @@ public class ModEventsForge {
                 UUID clanUUID = serverPlayer.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
                         .map(PlayerClanData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID);
 
-                ClanData data = ClanData.get(serverPlayer.serverLevel());
+                ClanData data = ClanData.get(serverPlayer.serverLevel().getServer().overworld());
                 ClanData.Clan clan = data.getClan(clanUUID);
                 if (clan != null) {
                     if (!wcat.getClanUUID().equals(clanUUID)) {

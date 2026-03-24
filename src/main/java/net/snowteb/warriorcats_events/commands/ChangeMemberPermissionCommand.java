@@ -84,7 +84,7 @@ public class ChangeMemberPermissionCommand {
         UUID currentMemberClanId = targetPlayer.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
                 .map(PlayerClanData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID);
 
-        ClanData data = ClanData.get(targetPlayer.serverLevel());
+        ClanData data = ClanData.get(targetPlayer.serverLevel().getServer().overworld());
         ClanData.Clan targetClan = data.getClan(targetClanId);
         ClanData.Clan currentMemberClan = data.getClan(currentMemberClanId);
 

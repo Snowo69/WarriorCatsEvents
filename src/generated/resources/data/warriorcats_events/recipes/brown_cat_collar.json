@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "item": "minecraft:leather"
+    }
+  },
+  "pattern": [
+    "AAA"
+  ],
+  "result": {
+    "item": "warriorcats_events:brown_cat_collar"
+  },
+  "show_notification": true
+}

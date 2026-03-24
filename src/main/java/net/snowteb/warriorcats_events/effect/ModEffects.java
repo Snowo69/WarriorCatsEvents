@@ -18,9 +18,16 @@ public class ModEffects {
 
 
     public static final RegistryObject<MobEffect> NUMB_EFFECT = MOB_EFFECTS.register("numb",
-            () -> new NumbEffect(MobEffectCategory.NEUTRAL, 0x969595));
+            () -> new NumbEffect(MobEffectCategory.HARMFUL, 0x969595));
+
     public static final RegistryObject<MobEffect> DEATHBERRIES = MOB_EFFECTS.register("deathberries",
             () -> new DeathberriesEffect(MobEffectCategory.HARMFUL, 0x969595));
+
+    public static final RegistryObject<MobEffect> EAGLE_ESCAPIST = MOB_EFFECTS.register("eagle_escapist",
+            () -> new EagleEscapistEffect(MobEffectCategory.BENEFICIAL, 0x5F4731));
+
+    public static final RegistryObject<MobEffect> SHARP_SCENT = MOB_EFFECTS.register("sharp_scent",
+            () -> new SharpScentEffect(MobEffectCategory.BENEFICIAL, 0x005F4731));
 
 
     public static void register(IEventBus eventBus) {

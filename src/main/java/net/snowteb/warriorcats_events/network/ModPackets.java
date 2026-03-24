@@ -16,6 +16,7 @@ import net.snowteb.warriorcats_events.network.packet.s2c.cats.OpenCatDataScreenP
 import net.snowteb.warriorcats_events.network.packet.s2c.cats.StCKitCreateScreenPacket;
 import net.snowteb.warriorcats_events.network.packet.s2c.cats.SyncCatDataPacket;
 import net.snowteb.warriorcats_events.network.packet.s2c.clan.*;
+import net.snowteb.warriorcats_events.network.packet.s2c.others.StCFinallySaveMorph;
 import net.snowteb.warriorcats_events.network.packet.s2c.others.StCFishingScreenPacket;
 import net.snowteb.warriorcats_events.network.packet.s2c.skilltree.StCStealthSyncPacket;
 import net.snowteb.warriorcats_events.network.packet.s2c.skilltree.SyncSkillDataPacket;
@@ -42,10 +43,10 @@ public class ModPackets {
 
         INSTANCE = net;
 // 0
-        net.messageBuilder(CtSHissPacket.class, 0, NetworkDirection.PLAY_TO_SERVER)
-                .decoder(CtSHissPacket::new)
-                .encoder(CtSHissPacket::toBytes)
-                .consumerMainThread(CtSHissPacket::handle)
+        net.messageBuilder(CtSPlayCatSoundPacket.class, 0, NetworkDirection.PLAY_TO_SERVER)
+                .decoder(CtSPlayCatSoundPacket::new)
+                .encoder(CtSPlayCatSoundPacket::toBytes)
+                .consumerMainThread(CtSPlayCatSoundPacket::handle)
                 .add();
         net.messageBuilder(WaterPacket.class, 1, NetworkDirection.PLAY_TO_SERVER)
                 .decoder(WaterPacket::new)
@@ -356,8 +357,36 @@ public class ModPackets {
                 .consumerMainThread(EmoteMorphPacket::handle)
                 .add();
 
+        net.messageBuilder(CtSShareMorphToChat.class, 50, NetworkDirection.PLAY_TO_SERVER)
+                .decoder(CtSShareMorphToChat::decode)
+                .encoder(CtSShareMorphToChat::encode)
+                .consumerMainThread(CtSShareMorphToChat::handle)
+                .add();
+
+        net.messageBuilder(CtSSaveChatMorphPacket.class, 51, NetworkDirection.PLAY_TO_SERVER)
+                .decoder(CtSSaveChatMorphPacket::decode)
+                .encoder(CtSSaveChatMorphPacket::encode)
+                .consumerMainThread(CtSSaveChatMorphPacket::handle)
+                .add();
 
 
+        net.messageBuilder(StCFinallySaveMorph.class, 52, NetworkDirection.PLAY_TO_CLIENT)
+                .decoder(StCFinallySaveMorph::decode)
+                .encoder(StCFinallySaveMorph::encode)
+                .consumerMainThread(StCFinallySaveMorph::handle)
+                .add();
+
+        net.messageBuilder(CtSDismountEaglePacket.class, 53, NetworkDirection.PLAY_TO_SERVER)
+                .decoder(CtSDismountEaglePacket::new)
+                .encoder(CtSDismountEaglePacket::toBytes)
+                .consumerMainThread(CtSDismountEaglePacket::handle)
+                .add();
+
+        net.messageBuilder(CallEaglesPacket.class, 54, NetworkDirection.PLAY_TO_SERVER)
+                .decoder(CallEaglesPacket::decode)
+                .encoder(CallEaglesPacket::encode)
+                .consumerMainThread(CallEaglesPacket::handle)
+                .add();
 
     }
 

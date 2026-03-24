@@ -40,7 +40,7 @@ public class RegisterClanCommand {
                 .map(PlayerClanData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID);
 
         if (!currentClanId.equals(ClanData.EMPTY_UUID)) {
-            ClanData data = ClanData.get(player.serverLevel());
+            ClanData data = ClanData.get(player.serverLevel().getServer().overworld());
             if (data.getClan(currentClanId) ==  null) {
                 player.sendSystemMessage(Component.literal("You are in a clan that doesn't exist. Resetting your clan info...").withStyle(ChatFormatting.GRAY));
                 player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {

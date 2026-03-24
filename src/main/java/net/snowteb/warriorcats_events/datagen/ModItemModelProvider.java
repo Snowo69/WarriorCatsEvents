@@ -26,6 +26,8 @@ public class ModItemModelProvider extends ItemModelProvider {
         simpleItem(ModItems.MOUSE_FOOD);
         simpleItem(ModItems.SQUIRREL_FOOD);
         simpleItem(ModItems.PIGEON_FOOD);
+        simpleItem(ModItems.EAGLE_MEAT_FOOD);
+        simpleItem(ModItems.SHREDDED_MEAT);
         simpleItem(ModItems.WARRIORNAMERANDOMIZER);
         simpleItem(ModItems.FRESHKILL_AND_HERBS_BUNDLE);
         simpleItem(ModItems.TRAVELING_HERBS);
@@ -51,6 +53,8 @@ public class ModItemModelProvider extends ItemModelProvider {
         simpleItem(ModItems.HEAD_DANDELION);
         simpleItem(ModItems.TAIL_VINES);
         simpleItem(ModItems.DRAPED_TAIL_VINES);
+        simpleItem(ModItems.HEAD_GLOWBERRY);
+        simpleItem(ModItems.HEAD_SWEETBERRY);
 
         simpleItem(ModItems.GREEN_PARROT_FEATHER);
         simpleItem(ModItems.BLUE_PARROT_FEATHER);
@@ -77,6 +81,7 @@ public class ModItemModelProvider extends ItemModelProvider {
         simpleItem(ModItems.GOLDFINCH_BODY_FEATHERS);
         simpleItem(ModItems.CARDINAL_BODY_FEATHERS);
 
+        simpleItem(ModItems.COLLAR_BELL);
 
 
         simpleBlockItem(ModBlocks.LEAF_DOOR);
@@ -89,6 +94,7 @@ public class ModItemModelProvider extends ItemModelProvider {
         withExistingParent(ModItems.WILDCAT_SPAWN_EGG.getId().getPath(), mcLoc("item/template_spawn_egg"));
         withExistingParent(ModItems.PIGEON_SPAWN_EGG.getId().getPath(), mcLoc("item/template_spawn_egg"));
         withExistingParent(ModItems.BADGER_SPAWN_EGG.getId().getPath(), mcLoc("item/template_spawn_egg"));
+        withExistingParent(ModItems.GOLDEN_EAGLE_SPAWN_EGG.getId().getPath(), mcLoc("item/template_spawn_egg"));
 
 
         basicItem(ModItems.DOCK_LEAVES.get());

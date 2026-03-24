@@ -17,12 +17,7 @@ public class GetClanDataCommand {
         dispatcher.register(
                 Commands.literal("wce")
                         .then(Commands.literal("info")
-                                .then(Commands.literal("get").requires(source -> {
-                                            if (source.getEntity() instanceof ServerPlayer player) {
-                                                return WarriorCatsEvents.Devs.isDev(player.getUUID()) || source.hasPermission(2);
-                                            }
-                                            return source.hasPermission(2);
-                                })
+                                .then(Commands.literal("get")
                                         .executes(ctx -> getData(ctx.getSource(), ctx.getSource().getPlayerOrException()))
                                         .then(Commands.argument("player", EntityArgument.player())
                                                 .executes(ctx ->

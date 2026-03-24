@@ -100,7 +100,7 @@ public class GradientButton extends AbstractButton {
             );
         }
 
-        if (hovered) {
+        if (hovered && this.active) {
             gui.fill(this.getX(), this.getY(),
                     this.getX() + this.width,
                     this.getY() + this.height,
@@ -118,7 +118,7 @@ public class GradientButton extends AbstractButton {
                 this.getMessage(),
                 textX,
                 textY,
-                this.isHoveredOrFocused() ? 0xFFFFA0 : 0xFFFFFF
+                (this.active ? (this.isHoveredOrFocused() ? 0xFFFFA0 : 0xFFFFFF) : 0x77ffffff)
         );
         gui.pose().popPose();
 

@@ -1,13 +1,17 @@
 package net.snowteb.warriorcats_events.datagen;
 
+import com.google.gson.JsonObject;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.ShapedRecipe;
 import net.minecraft.world.item.crafting.ShapelessRecipe;
 import net.minecraft.world.level.block.Blocks;
@@ -15,7 +19,9 @@ import net.minecraftforge.common.crafting.conditions.IConditionBuilder;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.block.ModBlocks;
 import net.snowteb.warriorcats_events.item.ModItems;
+import net.snowteb.warriorcats_events.recipes.WCERecipes;
 import net.snowteb.warriorcats_events.util.ModTags;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.util.IConsumer;
 
 import java.util.function.Consumer;
@@ -105,6 +111,7 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .unlockedBy("has_item", has(ModTags.Items.HERBS))
                 .save(pWriter);
 
+        //
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.TRAVELING_HERBS.get(), 1)
                 .requires(ModItems.SORREL.get())
                 .requires(ModItems.BURNET.get())
@@ -113,6 +120,7 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .requires(ModItems.DOCK_LEAVES.get())
                 .unlockedBy(getHasName(ModItems.DOCK_LEAVES.get()), has(ModItems.DOCK_LEAVES.get()))
                 .save(pWriter);
+        //
 
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.WARRIORNAMERANDOMIZER.get(), 1)
                 .requires(ModTags.Items.HERBS)
@@ -146,6 +154,7 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .unlockedBy("has_item", has(Items.STICK))
                 .save(pWriter);
 
+        //
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.FRESHKILL_AND_HERBS_BUNDLE.get(), 2)
                 .requires(ModTags.Items.HERBS)
                 .requires(ModTags.Items.PREY)
@@ -159,6 +168,7 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .requires(ModItems.DOCK_LEAVES.get())
                 .unlockedBy("has_item", has(ModItems.DOCK_LEAVES.get()))
                 .save(pWriter);
+        //
 
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.LEAF_DOOR.get(), 2)
                 .pattern("AA")
@@ -258,7 +268,7 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .requires(ModItems.WHITE_CAT_SOCKS.get())
                 .requires(Items.PINK_DYE)
                 .unlockedBy("has_item", has(ModItems.WHITE_CAT_SOCKS.get()))
-                .save(pWriter,  new ResourceLocation(WarriorCatsEvents.MODID, "pink_cat_socks_from_dye"));
+                .save(pWriter, new ResourceLocation(WarriorCatsEvents.MODID, "pink_cat_socks_from_dye"));
 
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.WHITE_CAT_SOCKS.get(), 1)
                 .pattern("A A")
@@ -276,7 +286,7 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .requires(ModItems.WHITE_CAT_SOCKS.get())
                 .requires(Items.BLACK_DYE)
                 .unlockedBy("has_item", has(ModItems.WHITE_CAT_SOCKS.get()))
-                .save(pWriter,  new ResourceLocation(WarriorCatsEvents.MODID, "black_cat_socks_from_dye"));
+                .save(pWriter, new ResourceLocation(WarriorCatsEvents.MODID, "black_cat_socks_from_dye"));
 
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.GREEN_CAT_SOCKS.get(), 1)
                 .pattern("A A")
@@ -288,7 +298,7 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .requires(ModItems.WHITE_CAT_SOCKS.get())
                 .requires(Items.LIME_DYE)
                 .unlockedBy("has_item", has(ModItems.WHITE_CAT_SOCKS.get()))
-                .save(pWriter,  new ResourceLocation(WarriorCatsEvents.MODID, "green_cat_socks_from_dye"));
+                .save(pWriter, new ResourceLocation(WarriorCatsEvents.MODID, "green_cat_socks_from_dye"));
 
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.HEAD_LEAF.get(), 2)
                 .requires(ItemTags.LEAVES)
@@ -332,7 +342,7 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .pattern("AA")
                 .define('A', Items.MOSS_CARPET)
                 .unlockedBy("has_item", has(Items.MOSS_CARPET))
-                .save(pWriter,  new ResourceLocation(WarriorCatsEvents.MODID, "moss_block_from_carpet"));
+                .save(pWriter, new ResourceLocation(WarriorCatsEvents.MODID, "moss_block_from_carpet"));
 
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.BLUE_PARROT_BODY_FEATHERS.get(), 1)
                 .pattern("AAA")
@@ -419,7 +429,6 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .save(pWriter);
 
 
-
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.BLACK_VULTURE_FEATHER.get(), 2)
                 .requires(ModTags.Items.FEATHERS)
                 .requires(ModTags.Items.FEATHERS)
@@ -463,5 +472,143 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .requires(ModItems.WARRIOR_NAMETAG.get())
                 .unlockedBy("has_item", has(ModItems.WARRIOR_NAMETAG.get()))
                 .save(pWriter, new ResourceLocation(WarriorCatsEvents.MODID, "nametag_from_warriortag"));
+
+
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModBlocks.LAVENDER_PETALS.get(), 3)
+                .requires(ModBlocks.LAVENDER.get())
+                .unlockedBy("has_item", has(ModBlocks.LAVENDER.get()))
+                .save(pWriter);
+
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.BLACK_CAT_COLLAR.get(), 1)
+                .pattern(" B ")
+                .pattern("AAA")
+                .define('A', Items.LEATHER)
+                .define('B', Items.BLACK_DYE)
+                .unlockedBy("has_item", has(Items.LEATHER))
+                .save(pWriter);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.BROWN_CAT_COLLAR.get(), 1)
+                .pattern("AAA")
+                .define('A', Items.LEATHER)
+                .unlockedBy("has_item", has(ItemTags.MUSIC_DISCS))
+                .save(pWriter);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.WHITE_CAT_COLLAR.get(), 1)
+                .pattern(" B ")
+                .pattern("AAA")
+                .define('A', Items.LEATHER)
+                .define('B', Items.WHITE_DYE)
+                .unlockedBy("has_item", has(Items.LEATHER))
+                .save(pWriter);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.PINK_CAT_COLLAR.get(), 1)
+                .pattern(" B ")
+                .pattern("AAA")
+                .define('A', Items.LEATHER)
+                .define('B', Items.PINK_DYE)
+                .unlockedBy("has_item", has(Items.LEATHER))
+                .save(pWriter);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.ORANGE_CAT_COLLAR.get(), 1)
+                .pattern(" B ")
+                .pattern("AAA")
+                .define('A', Items.LEATHER)
+                .define('B', Items.ORANGE_DYE)
+                .unlockedBy("has_item", has(Items.LEATHER))
+                .save(pWriter);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.RED_CAT_COLLAR.get(), 1)
+                .pattern(" B ")
+                .pattern("AAA")
+                .define('A', Items.LEATHER)
+                .define('B', Items.RED_DYE)
+                .unlockedBy("has_item", has(Items.LEATHER))
+                .save(pWriter);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.BLUE_CAT_COLLAR.get(), 1)
+                .pattern(" B ")
+                .pattern("AAA")
+                .define('A', Items.LEATHER)
+                .define('B', Items.BLUE_DYE)
+                .unlockedBy("has_item", has(Items.LEATHER))
+                .save(pWriter);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.PURPLE_CAT_COLLAR.get(), 1)
+                .pattern(" B ")
+                .pattern("AAA")
+                .define('A', Items.LEATHER)
+                .define('B', Items.PURPLE_DYE)
+                .unlockedBy("has_item", has(Items.LEATHER))
+                .save(pWriter);
+
+
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.BLACK_CAT_COLLAR.get(), 1)
+                .requires(ModItems.BROWN_CAT_COLLAR.get())
+                .requires(Items.BLACK_DYE)
+                .unlockedBy("has_item", has(ModItems.BROWN_CAT_COLLAR.get()))
+                .save(pWriter, new ResourceLocation(WarriorCatsEvents.MODID, "black_collar_recolored"));
+
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.WHITE_CAT_COLLAR.get(), 1)
+                .requires(ModItems.BROWN_CAT_COLLAR.get())
+                .requires(Items.WHITE_DYE)
+                .unlockedBy("has_item", has(ModItems.BROWN_CAT_COLLAR.get()))
+                .save(pWriter, new ResourceLocation(WarriorCatsEvents.MODID, "white_collar_recolored"));
+
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.PINK_CAT_COLLAR.get(), 1)
+                .requires(ModItems.BROWN_CAT_COLLAR.get())
+                .requires(Items.PINK_DYE)
+                .unlockedBy("has_item", has(ModItems.BROWN_CAT_COLLAR.get()))
+                .save(pWriter, new ResourceLocation(WarriorCatsEvents.MODID, "pink_collar_recolored"));
+
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.ORANGE_CAT_COLLAR.get(), 1)
+                .requires(ModItems.BROWN_CAT_COLLAR.get())
+                .requires(Items.ORANGE_DYE)
+                .unlockedBy("has_item", has(ModItems.BROWN_CAT_COLLAR.get()))
+                .save(pWriter, new ResourceLocation(WarriorCatsEvents.MODID, "orange_collar_recolored"));
+
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.RED_CAT_COLLAR.get(), 1)
+                .requires(ModItems.BROWN_CAT_COLLAR.get())
+                .requires(Items.RED_DYE)
+                .unlockedBy("has_item", has(ModItems.BROWN_CAT_COLLAR.get()))
+                .save(pWriter, new ResourceLocation(WarriorCatsEvents.MODID, "red_collar_recolored"));
+
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.BLUE_CAT_COLLAR.get(), 1)
+                .requires(ModItems.BROWN_CAT_COLLAR.get())
+                .requires(Items.BLUE_DYE)
+                .unlockedBy("has_item", has(ModItems.BROWN_CAT_COLLAR.get()))
+                .save(pWriter, new ResourceLocation(WarriorCatsEvents.MODID, "blue_collar_recolored"));
+
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.PURPLE_CAT_COLLAR.get(), 1)
+                .requires(ModItems.BROWN_CAT_COLLAR.get())
+                .requires(Items.PURPLE_DYE)
+                .unlockedBy("has_item", has(ModItems.BROWN_CAT_COLLAR.get()))
+                .save(pWriter, new ResourceLocation(WarriorCatsEvents.MODID, "purple_collar_recolored"));
+
+
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.COLLAR_BELL.get(), 1)
+                .requires(Items.GOLD_INGOT)
+                .requires(Items.GOLD_NUGGET)
+                .unlockedBy("has_item", has(Items.GOLD_INGOT))
+                .save(pWriter);
+
+
+
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.HEAD_GLOWBERRY.get(), 1)
+                .requires(Items.GLOW_BERRIES)
+                .requires(ModItems.DOCK_POULTICE.get())
+                .unlockedBy("has_item", has(Items.GLOW_BERRIES))
+                .save(pWriter);
+
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.HEAD_SWEETBERRY.get(), 1)
+                .requires(Items.SWEET_BERRIES)
+                .requires(ModItems.DOCK_POULTICE.get())
+                .unlockedBy("has_item", has(Items.SWEET_BERRIES))
+                .save(pWriter);
+
+
+
     }
+
+
 }

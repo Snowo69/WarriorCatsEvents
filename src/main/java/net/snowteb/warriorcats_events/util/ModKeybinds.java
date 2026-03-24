@@ -21,6 +21,4 @@ public class ModKeybinds {
 //    public static final KeyMapping SKILLMENU_KEY = new KeyMapping(KEY_SKILLMENU, KeyConflictContext.IN_GAME,
 //            InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_K, KEY_CATEGORY_WARRIORCATSEVENTS);
 
-//    public static final KeyMapping EMOTES_KEY = new KeyMapping(KEY_EMOTES, KeyConflictContext.IN_GAME,
-//            InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_Y, KEY_CATEGORY_WARRIORCATSEVENTS);
 }

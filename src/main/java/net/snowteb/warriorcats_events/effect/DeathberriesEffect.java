@@ -21,8 +21,11 @@ public class DeathberriesEffect extends MobEffect {
      * Hurt the entity every time this is called.
      * And if it's a player, then remove its saturation as well
      */
+    @Override
     public void applyEffectTick(LivingEntity entity, int amplifier) {
-            entity.hurt(entity.damageSources().magic(), 1.2F + amplifier);
+
+        entity.hurt(entity.damageSources().magic(), 1.2F + amplifier);
+
         if (entity instanceof Player player) {
             player.getFoodData().setSaturation(0);
         }

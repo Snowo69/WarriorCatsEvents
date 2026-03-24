@@ -41,13 +41,16 @@ import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.OwnerHurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.OwnerHurtTargetGoal;
+import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.ZombifiedPiglin;
 import net.minecraft.world.entity.monster.piglin.Piglin;
 import net.minecraft.world.entity.monster.piglin.PiglinBrute;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
@@ -64,7 +67,9 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.network.NetworkHooks;
 import net.minecraftforge.network.PacketDistributor;
 import net.snowteb.warriorcats_events.block.ModBlocks;
+import net.snowteb.warriorcats_events.block.custom.LavenderPetalsBlock;
 import net.snowteb.warriorcats_events.block.custom.MossBedBlock;
+import net.snowteb.warriorcats_events.block.entity.FreshkillPileBlockEntity;
 import net.snowteb.warriorcats_events.block.entity.MossBedBlockEntity;
 import net.snowteb.warriorcats_events.clan.ClanData;
 import net.snowteb.warriorcats_events.clan.PlayerClanData;
@@ -77,6 +82,7 @@ import net.snowteb.warriorcats_events.item.ModItems;
 import net.snowteb.warriorcats_events.network.ModPackets;
 import net.snowteb.warriorcats_events.network.packet.s2c.cats.OpenCatDataScreenPacket;
 import net.snowteb.warriorcats_events.network.packet.s2c.clan.S2CSyncClanDataPacket;
+import net.snowteb.warriorcats_events.particles.WCEParticles;
 import net.snowteb.warriorcats_events.screen.WCatMenu;
 import net.snowteb.warriorcats_events.sound.ModSounds;
 import net.snowteb.warriorcats_events.util.GeneticsForVariant;
@@ -93,6 +99,7 @@ import software.bernie.geckolib.core.object.PlayState;
 import tocraft.walkers.api.PlayerShape;
 
 import java.util.*;
+import java.util.function.Predicate;
 
 import static net.snowteb.warriorcats_events.entity.custom.WCatEntity.Rank.*;
 
@@ -429,6 +436,63 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
             SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.BOOLEAN);
 
 
+    private static final EntityDataAccessor<Boolean> IS_RESTING =
+            SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.BOOLEAN);
+
+    private static final EntityDataAccessor<Integer> SITTING_INDEX =
+            SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.INT);
+
+    private static final EntityDataAccessor<Integer> CHILLING_INDEX =
+            SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.INT);
+
+    private static final EntityDataAccessor<Boolean> IS_WAKING_UP =
+            SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.BOOLEAN);
+
+    private int restingForTicks = 0;
+    private int chillingForTicks = 0;
+
+    private int sittingForTicks = 0;
+
+    public boolean isRestingFromSitting() {
+        return this.entityData.get(SITTING_INDEX) == 3;
+    }
+
+    public void setResting(boolean resting, int ticks) {
+        this.entityData.set(IS_RESTING, resting);
+        if (!resting && this.isWakingUp()) {
+            this.entityData.set(IS_WAKING_UP, false);
+        }
+        if (!resting && this.isRestingFromSitting()) {
+            this.entityData.set(SITTING_INDEX, 0);
+        }
+
+        this.restingForTicks = ticks;
+    }
+
+    public boolean isWakingUp() {
+        return this.entityData.get(IS_WAKING_UP);
+    }
+    public void setWakingUp(boolean wakingUp) {
+        this.entityData.set(IS_WAKING_UP, wakingUp);
+    }
+
+    public boolean isResting() {
+        return this.entityData.get(IS_RESTING) || this.isRestingFromSitting();
+    }
+
+    public void setChilling(boolean resting, int ticks) {
+        if (resting) {
+            this.entityData.set(CHILLING_INDEX, 1 + this.getRandom().nextInt(3));
+        } else {
+            this.entityData.set(CHILLING_INDEX, 0);
+        }
+        this.chillingForTicks = ticks;
+    }
+
+    public boolean isChilling() {
+        return this.entityData.get(CHILLING_INDEX) != 0;
+    }
+
     private boolean isImage;
 
     public void setAnImage(boolean isAnImage) {
@@ -570,7 +634,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                 "Hmph… fine."
         ));
         dialoguePool.put("GRUMPY.SHOW_AFFECTION.FAIL", Arrays.asList(
-                "Hands off.",
+                "Paws off.",
                 "No touchies.",
                 "Don't, thank you.",
                 "Back away.",
@@ -819,7 +883,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                 "I’m really thankful, <morph.name>."
         ));
         dialoguePool.put("SHY.GIVE_ITEM.FAIL", Arrays.asList(
-                "S… sorry… I can't take it.",
+                "S-sorry… I can't take it.",
                 "I can't take that right now.",
                 "I-I'm good, thanks, <morph.name>.",
                 "I'm not hungry. Sorry, <morph.name>.",
@@ -1516,7 +1580,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                     return false;
                 }
             } else if (this.getPersonality() == Personality.GRUMPY) {
-                if (this.random.nextFloat() <= 0.35 + getMoodInteractionAddition() + ((double) this.getFriendshipLevel(playerUUID) / 300)) {
+                if (this.random.nextFloat() <= 0.4 + getMoodInteractionAddition() + ((double) this.getFriendshipLevel(playerUUID) / 300)) {
                     String dialogue = this.getRandomDialogue(Personality.GRUMPY, CatInteraction.TALK, InteractionResult.SUCCESS);
                     this.setFriendshipLevel(playerUUID, this.getFriendshipLevel(playerUUID) + 5);
                     this.sendInteractionMessage(playerUUID, dialogue);
@@ -1649,7 +1713,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                     return false;
                 }
             } else if (this.getPersonality() == Personality.GRUMPY) {
-                if (this.random.nextFloat() <= 0.35 + getMoodInteractionAddition() + ((double) this.getFriendshipLevel(playerUUID) / 300)) {
+                if (this.random.nextFloat() <= 0.45 + getMoodInteractionAddition() + ((double) this.getFriendshipLevel(playerUUID) / 300)) {
                     String dialogue = this.getRandomDialogue(Personality.GRUMPY, CatInteraction.GIVE_ITEM, InteractionResult.SUCCESS);
                     this.setFriendshipLevel(playerUUID, this.getFriendshipLevel(playerUUID) + 5);
                     this.sendInteractionMessage(playerUUID, dialogue);
@@ -1664,7 +1728,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                     return false;
                 }
             } else if (this.getPersonality() == Personality.CAUTIOUS) {
-                if (this.random.nextFloat() <= 0.3 + getMoodInteractionAddition() + ((double) this.getFriendshipLevel(playerUUID) / 300)) {
+                if (this.random.nextFloat() <= 0.40 + getMoodInteractionAddition() + ((double) this.getFriendshipLevel(playerUUID) / 300)) {
                     String dialogue = this.getRandomDialogue(Personality.CAUTIOUS, CatInteraction.GIVE_ITEM, InteractionResult.SUCCESS);
                     this.setFriendshipLevel(playerUUID, this.getFriendshipLevel(playerUUID) + 4);
                     this.sendInteractionMessage(playerUUID, dialogue);
@@ -1679,7 +1743,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                     return false;
                 }
             } else if (this.getPersonality() == Personality.INDEPENDENT) {
-                if (this.random.nextFloat() <= 0.2 - getMoodInteractionAddition() + ((double) this.getFriendshipLevel(playerUUID) / 300)) {
+                if (this.random.nextFloat() <= 0.3 - getMoodInteractionAddition() + ((double) this.getFriendshipLevel(playerUUID) / 300)) {
                     String dialogue = this.getRandomDialogue(Personality.INDEPENDENT, CatInteraction.GIVE_ITEM, InteractionResult.SUCCESS);
                     this.setFriendshipLevel(playerUUID, this.getFriendshipLevel(playerUUID) + 2);
                     this.sendInteractionMessage(playerUUID, dialogue);
@@ -1708,7 +1772,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                     return false;
                 }
             } else if (this.getPersonality() == Personality.SHY) {
-                if (this.random.nextFloat() <= 0.6 + getMoodInteractionAddition() + ((double) this.getFriendshipLevel(playerUUID) / 300)) {
+                if (this.random.nextFloat() <= 0.7 + getMoodInteractionAddition() + ((double) this.getFriendshipLevel(playerUUID) / 300)) {
                     String dialogue = this.getRandomDialogue(Personality.SHY, CatInteraction.GIVE_ITEM, InteractionResult.SUCCESS);
                     this.setFriendshipLevel(playerUUID, this.getFriendshipLevel(playerUUID) + 5);
                     this.sendInteractionMessage(playerUUID, dialogue);
@@ -1722,7 +1786,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                     return false;
                 }
             } else if (this.getPersonality() == Personality.AMBITIOUS) {
-                if (this.random.nextFloat() <= 0.9 + getMoodInteractionAddition() + ((double) this.getFriendshipLevel(playerUUID) / 300)) {
+                if (this.random.nextFloat() <= 0.8 + getMoodInteractionAddition() + ((double) this.getFriendshipLevel(playerUUID) / 300)) {
                     String dialogue = this.getRandomDialogue(Personality.AMBITIOUS, CatInteraction.GIVE_ITEM, InteractionResult.SUCCESS);
                     this.setFriendshipLevel(playerUUID, this.getFriendshipLevel(playerUUID) + 2);
                     this.sendInteractionMessage(playerUUID, dialogue);
@@ -1783,7 +1847,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                     return false;
                 }
             } else if (this.getPersonality() == Personality.GRUMPY) {
-                if (this.random.nextFloat() <= 0.1 + getMoodInteractionAddition() + ((double) this.getFriendshipLevel(playerUUID) / 300)) {
+                if (this.random.nextFloat() <= 0.25 + getMoodInteractionAddition() + ((double) this.getFriendshipLevel(playerUUID) / 300)) {
                     String dialogue = this.getRandomDialogue(Personality.GRUMPY, CatInteraction.SHOW_AFFECTION, InteractionResult.SUCCESS);
                     this.setFriendshipLevel(playerUUID, this.getFriendshipLevel(playerUUID) + 7);
                     this.sendInteractionMessage(playerUUID, dialogue);
@@ -1828,7 +1892,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                     return false;
                 }
             } else if (this.getPersonality() == Personality.FRIENDLY) {
-                if (this.random.nextFloat() <= 0.9 + getMoodInteractionAddition() + ((double) this.getFriendshipLevel(playerUUID) / 300)) {
+                if (this.random.nextFloat() <= 0.8 + getMoodInteractionAddition() + ((double) this.getFriendshipLevel(playerUUID) / 300)) {
                     String dialogue = this.getRandomDialogue(Personality.FRIENDLY, CatInteraction.SHOW_AFFECTION, InteractionResult.SUCCESS);
                     this.setFriendshipLevel(playerUUID, this.getFriendshipLevel(playerUUID) + 6);
                     this.sendInteractionMessage(playerUUID, dialogue);
@@ -2263,7 +2327,6 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
     }
 
-
     private double getThreatDetectionRange() {
         double range = 8D;
 
@@ -2320,19 +2383,20 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         this.goalSelector.addGoal(3, new WCGoals.WCatSeekShelterGoal(this, 1.2D));
         this.goalSelector.addGoal(3, new WCGoals.WCatMedicineHealsCats(this));
         this.goalSelector.addGoal(4, new WCGoals.WCatPickupItemGoal(this));
-        this.goalSelector.addGoal(5, new BreedGoal(this, 1.0D));
-        this.goalSelector.addGoal(6, new WCGoals.WCatRunWithPlayerGoal(this, 1f));
-        this.goalSelector.addGoal(6, new WCGoals.WCatFollowOwnerGoal(this, 1.2D, 1.2F, 7.0F));
-        this.targetSelector.addGoal(7, new HurtByTargetGoal(this));
-        this.targetSelector.addGoal(8, this.monsterTarget);
-        this.targetSelector.addGoal(9, this.preyTarget);
-        this.goalSelector.addGoal(10, new WCAttackGoal(this, 1.2D, true));
-        this.goalSelector.addGoal(11, new WCGoals.WCatMoveToMateGoal(this));
-        if (!this.isAnImage()) this.goalSelector.addGoal(12, new WCGoals.WCatBoundedWanderGoal(this, 1.0D));
-        this.goalSelector.addGoal(13, new WCGoals.WCatGiveRandomItemGoal(this));
-        if (!this.isAnImage()) this.goalSelector.addGoal(13, new WCGoals.WCatRandomLookAroundGoal(this));
-        if (!this.isAnImage()) this.goalSelector.addGoal(13, new WCGoals.WCatLookAtPlayerGoal(this, Player.class, 8.0F));
-        if (!this.isAnImage()) this.goalSelector.addGoal(14, new WCGoals.WCatCasualBlockSeekGoal(this, 1.0D, 15, 0.07D));
+        this.goalSelector.addGoal(5, new WCGoals.WCatDepositFreshkill(this));
+        this.goalSelector.addGoal(6, new BreedGoal(this, 0.8D));
+        this.goalSelector.addGoal(7, new WCGoals.WCatRunWithPlayerGoal(this, 1f));
+        this.goalSelector.addGoal(7, new WCGoals.WCatFollowOwnerGoal(this, 1.2D, 1.2F, 7.0F));
+        this.targetSelector.addGoal(8, new HurtByTargetGoal(this));
+        this.targetSelector.addGoal(9, this.monsterTarget);
+        this.targetSelector.addGoal(10, this.preyTarget);
+        this.goalSelector.addGoal(11, new WCAttackGoal(this, 1.2D, true));
+        this.goalSelector.addGoal(12, new WCGoals.WCatMoveToMateGoal(this));
+        if (!this.isAnImage()) this.goalSelector.addGoal(13, new WCGoals.WCatBoundedWanderGoal(this, 0.8D));
+        this.goalSelector.addGoal(14, new WCGoals.WCatGiveRandomItemGoal(this));
+        if (!this.isAnImage()) this.goalSelector.addGoal(14, new WCGoals.WCatRandomLookAroundGoal(this));
+        if (!this.isAnImage()) this.goalSelector.addGoal(14, new WCGoals.WCatLookAtPlayerGoal(this, Player.class, 8.0F));
+        if (!this.isAnImage()) this.goalSelector.addGoal(15, new WCGoals.WCatCasualBlockSeekGoal(this, 0.8D, 15, 0.07D));
 
     }
 
@@ -2398,7 +2462,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                 if (!this.getClanUUID().equals(currentUUID)) {
                     this.setClanUUID(currentUUID);
                     if (pPlayer instanceof ServerPlayer serverPlayer) {
-                        ClanData data = ClanData.get(serverPlayer.serverLevel());
+                        ClanData data = ClanData.get(serverPlayer.serverLevel().getServer().overworld());
                         data.addClanCat(currentUUID, this);
                     }
                 }
@@ -2579,7 +2643,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         if (this.isTame() && pPlayer.isShiftKeyDown() && pPlayer.getMainHandItem().isEmpty()) {
 
             if (!this.level().isClientSide() && pPlayer instanceof ServerPlayer sPlayer) {
-                ClanData data = ClanData.get(sPlayer.serverLevel());
+                ClanData data = ClanData.get(sPlayer.serverLevel().getServer().overworld());
                 UUID clanUUID = sPlayer.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
                         .map(PlayerClanData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID);
                 ClanData.Clan clan = data.getClan(clanUUID);
@@ -3411,12 +3475,81 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
          * Otherwise (If the cats mode is not sit):
          * If it is ordered to sit, then set it to false.
          */
-        if (mode == CatMode.SIT) {
-            if (!this.isOrderedToSit()) this.setOrderedToSit(true);
-            this.setTarget(null);
-            this.getNavigation().stop();
-        } else {
-            if (this.isOrderedToSit()) this.setOrderedToSit(false);
+        if (!this.level().isClientSide()){
+            if (mode == CatMode.SIT) {
+                if (!this.isOrderedToSit()) this.setOrderedToSit(true);
+                this.setTarget(null);
+                this.getNavigation().stop();
+                this.sittingForTicks++;
+
+                int newState = 0;
+
+                if (this.sittingForTicks > 7200 + this.getId()*10) {
+                    newState = 3;
+                } else if (this.sittingForTicks > 3600 + this.getId()*10) {
+                    newState = 2;
+                } else if (this.sittingForTicks > 600+ this.getId()*10) {
+                    newState = 1;
+                }
+
+                if (this.entityData.get(SITTING_INDEX) != newState) {
+                    this.entityData.set(SITTING_INDEX, newState);
+                }
+
+                if (!this.isResting() && newState == 3) {
+                    this.setResting(true, 36000 + 200*this.getId());
+                }
+
+            } else {
+                if (this.isOrderedToSit()) this.setOrderedToSit(false);
+                this.sittingForTicks = 0;
+                if (this.entityData.get(SITTING_INDEX) != 0) {
+                    this.entityData.set(SITTING_INDEX, 0);
+                }
+            }
+        }
+
+        if (!this.level().isClientSide()) {
+            if (this.isResting()) {
+                if (this.restingForTicks > 0) {
+                    this.restingForTicks--;
+
+                    if (this.level() instanceof ServerLevel sLevel && this.tickCount % 10 == 0) {
+                        sLevel.sendParticles(
+                                WCEParticles.SLEEP.get(),
+                                this.getX(), this.getY() + 0.5, this.getZ(),
+                                1, 0, 0, 0,0.005);
+                    }
+
+                    if (this.restingForTicks < 80) {
+                        if (!this.isWakingUp()) {
+                            this.setWakingUp(true);
+                        }
+                    }
+
+                } else {
+                    this.setResting(false, 0);
+                    this.entityData.set(SITTING_INDEX, 0);
+                }
+            }
+
+            if (this.isChilling()) {
+                if (this.chillingForTicks > 0) {
+                    this.chillingForTicks--;
+
+                } else {
+                    this.setChilling(false, 0);
+                }
+            }
+
+            if (this.mode != CatMode.WANDER) {
+                if (this.isResting()) {
+                    this.setResting(false, 0);
+                }
+                if (this.isChilling()) {
+                    this.setChilling(false, 0);
+                }
+            }
         }
 
         /**
@@ -3464,14 +3597,14 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
     }
 
     public void applyBabyAttributes() {
-        this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(10.0);
+        this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(15.0);
         this.getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(2.0);
         this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(0.25);
 
     }
 
     public void applyAppAttributes() {
-        this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(18.0);
+        this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(27.0);
         this.getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(3.0);
         this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(0.3);
 
@@ -3479,7 +3612,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
     }
 
     public void applyAdultAttributes() {
-        this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(30.0);
+        this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(40.0);
         this.getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(4.0);
         this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(0.33);
 
@@ -3490,6 +3623,8 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
      */
     @Override
     public boolean canAttack(LivingEntity target) {
+        if (this.mode == CatMode.SIT) return false;
+
         if (target instanceof Player player) {
             if (player instanceof ServerPlayer sPlayer) {
                 UUID clanID = sPlayer.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
@@ -3513,6 +3648,18 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                 return false;
             }
         }
+
+        if (target instanceof EagleEntity tam && tam.isTame()) {
+
+            LivingEntity myOwner = this.getOwner();
+            UUID thisOwnerUUID = myOwner != null ? myOwner.getUUID() : null;
+            UUID targetOwner = tam.getOwnerUUID();
+
+            if (targetOwner != null && targetOwner.equals(thisOwnerUUID)) {
+                return false;
+            }
+        }
+
         return super.canAttack(target);
     }
 
@@ -3541,6 +3688,17 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
             UUID targetOwner = tam.getOwnerUUID();
 
             if (targetOwner != null && thisOwnerUUID != null && targetOwner.equals(thisOwnerUUID)) {
+                return true;
+            }
+        }
+
+        if (other instanceof EagleEntity tam && tam.isTame()) {
+
+            LivingEntity myOwner = this.getOwner();
+            UUID thisOwnerUUID = myOwner != null ? myOwner.getUUID() : null;
+            UUID targetOwner = tam.getOwnerUUID();
+
+            if (targetOwner != null && targetOwner.equals(thisOwnerUUID)) {
                 return true;
             }
         }
@@ -3616,6 +3774,8 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         tag.putBoolean("ReturningHome", this.returnHomeFlag);
 
         tag.putBoolean("IsAnImage", this.isAnImage());
+
+        tag.putInt("SittingForTicks", this.sittingForTicks);
 
 
         if (this.getMate() != null) {
@@ -3804,6 +3964,10 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         }
 
 
+        if (tag.contains("SittingForTicks")) {
+            this.sittingForTicks = tag.getInt("SittingForTicks");
+        }
+
         if (tag.contains("Variant")) {
             this.setVariant(tag.getInt("Variant"));
         }
@@ -3898,6 +4062,8 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                 (this, "attackController", 0, this::attackPredicate));
         controllers.add(new AnimationController<>
                 (this, "playerController", 0, this::playerPredicate));
+        controllers.add(new AnimationController<>
+                (this, "blinkController", 0, this::blinkPredicate));
 
     }
 
@@ -3967,6 +4133,11 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                     state.getController().setAnimation(RawAnimation.begin()
                             .then("animation.wcat.roll", Animation.LoopType.PLAY_ONCE));
                     animPlayed = true;
+                } else if (animIndex == 12) {
+                    state.getController().setAnimation(RawAnimation.begin()
+                            .then("animation.wcat.scared", Animation.LoopType.PLAY_ONCE)
+                            .then("animation.wcat.scared_idle", Animation.LoopType.LOOP));
+                    animPlayed = true;
                 }
 
             }
@@ -3992,70 +4163,6 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
     public void setAnimIndex (int value) {
         this.entityData.set(ANIM_INDEX, value);
     }
-
-//    @OnlyIn(Dist.CLIENT)
-//    private <T extends GeoAnimatable> PlayState playerPredicate(AnimationState<T> state) {
-//
-//        Player player = Minecraft.getInstance().player;
-//
-//        if (!AnimationClientData.isPlayerShape) {
-//            AnimationClientData.reset();
-//            return PlayState.CONTINUE;
-//        }
-//
-//        int anim1 = AnimationClientData.getAnim1();
-//        int anim2 = AnimationClientData.getAnim2();
-//        int anim3 = AnimationClientData.getAnim3();
-//        int anim4 = AnimationClientData.getAnim4();
-//        int anim5 = AnimationClientData.getAnim5();
-//        int anim6 = AnimationClientData.getAnim6();
-//
-//        if (PlayerShape.getCurrentShape(player) instanceof WCatEntity) {
-//
-//            if (!animPlayed) {
-//                if (anim1 == 1) {
-//                    state.getController().setAnimation(RawAnimation.begin()
-//                            .then("animation.wcat.groom", Animation.LoopType.PLAY_ONCE));
-//                    animPlayed = true;
-//                } else if (anim2 == 1) {
-//                    state.getController().setAnimation(RawAnimation.begin()
-//                            .then("animation.wcat.stretch", Animation.LoopType.PLAY_ONCE));
-//                    animPlayed = true;
-//                } else if (anim3 == 1) {
-//                    state.getController().setAnimation(RawAnimation.begin()
-//                            .then("animation.wcat.scratch", Animation.LoopType.PLAY_ONCE));
-//                    animPlayed = true;
-//                } else if (anim4 == 1) {
-//                    state.getController().setAnimation(RawAnimation.begin()
-//                            .then("animation.wcat.attack", Animation.LoopType.PLAY_ONCE));
-//                    animPlayed = true;
-//                } else if (anim5 == 1) {
-//                    state.getController().setAnimation(RawAnimation.begin()
-//                            .then("animation.wcat.standstand", Animation.LoopType.PLAY_ONCE)
-//                            .then("animation.wcat.standidle", Animation.LoopType.LOOP));
-//                    animPlayed = true;
-//                } else if (anim6 == 1) {
-//                    state.getController().setAnimation(RawAnimation.begin()
-//                            .then("animation.wcat.sitlay", Animation.LoopType.PLAY_ONCE)
-//                            .then("animation.wcat.layidle", Animation.LoopType.LOOP));
-//                    animPlayed = true;
-//                }
-//
-//            }
-//
-//            if ((animPlayed && state.getController().hasAnimationFinished()) || state.isMoving()) {
-//                state.getController().setAnimation(RawAnimation.begin()
-//                        .then("animation.wcat.idle", Animation.LoopType.LOOP));
-//                animPlayed = false;
-//                AnimationClientData.reset();
-//
-//                return PlayState.CONTINUE;
-//            }
-//        }
-//
-//
-//        return PlayState.CONTINUE;
-//    }
 
 
     private <T extends GeoAnimatable> PlayState attackPredicate(AnimationState<T> state) {
@@ -4083,6 +4190,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         return PlayState.CONTINUE;
     }
 
+    private int nextIdleAnimTick = 0;
 
     private <T extends GeoAnimatable> PlayState predicate(AnimationState<T> tAnimationState) {
 
@@ -4092,6 +4200,77 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         double speed = cat.getDeltaMovement().length();
         float animSpeed = (float) (speed * 6.0f);
         animSpeed = Mth.clamp(animSpeed * animSpeed, 0.2f, 1.5f);
+
+
+
+        if (this.isResting() || this.entityData.get(SITTING_INDEX) == 3) {
+            if (this.isWakingUp()) {
+                tAnimationState.getController().setAnimation(RawAnimation.begin()
+                        .then("animation.wcat.stretch", Animation.LoopType.PLAY_ONCE));
+                tAnimationState.getController().setAnimationSpeed(0.8f);
+            } else {
+                tAnimationState.getController().setAnimation(RawAnimation.begin()
+                        .then("animation.wcat.laysleep", Animation.LoopType.PLAY_ONCE)
+                        .then("animation.wcat.sleep_idle", Animation.LoopType.LOOP));
+                tAnimationState.getController().setAnimationSpeed(0.8f);
+            }
+
+            return PlayState.CONTINUE;
+        }
+
+        if (this.entityData.get(SITTING_INDEX) != 0) {
+            if (this.entityData.get(SITTING_INDEX) == 1) {
+                tAnimationState.getController().setAnimation(RawAnimation.begin()
+                        .then("animation.wcat.start_sit", Animation.LoopType.PLAY_ONCE)
+                        .then("animation.wcat.sit_idle", Animation.LoopType.LOOP));
+                tAnimationState.getController().setAnimationSpeed(1f);
+
+                return PlayState.CONTINUE;
+            } else if (this.entityData.get(SITTING_INDEX) == 2) {
+                if (this.getId() % 2 == 0) {
+                    tAnimationState.getController().setAnimation(RawAnimation.begin()
+                            .then("animation.wcat.sitlay", Animation.LoopType.PLAY_ONCE)
+                            .then("animation.wcat.layidle", Animation.LoopType.LOOP));
+                    tAnimationState.getController().setAnimationSpeed(1f);
+
+                } else {
+                    tAnimationState.getController().setAnimation(RawAnimation.begin()
+                            .then("animation.wcat.start_loaf", Animation.LoopType.PLAY_ONCE)
+                            .then("animation.wcat.loaf_idle", Animation.LoopType.LOOP));
+                    tAnimationState.getController().setAnimationSpeed(1f);
+
+                }
+
+                return PlayState.CONTINUE;
+            }
+        }
+
+        if (this.isChilling()) {
+            if (this.entityData.get(CHILLING_INDEX) == 1) {
+                tAnimationState.getController().setAnimation(RawAnimation.begin()
+                        .then("animation.wcat.start_sit", Animation.LoopType.PLAY_ONCE)
+                        .then("animation.wcat.sit_idle", Animation.LoopType.LOOP));
+                tAnimationState.getController().setAnimationSpeed(1f);
+
+                return PlayState.CONTINUE;
+            } else if (this.entityData.get(CHILLING_INDEX) == 2) {
+                tAnimationState.getController().setAnimation(RawAnimation.begin()
+                        .then("animation.wcat.sitlay", Animation.LoopType.PLAY_ONCE)
+                        .then("animation.wcat.layidle", Animation.LoopType.LOOP));
+                tAnimationState.getController().setAnimationSpeed(1f);
+
+                return PlayState.CONTINUE;
+            } else if (this.entityData.get(CHILLING_INDEX) == 3){
+                tAnimationState.getController().setAnimation(RawAnimation.begin()
+                        .then("animation.wcat.start_loaf", Animation.LoopType.PLAY_ONCE)
+                        .then("animation.wcat.loaf_idle", Animation.LoopType.LOOP));
+                tAnimationState.getController().setAnimationSpeed(1f);
+
+                return PlayState.CONTINUE;
+            }
+        }
+
+
 
         if (this.isInWater()) {
             if (this.isSwimming()) {
@@ -4110,6 +4289,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
             tAnimationState.getController().setAnimation(RawAnimation.begin().
                     then("animation.wcat.falling", Animation.LoopType.LOOP));
             animPlayed = false;
+            tAnimationState.getController().setAnimationSpeed(1.f);
             return PlayState.CONTINUE;
         }
 
@@ -4133,7 +4313,10 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         }
 
 
-        if (this.random.nextInt(1200) == 0 && !this.isBeingCarried && !this.isAnImage() && this.getPlayerBoundUuid().equals(ClanData.EMPTY_UUID)) {
+        if (this.tickCount >= nextIdleAnimTick
+                && !this.isBeingCarried
+                && !this.isAnImage() && this.getPlayerBoundUuid().equals(ClanData.EMPTY_UUID)
+                && !this.isResting()) {
 
             int rand = this.random.nextInt(4);
 
@@ -4161,6 +4344,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                 animPlayed = true;
             }
             tAnimationState.getController().setAnimationSpeed(1f);
+            nextIdleAnimTick = this.tickCount + 600 + this.random.nextInt(800);
 
             return PlayState.CONTINUE;
 
@@ -4197,22 +4381,24 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
     }
 
-//    private <T extends GeoAnimatable> PlayState blinkPredicate(AnimationState<T> state) {
-//
-//        var controller = state.getController();
-//
-//        if (this.isAnImage()) return PlayState.STOP;
-//
-//        if (this.random.nextFloat() < 0.025f) {
-//
-//            controller.setAnimation(RawAnimation.begin()
-//                            .then("animation.wcat.blink", Animation.LoopType.PLAY_ONCE));
-//
-//            return PlayState.CONTINUE;
-//        }
-//
-//        return PlayState.CONTINUE;
-//    }
+    private <T extends GeoAnimatable> PlayState blinkPredicate(AnimationState<T> state) {
+
+        var controller = state.getController();
+
+        if (this.isAnImage()) return PlayState.CONTINUE;
+
+        if (!this.getPlayerBoundUuid().equals(ClanData.EMPTY_UUID)) return PlayState.CONTINUE;
+
+        if ((this.tickCount + this.getId()*2) % 100 == 0 && this.getRandom().nextFloat() < 0.80
+                && (!this.isResting() && this.entityData.get(SITTING_INDEX) != 3)) {
+            controller.setAnimation(RawAnimation.begin()
+                            .then("animation.wcat.blink", Animation.LoopType.PLAY_ONCE));
+
+            controller.forceAnimationReset();
+        }
+
+        return PlayState.CONTINUE;
+    }
 
 
     @Override
@@ -4670,6 +4856,11 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         this.entityData.define(PLAYER_BOUND_UUID, Optional.of(ClanData.EMPTY_UUID));
         this.entityData.define(ANIM_INDEX, -1);
         this.entityData.define(SHOW_MORPH_NAME, true);
+
+        this.entityData.define(IS_RESTING, false);
+        this.entityData.define(SITTING_INDEX, 0);
+        this.entityData.define(CHILLING_INDEX, 0);
+        this.entityData.define(IS_WAKING_UP, false);
 
 
     }
@@ -5680,6 +5871,23 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
     }
 
+    public void setGeneticalVariants(WCGenetics.GeneticalVariants variants) {
+
+        this.entityData.set(EYE_COLOR_LEFT, variants.eyeColorLeft);
+        this.entityData.set(EYE_COLOR_RIGHT, variants.eyeColorRight);
+        this.entityData.set(RUFOUSING_VARIANT, Math.min(variants.rufousingVariant, WCGenetics.Values.MAX_RUFOUSING_VARIANTS-1));
+        this.entityData.set(BLUE_RUFOUSING_VARIANT, Math.min(variants.blueRufousingVariant, WCGenetics.Values.MAX_BLUE_RUFOUSING_VARIANTS-1));
+        this.entityData.set(ORANGE_BASE_VARIANT, Math.min(variants.orangeVar, WCGenetics.Values.MAX_ORANGE_VARIANTS-1));
+        this.entityData.set(WHITE_RATIO_VARIANT, Math.min(WCGenetics.Values.MAX_WHITE_VARIANTS-1, variants.whiteVar));
+        this.entityData.set(TABBY_STRIPES_VARIANT, Math.min(variants.tabbyVar, WCGenetics.Values.MAX_TABBY_VARIANTS-1));
+        this.entityData.set(ALBINO_VARIANT, Math.min(variants.albinoVar, WCGenetics.Values.MAX_ALBINO_VARIANTS-1));
+        this.entityData.set(EYE_COLOR_VARIANT_LEFT, Math.min(variants.leftEyeVar, WCGenetics.Values.MAX_EYE_VARIANTS-1));
+        this.entityData.set(EYE_COLOR_VARIANT_RIGHT, Math.min(variants.rightEyeVar, WCGenetics.Values.MAX_EYE_VARIANTS-1));
+        this.entityData.set(NOISE, Math.min(variants.noise, WCGenetics.Values.MAX_NOISE_VARIANTS-1));
+        this.entityData.set(SIZE, variants.size);
+
+    }
+
     public void setGeneticalVariantsChimera(int chimeraVariant, int rufVar, int blueRufVar,
                                             int orangeVar, int whiteVar, int tabbyVar,
                                             int albinoVar, int noise) {
@@ -5693,6 +5901,20 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         this.entityData.set(TABBY_STRIPES_VARIANT_CHIMERA, Math.min(tabbyVar, WCGenetics.Values.MAX_TABBY_VARIANTS-1));
         this.entityData.set(ALBINO_VARIANT_CHIMERA, Math.min(albinoVar, WCGenetics.Values.MAX_ALBINO_VARIANTS-1));
         this.entityData.set(NOISE_CHIMERA, Math.min(noise, WCGenetics.Values.MAX_NOISE_VARIANTS-1));
+
+    }
+
+    public void setGeneticalVariantsChimera(WCGenetics.GeneticalChimeraVariants variants) {
+
+        this.entityData.set(CHIMERA_VARIANT, Math.min(variants.chimeraVariant, WCGenetics.Values.MAX_CHIMERISM_VARIANTS-1));
+
+        this.entityData.set(RUFOUSING_VARIANT_CHIMERA, Math.min(variants.rufousingVariant, WCGenetics.Values.MAX_RUFOUSING_VARIANTS-1));
+        this.entityData.set(BLUE_RUFOUSING_VARIANT_CHIMERA, Math.min(variants.blueRufousingVariant, WCGenetics.Values.MAX_BLUE_RUFOUSING_VARIANTS-1));
+        this.entityData.set(ORANGE_BASE_VARIANT_CHIMERA, Math.min(variants.orangeVar, WCGenetics.Values.MAX_ORANGE_VARIANTS-1));
+        this.entityData.set(WHITE_RATIO_VARIANT_CHIMERA, Math.min(WCGenetics.Values.MAX_WHITE_VARIANTS-1, variants.whiteVar));
+        this.entityData.set(TABBY_STRIPES_VARIANT_CHIMERA, Math.min(variants.tabbyVar, WCGenetics.Values.MAX_TABBY_VARIANTS-1));
+        this.entityData.set(ALBINO_VARIANT_CHIMERA, Math.min(variants.albinoVar, WCGenetics.Values.MAX_ALBINO_VARIANTS-1));
+        this.entityData.set(NOISE_CHIMERA, Math.min(variants.noise, WCGenetics.Values.MAX_NOISE_VARIANTS-1));
 
     }
 
@@ -5853,7 +6075,6 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         if (vehicle instanceof LivingEntity) {
             yawDeg = ((LivingEntity) vehicle).yBodyRot;
             pitchDeg = vehicle.getXRot();
-
         } else {
             yawDeg = vehicle.getYRot();
             pitchDeg = vehicle.getXRot();
@@ -5864,9 +6085,35 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         double dirX = Math.sin(yaw);
         double dirZ = Math.cos(yaw);
 
+
+        float sizeOffset = 0.0f;
+        float sizeOffsetDistance = 0.0f;
+
+        if (vehicle instanceof Player player) {
+            if (PlayerShape.getCurrentShape(player) instanceof WCatEntity cat) {
+                sizeOffset = cat.getSize()*0.07f;
+                if (cat.getSize() > 1.1f) sizeOffset += 0.05;
+                sizeOffsetDistance = sizeOffset;
+                if (cat.getSize() <= 0.81) {
+                    sizeOffset = -sizeOffset;
+                    if (cat.getSize() <= 0.61) {
+                        sizeOffset = sizeOffset - 0.07f;
+                        sizeOffsetDistance += 0.10f;
+                    }
+                    sizeOffsetDistance = -sizeOffsetDistance*0.4f;
+                }
+
+            }
+        }
+
         double distance = 0.66;
 
         double offsetY = 0.15;
+
+        offsetY += sizeOffset;
+
+        distance += sizeOffsetDistance*2.5;
+
 
         double pitch = Math.toRadians(pitchDeg);
 
@@ -5946,10 +6193,10 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
             if (this.getMood() == Mood.SAD) {
                 Vec3 currentMovement = this.getDeltaMovement();
-                this.setDeltaMovement(currentMovement.x * 0.7, currentMovement.y, currentMovement.z * 0.7);
+                this.setDeltaMovement(currentMovement.x * 0.8, currentMovement.y, currentMovement.z * 0.8);
             }
 
-            if (this.mode == CatMode.SIT && this.lookAtLeaderFlag) {
+            if (this.mode == CatMode.SIT && this.lookAtLeaderFlag && this.entityData.get(SITTING_INDEX) != 3) {
                 LivingEntity owner = this.getOwner();
                 if (owner != null) {
                     if (this.distanceToSqr(owner) <= 100) {
@@ -5981,9 +6228,6 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                 }
             }
 
-            // Ong this is a mess
-
-
             if (this.tickCount % 9600 == 0) {
                 this.setRandomMood(this.random);
             }
@@ -5998,25 +6242,6 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                 float moonsCalc = (float) ((this.getAge() + (20 * 60 * getKitGrowthTimeMinutes())) / (100.0 * getKitGrowthTimeMinutes()));
                 this.entityData.set(AGE_SYNC, moonsCalc);
             }
-
-//            if (this.tickCount % 6000 == 0 && this.level() instanceof ServerLevel sLevel) {
-//                ClanData data = ClanData.get(sLevel);
-//
-//                ClanData.Clan registeredClan = data.getClanByCat(this.getUUID());
-//
-//                if (registeredClan != null && !registeredClan.clanUUID.equals(this.getClanUUID())) {
-//                    registeredClan.clanCats.remove(this.getUUID());
-//                    data.setDirty();
-//                }
-//
-//                if (!this.getClanUUID().equals(ClanData.EMPTY_UUID)) {
-//                    ClanData.Clan correctClan = data.getClan(this.getClanUUID());
-//
-//                    if (correctClan != null && !correctClan.clanCats.containsKey(this.getUUID())) {
-//                        data.addClanCat(this.getClanUUID(), this);
-//                    }
-//                }
-//            }
 
 
             if (this.tickCount % 400 == 0 && this.level() instanceof ServerLevel serverLevel) {
@@ -6287,6 +6512,32 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         boolean result = super.hurt(source, amount);
 
         if (!level().isClientSide && result) {
+            if (this.isResting()) {
+                if (this.level() instanceof ServerLevel serverLevel) {
+                    serverLevel.sendParticles(ParticleTypes.SMOKE, this.getX(), this.getY(),this.getZ(),
+                            30,0.4f,0.4f,0.4f,0.2f);
+                    if (source.getEntity() instanceof Player player) {
+                        if (this.getFriendshipLevel(player.getUUID()) > 0) {
+                            this.setFriendshipLevel(player.getUUID(), this.getFriendshipLevel(player.getUUID()) - 10);
+                        }
+                    }
+                }
+                this.setResting(false, 0);
+            }
+
+            if (this.isChilling()) {
+                if (this.level() instanceof ServerLevel serverLevel) {
+                    serverLevel.sendParticles(ParticleTypes.SMOKE, this.getX(), this.getY(),this.getZ(),
+                            30,0.4f,0.4f,0.4f,0.2f);
+                    if (source.getEntity() instanceof Player player) {
+                        if (this.getFriendshipLevel(player.getUUID()) > 0) {
+                            this.setFriendshipLevel(player.getUUID(), this.getFriendshipLevel(player.getUUID()) - 5);
+                        }
+                    }
+                }
+                this.setChilling(false, 0);
+            }
+
             Entity enemy = source.getEntity();
 
             if (enemy instanceof LivingEntity livingEnemy) {
@@ -6365,6 +6616,8 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
     @Override
     protected SoundEvent getAmbientSound() {
+
+        if (this.isResting() || this.entityData.get(SITTING_INDEX) == 3) return SoundEvents.CAT_PURR;
 
         if (this.random.nextFloat() < 0.05f) {
             if (this.getPersonality() == Personality.GRUMPY) {
@@ -6598,4 +6851,1817 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
     public boolean isPersistenceRequired() {
         return true;
     }
+
+    @Override
+    public boolean isPushable() {
+        if (this.isResting() || this.entityData.get(SITTING_INDEX) == 3 || this.isChilling()) return false;
+        return super.isPushable();
+    }
+
+    @Override
+    public LivingEntity getTarget() {
+        if (this.mode == CatMode.SIT){
+            this.setTarget(null);
+            this.setAggressive(false);
+            this.setLastHurtByPlayer(null);
+            this.setLastHurtByMob(null);
+            return null;
+        }
+        if (this.isResting()) {
+            return null;
+        }
+        return super.getTarget();
+    }
+
+
+    public class WCGoals {
+
+        public static class WCatFollowOwnerGoal extends Goal {
+
+            private final TamableAnimal cat;
+            private LivingEntity owner;
+            private final double speed;
+            private final float stopDistance;
+            private final float startDistance;
+            private final double angleOffset;
+
+
+            public WCatFollowOwnerGoal(TamableAnimal cat, double speed, float stopDistance, float startDistance) {
+                this.cat = cat;
+                this.speed = speed;
+                this.angleOffset = cat.getId() * 0.8;
+
+
+                if (cat instanceof WCatEntity wCatEntity && (wCatEntity.getPersonality() == WCatEntity.Personality.INDEPENDENT || wCatEntity.getPersonality() == WCatEntity.Personality.SHY)) {
+                    if (wCatEntity.getPersonality() == WCatEntity.Personality.SHY) {
+                        this.stopDistance = stopDistance * 5;
+                        this.startDistance = startDistance * 5;
+                    } else {
+                        this.stopDistance = stopDistance * 3;
+                        this.startDistance = startDistance * 3;
+                    }
+                } else {
+                    this.stopDistance = stopDistance;
+                    this.startDistance = startDistance;
+                }
+
+                this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
+            }
+
+            @Override
+            public boolean canUse() {
+
+                if (!(cat instanceof WCatEntity)) return false;
+                WCatEntity wcat = (WCatEntity) cat;
+
+
+                if (!cat.isTame()) return false;
+                if (wcat.mode != WCatEntity.CatMode.FOLLOW) return false;
+                if (cat.isOrderedToSit()) return false;
+
+                if (cat.getTarget() != null && cat.getTarget().isAlive()) return false;
+
+                LivingEntity ownerEntity = cat.getOwner();
+                if (ownerEntity == null) return false;
+                if (cat.distanceTo(ownerEntity) < startDistance) return false;
+
+                this.owner = ownerEntity;
+                return true;
+            }
+
+            @Override
+            public boolean canContinueToUse() {
+                if (!(cat instanceof WCatEntity)) return false;
+                WCatEntity wcat = (WCatEntity) cat;
+
+                if (wcat.mode != WCatEntity.CatMode.FOLLOW) return false;
+                if (cat.isOrderedToSit()) return false;
+
+                if (cat.getTarget() != null && cat.getTarget().isAlive()) return false;
+
+                if (owner == null || !owner.isAlive()) return false;
+
+                return cat.distanceTo(owner) > stopDistance;
+            }
+
+            @Override
+            public void tick() {
+                if (owner == null) return;
+
+                double dist = cat.distanceTo(owner);
+
+                cat.getLookControl().setLookAt(owner, 10.0F, cat.getMaxHeadXRot());
+                applySeparation();
+
+                if (dist > 25 && (cat.getOwner() != null && cat.getOwner().onGround())) {
+                    cat.teleportTo(owner.getX(), owner.getY(), owner.getZ());
+                    cat.getNavigation().stop();
+//                return;
+                }
+
+                if (dist <= stopDistance) {
+                    cat.getNavigation().stop();
+                    return;
+                }
+
+                double dx = cat.getX() - owner.getX();
+                double dz = cat.getZ() - owner.getZ();
+                double len = Math.sqrt(dx * dx + dz * dz);
+
+                if (len < 0.001) len = 0.001;
+
+                double ratio = stopDistance / len;
+
+                double targetX = owner.getX() + dx * ratio;
+                double targetZ = owner.getZ() + dz * ratio;
+                double targetY = owner.getY();
+
+                double offsetX = Math.cos(angleOffset) * 0.6;
+                double offsetZ = Math.sin(angleOffset) * 0.6;
+
+                if (!hasGroundAhead(targetX, targetZ) || pathHasVoidAhead(owner) ||
+                        (cat.distanceTo(owner) < 6.5D && isACatTooClose())) {
+                    cat.getNavigation().stop();
+                    return;
+                }
+
+                cat.getNavigation().moveTo(targetX + offsetX, targetY, targetZ + offsetZ, speed);
+            }
+
+            private boolean isACatTooClose() {
+                AABB box = this.cat.getBoundingBox().inflate(0.6);
+                List<WCatEntity> entities = cat.level().getEntitiesOfClass(
+                        WCatEntity.class,
+                        box,
+                        kitty -> kitty.isAlive() && kitty != this.cat && kitty.mode == WCatEntity.CatMode.FOLLOW
+                );
+                return !entities.isEmpty();
+            }
+
+
+            private boolean pathHasVoidAhead(Entity owner) {
+                Vec3 catPos = cat.position();
+                Vec3 playerPos = owner.position();
+
+                Vec3 dir = playerPos.subtract(catPos);
+                double dist = dir.length();
+                dir = dir.normalize();
+
+                Level level = cat.level();
+
+                for (double d = 0; d < Math.min(dist, 6); d += 0.5) {
+                    Vec3 sample = catPos.add(dir.scale(d));
+                    BlockPos pos = BlockPos.containing(sample.x, cat.getY(), sample.z);
+
+                    boolean hasGround = false;
+                    for (int i = 1; i <= 4; i++) {
+                        if (!level.isEmptyBlock(pos.below(i))) {
+                            hasGround = true;
+                            break;
+                        }
+                    }
+
+                    if (!hasGround) {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+
+
+            private boolean hasGroundAhead(double targetX, double targetZ) {
+                Level level = cat.level();
+
+                BlockPos pos = BlockPos.containing(targetX, cat.getY(), targetZ);
+
+                for (int i = 0; i < 4; i++) {
+                    BlockPos check = pos.below(i + 1);
+                    if (!level.isEmptyBlock(check)) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+
+            private void applySeparation() {
+                AABB box = cat.getBoundingBox().inflate(0.3);
+                List<WCatEntity> others = cat.level().getEntitiesOfClass(
+                        WCatEntity.class,
+                        box,
+                        e -> e != cat
+                );
+
+                if (others.isEmpty()) return;
+
+                double pushX = 0;
+                double pushZ = 0;
+
+                for (WCatEntity other : others) {
+                    double dx = cat.getX() - other.getX();
+                    double dz = cat.getZ() - other.getZ();
+                    double dist = Math.max(Math.sqrt(dx * dx + dz * dz), 0.001);
+
+                    pushX += dx / dist;
+                    pushZ += dz / dist;
+                }
+
+                cat.setDeltaMovement(
+                        cat.getDeltaMovement().add(pushX * 0.05, 0, pushZ * 0.05)
+                );
+            }
+
+        }
+
+        public static class WCatCasualBlockSeekGoal extends Goal {
+
+            private final WCatEntity cat;
+            private final double speed;
+            private final int baseRadius;
+            private final double chance;
+            private int cooldown = 0;
+
+            private BlockPos targetPos = null;
+            private Predicate<BlockState> targetPredicate;
+
+            public WCatCasualBlockSeekGoal(WCatEntity cat, double speed, int baseRadius, double chance) {
+                this.cat = cat;
+                this.speed = speed;
+                this.baseRadius = baseRadius;
+                this.chance = chance;
+                this.setFlags(EnumSet.of(Flag.MOVE));
+            }
+
+            @Override
+            public boolean canUse() {
+                if (cat.returnHomeFlag) return false;
+
+                if (cooldown > 0) {
+                    cooldown--;
+                    return false;
+                }
+
+                if (cat.isResting() || cat.isChilling()) return false;
+
+                if (cat.isOrderedToSit()) return false;
+
+                if (this.targetPos != null) {
+                    if (targetPredicate != null &&
+                            targetPredicate.test(cat.level().getBlockState(this.targetPos))) {
+                        return false;
+                    }
+                    this.targetPos = null;
+                }
+
+
+                if (cat.mode != WCatEntity.CatMode.WANDER) return false;
+
+                if (cat.isExpectingKits()) {
+                    if (cat.getRandom().nextDouble() >= this.chance * 2) return false;
+                } else {
+                    if (cat.getRandom().nextDouble() >= this.chance) return false;
+                }
+
+                this.targetPredicate = defineTargetPredicate();
+
+                this.targetPos = findTargetBlock();
+                return this.targetPos != null;
+            }
+
+            @Override
+            public boolean canContinueToUse() {
+                return targetPos != null &&
+                        !cat.getNavigation().isDone() &&
+                        !cat.isOrderedToSit();
+            }
+
+            @Override
+            public void start() {
+
+                if (cat.wanderCenter != null &&
+                        cat.blockPosition().distSqr(cat.wanderCenter) > cat.getWanderRadius() * cat.getWanderRadius()) {
+                    cat.getNavigation().moveTo(cat.wanderCenter.getX(), cat.wanderCenter.getY(), cat.wanderCenter.getZ(), speed);
+                    return;
+                }
+
+                if (targetPos != null) {
+                    cat.getNavigation().moveTo(
+                            targetPos.getX() + 0.5,
+                            targetPos.getY(),
+                            targetPos.getZ() + 0.5,
+                            speed
+                    );
+                }
+            }
+
+            @Override
+            public void stop() {
+                targetPos = null;
+                cat.getNavigation().stop();
+                this.cooldown = 400 + cat.getRandom().nextInt(4) * 80;
+            }
+
+            private Predicate<BlockState> defineTargetPredicate() {
+
+                return switch (cat.getRank()) {
+                    case MEDICINE -> state -> state.is(ModBlocks.STONECLEFT.get());
+                    default -> state -> state.getBlock() instanceof MossBedBlock;
+                };
+            }
+
+            private BlockPos findTargetBlock() {
+                Level level = cat.level();
+                BlockPos origin = cat.blockPosition();
+
+                List<BlockPos> found = new ArrayList<>();
+
+                int radius = this.baseRadius;
+
+                for (int x = -radius; x <= radius; x++) {
+                    for (int y = -2; y <= 2; y++) {
+                        for (int z = -radius; z <= radius; z++) {
+                            BlockPos pos = origin.offset(x, y, z);
+                            if (targetPredicate.test(level.getBlockState(pos))) {
+                                found.add(pos);
+                            }
+                        }
+                    }
+                }
+
+                if (found.isEmpty()) return null;
+
+                return found.get(cat.getRandom().nextInt(found.size()));
+            }
+        }
+
+        public static class WCatBoundedWanderGoal extends WaterAvoidingRandomStrollGoal {
+
+            private final WCatEntity cat;
+            private int cooldown = 0;
+            private boolean shouldSearchForLavender = false;
+
+            public WCatBoundedWanderGoal(WCatEntity cat, double speed) {
+                super(cat, speed);
+                this.cat = cat;
+                this.setInterval(40);
+            }
+
+
+            @Override
+            public boolean canUse() {
+                if (this.cat.returnHomeFlag) return false;
+
+                if (cooldown > 0) {
+                    cooldown--;
+                    return false;
+                }
+
+                if (cat.isResting() || cat.isChilling()) return false;
+
+                WCatEntity wcat = cat;
+
+                if (wcat.mode != WCatEntity.CatMode.WANDER) return false;
+                if (cat.isOrderedToSit()) return false;
+
+
+                if (wcat.wanderCenter == null) return false;
+
+                Vec3 pos = this.getRandomPointInRadius(wcat);
+
+                if (pos == null) return false;
+
+                this.wantedX = pos.x;
+                this.wantedY = pos.y;
+                this.wantedZ = pos.z;
+
+                return true;
+            }
+
+            @Override
+            public void stop() {
+                super.stop();
+
+                cooldown = cat.getRandom().nextInt(5) * 20 + 140;
+
+                if (cat.getRandom().nextFloat() < 0.013 || cat.distanceToSqr(cat.getHomePosition().getCenter()) < 1.5*1.5) {
+                    int counterBonus = 0;
+                    if (cat.distanceToSqr(cat.getHomePosition().getCenter()) < 1.5*1.5) {
+                        Vec3 pos = cat.getHomePosition().getCenter();
+                        cat.teleportTo(pos.x, pos.y, pos.z);
+
+                        if (cat.level().isNight()) counterBonus = (2 + cat.getRandom().nextInt(5))*800;
+                    }
+                    cat.setResting(true, ((1 + cat.getRandom().nextInt(5))*800) + counterBonus);
+                } else if (shouldSearchForLavender) {
+
+                    BlockPos catPos = cat.blockPosition();
+                    boolean foundLavender = false;
+
+                    for (int dx = -1; dx <= 1; dx++) {
+                        for (int dz = -1; dz <= 1; dz++) {
+                            BlockPos checkPos = catPos.offset(dx, 0, dz);
+                            if (cat.level().getBlockState(checkPos).getBlock() instanceof LavenderPetalsBlock) {
+                                foundLavender = true;
+                                break;
+                            }
+                        }
+                        if (foundLavender) break;
+                    }
+
+                    if (foundLavender) {
+                        cat.setChilling(true, (1 + cat.getRandom().nextInt(5)) * 800);
+                        shouldSearchForLavender = false;
+                    }
+                }
+            }
+
+            private Vec3 getRandomPointInRadius(WCatEntity wcat) {
+                int attempts = 7;
+
+                float bedChanceBonus = switch (cat.getMood()) {
+                    case SAD -> 0.03f;
+                    case STRESSED -> -0.05f;
+                    default -> 0;
+                };
+
+                if (cat.level().isNight()) bedChanceBonus += 0.02f;
+
+                if (cat.isBaby() && cat.getRank() == KIT) bedChanceBonus += 0.05f;
+
+                float personalityBedChanceBonus = switch (cat.getPersonality()) {
+                    case INDEPENDENT ->  0.002f;
+                    case GRUMPY -> -0.01f;
+                    case RECKLESS -> -0.005f;
+                    case CAUTIOUS -> -0.004f;
+                    default -> 0;
+                };
+
+                if (this.cat.getRandom().nextFloat() < Math.max(0.008f, 0.013 + bedChanceBonus + personalityBedChanceBonus)) {
+                    BlockPos homePos = wcat.getHomePosition();
+                    if (homePos != null && !homePos.equals(BlockPos.ZERO)) {
+                        Vec3 targetPos = Vec3.atCenterOf(homePos);
+                        if (wcat.distanceToSqr(targetPos) < 20 * 20) {
+                            return targetPos;
+                        }
+                    }
+                }
+
+                float hangoutChanceBonus = switch (cat.getMood()) {
+                    case SAD -> -0.04f;
+                    case STRESSED -> -0.02f;
+                    case HAPPY -> 0.05f;
+                    default -> 0;
+                };
+                float personalityHangoutChanceBonus = switch (cat.getPersonality()) {
+                    case INDEPENDENT ->  -0.003f;
+                    case SHY -> -0.004f;
+                    case GRUMPY -> -0.01f;
+                    case RECKLESS -> 0.01f;
+                    case CAUTIOUS -> -0.004f;
+                    case FRIENDLY -> 0.01f;
+                    default -> 0;
+                };
+
+                shouldSearchForLavender = false;
+                if (this.cat.getRandom().nextFloat() < Math.max(0.03f, 0.05 + hangoutChanceBonus + personalityHangoutChanceBonus)) {
+                    shouldSearchForLavender = true;
+                    {
+                        int radius = cat.getWanderRadius();
+
+                        BlockPos origin = cat.blockPosition();
+                        BlockPos nearest = null;
+                        double nearestDist = Double.MAX_VALUE;
+
+                        for (int x = -radius; x <= radius; x++) {
+                            for (int z = -radius; z <= radius; z++) {
+
+                                BlockPos pos = origin.offset(x, 0, z);
+                                BlockState state = cat.level().getBlockState(pos);
+
+                                if (state.getBlock() instanceof LavenderPetalsBlock) {
+
+                                    double dist = origin.distSqr(pos);
+
+                                    if (dist < nearestDist) {
+                                        nearestDist = dist;
+                                        nearest = pos;
+                                    }
+                                }
+                            }
+                        }
+
+                        if (nearest != null) {
+                            return nearest.getCenter();
+                        }
+                    }
+                }
+
+                for (int i = 0; i < attempts; i++) {
+
+                    double angle = cat.getRandom().nextDouble() * (Math.PI * 2);
+                    double radious;
+                    if (cat.isTame()) {
+                        radious = cat.getRandom().nextDouble() * cat.getWanderRadius();
+                    } else {
+                        radious = cat.getRandom().nextDouble() * 32;
+                    }
+
+                    double x = wcat.wanderCenter.getX() + 0.5 + Math.cos(angle) * radious;
+                    double z = wcat.wanderCenter.getZ() + 0.5 + Math.sin(angle) * radious;
+                    double y = wcat.getY();
+
+                    BlockPos groundPos = BlockPos.containing(x, y - 1, z);
+
+                    if (cat.level().getBlockState(groundPos).isSolid()) {
+                        return new Vec3(x, y, z);
+                    }
+                }
+
+                return null;
+            }
+
+            @Override
+            protected Vec3 getPosition() {
+                return new Vec3(this.wantedX, this.wantedY, this.wantedZ);
+            }
+
+
+            @Override
+            public boolean canContinueToUse() {
+                if (!(cat instanceof WCatEntity)) return false;
+
+                if (cat.mode != WCatEntity.CatMode.WANDER) return false;
+                if (cat.isOrderedToSit()) return false;
+
+                return !cat.getNavigation().isDone();
+            }
+        }
+
+        public static class WCatGiveRandomItemGoal extends Goal {
+            private final WCatEntity cat;
+            private final double speedModifier;
+            private static final TargetingConditions PLAYER_TARGET
+                    = TargetingConditions.forNonCombat().range(32f).ignoreLineOfSight();
+
+            @Nullable
+            private Player player;
+
+            WCatGiveRandomItemGoal(WCatEntity cat) {
+                this.cat = cat;
+                this.speedModifier = 1f;
+                this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
+            }
+
+            public boolean canUse() {
+                if (cat.getMood() == WCatEntity.Mood.SAD || cat.getMood() == WCatEntity.Mood.STRESSED) return false;
+
+                if (this.cat.getRank() != WARRIOR) return false;
+
+                if (cat.isResting() || cat.isChilling()) return false;
+
+                if (this.cat.mode != WCatEntity.CatMode.WANDER) return false;
+
+                if (cat.getTarget() != null && cat.getTarget().isAlive()) return false;
+
+                if (this.cat.getRandom().nextFloat() > ((float) 1 / (20 * 60 * 15))) return false;
+
+                this.player = this.cat.level().getNearestPlayer(PLAYER_TARGET, this.cat);
+
+                if (this.player == null) return false;
+
+                if (this.cat.getFriendshipLevel(this.player.getUUID()) < 65) return false;
+
+                return this.cat.getTarget() != this.player;
+
+            }
+
+            public boolean canContinueToUse() {
+                return this.player != null && this.cat.distanceToSqr(this.player) < 32 * 32;
+            }
+
+            public void start() {
+                this.cat.getNavigation().moveTo(this.player, this.speedModifier);
+            }
+
+            public void stop() {
+                this.player = null;
+                this.cat.getNavigation().stop();
+            }
+
+            public void tick() {
+                this.cat.getLookControl().setLookAt(this.player, (float) (this.cat.getMaxHeadYRot() + 20), (float) this.cat.getMaxHeadXRot());
+                if (this.cat.distanceToSqr(this.player) < 6.25D) {
+                    this.cat.getNavigation().stop();
+                    performGiveItemInteraction();
+                    String message = cat.getRandomGiftDialogue(this.cat.getPersonality());
+                    this.cat.sendInteractionMessage(this.player.getUUID(), message);
+                    stop();
+                } else {
+                    this.cat.getNavigation().moveTo(this.player, this.speedModifier);
+                }
+
+            }
+
+            private void performGiveItemInteraction() {
+                ItemStack item = new ItemStack(getPersonalityItemPool(), 2 + this.cat.getRandom().nextInt(3));
+                ItemEntity itemEntity = new ItemEntity(this.player.level(), this.cat.getX(), this.cat.getY() + 0.5, this.cat.getZ(), item);
+                itemEntity.getPersistentData().putBoolean("gift_by_cat", true);
+
+                Vec3 look = this.cat.getLookAngle();
+                double impulse = 0.35;
+                itemEntity.setDeltaMovement(look.x * impulse, 0.2, look.z * impulse);
+
+                itemEntity.setDefaultPickUpDelay();
+
+                this.player.level().addFreshEntity(itemEntity);
+            }
+
+            private Item getPersonalityItemPool() {
+                Item item = Items.COD;
+                int randomPool = this.cat.getRandom().nextInt(4);
+
+                if (randomPool == 0) {
+                    switch (this.cat.getPersonality()) {
+                        case NONE -> item = Items.COD;
+                        case AMBITIOUS -> item = Items.DIAMOND;
+                        case CALM -> item = Items.COD;
+                        case FRIENDLY -> item = ModItems.ANIMAL_TOOTH.get();
+                        case CAUTIOUS -> item = ModItems.DOCK.get();
+                        case RECKLESS -> item = ModItems.ANIMAL_TEETH.get();
+                        case GRUMPY -> item = ModItems.ANIMAL_TOOTH.get();
+                        case HUMBLE -> item = Items.GLOW_BERRIES;
+                        case SHY -> item = Items.SALMON;
+                        case INDEPENDENT -> item = Items.CHICKEN;
+                    }
+                } else if (randomPool == 1) {
+                    switch (this.cat.getPersonality()) {
+                        case NONE -> item = Items.COD;
+                        case AMBITIOUS -> item = Items.EMERALD;
+                        case CALM -> item = Items.SALMON;
+                        case FRIENDLY -> item = Items.RABBIT;
+                        case CAUTIOUS -> item = ModItems.CATMINT.get();
+                        case RECKLESS -> item = Items.BEEF;
+                        case GRUMPY -> item = ModItems.MOUSE_FOOD.get();
+                        case HUMBLE -> item = ModItems.SQUIRREL_FOOD.get();
+                        case SHY -> item = Items.TROPICAL_FISH;
+                        case INDEPENDENT -> item = ModItems.MOUSE_FOOD.get();
+                    }
+                } else if (randomPool == 2) {
+                    switch (this.cat.getPersonality()) {
+                        case NONE -> item = Items.COD;
+                        case AMBITIOUS -> item = ModItems.PIGEON_FOOD.get();
+                        case CALM -> item = ModItems.ANIMAL_TEETH.get();
+                        case FRIENDLY -> item = ModItems.SQUIRREL_FOOD.get();
+                        case CAUTIOUS -> item = ModItems.GLOW_SHROOM.get();
+                        case RECKLESS -> item = Items.DIAMOND;
+                        case GRUMPY -> item = ModItems.DOCK_LEAVES.get();
+                        case HUMBLE -> item = ModItems.ANIMAL_TOOTH.get();
+                        case SHY -> item = ModItems.LEAF_MANE.get();
+                        case INDEPENDENT -> item = Items.DIAMOND;
+                    }
+                } else if (randomPool == 3) {
+                    switch (this.cat.getPersonality()) {
+                        case NONE -> item = Items.COD;
+                        case AMBITIOUS -> item = ModItems.ANIMAL_TEETH.get();
+                        case CALM -> item = ModItems.DOCK_LEAVES.get();
+                        case FRIENDLY -> item = Items.IRON_INGOT;
+                        case CAUTIOUS -> item = ModItems.LEAF_MANE.get();
+                        case RECKLESS -> item = Items.EMERALD;
+                        case GRUMPY -> item = Items.GLOW_BERRIES;
+                        case HUMBLE -> item = Items.PORKCHOP;
+                        case SHY -> item = ModItems.FLOWER_CROWN.get();
+                        case INDEPENDENT -> item = ModItems.ANIMAL_TEETH.get();
+                    }
+                }
+
+                return item;
+            }
+
+        }
+
+        public static class WCatRunWithPlayerGoal extends Goal {
+            private final WCatEntity cat;
+            private final double speedModifier;
+            private static final TargetingConditions PLAYER_TARGET
+                    = TargetingConditions.forNonCombat().range(10.0D).ignoreLineOfSight();
+
+            @Nullable
+            private Player player;
+
+            WCatRunWithPlayerGoal(WCatEntity cat, double pSpeedModifier) {
+                this.cat = cat;
+                this.speedModifier = pSpeedModifier;
+                this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
+            }
+
+            public boolean canUse() {
+                if (this.cat.getRank() != WARRIOR) return false;
+
+                if (this.cat.mode != WCatEntity.CatMode.FOLLOW) return false;
+
+                if (cat.getTarget() != null && cat.getTarget().isAlive()) return false;
+
+                this.player = this.cat.level().getNearestPlayer(PLAYER_TARGET, this.cat);
+
+                if (this.player == null) return false;
+
+                if (this.cat.getFriendshipLevel(this.player.getUUID()) < 80) return false;
+
+                return this.player.isSprinting() && this.cat.getTarget() != this.player;
+
+            }
+
+            public boolean canContinueToUse() {
+                return this.player != null && this.player.isSprinting() && this.cat.distanceToSqr(this.player) < 256.0D;
+            }
+
+            public void start() {
+                this.player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 100, 0, false, false, false), this.cat);
+                this.cat.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 100, 1, false, false, false), this.cat);
+            }
+
+            public void stop() {
+                this.player = null;
+                this.cat.getNavigation().stop();
+            }
+
+            public void tick() {
+                this.cat.getLookControl().setLookAt(this.player, (float) (this.cat.getMaxHeadYRot() + 20), (float) this.cat.getMaxHeadXRot());
+                if (this.cat.distanceToSqr(this.player) < 6.25D) {
+                    this.cat.getNavigation().stop();
+                } else {
+                    this.cat.getNavigation().moveTo(this.player, this.speedModifier);
+                }
+
+                if (this.player.isSprinting() && this.player.level().random.nextInt(6) == 0) {
+                    this.player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 100, 0, false, false, false), this.cat);
+                    this.cat.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 100, 1, false, false, false), this.cat);
+                }
+
+            }
+        }
+
+        public static class WCatLeaderCallsGoal extends Goal {
+            private final WCatEntity cat;
+            private final double speed;
+            private BlockPos ownerPosition;
+            private static final int BASE_OBEY_TICKS = 140;
+            private int obeyingLeaderCallForTicks = BASE_OBEY_TICKS;
+
+            public WCatLeaderCallsGoal(WCatEntity cat) {
+                this.cat = cat;
+                this.speed = 1.2f;
+                this.setFlags(EnumSet.of(Flag.MOVE));
+            }
+
+            @Override
+            public boolean canUse() {
+                if (!(cat.leaderCallingToSitFlag || cat.leaderCallingToFollowFlag)) return false;
+
+                if (cat.getOwner() == null) return false;
+
+                this.ownerPosition = cat.getOwner().blockPosition();
+
+                if (cat.distanceToSqr(ownerPosition.getX(), ownerPosition.getY(), ownerPosition.getZ()) > 48 * 48)
+                    return false;
+
+                return true;
+            }
+
+            @Override
+            public boolean canContinueToUse() {
+                if (ownerPosition == null) return false;
+
+                if (cat.distanceToSqr(ownerPosition.getX(), ownerPosition.getY(), ownerPosition.getZ()) > 48 * 48) {
+                    return false;
+                }
+
+                return cat.distanceToSqr(ownerPosition.getX(), ownerPosition.getY(), ownerPosition.getZ()) > 5 * 5;
+            }
+
+            @Override
+            public void start() {
+                this.cat.returnHomeFlag = false;
+                this.cat.mode = WCatEntity.CatMode.WANDER;
+                this.cat.setResting(false, 0);
+                this.cat.setChilling(false, 0);
+//            this.cat.getNavigation().moveTo(ownerPosition.getX(), ownerPosition.getY(), ownerPosition.getZ(), speed);
+            }
+
+            @Override
+            public void stop() {
+                if (cat.leaderCallingToSitFlag) {
+                    this.obeyingLeaderCallForTicks = BASE_OBEY_TICKS;
+                    cat.leaderCallingToFollowFlag = false;
+                    cat.leaderCallingToSitFlag = false;
+                    cat.mode = WCatEntity.CatMode.SIT;
+                    cat.setOrderedToSit(true);
+                    cat.lookAtLeaderFlag = true;
+                    this.ownerPosition = null;
+                }
+                if (cat.leaderCallingToFollowFlag) {
+                    this.obeyingLeaderCallForTicks = BASE_OBEY_TICKS;
+                    cat.leaderCallingToFollowFlag = false;
+                    cat.leaderCallingToSitFlag = false;
+                    cat.mode = WCatEntity.CatMode.FOLLOW;
+                    cat.setOrderedToSit(false);
+                    this.ownerPosition = null;
+                }
+
+            }
+
+            @Override
+            public void tick() {
+
+                if (ownerPosition == null) return;
+
+                double dist = cat.distanceToSqr(
+                        ownerPosition.getX(),
+                        ownerPosition.getY(),
+                        ownerPosition.getZ()
+                );
+
+//            if (this.cat.obeyingLeaderCallForTicks > 200 && this.startCountingObeyTicks) {
+//            }
+
+                if (dist < 5.0 || this.obeyingLeaderCallForTicks <= 0) {
+                    stop();
+                } else {
+                    this.obeyingLeaderCallForTicks--;
+                    cat.getNavigation().moveTo(
+                            ownerPosition.getX(),
+                            ownerPosition.getY(),
+                            ownerPosition.getZ(),
+                            speed
+                    );
+                }
+            }
+
+        }
+
+        public static class WCatReturnHomeGoal extends Goal {
+            private final WCatEntity cat;
+            private final double speed;
+            private BlockPos homeTarget;
+            private int stuckTicks = 0;
+            private Vec3 lastPos = Vec3.ZERO;
+
+            private int tickCounterUntilHorizontalImpulse;
+            private boolean countUntilHorizontalImpulse;
+
+
+            public WCatReturnHomeGoal(WCatEntity cat, double speed) {
+                this.cat = cat;
+                this.speed = speed;
+                this.setFlags(EnumSet.of(Flag.MOVE));
+            }
+
+            @Override
+            public boolean canUse() {
+                if (!cat.returnHomeFlag) return false;
+
+                this.homeTarget = cat.getHomePosition();
+
+                if (this.homeTarget == null || this.homeTarget.equals(BlockPos.ZERO)) return false;
+
+                if (cat.distanceToSqr(homeTarget.getX(), homeTarget.getY(), homeTarget.getZ()) > 160000) return false;
+
+                return true;
+            }
+
+            @Override
+            public boolean canContinueToUse() {
+                if (homeTarget == null) return false;
+
+                if (cat.distanceToSqr(homeTarget.getX(), homeTarget.getY(), homeTarget.getZ()) > 160000) {
+                    return false;
+                }
+
+                return cat.mode == WCatEntity.CatMode.WANDER && cat.distanceToSqr(homeTarget.getX(), homeTarget.getY(), homeTarget.getZ()) > 2 * 2;
+            }
+
+            @Override
+            public void start() {
+                this.cat.getNavigation().moveTo(homeTarget.getX(), homeTarget.getY(), homeTarget.getZ(), speed);
+            }
+
+            @Override
+            public void stop() {
+                cat.wanderCenter = cat.blockPosition();
+                cat.mode = WCatEntity.CatMode.SIT;
+                cat.returnHomeFlag = false;
+                this.homeTarget = null;
+                cat.getNavigation().stop();
+            }
+
+            @Override
+            public void tick() {
+
+                if (homeTarget == null) return;
+
+                double dist = cat.distanceToSqr(
+                        homeTarget.getX(),
+                        homeTarget.getY(),
+                        homeTarget.getZ()
+                );
+
+                if (dist < 2.0) {
+                    cat.getNavigation().moveTo(
+                            homeTarget.getX(),
+                            homeTarget.getY(),
+                            homeTarget.getZ(),
+                            speed
+                    );
+                    cat.returnHomeFlag = false;
+                    return;
+                }
+
+                if (cat.getNavigation().isDone()) {
+                    cat.getNavigation().moveTo(
+                            homeTarget.getX(),
+                            homeTarget.getY(),
+                            homeTarget.getZ(),
+                            speed
+                    );
+                }
+
+                Vec3 current = cat.position();
+
+                if (current.distanceToSqr(lastPos) < 0.01) {
+                    stuckTicks++;
+                } else {
+                    stuckTicks = 0;
+                    lastPos = current;
+                }
+
+                if (this.countUntilHorizontalImpulse) {
+                    this.tickCounterUntilHorizontalImpulse++;
+                    if (this.tickCounterUntilHorizontalImpulse >= 7) {
+                        Vec3 lookAngleImpulse = cat.getLookAngle().normalize().scale(0.8);
+                        Vec3 impulse = new Vec3(lookAngleImpulse.x, 0.2, lookAngleImpulse.z);
+                        cat.setDeltaMovement(cat.getDeltaMovement().add(impulse));
+                        cat.hasImpulse = true;
+                        this.countUntilHorizontalImpulse = false;
+                        this.tickCounterUntilHorizontalImpulse = 0;
+                        this.cat.addEffect(new MobEffectInstance(MobEffects.SLOW_FALLING, 50, 0, false, false));
+                    }
+                }
+
+
+                if (stuckTicks >= 40) {
+                    if (cat.horizontalCollision || cat.verticalCollision) {
+                        Vec3 lookAngleImpulse = cat.getLookAngle().normalize().scale(2);
+
+                        Vec3 impulse = new Vec3(lookAngleImpulse.x, 0.8, lookAngleImpulse.z);
+
+                        cat.setDeltaMovement(cat.getDeltaMovement().add(impulse));
+
+                        cat.hasImpulse = true;
+                        this.countUntilHorizontalImpulse = true;
+                    }
+
+                    stuckTicks = 0;
+                }
+
+            }
+
+        }
+
+        public static class WCatLookAtPlayerGoal extends LookAtPlayerGoal {
+            private final WCatEntity cat;
+
+            public WCatLookAtPlayerGoal(WCatEntity cat, Class<? extends LivingEntity> pLookAtType, float pLookDistance) {
+                super(cat, pLookAtType, pLookDistance);
+                this.cat = cat;
+            }
+
+            @Override
+            public boolean canUse() {
+                if (this.cat.isAnImage()) return false;
+
+                if (this.cat.isChilling() && this.cat.getRandom().nextBoolean()) return false;
+
+                if (cat.isResting()) return false;
+
+                return super.canUse();
+            }
+
+            @Override
+            public void tick() {
+                if (cat.isAnImage()) return;
+                super.tick();
+            }
+
+        }
+
+        public static class WCatMoveToMateGoal extends Goal {
+            private final WCatEntity cat;
+            private LivingEntity targetMate;
+            private boolean isCloseToMate = false;
+            private static final int BASE_DURATION = 100;
+            private int interactionTickCount = BASE_DURATION;
+
+            public WCatMoveToMateGoal(WCatEntity cat) {
+                this.cat = cat;
+                this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
+            }
+
+            @Override
+            public boolean canUse() {
+                if (cat.returnHomeFlag) return false;
+
+                if (cat.isResting() || cat.isChilling()) return false;
+
+                if (cat.mode != WCatEntity.CatMode.WANDER) return false;
+
+                if (cat.getMateUUID() == null) return false;
+                if (cat.getMateUUID().equals(emptyUUID)) return false;
+
+                if (cat.getMood() == WCatEntity.Mood.SAD || cat.getMood() == WCatEntity.Mood.STRESSED) return false;
+
+                if (cat.getRandom().nextFloat() > 0.0001667f) return false;
+
+                return findMate();
+            }
+
+            @Override
+            public boolean canContinueToUse() {
+                return targetMate != null && cat.mode == WCatEntity.CatMode.WANDER;
+            }
+
+            @Override
+            public void tick() {
+
+                if (cat.distanceToSqr(targetMate) > 1f && !this.isCloseToMate) {
+                    cat.getNavigation().moveTo(targetMate.getX(), targetMate.getY(), targetMate.getZ(), 1f);
+                } else if (!this.isCloseToMate) {
+                    this.isCloseToMate = true;
+                    this.interactionTickCount = BASE_DURATION;
+                    targetMate.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 200, 0, false, false));
+                }
+
+                if (this.isCloseToMate && this.interactionTickCount > 0) {
+                    this.interactionTickCount--;
+                    ServerLevel sLevel = ((ServerLevel) cat.level());
+                    cat.getLookControl().setLookAt(targetMate, (float) (cat.getMaxHeadYRot() + 20), (float) cat.getMaxHeadXRot());
+
+                    float chance = cat.getRandom().nextFloat();
+                    if (chance <= 0.05f) {
+                        sLevel.sendParticles(ParticleTypes.HEART, cat.getX(), cat.getY(), cat.getZ(), 2, 0.5f, 0.5f, 0.5f, 0.1f);
+                        if (chance < 0.03) {
+                            sLevel.playSound(null, cat.blockPosition(), SoundEvents.CAT_PURR, SoundSource.NEUTRAL, 0.4F, 1.0F);
+                        }
+                    }
+
+                    if (cat.distanceToSqr(targetMate) > 1f) {
+                        cat.getNavigation().moveTo(targetMate.getX(), targetMate.getY(), targetMate.getZ(), 1f);
+                    }
+                }
+                if (this.interactionTickCount <= 0) {
+                    stop();
+                }
+            }
+
+            @Override
+            public void stop() {
+                if (targetMate != null && this.interactionTickCount <= 0) {
+                    if (!cat.level().isClientSide()) {
+                        ServerLevel sLevel = ((ServerLevel) cat.level());
+
+                        sLevel.sendParticles(ParticleTypes.HEART, cat.getX(), cat.getY(), cat.getZ(), 2, 0.5f, 0.5f, 0.5f, 0.1f);
+                        cat.playSound(SoundEvents.CAT_PURR);
+                        this.targetMate = null;
+                        this.interactionTickCount = BASE_DURATION;
+                        this.isCloseToMate = false;
+                    }
+                }
+                super.stop();
+            }
+
+            private boolean findMate() {
+                AABB box = cat.getBoundingBox().inflate(28);
+
+                List<LivingEntity> cats = cat.level().getEntitiesOfClass(
+                        LivingEntity.class,
+                        box
+                );
+
+                for (LivingEntity potentialMate : cats) {
+                    if (potentialMate == cat) continue;
+                    if (!(potentialMate instanceof WCatEntity || potentialMate instanceof Player)) continue;
+
+                    UUID potentialMateUUID = potentialMate.getUUID();
+                    if (!potentialMateUUID.equals(cat.getMateUUID())) continue;
+
+                    this.targetMate = potentialMate;
+                    return true;
+
+                }
+
+                return false;
+            }
+
+        }
+
+        public static class WCatRandomLookAroundGoal extends RandomLookAroundGoal {
+            private final WCatEntity cat;
+
+            public WCatRandomLookAroundGoal(WCatEntity pMob) {
+                super(pMob);
+                this.cat = pMob;
+            }
+
+            @Override
+            public boolean canUse() {
+                if (this.cat.lookAtLeaderFlag && this.cat.isLookingAtLeader) return false;
+                if (this.cat.isAnImage()) return false;
+
+                if (cat.isResting()) return false;
+
+                return super.canUse();
+            }
+
+            @Override
+            public void tick() {
+                if (cat.isAnImage()) return;
+                super.tick();
+            }
+
+        }
+
+        public static class WCatSeekShelterGoal extends Goal {
+            private final WCatEntity cat;
+            private double wantedX;
+            private double wantedY;
+            private double wantedZ;
+            private final double speedModifier;
+            private final Level level;
+
+            public WCatSeekShelterGoal(WCatEntity cat, double pSpeedModifier) {
+                this.cat = cat;
+                this.speedModifier = pSpeedModifier;
+                this.level = cat.level();
+                this.setFlags(EnumSet.of(Flag.MOVE));
+            }
+
+            @Override
+            public boolean canUse() {
+                if (cat.returnHomeFlag) return false;
+
+                if (cat.getTarget() != null && cat.getTarget().isAlive()) return false;
+
+                if (cat.mode != WCatEntity.CatMode.WANDER || cat.getTarget() != null) return false;
+                BlockPos pos = cat.blockPosition();
+
+                boolean isExposed = this.level.canSeeSky(pos);
+                boolean isRaining = this.level.isThundering() || this.level.isRainingAt(pos);
+
+                if (isRaining && isExposed) return setWantedPos();
+
+                return false;
+            }
+
+            public boolean canContinueToUse() {
+                return !this.cat.getNavigation().isDone();
+            }
+
+            public void start() {
+                this.cat.getNavigation().moveTo(this.wantedX, this.wantedY, this.wantedZ, this.speedModifier);
+                this.cat.setResting(false, 0);
+                this.cat.setChilling(false, 0);
+            }
+
+            protected boolean setWantedPos() {
+                BlockPos pos = this.findShelter();
+                if (pos == null) {
+                    return false;
+                } else {
+                    this.wantedX = pos.getX();
+                    this.wantedY = pos.getY();
+                    this.wantedZ = pos.getZ();
+                    return true;
+                }
+            }
+
+            @Nullable
+            private BlockPos findShelter() {
+                BlockPos origin = cat.blockPosition();
+
+                for (int i = 0; i < 12; i++) {
+                    BlockPos pos = origin.offset(
+                            cat.getRandom().nextInt(14) - 7,
+                            cat.getRandom().nextInt(6) - 2,
+                            cat.getRandom().nextInt(14) - 7
+                    );
+
+                    if (!cat.level().getBlockState(pos.below()).entityCanStandOn(cat.level(), pos.below(), cat))
+                        continue;
+
+                    if (!cat.level().isEmptyBlock(pos) || !cat.level().isEmptyBlock(pos.above()))
+                        continue;
+
+                    if (cat.level().canSeeSky(pos))
+                        continue;
+
+                    return pos;
+                }
+
+                return null;
+            }
+
+        }
+
+        public static class WCatMedicineHealsCats extends Goal {
+
+            private final WCatEntity cat;
+            private LivingEntity target;
+            private int cooldown = 400;
+            private int keepTicks = 0;
+            private final int BASE_COOLDOWN = 600;
+            private int healCooldown = 0;
+
+            public WCatMedicineHealsCats(WCatEntity cat) {
+                this.cat = cat;
+                this.setFlags(EnumSet.of(Flag.MOVE));
+            }
+
+            @Override
+            public boolean canUse() {
+                if (cat.returnHomeFlag) return false;
+
+                if (cat.getRank() != MEDICINE) return false;
+
+                if (cat.isResting()) return false;
+
+                if (target != null && (!target.isAlive() || cat.distanceTo(target) > 25D)) {
+                    target = null;
+                }
+
+                if (cat.isOrderedToSit()) return false;
+
+                if (target != null) return false;
+
+                if (cooldown > 0) {
+                    cooldown--;
+                    return false;
+                }
+
+                target = findNearestInjuredClanmate();
+
+                if (target != null) {
+                    cooldown = ((BASE_COOLDOWN + cat.getRandom().nextInt(5) * 20));
+                    if (!cat.hasPoultice()) {
+                        if (!cat.tryMakePoultice()) {
+                            cooldown = ((BASE_COOLDOWN + cat.getRandom().nextInt(5) * 20));
+                            ;
+                            return false;
+                        }
+                    }
+                    return true;
+                }
+
+                cooldown = 600;
+                return false;
+            }
+
+
+            @Override
+            public boolean canContinueToUse() {
+                if (target != null && cat.distanceTo(target) > 20D) return false;
+                return target != null
+                        && target.isAlive()
+                        && !cat.isOrderedToSit()
+                        && cat.getRank() == MEDICINE
+                        && cat.hasPoultice();
+            }
+
+            @Override
+            public void start() {
+                if (target != null) {
+                    if (cat.isChilling()) {
+                        cat.setChilling(false, 0);
+                    }
+                    cat.getNavigation().moveTo(target, 1.1D);
+                }
+            }
+
+            @Override
+            public void stop() {
+                target = null;
+                keepTicks = 0;
+                cat.getNavigation().stop();
+            }
+
+            @Override
+            public void tick() {
+                if (healCooldown > 0) healCooldown--;
+
+                if (target == null || !target.isAlive()) {
+                    stop();
+                    return;
+                }
+
+                /**
+                 * If it is not moving, then move to the target.
+                 */
+                if (!cat.getNavigation().isInProgress()) {
+                    cat.getNavigation().moveTo(target, 1.1D);
+                }
+
+                /**
+                 * If it still is not moving, start counting.
+                 */
+                if (cat.getNavigation().isInProgress()) {
+                    keepTicks = 0;
+                } else {
+                    keepTicks++;
+                }
+
+                /**
+                 * In case it gets stuck without being able to pick up the item or move, then stop.
+                 */
+                if (keepTicks > 60) {
+                    stop();
+                    return;
+                }
+
+                /**
+                 * Withing certain distance of the target, try to insert it into the inventory.
+                 * Then remove 1 from the stack on the ground.
+                 */
+                WCatEntity medicine = this.cat;
+                LivingEntity injured = this.target;
+                if (medicine.distanceTo(injured) < 1.52D && healCooldown <= 0) {
+                    if (medicine.tryHealClanmante(injured)) {
+
+
+                        healCooldown = 20;
+
+                        if (target.getHealth() >= target.getMaxHealth() - 4) {
+                            stop();
+                            target = null;
+                        }
+
+                        injured.level().playSound(
+                                null, injured.getX(), injured.getY(), injured.getZ(),
+                                SoundEvents.SLIME_JUMP, SoundSource.NEUTRAL,
+                                0.5F, 1.5F + cat.getRandom().nextFloat() * 0.2F
+                        );
+                        injured.level().playSound(
+                                null, injured.getX(), injured.getY(), injured.getZ(),
+                                SoundEvents.CAT_EAT, SoundSource.NEUTRAL,
+                                0.6F, 0.9F + cat.getRandom().nextFloat() * 0.2F
+                        );
+                        ((ServerLevel) injured.level()).sendParticles(
+                                ParticleTypes.HAPPY_VILLAGER,
+                                injured.getX(), injured.getY() + injured.getBbHeight() * 0.6,
+                                injured.getZ(), 30, 0.3, 0.3, 0.3, 1
+                        );
+
+                    }
+                } else {
+
+                    if (medicine.distanceTo(injured) > 30D) {
+                        this.stop();
+                    }
+                    /**
+                     * If the distance to the item is not enough and this is not moving, then move around the item.
+                     */
+                    if (target != null && !cat.getNavigation().isInProgress()) {
+                        List<BlockPos> positions = List.of(
+                                target.blockPosition().offset(2, 1, 2),
+                                target.blockPosition().offset(2, 1, -2),
+                                target.blockPosition().offset(-2, 1, 2),
+                                target.blockPosition().offset(-2, 1, -2)
+                        );
+
+                        for (BlockPos pos : positions) {
+                            if (cat.getNavigation().moveTo(pos.getX(), pos.getY(), pos.getZ(), 1.1D)) {
+                                break;
+                            }
+                        }
+                    }
+
+                }
+            }
+
+
+            /**
+             * In certain are, make a list of droped items.
+             * Then for every item in the list, verify if the cat can accept it.
+             * If the distance to the item is less than the one from the last item, then set that item as the closest.
+             */
+//        private WCatEntity findNearestInjuredClanmate() {
+//            AABB box = cat.getBoundingBox().inflate(16);
+//
+//            List<WCatEntity> cats = cat.level().getEntitiesOfClass(
+//                    WCatEntity.class,
+//                    box
+//            );
+//
+//            double closestDist = Double.MAX_VALUE;
+//            WCatEntity closest = null;
+//
+//            for (WCatEntity catToHeal : cats) {
+//                if (catToHeal.getHealth() >= catToHeal.getMaxHealth() - 4) continue;
+//                if (catToHeal == cat) continue;
+//                if (catToHeal.getOwner() != cat.getOwner()) continue;
+//
+//                double dist = cat.distanceToSqr(catToHeal);
+//                if (dist < closestDist) {
+//                    closestDist = dist;
+//                    closest = catToHeal;
+//                }
+//            }
+//
+//            return closest;
+//        }
+            private LivingEntity findNearestInjuredClanmate() {
+                AABB box = cat.getBoundingBox().inflate(28);
+
+                List<LivingEntity> cats = cat.level().getEntitiesOfClass(
+                        LivingEntity.class,
+                        box
+                );
+
+                double closestDist = Double.MAX_VALUE;
+                LivingEntity closest = null;
+
+                for (LivingEntity catToHeal : cats) {
+                    if (catToHeal.getHealth() >= catToHeal.getMaxHealth() - 4) continue;
+                    if (catToHeal == cat) continue;
+                    if (!(catToHeal instanceof WCatEntity || catToHeal instanceof Player)) continue;
+                    if (catToHeal instanceof WCatEntity kitty) {
+                        if (kitty.getOwner() != cat.getOwner()) continue;
+                    }
+                    if (catToHeal instanceof Player playerKitty) {
+                        if (cat.getFriendshipLevel(playerKitty.getUUID()) < 30) continue;
+                    }
+
+                    double dist = cat.distanceToSqr(catToHeal);
+                    if (dist < closestDist) {
+                        closestDist = dist;
+                        closest = catToHeal;
+                    }
+                }
+
+                return closest;
+            }
+
+        }
+
+        public static class WCatPickupItemGoal extends Goal {
+
+            private final WCatEntity cat;
+            private ItemEntity target;
+            private int cooldown = 0;
+            private int keepTicks = 0;
+            private static final int BASE_COOLDOWN = 45;
+            private float growingMinimumDistance = 0;
+
+            public WCatPickupItemGoal(WCatEntity cat) {
+                this.cat = cat;
+                this.setFlags(EnumSet.of(Flag.MOVE));
+            }
+
+            @Override
+            public boolean canUse() {
+                if (cat.returnHomeFlag) return false;
+
+                if (cat.isResting()) return false;
+
+                if (cat.getTarget() != null && cat.getTarget().isAlive()) return false;
+
+                if (target != null && (!target.isAlive() || cat.distanceTo(target) > 25D)) {
+                    target = null;
+                }
+
+                if (cat.isOrderedToSit()) return false;
+
+                if (target != null) return false;
+
+                if (cooldown > 0) {
+                    cooldown--;
+                    return false;
+                }
+
+                target = findNearestItem();
+
+                if (target != null) {
+                    cooldown = (int) ((BASE_COOLDOWN + cat.getRandom().nextInt(10)) * cat.itemPickupChanceMultiplier());
+                    return true;
+                }
+
+                cooldown = 10;
+                return false;
+            }
+
+
+            @Override
+            public boolean canContinueToUse() {
+                if (target != null && cat.distanceTo(target) > 20D) return false;
+                return target != null
+                        && target.isAlive()
+                        && !cat.isOrderedToSit();
+            }
+
+            @Override
+            public void start() {
+                this.growingMinimumDistance = 0;
+                if (target != null) {
+                    if (cat.isChilling()) {
+                        cat.setChilling(false, 0);
+                    }
+                    cat.getNavigation().moveTo(target, 1.1D);
+                }
+            }
+
+            @Override
+            public void stop() {
+                target = null;
+                keepTicks = 0;
+                cat.getNavigation().stop();
+            }
+
+            @Override
+            public void tick() {
+                if (target == null || !target.isAlive()) {
+                    stop();
+                    return;
+                }
+
+                /**
+                 * If it is not moving, then move to the target.
+                 */
+                if (!cat.getNavigation().isInProgress()) {
+                    cat.getNavigation().moveTo(target, 1.1D);
+                }
+
+                /**
+                 * If it still is not moving, start counting.
+                 */
+                if (cat.getNavigation().isInProgress()) {
+                    keepTicks = 0;
+                } else {
+                    keepTicks++;
+                }
+
+                /**
+                 * In case it gets stuck without being able to pick up the item or move, then stop.
+                 */
+                if (keepTicks > 60) {
+                    stop();
+                    return;
+                }
+
+                /**
+                 * Withing certain distance of the target, try to insert it into the inventory.
+                 * Then remove 1 from the stack on the ground.
+                 */
+                ItemStack groundItems = target.getItem();
+                if (cat.distanceTo(target) < 1.42D + this.growingMinimumDistance) {
+                    if (cat.tryInsert(groundItems)) {
+                        groundItems.shrink(1);
+
+                        if (groundItems.isEmpty()) {
+                            target.discard();
+                        }
+
+
+                        cat.level().playSound(
+                                null, cat.getX(), cat.getY(), cat.getZ(),
+                                SoundEvents.ITEM_PICKUP, SoundSource.NEUTRAL,
+                                0.5F, 1.4F + cat.getRandom().nextFloat() * 0.2F
+                        );
+                        cat.level().playSound(
+                                null, cat.getX(), cat.getY(), cat.getZ(),
+                                SoundEvents.CAT_EAT, SoundSource.NEUTRAL,
+                                0.6F, 0.9F + cat.getRandom().nextFloat() * 0.2F
+                        );
+
+                    }
+                    stop();
+                } else {
+
+                    if (cat.distanceTo(target) > 20D) {
+                        this.stop();
+                    }
+                    /**
+                     * If the distance to the item is not enough and this is not moving, then move around the item.
+                     */
+                    if (target != null && !cat.getNavigation().isInProgress()) {
+                        List<BlockPos> positions = List.of(
+                                target.blockPosition().offset(2, 1, 2),
+                                target.blockPosition().offset(2, 1, -2),
+                                target.blockPosition().offset(-2, 1, 2),
+                                target.blockPosition().offset(-2, 1, -2)
+                        );
+
+                        this.growingMinimumDistance += 0.05F;
+
+                        for (BlockPos pos : positions) {
+                            if (cat.getNavigation().moveTo(pos.getX(), pos.getY(), pos.getZ(), 1.1D)) {
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+
+            /**
+             * In certain are, make a list of droped items.
+             * Then for every item in the list, verify if the cat can accept it.
+             * If the distance to the item is less than the one from the last item, then set that item as the closest.
+             */
+            private ItemEntity findNearestItem() {
+                AABB box = cat.getBoundingBox().inflate(12);
+
+                List<ItemEntity> items = cat.level().getEntitiesOfClass(
+                        ItemEntity.class,
+                        box
+                );
+
+                double closestDist = Double.MAX_VALUE;
+                ItemEntity closest = null;
+
+                for (ItemEntity item : items) {
+                    ItemStack stack = item.getItem();
+
+                    if (!cat.canAccept(stack)) continue;
+                    if (item.getPersistentData().getBoolean("gift_by_cat")) continue;
+
+
+                    double dist = cat.distanceToSqr(item);
+                    if (dist < closestDist) {
+                        closestDist = dist;
+                        closest = item;
+                    }
+                }
+
+                return closest;
+            }
+
+        }
+
+        public static class WCatDepositFreshkill extends Goal {
+            private final WCatEntity cat;
+            private final double speed;
+            private BlockPos freshKillPos;
+            private int checkCooldown = 0;
+            private float distanceMultiplier = 1f;
+
+            public WCatDepositFreshkill(WCatEntity cat) {
+                this.cat = cat;
+                this.speed = 1f;
+                this.setFlags(EnumSet.of(Flag.MOVE));
+            }
+
+            @Override
+            protected int adjustedTickDelay(int pAdjustment) {
+                return super.adjustedTickDelay(pAdjustment);
+            }
+
+            @Override
+            public boolean canUse() {
+                if (cat.returnHomeFlag) return false;
+
+                if (checkCooldown > 0) {
+                    checkCooldown--;
+                    return false;
+                }
+
+                if (cat.isResting())  return false;
+
+                if (cat.mode != WCatEntity.CatMode.WANDER) return false;
+
+                if (cat.getCatInventory().isEmpty()) return false;
+
+                for (int i = 0; i < cat.getCatInventory().getContainerSize(); i++) {
+                    if (cat.getCatInventory().getItem(i).is(ModTags.Items.PREY)) {
+                        return true;
+                    }
+                }
+
+                checkCooldown = 100 + cat.getId()*2;
+
+                return false;
+            }
+
+            @Override
+            public boolean canContinueToUse() {
+
+                return cat.mode == WCatEntity.CatMode.WANDER
+                        && !cat.getCatInventory().isEmpty();
+            }
+
+            @Override
+            public void start() {
+                if (cat.isChilling()) {
+                    cat.setChilling(false, 0);
+                }
+                distanceMultiplier = 1f;
+            }
+
+            @Override
+            public void stop() {
+                this.freshKillPos = null;
+                distanceMultiplier = 1f;
+                cat.getNavigation().stop();
+            }
+
+            @Override
+            public void tick() {
+
+                if (freshKillPos == null) {
+
+                    checkCooldown = 100 + cat.getId()*2;
+
+                    freshKillPos = findTargetBlock();
+                    if (freshKillPos == null) return;
+                    distanceMultiplier = 1f;
+
+                    cat.getNavigation().moveTo(freshKillPos.getX(), freshKillPos.getY(), freshKillPos.getZ(), speed);
+                }
+
+                if (cat.tickCount % 3 == 0) {
+                    if (this.freshKillPos != null) {
+                        if (cat.distanceToSqr(freshKillPos.getCenter()) < 4*distanceMultiplier) {
+                            BlockEntity blockEntity = cat.level().getBlockEntity(freshKillPos);
+                            if (blockEntity instanceof FreshkillPileBlockEntity freshkillPileBlockEntity) {
+
+                                for (int i = 0; i < cat.getCatInventory().getContainerSize(); i++) {
+                                    ItemStack catStack = cat.getCatInventory().getItem(i);
+                                    if (catStack.is(ModTags.Items.PREY)) {
+
+                                        boolean couldInsert = freshkillPileBlockEntity.putItem(catStack.copyWithCount(1));
+
+                                        if (couldInsert) {
+                                            cat.setItemSynced(i, cat.getCatInventory().getItem(i).copyWithCount(cat.getCatInventory().getItem(i).getCount() - 1));
+
+                                            cat.level().playSound(
+                                                    null, cat.getX(), cat.getY(), cat.getZ(),
+                                                    SoundEvents.ITEM_PICKUP, SoundSource.NEUTRAL,
+                                                    0.5F, 0.9F + cat.getRandom().nextFloat() * 0.2F
+                                            );
+                                        } else {
+                                            freshKillPos = null;
+                                        }
+
+                                    }
+                                }
+
+                            } else {
+                                freshKillPos = null;
+                            }
+                        } else {
+                            if (cat.getNavigation().isDone()) {
+                                cat.getNavigation().moveTo(freshKillPos.getX(), freshKillPos.getY(), freshKillPos.getZ(), speed);
+                                distanceMultiplier = Math.min(distanceMultiplier + 0.05f, 4f);                        }
+                        }
+                    }
+                }
+            }
+
+            private BlockPos findTargetBlock() {
+                Level level = cat.level();
+                BlockPos origin = cat.blockPosition();
+
+                int radius = 18;
+
+                for (int x = -radius; x <= radius; x++) {
+                    for (int y = -2; y <= 2; y++) {
+                        for (int z = -radius; z <= radius; z++) {
+                            BlockPos pos = origin.offset(x, y, z);
+                            if (level.getBlockState(pos).getBlock() == ModBlocks.FRESHKILL_PILE.get()) {
+                                BlockEntity blockEntity = level.getBlockEntity(pos);
+                                if (blockEntity instanceof FreshkillPileBlockEntity freshkillPileBlockEntity) {
+                                    for (int i = 0; i < freshkillPileBlockEntity.getItemHandler().getSlots(); i++) {
+                                        if (freshkillPileBlockEntity.getItemHandler().getStackInSlot(i).isEmpty()) {
+                                            return pos;
+                                        } else {
+                                            for (int j = 0; j < cat.getCatInventory().getContainerSize(); j++) {
+                                                if (ItemStack.isSameItemSameTags(freshkillPileBlockEntity.getItemHandler().getStackInSlot(i),
+                                                        cat.getCatInventory().getItem(j)) &&
+                                                        freshkillPileBlockEntity.getItemHandler().getStackInSlot(i).getCount()
+                                                                < freshkillPileBlockEntity.getItemHandler().getStackInSlot(i).getItem().getMaxStackSize()) {
+                                                    return pos;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                return null;
+            }
+
+        }
+
+    }
+
 }

@@ -265,14 +265,11 @@ public class PigeonEntity extends Parrot implements GeoEntity {
     @Override
     protected void dropCustomDeathLoot(DamageSource pSource, int pLooting, boolean pRecentlyHit) {
         ItemStack itemEarned = new ItemStack(ModItems.PIGEON_FEATHER.get());
+
         if (itemEarned.isEmpty()) return;
-        ItemEntity drop = new ItemEntity(
-                this.level(),
-                this.getX(),
-                this.getY() + 0.2,
-                this.getZ(),
-                itemEarned.copyWithCount(this.getRandom().nextInt(4))
-        );
+
+        ItemEntity drop = new ItemEntity(this.level(), this.getX(), this.getY() + 0.2, this.getZ(),
+                itemEarned.copyWithCount(this.getRandom().nextInt(4)));
         if (this.level() instanceof ServerLevel sLevel) {
             sLevel.addFreshEntity(drop);
         }

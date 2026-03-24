@@ -1,30 +1,43 @@
 package net.snowteb.warriorcats_events.screen.clandata;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.snowteb.warriorcats_events.WCEClient;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
+import net.snowteb.warriorcats_events.client.ClanInfo;
 import net.snowteb.warriorcats_events.client.ClientClanData;
+import net.snowteb.warriorcats_events.client.ClientStoredMorphs;
 import net.snowteb.warriorcats_events.entity.ModEntities;
 import net.snowteb.warriorcats_events.entity.custom.WCGenetics;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.network.ModPackets;
 import net.snowteb.warriorcats_events.network.packet.c2s.clan.SavePlayerGeneticsPacket;
-import net.snowteb.warriorcats_events.util.FloatSliderButton;
-import net.snowteb.warriorcats_events.util.GradientToggleButton;
-import net.snowteb.warriorcats_events.util.IntSliderButton;
+import net.snowteb.warriorcats_events.network.packet.c2s.others.CtSShareMorphToChat;
+import net.snowteb.warriorcats_events.util.*;
 
+import java.nio.file.Path;
+import java.util.Map;
 import java.util.UUID;
 
 import static net.snowteb.warriorcats_events.screen.clandata.CreateClanScreen.BANNER;
 import static net.snowteb.warriorcats_events.screen.clandata.CreateClanScreen.BG_TEXTURE;
 
 public class CreateMorphGeneticsScreen extends Screen {
+
+    private int displayErrorTime = 0;
+    private String displayErrorText = "";
+    private boolean isAnError = false;
 
     private float animationTime = 0f;
     private float duration = 20f;
@@ -64,6 +77,25 @@ public class CreateMorphGeneticsScreen extends Screen {
 
     private VariantScrollList variantScrollList;
     private FloatSliderButton sizeSliderPreset;
+
+    private String storedMorphsKey = "";
+    private GradientButton storedMorphsMenu;
+    private boolean onStoredMorphsMenu = false;
+    private GradientButton saveStoredMorph;
+    private EditBox saveMorphNameBox;
+    private GradientButton cancelMorphSave;
+    private GradientButton confirmSaveMorph;
+    private GradientButton loadStoredMorph;
+    private MorphsScrollList savedMorphsScrollList;
+    private GradientButton loadSelectedMorphButton;
+    private GradientButton cancelMorphLoad;
+    private GradientButton backFromStoredMorphMenu;
+
+    private GradientButton removeSelectedMorph;
+    private boolean removeSelectedMorphConfirm = false;
+    private GradientButton overwriteSelectedMorph;
+    private GradientButton sendSelectedMorphToChat;
+    private boolean overwriteSelectedMorphConfirm = false;
 
 
     private String mainSectionActiveMenu = "";
@@ -378,7 +410,6 @@ public class CreateMorphGeneticsScreen extends Screen {
             variantScrollList.addOption("Patch (Feathered Melodica)", 51);
             variantScrollList.addOption("Parlee (PsychicStudios, CoffeeCat)", 52);
 
-
         }
 
         mainSectionActiveMenu = "base";
@@ -442,6 +473,183 @@ public class CreateMorphGeneticsScreen extends Screen {
                 }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
                 80, 20, 1f, 0xFFFFFFFF
         );
+
+        // STORED MORPHS
+        {
+            storedMorphsMenu = new GradientButton(
+                    centerX - 87, centerY - 37,
+                    70, 10,
+                    Component.literal("Saved Morphs"),
+                    btn -> {
+                        this.onStoredMorphsMenu = true;
+                        this.removeWidget(saveMorphNameBox);
+                        storedMorphsKey = "main";
+
+                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    80, 20, 0.80f
+            );
+
+            saveStoredMorph = new GradientButton(
+                    centerX - 75, centerY + 30,
+                    70, 10,
+                    Component.literal("Save"),
+                    btn -> {
+                        storedMorphsKey = "save";
+                        this.removeWidget(saveMorphNameBox);
+                        loadSaveMorph();
+
+                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    80, 20, 0.80f
+            );
+            loadStoredMorph = new GradientButton(
+                    centerX + 5, centerY + 30,
+                    70, 10,
+                    Component.literal("Load"),
+                    btn -> {
+                        storedMorphsKey = "load";
+                        loadStoredMorphsList();
+
+                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    80, 20, 0.80f
+            );
+            backFromStoredMorphMenu = new GradientButton(
+                    centerX - 32, centerY + 50,
+                    70, 10,
+                    Component.literal("Back"),
+                    btn -> {
+                        this.onStoredMorphsMenu = false;
+                        storedMorphsKey = "";
+                        this.removeWidget(savedMorphsScrollList);
+                        this.removeWidget(saveMorphNameBox);
+
+                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    80, 20, 0.80f
+            );
+
+            loadSelectedMorphButton = new GradientButton(
+                    centerX - 75, centerY + 87,
+                    70, 10,
+                    Component.literal("Load"),
+                    btn -> {
+                        this.onStoredMorphsMenu = false;
+                        this.storedMorphsKey = "";
+                        this.removeWidget(savedMorphsScrollList);
+                        this.removeWidget(saveMorphNameBox);
+
+                        loadSelectedMorph();
+
+                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    80, 20, 0.80f
+            );
+
+            cancelMorphLoad = new GradientButton(
+                    centerX + 5, centerY + 87,
+                    70, 10,
+                    Component.literal("Return"),
+                    btn -> {
+                        this.onStoredMorphsMenu = false;
+                        this.storedMorphsKey = "";
+                        this.removeWidget(savedMorphsScrollList);
+                        this.removeWidget(saveMorphNameBox);
+
+                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    80, 20, 0.80f
+            );
+
+            removeSelectedMorph = new GradientButton(
+                    centerX - 75, centerY + 102,
+                    70, 10,
+                    Component.literal("Delete"),
+                    btn -> {
+                        if (!removeSelectedMorphConfirm) {
+                            displayError("Press again to confirm", false);
+                            removeSelectedMorphConfirm = true;
+                            return;
+                        }
+                        removeSelectedMorphConfirm = false;
+
+                        this.onStoredMorphsMenu = false;
+                        this.storedMorphsKey = "";
+                        this.removeWidget(savedMorphsScrollList);
+                        this.removeWidget(saveMorphNameBox);
+
+                        deleteSelectedMorph();
+
+                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    80, 20, 0.80f
+            );
+
+            overwriteSelectedMorph = new GradientButton(
+                    centerX + 5, centerY + 102,
+                    70, 10,
+                    Component.literal("Overwrite"),
+                    btn -> {
+                        if (!overwriteSelectedMorphConfirm) {
+                            displayError("Press again to confirm", false);
+                            overwriteSelectedMorphConfirm = true;
+                            return;
+                        }
+                        overwriteSelectedMorphConfirm = false;
+
+                        this.onStoredMorphsMenu = false;
+                        this.storedMorphsKey = "";
+                        this.removeWidget(savedMorphsScrollList);
+                        this.removeWidget(saveMorphNameBox);
+
+                        overwriteSelectedMorph();
+
+                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    80, 20, 0.80f
+            );
+
+            sendSelectedMorphToChat = new GradientButton(
+                    centerX + 5, centerY - 32,
+                    70, 10,
+                    Component.literal("Send to Chat"),
+                    btn -> {
+                        this.onStoredMorphsMenu = false;
+                        this.storedMorphsKey = "";
+                        this.removeWidget(savedMorphsScrollList);
+                        this.removeWidget(saveMorphNameBox);
+
+                        sendMorphToChat();
+
+                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    80, 20, 0.80f
+            );
+
+
+            confirmSaveMorph = new GradientButton(
+                    centerX - 75, centerY + 90,
+                    70, 10,
+                    Component.literal("Save"),
+                    btn -> {
+                        this.onStoredMorphsMenu = false;
+                        this.storedMorphsKey = "";
+                        this.removeWidget(savedMorphsScrollList);
+                        this.removeWidget(saveMorphNameBox);
+
+                        saveSelectedMorph();
+
+                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    80, 20, 0.80f
+            );
+
+            cancelMorphSave = new GradientButton(
+                    centerX + 5, centerY + 90,
+                    70, 10,
+                    Component.literal("Return"),
+                    btn -> {
+                        this.onStoredMorphsMenu = false;
+                        this.storedMorphsKey = "";
+                        this.removeWidget(savedMorphsScrollList);
+                        this.removeWidget(saveMorphNameBox);
+
+                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    80, 20, 0.80f
+            );
+
+        }
 
         setOnPresetSkinButton = new GradientToggleButton(
                 250, 10,
@@ -1297,6 +1505,17 @@ public class CreateMorphGeneticsScreen extends Screen {
         this.addRenderableWidget(setOnGeneticalSkinButton);
         this.addRenderableWidget(setOnPresetSkinButton);
         this.addRenderableWidget(saveButton);
+        this.addRenderableWidget(storedMorphsMenu);
+        this.addRenderableWidget(saveStoredMorph);
+        this.addRenderableWidget(loadStoredMorph);
+        this.addRenderableWidget(backFromStoredMorphMenu);
+        this.addRenderableWidget(loadSelectedMorphButton);
+        this.addRenderableWidget(cancelMorphLoad);
+        this.addRenderableWidget(confirmSaveMorph);
+        this.addRenderableWidget(cancelMorphSave);
+        this.addRenderableWidget(removeSelectedMorph);
+        this.addRenderableWidget(overwriteSelectedMorph);
+        this.addRenderableWidget(sendSelectedMorphToChat);
 
         menuX = 500;
         if (comingBackFromChimeraMenu) menuX = -500;
@@ -1361,6 +1580,7 @@ public class CreateMorphGeneticsScreen extends Screen {
 
 
 
+        storedMorphsMenu.visible = false;
         baseSection.visible = false;
         orangeSection.visible = false;
         whiteSection.visible = false;
@@ -1412,6 +1632,19 @@ public class CreateMorphGeneticsScreen extends Screen {
         tailFurSwitch.visible = false;
         editChimera.visible = false;
         chimeraSwitch.visible = false;
+
+        saveStoredMorph.visible = false;
+        loadStoredMorph.visible = false;
+        backFromStoredMorphMenu.visible = false;
+        storedMorphsMenu.visible = false;
+        loadSelectedMorphButton.visible = false;
+        cancelMorphLoad.visible = false;
+        confirmSaveMorph.visible = false;
+        cancelMorphSave.visible = false;
+        overwriteSelectedMorph.visible = false;
+        removeSelectedMorph.visible = false;
+        sendSelectedMorphToChat.visible = false;
+
         if (onGeneticalSkin) {
             baseSection.visible = true;
             orangeSection.visible = true;
@@ -1423,6 +1656,39 @@ public class CreateMorphGeneticsScreen extends Screen {
             extraSection.visible = true;
             chimeraSection.visible = true;
             agoutiAndTabbySection.visible = true;
+
+            storedMorphsMenu.visible = true;
+            storedMorphsMenu.active = true;
+            if (onStoredMorphsMenu) {
+                storedMorphsMenu.active = false;
+
+                pGuiGraphics.pose().translate(0,0,390);
+                pGuiGraphics.fill(centerX-80, centerY-20, centerX+80, centerY+115, 0x11000000);
+
+                if (storedMorphsKey.equals("main")) {
+                    saveStoredMorph.visible = true;
+                    loadStoredMorph.visible = true;
+                    backFromStoredMorphMenu.visible = true;
+                }
+                if (storedMorphsKey.equals("load")) {
+                    pGuiGraphics.renderOutline(centerX - 66, centerY-17, 135, 100, 0x22FFFFFF);
+                    loadSelectedMorphButton.visible = true;
+                    cancelMorphLoad.visible = true;
+                    overwriteSelectedMorph.visible = true;
+                    removeSelectedMorph.visible = true;
+                    sendSelectedMorphToChat.visible = true;
+
+                }
+                if (storedMorphsKey.equals("save")) {
+                    confirmSaveMorph.visible = true;
+                    cancelMorphSave.visible = true;
+                }
+
+
+                pGuiGraphics.pose().translate(0,0,-390);
+
+            }
+
 
             if (mainSectionActiveMenu.equals("base")) {
                 setBlackButton.visible = true;
@@ -1596,64 +1862,80 @@ public class CreateMorphGeneticsScreen extends Screen {
 
         }
 
-//        if (!onGeneticalSkin) centerX += 38;
-        if (!onGeneticalSkin) centerX += -0;
+        {
+            WCatEntity entityToRender = new WCatEntity(ModEntities.WCAT.get(), Minecraft.getInstance().level);
 
-        WCatEntity entityToRender = new WCatEntity(ModEntities.WCAT.get(), Minecraft.getInstance().level);
+            entityToRender.setPlayerBoundUuid(UUID.nameUUIDFromBytes(ModEntities.WCAT.get().toString().getBytes()));
+            entityToRender.setShowMorphName(false);
 
-        entityToRender.setPlayerBoundUuid(UUID.nameUUIDFromBytes(ModEntities.WCAT.get().toString().getBytes()));
-        entityToRender.setShowMorphName(false);
+            entityToRender.setOnGeneticalSkin(onGeneticalSkin);
+            entityToRender.setGenetics(genetics);
+            entityToRender.setGender(1);
 
-        entityToRender.setOnGeneticalSkin(onGeneticalSkin);
-        entityToRender.setGenetics(genetics);
-        entityToRender.setGender(1);
-        entityToRender.setGeneticalVariants(eyeColorLeft, eyeColorRight, rufousingVariant, blueRufousingVariant,
-                orangeBaseVariant, whiteRatioVariant, tabbyStripesVariant, albinoVariant, eyeColorVariantLeft,
-                eyeColorVariantRight, noise, size);
+            entityToRender.setGeneticalVariants(eyeColorLeft, eyeColorRight, rufousingVariant, blueRufousingVariant,
+                    orangeBaseVariant, whiteRatioVariant, tabbyStripesVariant, albinoVariant, eyeColorVariantLeft,
+                    eyeColorVariantRight, noise, size);
 
-        geneticsChimera.chimeraGene = chimeraGene;
-        entityToRender.setChimeraGenetics(geneticsChimera);
-        entityToRender.setGeneticalVariantsChimera(variantsChimera.chimeraVariant, variantsChimera.rufousingVariant,
-                variantsChimera.blueRufousingVariant, variantsChimera.orangeVar, variantsChimera.whiteVar, variantsChimera.tabbyVar,
-                variantsChimera.albinoVar, variantsChimera.noise);
+            geneticsChimera.chimeraGene = chimeraGene;
+            entityToRender.setChimeraGenetics(geneticsChimera);
+            entityToRender.setGeneticalVariantsChimera(variantsChimera.chimeraVariant, variantsChimera.rufousingVariant,
+                    variantsChimera.blueRufousingVariant, variantsChimera.orangeVar, variantsChimera.whiteVar, variantsChimera.tabbyVar,
+                    variantsChimera.albinoVar, variantsChimera.noise);
 
-        entityToRender.setOnGround(true);
-        if (variantScrollList.getSelectedEntry() != null) {
-            entityToRender.setVariant(variantScrollList.getSelectedEntry().getId());
+            entityToRender.setOnGround(true);
+            if (variantScrollList.getSelectedEntry() != null) {
+                entityToRender.setVariant(variantScrollList.getSelectedEntry().getId());
+            }
+            entityToRender.setYRot(0);
+            entityToRender.yHeadRot = 0;
+            entityToRender.yBodyRot = 0;
+
+
+            pGuiGraphics.renderOutline(centerX - 90, centerY - 40, 180, 157, 0x44FFFFFF);
+            pGuiGraphics.fill(centerX - 90, centerY - 40, centerX + 90, centerY + 115, 0x07FFFFFF);
+
+            {
+                pGuiGraphics.pose().pushPose();
+
+                pGuiGraphics.pose().translate(centerX, centerY + 90, 0);
+
+                float scale = 3.5f;
+                if (this.variantScrollList.getSelectedEntry() != null && onGeneticalSkin) {
+                    variantScrollList.setSelected(null);
+                }
+
+                pGuiGraphics.pose().scale(scale, scale, scale);
+
+                InventoryScreen.renderEntityInInventoryFollowsMouse(
+                        pGuiGraphics,
+                        0,
+                        0,
+                        30,
+                        (float) (centerX - pMouseX),
+                        (float) ((centerY + 15) - pMouseY),
+                        entityToRender
+                );
+
+                pGuiGraphics.pose().popPose();
+            }
         }
-        entityToRender.setYRot(0);
-        entityToRender.yHeadRot = 0;
-        entityToRender.yBodyRot = 0;
+        pGuiGraphics.pose().translate(0, 0, 400);
 
+        if (displayErrorTime > 0) {
+            ChatFormatting color;
+            if (isAnError) color = ChatFormatting.RED;
+            else color = ChatFormatting.GREEN;
+            int xOffset = font.width(displayErrorText)/2;
+            int xO = centerX - xOffset - 12;
 
-        pGuiGraphics.renderOutline(centerX - 90, centerY - 40, 180, 157, 0x44FFFFFF);
-        pGuiGraphics.fill(centerX - 90, centerY - 40, centerX + 90, centerY + 115, 0x07FFFFFF);
+            float alpha = (float) displayErrorTime / 20;
 
-        pGuiGraphics.pose().pushPose();
+            float finalAlpha = Mth.clamp(alpha, 0f, 1f);
 
-        pGuiGraphics.pose().translate(centerX, centerY + 90, 0);
-
-        float scale = 2.0f;
-        if (this.variantScrollList.getSelectedEntry() != null && !onGeneticalSkin) {
-            scale = 2.0f;
-        } else if (this.variantScrollList.getSelectedEntry() != null && onGeneticalSkin) {
-            variantScrollList.setSelected(null);
+            pGuiGraphics.setColor(1f,1f,1f,finalAlpha);
+            pGuiGraphics.renderTooltip(font, Component.literal(displayErrorText).withStyle(color), xO, centerY + 100);
+            pGuiGraphics.setColor(1f,1f,1f,1f);
         }
-
-        pGuiGraphics.pose().scale(scale, scale, scale);
-
-        InventoryScreen.renderEntityInInventoryFollowsMouse(
-                pGuiGraphics,
-                0,
-                0,
-                48,
-                (float) (centerX - pMouseX),
-                (float) ((centerY + 15) - pMouseY),
-                entityToRender
-        );
-
-        pGuiGraphics.pose().popPose();
-
 
         super.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
 
@@ -1755,8 +2037,6 @@ public class CreateMorphGeneticsScreen extends Screen {
 
     private void saveAndNext() {
 
-
-
         WCGenetics.GeneticalVariants variants =
                 new WCGenetics.GeneticalVariants(eyeColorLeft, eyeColorRight,
                         rufousingVariant, blueRufousingVariant, orangeBaseVariant, whiteRatioVariant,
@@ -1772,8 +2052,6 @@ public class CreateMorphGeneticsScreen extends Screen {
             this.minecraft.setScreen(new CreateChimeraMorphGeneticsScreen(onGeneticalSkin, genetics, variants, geneticsChimera, variantsChimera));
             return;
         }
-
-
 
         ModPackets.sendToServer(new SavePlayerGeneticsPacket(onGeneticalSkin, genetics, variants, geneticsChimera, variantsChimera, defaultVariant));
 
@@ -1800,4 +2078,241 @@ public class CreateMorphGeneticsScreen extends Screen {
         }
         return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
     }
+
+
+    private void loadStoredMorphsList() {
+        int centerX = this.width / 2;
+        int centerY = this.height / 2;
+
+        savedMorphsScrollList = new MorphsScrollList(Minecraft.getInstance(),
+                135, 160, centerY-16, centerY+80, 22);
+
+        savedMorphsScrollList.setLeftPos(centerX -75);
+        savedMorphsScrollList.setRenderBackground(false);
+        savedMorphsScrollList.setRenderTopAndBottom(false);
+
+        for (Map.Entry<String, ClientStoredMorphs.MorphsFile.MorphData> entry : ClientStoredMorphs.DATA.morphs.entrySet()) {
+            savedMorphsScrollList.addOption(entry.getKey(), entry.getValue());
+        }
+
+        this.addRenderableWidget(savedMorphsScrollList);
+
+    }
+
+    private void loadSelectedMorph() {
+        if (savedMorphsScrollList.getSelectedEntry() != null) {
+            String key = savedMorphsScrollList.getSelectedEntry().getKey();
+            ClientStoredMorphs.MorphsFile.MorphData data = ClientStoredMorphs.DATA.morphs.get(key);
+            if (data != null) {
+
+                WCGenetics geneticsCopy = new WCGenetics(data.genetics());
+                WCGenetics chimeraGeneticsCopy = new WCGenetics(data.chimeraGenetics());
+
+                WCGenetics.GeneticalVariants variantsCopy = new WCGenetics.GeneticalVariants(data.variants());
+                WCGenetics.GeneticalChimeraVariants chimeraVariantsCopy = new WCGenetics.GeneticalChimeraVariants(data.chimeraVariants());
+
+                genetics = geneticsCopy;
+                geneticsChimera = chimeraGeneticsCopy;
+                variantsChimera = chimeraVariantsCopy;
+
+                chimeraGene = chimeraGeneticsCopy.chimeraGene;
+
+                eyeColorLeft = variantsCopy.eyeColorLeft;
+                eyeColorRight = variantsCopy.eyeColorRight;
+                rufousingVariant = variantsCopy.rufousingVariant;
+                blueRufousingVariant = variantsCopy.blueRufousingVariant;
+                orangeBaseVariant = variantsCopy.orangeVar;
+                whiteRatioVariant = variantsCopy.whiteVar;
+                tabbyStripesVariant = variantsCopy.tabbyVar;
+                albinoVariant = variantsCopy.albinoVar;
+                eyeColorVariantLeft = variantsCopy.leftEyeVar;
+                eyeColorVariantRight = variantsCopy.rightEyeVar;
+                noise = variantsCopy.noise;
+                size = variantsCopy.size;
+
+            } else {
+                displayError("Morph data not present.", true);
+            }
+        } else {
+            displayError("No morph selected.", true);
+        }
+    }
+
+    private void loadSaveMorph() {
+        int centerX = this.width / 2;
+        int centerY = this.height / 2;
+
+        saveMorphNameBox = new EditBox(Minecraft.getInstance().font,
+                centerX-50, centerY+20, 100, 15, Component.literal("Name"));
+
+        saveMorphNameBox.setHint(Component.literal("Name / Key").withStyle(ChatFormatting.DARK_GRAY));
+
+        this.addRenderableWidget(saveMorphNameBox);
+    }
+
+    private void saveSelectedMorph() {
+
+        WCGenetics geneticsCopy = new WCGenetics(genetics.bobtail, genetics.chestFur, genetics.bellyFur, genetics.legsFur
+        , genetics.headFur, genetics.cheekFur, genetics.tailFur, genetics.backFur, genetics.base, genetics.orangeBase, genetics.whiteRatio
+        , genetics.albino, genetics.dilute, genetics.agouti, genetics.tabbyStripes, genetics.eyesAnomaly, genetics.rufousing
+        , genetics.blueRufousing, genetics.noise, genetics.chimeraGene);
+
+        WCGenetics geneticsChimeraCopy = new WCGenetics(geneticsChimera.bobtail, geneticsChimera.chestFur, geneticsChimera.bellyFur, geneticsChimera.legsFur
+                , geneticsChimera.headFur, geneticsChimera.cheekFur, geneticsChimera.tailFur, geneticsChimera.backFur, geneticsChimera.base, geneticsChimera.orangeBase, geneticsChimera.whiteRatio
+                , geneticsChimera.albino, geneticsChimera.dilute, geneticsChimera.agouti, geneticsChimera.tabbyStripes, geneticsChimera.eyesAnomaly, geneticsChimera.rufousing
+                , geneticsChimera.blueRufousing, geneticsChimera.noise, geneticsChimera.chimeraGene);
+
+        WCGenetics.GeneticalVariants variants = new WCGenetics.GeneticalVariants(eyeColorLeft, eyeColorRight,
+                        rufousingVariant, blueRufousingVariant, orangeBaseVariant, whiteRatioVariant,
+                        tabbyStripesVariant, albinoVariant, eyeColorVariantLeft, eyeColorVariantRight, noise, size);
+
+        WCGenetics.GeneticalChimeraVariants chimeraVariantsCopy = new WCGenetics.GeneticalChimeraVariants(variantsChimera.chimeraVariant,
+                variantsChimera.rufousingVariant, variantsChimera.blueRufousingVariant, variantsChimera.orangeVar, variantsChimera.whiteVar
+        , variantsChimera.tabbyVar, variantsChimera.albinoVar, variantsChimera.noise, variantsChimera.chimeraGene);
+
+        ClientStoredMorphs.MorphsFile.MorphData data =
+                new ClientStoredMorphs.MorphsFile.MorphData(geneticsCopy, geneticsChimeraCopy, variants, chimeraVariantsCopy);
+
+        if (!saveMorphNameBox.getValue().equals("")) {
+            boolean success = ClientStoredMorphs.add(saveMorphNameBox.getValue(), data, false);
+
+            if (success) {
+                displayError("Morph saved with key: " + saveMorphNameBox.getValue(), false);
+            } else {
+                displayError("A morph with provided key already exists: " + "'" + saveMorphNameBox.getValue() + "'", true);
+            }
+        } else {
+            displayError("No name or key provided.", true);
+        }
+
+    }
+
+    private void displayError(String error, boolean isAnError) {
+        displayErrorTime = 100;
+        displayErrorText = error;
+        this.isAnError = isAnError;
+    }
+
+    @Override
+    public void tick() {
+        if (displayErrorTime > 0) displayErrorTime--;
+        else {
+            removeSelectedMorphConfirm = false;
+            overwriteSelectedMorphConfirm = false;
+        }
+        super.tick();
+    }
+
+    private void overwriteSelectedMorph() {
+        if (savedMorphsScrollList.getSelectedEntry() != null) {
+            String key = savedMorphsScrollList.getSelectedEntry().getKey();
+            ClientStoredMorphs.MorphsFile.MorphData data = ClientStoredMorphs.DATA.morphs.get(key);
+            if (data != null) {
+
+                WCGenetics geneticsCopy = new WCGenetics(genetics.bobtail, genetics.chestFur, genetics.bellyFur, genetics.legsFur
+                        , genetics.headFur, genetics.cheekFur, genetics.tailFur, genetics.backFur, genetics.base, genetics.orangeBase, genetics.whiteRatio
+                        , genetics.albino, genetics.dilute, genetics.agouti, genetics.tabbyStripes, genetics.eyesAnomaly, genetics.rufousing
+                        , genetics.blueRufousing, genetics.noise, genetics.chimeraGene);
+
+                WCGenetics geneticsChimeraCopy = new WCGenetics(geneticsChimera.bobtail, geneticsChimera.chestFur, geneticsChimera.bellyFur, geneticsChimera.legsFur
+                        , geneticsChimera.headFur, geneticsChimera.cheekFur, geneticsChimera.tailFur, geneticsChimera.backFur, geneticsChimera.base, geneticsChimera.orangeBase, geneticsChimera.whiteRatio
+                        , geneticsChimera.albino, geneticsChimera.dilute, geneticsChimera.agouti, geneticsChimera.tabbyStripes, geneticsChimera.eyesAnomaly, geneticsChimera.rufousing
+                        , geneticsChimera.blueRufousing, geneticsChimera.noise, geneticsChimera.chimeraGene);
+
+                WCGenetics.GeneticalVariants variants = new WCGenetics.GeneticalVariants(eyeColorLeft, eyeColorRight,
+                        rufousingVariant, blueRufousingVariant, orangeBaseVariant, whiteRatioVariant,
+                        tabbyStripesVariant, albinoVariant, eyeColorVariantLeft, eyeColorVariantRight, noise, size);
+
+                WCGenetics.GeneticalChimeraVariants chimeraVariantsCopy = new WCGenetics.GeneticalChimeraVariants(variantsChimera.chimeraVariant,
+                        variantsChimera.rufousingVariant, variantsChimera.blueRufousingVariant, variantsChimera.orangeVar, variantsChimera.whiteVar
+                        , variantsChimera.tabbyVar, variantsChimera.albinoVar, variantsChimera.noise, variantsChimera.chimeraGene);
+
+                ClientStoredMorphs.MorphsFile.MorphData newData =
+                        new ClientStoredMorphs.MorphsFile.MorphData(geneticsCopy, geneticsChimeraCopy, variants, chimeraVariantsCopy);
+
+                boolean success = ClientStoredMorphs.add(key, newData, true);
+
+                if (success) {
+                    displayError("Morph overwritten with key: " + key, false);
+                } else {
+                    displayError("Couldn't overwrite key: " + key, true);
+                }
+
+            } else {
+                displayError("Key not present.", true);
+            }
+        } else {
+            displayError("No morph selected.", true);
+        }
+    }
+
+    private void deleteSelectedMorph() {
+        if (savedMorphsScrollList.getSelectedEntry() != null) {
+            String key = savedMorphsScrollList.getSelectedEntry().getKey();
+            ClientStoredMorphs.MorphsFile.MorphData data = ClientStoredMorphs.DATA.morphs.get(key);
+            if (data != null) {
+
+                boolean success = ClientStoredMorphs.remove(key);
+
+                if (success) {
+                    displayError("Morph deleted with key: " + key, false);
+                } else {
+                    displayError("Couldn't remove key: " + key, true);
+                }
+
+            } else {
+                displayError("Key not present.", true);
+            }
+        } else {
+            displayError("No morph selected.", true);
+        }
+    }
+
+    private void sendMorphToChat() {
+        if (savedMorphsScrollList.getSelectedEntry() != null) {
+            String key = savedMorphsScrollList.getSelectedEntry().getKey();
+            ClientStoredMorphs.MorphsFile.MorphData data = ClientStoredMorphs.DATA.morphs.get(key);
+            if (data != null) {
+
+                WCGenetics geneticsCopy = data.genetics();
+
+                WCGenetics geneticsChimeraCopy = data.chimeraGenetics();
+
+                WCGenetics.GeneticalVariants variants = data.variants();
+
+                WCGenetics.GeneticalChimeraVariants chimeraVariantsCopy = data.chimeraVariants();
+
+                ModPackets.sendToServer(new CtSShareMorphToChat(key, geneticsCopy, variants, geneticsChimeraCopy, chimeraVariantsCopy));
+                Minecraft.getInstance().setScreen(null);
+
+                if (Minecraft.getInstance().player != null) {
+                    LocalPlayer player = Minecraft.getInstance().player;
+
+                    Path path = Minecraft.getInstance().gameDirectory.toPath().resolve("config")
+                            .resolve("warriorcats_events");
+
+                    Component filePath = Component.literal(" [File]")
+                            .withStyle(style -> style.withClickEvent(
+                                    new ClickEvent(ClickEvent.Action.OPEN_FILE, path.toString())
+                            ).withHoverEvent(
+                                    new HoverEvent(
+                                            HoverEvent.Action.SHOW_TEXT,
+                                            Component.literal("Open JSON")
+                                                    .withStyle(ChatFormatting.GRAY)
+                                    )
+                            ));
+
+                    player.sendSystemMessage(Component.literal("Morph with key '" + key + "' shared to chat. From:").withStyle(ChatFormatting.DARK_GRAY)
+                            .append(filePath.copy().withStyle(ChatFormatting.DARK_GRAY)));
+                }
+
+            } else {
+                displayError("Key not present.", true);
+            }
+        } else {
+            displayError("No morph selected.", true);
+        }
+    }
+
+
 }

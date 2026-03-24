@@ -8,9 +8,11 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
+import net.snowteb.warriorcats_events.entity.custom.EagleEntity;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.network.ModPackets;
 import net.snowteb.warriorcats_events.network.packet.c2s.cats.CommandCatsPacket;
+import net.snowteb.warriorcats_events.network.packet.c2s.others.CallEaglesPacket;
 import net.snowteb.warriorcats_events.screen.clandata.MultipleSelectionScrollList;
 import org.lwjgl.glfw.GLFW;
 
@@ -20,6 +22,7 @@ import java.util.Optional;
 
 public class AncientStickScreen extends Screen {
     private final List<WCatEntity> catsInRange;
+    private final List<EagleEntity> eaglesInRange;
     public List<Component> catListNames = new ArrayList<>();
 
     private Button setAllToFollow;
@@ -29,6 +32,7 @@ public class AncientStickScreen extends Screen {
     private Button setSpecificToFollow;
     private Button setSpecificToStay;
     private Button dismissSpecific;
+    private Button callEagles;
 
     private MultipleSelectionScrollList catsScrollListAll;
     private MultipleSelectionScrollList catsScrollListSelected;
@@ -40,9 +44,10 @@ public class AncientStickScreen extends Screen {
             new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/showallcats.png");
 
 
-    public AncientStickScreen(List<WCatEntity> cats) {
+    public AncientStickScreen(List<WCatEntity> cats, List<EagleEntity> eagles) {
         super(Component.literal("AncientStick"));
         this.catsInRange = cats;
+        this.eaglesInRange = eagles;
     }
 
     @Override
@@ -195,7 +200,7 @@ public class AncientStickScreen extends Screen {
                         showTimeNoCatsSelected = SHOW_TIME;
                     }
                 }
-        ).bounds(this.width - 140, 10 + 130, 130, 20).build();
+        ).bounds(this.width - 140, 10 + 120, 130, 20).build();
 
         setSpecificToStay = Button.builder(
                 Component.literal("Call selected to stay"),
@@ -209,7 +214,7 @@ public class AncientStickScreen extends Screen {
                         showTimeNoCatsSelected = SHOW_TIME;
                     }
                 }
-        ).bounds(this.width - 140, 35 + 130, 130, 20).build();
+        ).bounds(this.width - 140, 35 + 120, 130, 20).build();
 
         dismissSpecific = Button.builder(
                 Component.literal("Dismiss selected"),
@@ -223,7 +228,26 @@ public class AncientStickScreen extends Screen {
                         showTimeNoCatsSelected = SHOW_TIME;
                     }
                 }
-        ).bounds(this.width - 140, 60 + 130, 130, 20).build();
+        ).bounds(this.width - 140, 60 + 120, 130, 20).build();
+
+
+        String eaglesText;
+        if (eaglesInRange.size() > 1) {
+            eaglesText = "Call Eagles";
+        } else {
+            eaglesText = "Call Eagle";
+        }
+
+        callEagles = Button.builder(
+                Component.literal(eaglesText),
+                btn -> {
+                    if (!eaglesInRange.isEmpty()) {
+                        this.onClose();
+                        List<Integer> list = eaglesInRange.stream().map(EagleEntity::getId).toList();
+                        ModPackets.sendToServer(new CallEaglesPacket(list));
+                    }
+                }
+        ).bounds(this.width - 140, 85 + 120, 130, 20).build();
 
 
         this.addRenderableWidget(setAllToFollow);
@@ -233,6 +257,7 @@ public class AncientStickScreen extends Screen {
         this.addRenderableWidget(setSpecificToFollow);
         this.addRenderableWidget(setSpecificToStay);
         this.addRenderableWidget(dismissSpecific);
+        if (!eaglesInRange.isEmpty()) this.addRenderableWidget(callEagles);
 
         this.addRenderableWidget(catsScrollListAll);
         this.addRenderableWidget(catsScrollListSelected);

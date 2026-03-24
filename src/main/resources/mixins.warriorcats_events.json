@@ -6,13 +6,17 @@
   "minVersion": "0.8",
   "client": [
     "ClientChatPacketMixin",
-    "GameRendererHitMixin"
+    "GameRendererHitMixin",
+    "ScreenClickedComponentMixin"
   ],
   "injectors": {
     "defaultRequire": 1
   },
   "mixins": [
+    "LivingEntityMixin",
     "ParrotDeathLootMobMixin",
-    "PlayerRideTickMixin"
+    "PlayerEntityMixin",
+    "ServerChatListenerMixin",
+    "ServerGamePacketListenerMixin"
   ]
 }

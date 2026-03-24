@@ -48,7 +48,7 @@ public class InviteToClanCommand {
         UUID currentClanId = invitedPlayer.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
                 .map(PlayerClanData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID);
 
-        ClanData data = ClanData.get(invitedPlayer.serverLevel());
+        ClanData data = ClanData.get(invitedPlayer.serverLevel().getServer().overworld());
         ClanData.Clan clan = data.getClan(invitingClanId);
 
         if (invitedPlayer == sPlayer) {

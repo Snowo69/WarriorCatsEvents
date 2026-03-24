@@ -1,0 +1,41 @@
+{
+
+
+  "name": "- Mixing Herbs",
+  "icon": "warriorcats_events:dock_poultice",
+  "category": "warriorcats_events:features_category",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "warriorcats_events:stone_crafting_table",
+      "text": "$(8)To start mixing herbs, you are gonna need a Crafting Rock. To put ingredients in it, Shift + Right-click the rock with the item in your hand. To prepare the recipe, Shift + Right-click with your claws.",
+      "title": "Mixing Herbs"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "warriorcats_events:freshkill_and_herbs",
+      "text": "$(8)- 2 Herbs$(br)- 2 Prey$(br)- 1 Dock leaves$(br)",
+      "title": "Freshkill and Herbs"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "warriorcats_events:shredded_meat",
+      "text": "$(8)- 2-5 Prey",
+      "title": "Shredded Meat"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "warriorcats_events:traveling_herbs",
+      "text": "$(8)- 1 Sorrel Leaves$(br)- 1 Burnet Leaves$(br)- 1 Chamomile$(br)- 1 Daisy Leaves$(br)- 1 Dock Leaves$(br)",
+      "title": "Traveling Herbs"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "warriorcats_events:dock_poultice",
+      "text": "$(8)- 1 Dock Leaves$(br)",
+      "title": "Dock Poultice"
+    }
+  ]
+
+
+}

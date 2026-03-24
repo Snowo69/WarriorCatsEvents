@@ -29,7 +29,7 @@ public class ModPlacedFeatures {
     public static final ResourceKey<PlacedFeature> GLOWSHROOM_PLACED_KEY = registerKey("glowshroom_placed");
     public static final ResourceKey<PlacedFeature> YARROW_PLACED_KEY = registerKey("yarrow_placed");
 
-    public static final ResourceKey<PlacedFeature> STARRYTREE_PLACED_KEY = registerKey("starrytree_placed");
+    public static final ResourceKey<PlacedFeature> LAVENDER_PLACED_KEY = registerKey("lavender_placed");
 
     public static void bootstrap(BootstapContext<PlacedFeature> context) {
         HolderGetter<ConfiguredFeature<?, ?>> configuredFeatures = context.lookup(Registries.CONFIGURED_FEATURE);
@@ -68,6 +68,10 @@ public class ModPlacedFeatures {
 
         register(context, GLOWSHROOM_PLACED_KEY, configuredFeatures.getOrThrow(ModConfiguredFeatures.GLOWSHROOM_KEY),
                 List.of(RarityFilter.onAverageOnceEvery(90), InSquarePlacement.spread(),
+                        PlacementUtils.HEIGHTMAP_WORLD_SURFACE, BiomeFilter.biome()));
+
+        register(context, LAVENDER_PLACED_KEY, configuredFeatures.getOrThrow(ModConfiguredFeatures.LAVENDER_KEY),
+                List.of(RarityFilter.onAverageOnceEvery(130),
                         PlacementUtils.HEIGHTMAP_WORLD_SURFACE, BiomeFilter.biome()));
 
 

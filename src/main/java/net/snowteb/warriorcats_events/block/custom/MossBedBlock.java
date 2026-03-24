@@ -6,8 +6,12 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
@@ -34,12 +38,18 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.snowteb.warriorcats_events.block.ModBlocks;
 import net.snowteb.warriorcats_events.block.entity.MossBedBlockEntity;
 import net.snowteb.warriorcats_events.clan.ClanData;
 import net.snowteb.warriorcats_events.clan.PlayerClanData;
 import net.snowteb.warriorcats_events.clan.PlayerClanDataProvider;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.item.ModItems;
+import net.snowteb.warriorcats_events.particles.WCEParticles;
+import net.snowteb.warriorcats_events.sound.ModSounds;
+import tocraft.walkers.api.PlayerShape;
+
+import java.util.List;
 
 public class MossBedBlock extends BedBlock {
     protected static final VoxelShape BASE = Block.box(2.0D, 0.0D, 2.0D, 14.0D, 1.0D, 14.0D);
@@ -59,6 +69,104 @@ public class MossBedBlock extends BedBlock {
 
     public InteractionResult use(BlockState state, Level level, BlockPos pos,
                                  Player player, InteractionHand hand, BlockHitResult hit) {
+
+        if (!level.isClientSide()) {
+            if (player.getItemInHand(InteractionHand.MAIN_HAND).is(ModBlocks.LAVENDER_PETALS.get().asItem())) {
+                BlockEntity blockEntity = level.getBlockEntity(pos);
+                if (blockEntity instanceof MossBedBlockEntity mossBedBlockEntity && !mossBedBlockEntity.getAssignedUUID().equals(ClanData.EMPTY_UUID)) {
+                    LivingEntity entity = mossBedBlockEntity.getAssignedEntity(level);
+                    if (entity != null) {
+                        if (entity instanceof WCatEntity cat) {
+                            cat.setHomePosition(BlockPos.ZERO);
+                            if (cat.getOwner() instanceof Player owner && owner != player) {
+                                owner.displayClientMessage(
+                                            Component.empty()
+                                                    .append(cat.hasCustomName() ? cat.getCustomName() : Component.literal("A cat")).withStyle(ChatFormatting.YELLOW)
+                                                    .append(Component.literal("'s nest was cleaned").withStyle(ChatFormatting.YELLOW)), true
+                                );
+                            }
+                            mossBedBlockEntity.resetAssigned();
+                            if (!player.getAbilities().instabuild) player.getItemInHand(InteractionHand.MAIN_HAND).shrink(1);
+                            level.sendBlockUpdated(pos, state, state, 3);
+
+                            if (level instanceof ServerLevel sLevel) {
+                                Vec3 position = pos.getCenter();
+                                sLevel.sendParticles(
+                                        WCEParticles.LAVENDER.get(),
+                                        position.x, pos.getY() + 0.2, position.z,
+                                        15, 0.4, 0.0, 0.4,0.005);
+                                sLevel.playSound(
+                                        null, position.x, position.y, position.z,
+                                        SoundEvents.PINK_PETALS_PLACE, SoundSource.BLOCKS,
+                                        0.6F, 0.9F
+                                );
+                            }
+                        }
+                        if (entity instanceof Player other && other != player) {
+                            player.displayClientMessage(Component.literal("You can't reset another player's nest.").withStyle(ChatFormatting.GRAY), true);
+                        } else {
+                            mossBedBlockEntity.resetAssigned();
+                            if (!player.getAbilities().instabuild) player.getItemInHand(InteractionHand.MAIN_HAND).shrink(1);
+                            level.sendBlockUpdated(pos, state, state, 3);
+
+                            if (level instanceof ServerLevel sLevel) {
+                                Vec3 position = pos.getCenter();
+                                sLevel.sendParticles(
+                                        WCEParticles.LAVENDER.get(),
+                                        position.x, pos.getY() + 0.2, position.z,
+                                        15, 0.4, 0.0, 0.4,0.005);
+                                sLevel.playSound(
+                                        null, position.x, position.y, position.z,
+                                        SoundEvents.PINK_PETALS_PLACE, SoundSource.BLOCKS,
+                                        0.6F, 0.9F
+                                );
+                            }
+                        }
+                    } else {
+                        mossBedBlockEntity.resetAssigned();
+                        level.sendBlockUpdated(pos, state, state, 3);
+
+
+                        if (!player.getAbilities().instabuild) player.getItemInHand(InteractionHand.MAIN_HAND).shrink(1);
+                        if (level instanceof ServerLevel sLevel) {
+                            Vec3 position = pos.getCenter();
+                            sLevel.sendParticles(
+                                    WCEParticles.LAVENDER.get(),
+                                    position.x, pos.getY() + 0.2, position.z,
+                                    15, 0.4, 0.0, 0.4,0.005);
+                            sLevel.playSound(
+                                    null, position.x, position.y, position.z,
+                                    SoundEvents.PINK_PETALS_PLACE, SoundSource.BLOCKS,
+                                    0.6F, 0.9F
+                            );
+                        }
+                    }
+                    return InteractionResult.SUCCESS;
+                }
+            }
+
+            if (player.getItemInHand(InteractionHand.MAIN_HAND).is(ModItems.ANCIENT_STICK.get())) {
+                BlockEntity blockEntity = level.getBlockEntity(pos);
+                if (blockEntity instanceof MossBedBlockEntity mossBedBlockEntity && !mossBedBlockEntity.getAssignedUUID().equals(ClanData.EMPTY_UUID)) {
+                    LivingEntity entity = mossBedBlockEntity.getAssignedEntity(level);
+                    if (entity != null) {
+                        if (entity instanceof WCatEntity cat) {
+                            if (level instanceof ServerLevel sLevel) {
+                                if (player instanceof ServerPlayer serverPlayer) {
+                                    callCat(cat, sLevel, serverPlayer);
+                                }
+                            }
+                        }
+                        if (entity instanceof Player) {
+                            player.displayClientMessage(Component.literal("You can't call players.").withStyle(ChatFormatting.GRAY), false);
+                        }
+                    } else {
+                        player.displayClientMessage(Component.literal("No entity found in range.").withStyle(ChatFormatting.GRAY), false);
+                    }
+                    return InteractionResult.SUCCESS;
+                }
+            }
+        }
 
         if (level.getBlockEntity(pos) instanceof MossBedBlockEntity mbEntity) {
 
@@ -141,7 +249,20 @@ public class MossBedBlock extends BedBlock {
             }
         }
         BlockState headState = state.setValue(PART, BedPart.HEAD);
-        return super.use(headState, level, pos, player, hand, hit);
+
+
+        InteractionResult result = super.use(headState, level, pos, player, hand, hit);
+        if (result == InteractionResult.SUCCESS && player.isSleeping()) {
+            if (player instanceof ServerPlayer sPlayer) {
+                if (PlayerShape.getCurrentShape(sPlayer) instanceof WCatEntity catShape) {
+                    catShape.setAnimIndex(9);
+                    PlayerShape.updateShapes(sPlayer, catShape);
+                    player.getPersistentData().putInt("wcat_animation_playing", sPlayer.server.getTickCount() + 10);
+                }
+            }
+        }
+
+        return result;
     }
 
     @Override
@@ -220,6 +341,35 @@ public class MossBedBlock extends BedBlock {
         return pLevel.getBlockState(pPos.below()).isFaceSturdy(pLevel, pPos.below(), Direction.UP);
     }
 
+
+    public static void callCat(WCatEntity cat, ServerLevel level, ServerPlayer player) {
+        int catsAffected = 0;
+        WCatEntity.CatMode mode = WCatEntity.CatMode.FOLLOW;
+
+        float pitch = 0.9f;
+        PlayerClanData.Age morphAge = player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
+                .map(PlayerClanData::getMorphAge).orElse(PlayerClanData.Age.ADULT);
+        switch (morphAge) {
+            case KIT -> pitch = 1.3f;
+            case APPRENTICE -> pitch = 1.1f;
+            case ADULT -> pitch = 0.9f;
+        }
+
+        cat.leaderCallingToFollowFlag = true;
+
+        level.playSound(null, player.blockPosition(), ModSounds.LEADER_CALL.get(), SoundSource.PLAYERS, 0.8F, pitch);
+
+        if (!player.isCreative()) {
+            ItemStack iteminHand = player.getItemInHand(InteractionHand.MAIN_HAND);
+            if (iteminHand.is(ModItems.ANCIENT_STICK.get())) {
+                iteminHand.hurt(catsAffected, player.getRandom(), player);
+                player.getCooldowns().addCooldown(iteminHand.getItem(), 20 * 8);
+            }
+        }
+
+        cat.sendModeMessage(player, mode);
+
+    }
 
 
 }

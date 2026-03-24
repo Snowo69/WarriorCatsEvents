@@ -27,7 +27,7 @@ public class ClanListCommand {
 
     public static int getList(ServerPlayer player) {
 
-        ServerLevel level = player.serverLevel();
+        ServerLevel level = player.serverLevel().getServer().overworld();
         ClanData data = ClanData.get(level);
 
         List<ClanInfo> list = new ArrayList<>();

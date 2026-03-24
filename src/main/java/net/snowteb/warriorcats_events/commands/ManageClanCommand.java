@@ -30,8 +30,7 @@ public class ManageClanCommand {
 
     private static int method(CommandSourceStack source, ServerPlayer player) {
 
-        ServerLevel level = player.serverLevel();
-        ClanData data = ClanData.get(level);
+        ClanData data = ClanData.get(player.serverLevel().getServer().overworld());
 
         UUID clanUUID = player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
                 .map(PlayerClanData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID);

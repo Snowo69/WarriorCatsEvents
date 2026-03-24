@@ -38,7 +38,7 @@ public class WCatTypeProvider extends TypeProvider<WCatEntity> {
         });
 
         if (player instanceof ServerPlayer serverPlayer) {
-            ClanData clanData = ClanData.get(serverPlayer.serverLevel());
+            ClanData clanData = ClanData.get(serverPlayer.serverLevel().getServer().overworld());
             clanData.playerMorphData.put(player.getUUID(), data);
             clanData.setDirty();
         }

@@ -45,11 +45,11 @@ public class ModEntities {
                             .sized(1f,1f)
                             .build(new ResourceLocation(WarriorCatsEvents.MODID, "badger").toString()));
 
-//    public static final RegistryObject<EntityType<EagleEntity>> EAGLE =
-//            ENTITY_TYPES.register("golden_eagle",
-//                    () -> EntityType.Builder.of(EagleEntity::new, MobCategory.MONSTER)
-//                            .sized(1f,1f)
-//                            .build(new ResourceLocation(WarriorCatsEvents.MODID, "golden_eagle").toString()));
+    public static final RegistryObject<EntityType<EagleEntity>> EAGLE =
+            ENTITY_TYPES.register("golden_eagle",
+                    () -> EntityType.Builder.of(EagleEntity::new, MobCategory.CREATURE)
+                            .sized(1f,1f)
+                            .build(new ResourceLocation(WarriorCatsEvents.MODID, "golden_eagle").toString()));
 
 
     public static void register(IEventBus eventBus) {

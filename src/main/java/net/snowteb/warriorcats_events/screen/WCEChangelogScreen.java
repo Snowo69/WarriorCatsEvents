@@ -1,5 +1,7 @@
 package net.snowteb.warriorcats_events.screen;
 
+import com.mojang.math.Axis;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -49,6 +51,12 @@ public class WCEChangelogScreen extends Screen {
         super(Component.literal("Warrior Cats Events"));
         this.parent = parent;
     }
+
+    private int pulsationCicle = 0;
+
+    private boolean pulsationSwitch = false;
+
+    private float pulsationIncrease = 0f;
 
     @Override
     protected void init() {
@@ -115,15 +123,46 @@ public class WCEChangelogScreen extends Screen {
             }
             y+=6;
         }
-
-
         pGuiGraphics.pose().popPose();
 
+
+        float versionScale = 1.4f;
+
+        versionScale += pulsationIncrease;
+
+        pGuiGraphics.pose().pushPose();
+        pGuiGraphics.pose().translate(centerX + 70, centerY-90, 0.1);
+
+        pGuiGraphics.pose().mulPose(Axis.ZP.rotationDegrees(-20f));
+
+        pGuiGraphics.pose().scale(versionScale, versionScale, versionScale);
+
+        pGuiGraphics.drawCenteredString(this.font, WarriorCatsEvents.MOD_VERSION, 0, 0, ChatFormatting.GOLD.getColor());
+
+        pGuiGraphics.pose().popPose();
 
 
         super.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
 
 
+    }
+
+    @Override
+    public void tick() {
+        if (pulsationCicle >= 0 && pulsationCicle <= 10) {
+            pulsationCicle++;
+
+            if (pulsationSwitch) {
+                pulsationIncrease += 0.02f;
+            } else {
+                pulsationIncrease -= 0.02f;
+            }
+
+            if (pulsationCicle >= 10) {
+                pulsationSwitch = !pulsationSwitch;
+                pulsationCicle = 0;
+            }
+        }
     }
 
     @Override
@@ -146,20 +185,20 @@ public class WCEChangelogScreen extends Screen {
     }
 
     private void defineChangelogLines() {
-        line1 = "- Fixed an issue that crashed the game when using beds without a shape";
-        line2 = "- Added new mechanic to Leap. You can now sprint and after sprinting for a while, you'll be able to leap without having to charge the leap.";
-        line3 = "- You can now carry other players. Use shift + claws to request carry";
-        line4 = "- Added size slider and fur to presets in the create morph screen. You can now have custom size and fur with a preset.";
-        line5 = "- Adjustements to the clan system";
-        line6 = "- Added a configurable list of items that should be considered as prey and a bonus should be applied.";
-        line7 = "- Added the Non-binary button to the info setup ";
-        line8 = "- Chat bubbles can now display emotes in Markdown format. Such as typing :cat: ";
-        line9 = "- Fixed the unlocking for all the recipes";
-        line10 = "- Added a recipe to convert a Warrior Nametag to a vanilla Nametag";
-        line11 = "- Minor adjustements and fixes";
-        line12 = "";
-        line13 = "";
-        line14 = "";
+        line1 = "- Added Lavender and Lavender petals. You can now clean nests using Lavender petals.";
+        line2 = "- Added morphs storage. You can now save, load, and even share in chat the morphs you make. This menu is accessible through the morph create menu. ";
+        line3 = "- Added the new Golden Eagle entity. The Golden Eagle is agressive most of the time. If you ever find a friendly eagle, you might even be able to tame it! Tame Eagles can be called through the Ancient Stick. Model provided by bem te vi, feathers by Lightley.";
+        line4 = "- Added new type of recipes. This update introduces a type of recipe using the Crafting Rock. Vanilla recipes such as for Freshkill and herbs, poultice, and traveling herb are now obtained through the new crafting system. The vanilla recipes will be removed in future updates to adapt to this new system.";
+        line5 = "- Added cat collars! You can create your own collar and add spikes, a bell, and even make it glowy! Put a collar and a bell in a crafting table to add a bell to it. Put an iron ingot to add spikes, and glowstone, glowshroom, or glowberries to make it glow.";
+        line6 = "- Added Footprints! Every entity will now leave footprints which will only be visible while having the Sharp Nose effect. You can get this effect with the integrated shape ability woodwalkers provides.";
+        line7 = "- Improved AI for Wild Cats and added new behaviours. Also they will now periocally take naps and chill around hang out zones defined by Lavender Petals.";
+        line8 = "- Fixed an issue with Clans that kicked players when changing dimensions.";
+        line9 = "- Fixed and improved Sprint Leap.";
+        line10 = "- Befriending cats should now be easier";
+        line11 = "- Increased health for Wild Cats";
+        line12 = "- Added Sharp Nose effect and Eagle Escapist effect";
+        line13 = "- Added new Wiki for WCE";
+        line14 = "------ For full changelog, visit the website. -------";
         line15 = "";
         line16 = "";
         line17 = "";

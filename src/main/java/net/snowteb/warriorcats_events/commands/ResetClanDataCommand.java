@@ -28,7 +28,7 @@ public class ResetClanDataCommand {
     private static int resetData(CommandSourceStack source) throws CommandSyntaxException {
         ServerPlayer player = source.getPlayerOrException();
 
-        ClanData data = ClanData.get(player.serverLevel());
+        ClanData data = ClanData.get(player.serverLevel().getServer().overworld());
 
         player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {
             cap.reset();

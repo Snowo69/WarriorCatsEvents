@@ -67,10 +67,7 @@ public class CommandCatsPacket {
 
             ServerLevel level = player.serverLevel();
 
-            String allOrSome = msg.command1;
-            String whichMode = msg.command2;
-
-            setCatsMode(allOrSome, whichMode, level, player);
+            setCatsMode(msg.command1, msg.command2, level, player);
 
         });
 

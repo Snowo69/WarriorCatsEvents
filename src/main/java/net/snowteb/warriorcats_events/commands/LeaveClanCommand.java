@@ -36,7 +36,7 @@ public class LeaveClanCommand {
         UUID targetClanId = sPlayer.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
                 .map(PlayerClanData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID);
 
-        ClanData data = ClanData.get(sPlayer.serverLevel());
+        ClanData data = ClanData.get(sPlayer.serverLevel().getServer().overworld());
         ClanData.Clan targetClan = data.getClan(targetClanId);
 
         if (targetClanId.equals(ClanData.EMPTY_UUID)) {

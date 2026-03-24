@@ -57,6 +57,9 @@ public class SaveClanDataPacket {
             UUID currentClanUUID = player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
                     .map(PlayerClanData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID);
 
+            UUID currentMateUUID = player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
+                    .map(PlayerClanData::getMateUUID).orElse(ClanData.EMPTY_UUID);
+
             WCGenetics.GeneticalVariants currentGeneticVariants = player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
                             .map(PlayerClanData::getPlayerGeneticalVariants).orElse(new WCGenetics.GeneticalVariants());
 
@@ -75,6 +78,7 @@ public class SaveClanDataPacket {
             player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {
                 cap.copyFrom(packet.data);
                 cap.setCurrentClanUUID(currentClanUUID);
+                cap.setMateUUID(currentMateUUID);
 
                 cap.setPlayerGenetics(currentGenetics);
                 cap.setPlayerGeneticalVariants(currentGeneticVariants);
@@ -121,7 +125,7 @@ public class SaveClanDataPacket {
                 }
             });
 
-            ClanData data = ClanData.get(player.serverLevel());
+            ClanData data = ClanData.get(player.serverLevel().getServer().overworld());
 
             player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {
                 data.playerMorphNames.put(player.getUUID(), cap.getMorphName());
@@ -136,7 +140,7 @@ public class SaveClanDataPacket {
                                                     .append(" New name: ")
                                                             .append(Component.literal(cap.getMorphName()).withStyle(ChatFormatting.AQUA));
 
-                    data.registerLog(player.serverLevel(), clan.clanUUID, message);
+                    data.registerLog(player.serverLevel().getServer().overworld(), clan.clanUUID, message);
 
                     if (clan.members.get(player.getUUID()) == ClanData.ClanPlayerRank.LEADER) {
                         clan.leaderName = cap.getMorphName();

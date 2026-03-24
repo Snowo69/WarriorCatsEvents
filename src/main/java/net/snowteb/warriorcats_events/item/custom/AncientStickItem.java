@@ -11,6 +11,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+import net.snowteb.warriorcats_events.entity.custom.EagleEntity;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.network.ModPackets;
 import net.snowteb.warriorcats_events.network.packet.s2c.cats.OpenAncientStickScreenPacket;
@@ -35,8 +36,15 @@ public class AncientStickItem extends Item {
                     cat -> cat.isAlive() && cat.getOwner() == pPlayer
             ).stream().map(Entity::getId).toList();
 
+            List<Integer> eagleIDs = pLevel.getEntitiesOfClass(
+                    EagleEntity.class,
+                    pPlayer.getBoundingBox().inflate(60),
+                    eagle -> eagle.isAlive() && eagle.getOwner() == pPlayer
+            ).stream().map(Entity::getId).toList();
+
+
             if (pPlayer instanceof ServerPlayer sPlayer) {
-                ModPackets.sendToPlayer(new OpenAncientStickScreenPacket(catIDs), sPlayer);
+                ModPackets.sendToPlayer(new OpenAncientStickScreenPacket(catIDs, eagleIDs), sPlayer);
             }
 
         }

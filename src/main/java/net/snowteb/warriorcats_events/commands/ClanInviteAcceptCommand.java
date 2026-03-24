@@ -48,7 +48,7 @@ public class ClanInviteAcceptCommand {
         UUID currentClanUUID = player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
                 .map(PlayerClanData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID);
 
-        ClanData data = ClanData.get(player.serverLevel());
+        ClanData data = ClanData.get(player.serverLevel().getServer().overworld());
         ClanData.Clan clan = data.getClan(currentClanUUID);
         if (clan != null) {
             player.sendSystemMessage(

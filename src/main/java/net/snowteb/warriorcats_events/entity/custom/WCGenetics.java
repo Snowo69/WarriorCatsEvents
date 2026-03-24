@@ -44,6 +44,30 @@ public class WCGenetics {
     public String chimeraGene = "C-C";
 
 
+    public WCGenetics(WCGenetics copy) {
+        this.chestFur = copy.chestFur;
+        this.bellyFur = copy.bellyFur;
+        this.legsFur = copy.legsFur;
+        this.headFur = copy.headFur;
+        this.cheekFur = copy.cheekFur;
+        this.backFur =  copy.backFur;
+        this.tailFur = copy.tailFur;
+        this.bobtail = copy.bobtail;
+
+        this.base = copy.base;
+        this.orangeBase = copy.orangeBase;
+        this.whiteRatio = copy.whiteRatio;
+        this.albino = copy.albino;
+        this.dilute = copy.dilute;
+        this.agouti = copy.agouti;
+        this.tabbyStripes = copy.tabbyStripes;
+        this.eyesAnomaly = copy.eyesAnomaly;
+        this.rufousing = copy.rufousing;
+        this.blueRufousing = copy.blueRufousing;
+        this.noise = copy.noise;
+
+        this.chimeraGene = copy.chimeraGene;
+    }
 
     public WCGenetics(String bobtail, String chestFur, String bellyFur,
                       String legsFur, String headFur, String cheekFur,
@@ -171,6 +195,21 @@ public class WCGenetics {
             this.size = size;
         }
 
+        public GeneticalVariants(GeneticalVariants copy) {
+            this.eyeColorLeft = copy.eyeColorLeft;
+            this.eyeColorRight = copy.eyeColorRight;
+            this.rufousingVariant = copy.rufousingVariant;
+            this.blueRufousingVariant = copy.blueRufousingVariant;
+            this.orangeVar = copy.orangeVar;
+            this.whiteVar = copy.whiteVar;
+            this.tabbyVar = copy.tabbyVar;
+            this.albinoVar = copy.albinoVar;
+            this.leftEyeVar = copy.leftEyeVar;
+            this.rightEyeVar = copy.rightEyeVar;
+            this.noise = copy.noise;
+            this.size = copy.size;
+        }
+
         public void encode(FriendlyByteBuf buf) {
             buf.writeUtf(this.eyeColorLeft);
             buf.writeUtf(this.eyeColorRight);
@@ -233,6 +272,18 @@ public class WCGenetics {
             this.albinoVar = albinoVar;
             this.noise = noise;
             this.chimeraGene = chimeraGene;
+        }
+
+        public GeneticalChimeraVariants(GeneticalChimeraVariants copy) {
+            this.rufousingVariant = copy.rufousingVariant;
+            this.blueRufousingVariant = copy.blueRufousingVariant;
+            this.orangeVar = copy.orangeVar;
+            this.whiteVar = copy.whiteVar;
+            this.chimeraVariant = copy.chimeraVariant;
+            this.tabbyVar = copy.tabbyVar;
+            this.albinoVar = copy.albinoVar;
+            this.noise = copy.noise;
+            this.chimeraGene = copy.chimeraGene;
         }
 
         public void encode(FriendlyByteBuf buf) {

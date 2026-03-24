@@ -2,6 +2,7 @@ package net.snowteb.warriorcats_events.integration;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -14,6 +15,8 @@ import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
+import net.snowteb.warriorcats_events.WarriorCatsEvents;
+import net.snowteb.warriorcats_events.effect.ModEffects;
 import net.snowteb.warriorcats_events.item.ModItems;
 import net.snowteb.warriorcats_events.sound.ModSounds;
 import tocraft.walkers.Walkers;
@@ -38,7 +41,9 @@ public class WCatNightVision<T extends LivingEntity> extends GenericShapeAbility
     @Override
     public void onUse(Player player, LivingEntity shape, Level world) {
 
-        if (world.isClientSide) return;
+        if (world.isClientSide) {
+            return;
+        }
 
         if (world.isNight()) {
             player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, 300, 0, true, false));
@@ -47,7 +52,7 @@ public class WCatNightVision<T extends LivingEntity> extends GenericShapeAbility
             ((ServerLevel) player.level()).sendParticles(ParticleTypes.CLOUD, player.getX(),player.getY(),player.getZ(),5,0.2,0.2,0.2,0.4);
 
             for (LivingEntity e : world.getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(15))) {
-                if (e instanceof Animal) e.addEffect(new MobEffectInstance(MobEffects.GLOWING, 40, 0, true, false));
+                e.addEffect(new MobEffectInstance(MobEffects.GLOWING, 40, 0, true, false));
             }
 
         } else {
@@ -55,9 +60,11 @@ public class WCatNightVision<T extends LivingEntity> extends GenericShapeAbility
             world.playSound(null,player.blockPosition(), ModSounds.LONG_WOOSH.get(), SoundSource.PLAYERS, 0.9f,1f);
 
             for (LivingEntity e : world.getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(20))) {
-                if (e instanceof Animal) e.addEffect(new MobEffectInstance(MobEffects.GLOWING, 80, 0, true, false));
+                e.addEffect(new MobEffectInstance(MobEffects.GLOWING, 80, 0, true, false));
             }
         }
+
+        player.addEffect(new MobEffectInstance(ModEffects.SHARP_SCENT.get(), 1000, 0, true, false));
 
     }
 

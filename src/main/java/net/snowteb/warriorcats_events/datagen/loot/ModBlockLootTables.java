@@ -6,16 +6,20 @@ import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.DoublePlantBlock;
 import net.minecraft.world.level.block.SweetBerryBushBlock;
+import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.functions.ApplyBonusCount;
 import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
 import net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePropertyCondition;
+import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import net.minecraftforge.registries.RegistryObject;
 import net.snowteb.warriorcats_events.block.ModBlocks;
+import net.snowteb.warriorcats_events.block.custom.LavenderPetalsBlock;
 import net.snowteb.warriorcats_events.item.ModItems;
 
 import java.util.Set;
@@ -29,8 +33,6 @@ public class ModBlockLootTables extends BlockLootSubProvider {
     protected void generate() {
 
         this.dropSelf(ModBlocks.STONECLEFT.get());
-//        this.dropSelf(ModBlocks.DARKTREE_SAPLING.get());
-//        this.dropSelf(ModBlocks.STARRYTREE_SAPLING.get());
         this.dropSelf(ModBlocks.GLOWSHROOM.get());
 
         this.dropSelf(ModBlocks.STONE_CRAFTING_TABLE.get());
@@ -172,8 +174,12 @@ public class ModBlockLootTables extends BlockLootSubProvider {
                         block,
                         Items.FEATHER,
                         UniformGenerator.between(1.0F, 3.0F)
+                ).withPool(
+                        LootPool.lootPool()
+                                .setRolls(ConstantValue.exactly(1))
+                                .add(LootItem.lootTableItem(Items.MOSS_BLOCK)
+                                        .apply(SetItemCountFunction.setCount(UniformGenerator.between(0.0F, 1.0F))))
                 )
-
         );
 
         this.add(ModBlocks.FRESHKILL_PILE.get(),
@@ -198,7 +204,51 @@ public class ModBlockLootTables extends BlockLootSubProvider {
                 block -> createDoorTable(ModBlocks.LEAF_DOOR.get()));
 
 
+        this.add(ModBlocks.LAVENDER_PETALS.get(),
+                block -> LootTable.lootTable()
+                        .withPool(
+                                LootPool.lootPool()
+                                        .setRolls(ConstantValue.exactly(1))
+                                        .add(LootItem.lootTableItem(ModBlocks.LAVENDER_PETALS.get())
+                                                .when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(block)
+                                                        .setProperties(StatePropertiesPredicate.Builder.properties()
+                                                                .hasProperty(LavenderPetalsBlock.AMOUNT, 1)))
+                                                .apply(SetItemCountFunction.setCount(ConstantValue.exactly(1))))
+                                        .add(LootItem.lootTableItem(ModBlocks.LAVENDER_PETALS.get())
+                                                .when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(block)
+                                                        .setProperties(StatePropertiesPredicate.Builder.properties()
+                                                                .hasProperty(LavenderPetalsBlock.AMOUNT, 2)))
+                                                .apply(SetItemCountFunction.setCount(ConstantValue.exactly(2))))
+                                        .add(LootItem.lootTableItem(ModBlocks.LAVENDER_PETALS.get())
+                                                .when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(block)
+                                                        .setProperties(StatePropertiesPredicate.Builder.properties()
+                                                                .hasProperty(LavenderPetalsBlock.AMOUNT, 3)))
+                                                .apply(SetItemCountFunction.setCount(ConstantValue.exactly(3))))
+                                        .add(LootItem.lootTableItem(ModBlocks.LAVENDER_PETALS.get())
+                                                .when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(block)
+                                                        .setProperties(StatePropertiesPredicate.Builder.properties()
+                                                                .hasProperty(LavenderPetalsBlock.AMOUNT, 4)))
+                                                .apply(SetItemCountFunction.setCount(ConstantValue.exactly(4))))
+                        )
+        );
 
+        this.add(ModBlocks.LAVENDER.get(),
+                block -> LootTable.lootTable()
+                        .withPool(
+                                LootPool.lootPool()
+                                        .setRolls(ConstantValue.exactly(1))
+                                        .add(
+                                                LootItem.lootTableItem(block)
+                                                        .when(
+                                                                LootItemBlockStatePropertyCondition.hasBlockStateProperties(block)
+                                                                        .setProperties(
+                                                                                StatePropertiesPredicate.Builder.properties()
+                                                                                        .hasProperty(DoublePlantBlock.HALF, DoubleBlockHalf.LOWER)
+                                                                        )
+                                                        )
+                                        )
+                        )
+        );
 
     }
 
