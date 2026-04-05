@@ -21,6 +21,7 @@ public class WCEClientConfig {
         public final ForgeConfigSpec.BooleanValue AMBIENT_MUSIC;
         public final ForgeConfigSpec.BooleanValue MORPH_CHAT_BUBBLES;
         public final ForgeConfigSpec.BooleanValue OWN_CHAT_BUBBLES;
+        public final ForgeConfigSpec.BooleanValue DISPLAY_TERRITORY;
 
         public Client(ForgeConfigSpec.Builder builder) {
             builder.push("wce_client");
@@ -49,7 +50,9 @@ public class WCEClientConfig {
                     .comment("Whether your own chat bubble will display")
                     .define("ownChatBubbles", true);
 
-
+            DISPLAY_TERRITORY = builder
+                    .comment("Whether territory info will display on your HUD")
+                    .define("displayTerritory", true);
 
             builder.pop();
         }

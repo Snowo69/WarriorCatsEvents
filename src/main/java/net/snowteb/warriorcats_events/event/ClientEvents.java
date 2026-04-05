@@ -28,29 +28,22 @@ import net.minecraftforge.registries.RegistryObject;
 import net.snowteb.warriorcats_events.WCEClient;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.block.ModBlocks;
-import net.snowteb.warriorcats_events.block.entity.FreshkillPileRenderer;
-import net.snowteb.warriorcats_events.block.entity.ModBlockEntities;
-import net.snowteb.warriorcats_events.block.entity.MossBedRenderer;
-import net.snowteb.warriorcats_events.block.entity.StoneTableRenderer;
+import net.snowteb.warriorcats_events.block.entity.*;
 import net.snowteb.warriorcats_events.client.ClientStoredMorphs;
 import net.snowteb.warriorcats_events.client.EntityChatBubbleManager;
 import net.snowteb.warriorcats_events.client.LeapClientState;
 import net.snowteb.warriorcats_events.client.ThirstHUD;
 import net.snowteb.warriorcats_events.entity.ModEntities;
 import net.snowteb.warriorcats_events.entity.client.*;
-//import net.snowteb.warriorcats_events.entity.custom.ModModelLayers;
 import net.snowteb.warriorcats_events.entity.custom.EagleEntity;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.item.ModItems;
 import net.snowteb.warriorcats_events.network.ModPackets;
 import net.snowteb.warriorcats_events.network.packet.c2s.clan.EmoteMorphPacket;
-import net.snowteb.warriorcats_events.network.packet.c2s.others.CtSDismountEaglePacket;
-import net.snowteb.warriorcats_events.network.packet.c2s.others.CtSPlayCatSoundPacket;
-import net.snowteb.warriorcats_events.network.packet.c2s.others.CtSSwitchShape;
+import net.snowteb.warriorcats_events.network.packet.c2s.others.*;
 import net.snowteb.warriorcats_events.network.packet.s2c.cats.OpenCatDataScreenPacket;
 import net.snowteb.warriorcats_events.network.packet.s2c.clan.OpenClanSetupScreenPacket;
 import net.snowteb.warriorcats_events.network.packet.s2c.others.StCFishingScreenPacket;
-import net.snowteb.warriorcats_events.network.packet.c2s.others.WaterPacket;
 import net.snowteb.warriorcats_events.particles.*;
 import net.snowteb.warriorcats_events.screen.*;
 import net.snowteb.warriorcats_events.screen.clandata.CatDataScreen;
@@ -125,8 +118,6 @@ public class ClientEvents {
             }
         }
 
-        private static boolean wasJumpPressed = false;
-
         @SubscribeEvent
         public static void onClientTick(TickEvent.ClientTickEvent event) {
             if (event.phase != TickEvent.Phase.END) return;
@@ -163,8 +154,6 @@ public class ClientEvents {
                     if (isBeingLatched) isBeingLatched = false;
                 }
 
-                boolean isJumpPressed = mc.options.keyJump.isDown();
-
                 if (!isBeingLatched) {
                     setFreeCounter = 0;
                 } else {
@@ -181,7 +170,6 @@ public class ClientEvents {
                     }
                 }
 
-                wasJumpPressed = isJumpPressed;
             }
 
 
@@ -209,6 +197,7 @@ public class ClientEvents {
             if (ModKeybinds.WATERDRINK_KEY.isDown() && waterCooldown == 0) {
                 if (!waterPressed) {
                     ModPackets.sendToServer(new WaterPacket());
+//                    ModPackets.sendToServer(new CtSStartSleep());
                     waterPressed = true;
                     waterCooldown = 7;
                 }
@@ -216,7 +205,7 @@ public class ClientEvents {
                 waterPressed = false;
             }
 //            if (ModKeybinds.SKILLMENU_KEY.isDown()) {
-//                ModPackets.sendToServer(new CtSTeleportToLocationPacket(player.getRandom().nextInt(9)));
+//                Minecraft.getInstance().setScreen(new TerritoryMapScreen(null));
 //            }
 
 
@@ -321,6 +310,7 @@ public class ClientEvents {
             event.registerBlockEntityRenderer(ModBlockEntities.FRESH_KILL_PILE.get(), FreshkillPileRenderer::new);
             event.registerBlockEntityRenderer(ModBlockEntities.MOSS_BED.get(), MossBedRenderer::new);
             event.registerBlockEntityRenderer(ModBlockEntities.STONE_TABLE.get(), StoneTableRenderer::new);
+            event.registerBlockEntityRenderer(ModBlockEntities.TREE_STUMP.get(), TreeStumpEntityRenderer::new);
         }
 
         @SubscribeEvent
@@ -367,7 +357,7 @@ public class ClientEvents {
                                 ? BiomeColors.getAverageFoliageColor(world, pos)
                                 : FoliageColor.getDefaultColor();
                     },
-                    ModBlocks.LEAF_DOOR.get(), ModBlocks.LEAF_TRAPDOOR.get()
+                    ModBlocks.LEAF_DOOR.get(), ModBlocks.LEAF_TRAPDOOR.get(), ModBlocks.MAKESHIFT_BED.get()
             );
         }
 
@@ -377,10 +367,10 @@ public class ClientEvents {
             MenuScreens.register(ModMenuTypes.STONECLEFT_MENU.get(), StoneCleftScreen::new);
             MenuScreens.register(ModMenuTypes.FRESHKILL_PILE_MENU.get(), FreshkillPileScreen::new);
             MenuScreens.register(ModMenuTypes.WCAT_INVENTORY.get(), WCatScreen::new);
+
             UpdateCheck.checkForUpdates();
 
             ClientStoredMorphs.load();
-
 
             ModLoadingContext.get().registerExtensionPoint(
                     ConfigScreenHandler.ConfigScreenFactory.class,

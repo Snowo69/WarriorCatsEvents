@@ -135,7 +135,7 @@ public class PigeonEntity extends Parrot implements GeoEntity {
      * An indicator that makes sure the cat it should fly away from is in Wander mode.
      */
     private boolean shouldScareFrom(WCatEntity cat) {
-        return cat.mode == WCatEntity.CatMode.WANDER;
+        return cat.mode == WCatEntity.CatMode.WANDER && !cat.onHuntingPatrolFlag;
     }
 
 

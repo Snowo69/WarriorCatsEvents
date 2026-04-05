@@ -32,7 +32,7 @@ public class EagleModel extends GeoModel<EagleEntity> {
     @Override
     public void setCustomAnimations(EagleEntity animatable, long instanceId, AnimationState<EagleEntity> animationState) {
         CoreGeoBone body = getAnimationProcessor().getBone("body");
-        if (body != null && !animatable.onGround()) {
+        if (body != null && animatable.isFlying()) {
             EntityModelData entityModelData = animationState.getData(DataTickets.ENTITY_MODEL_DATA);
 
             body.setRotX(entityModelData.headPitch() * -Mth.DEG_TO_RAD);

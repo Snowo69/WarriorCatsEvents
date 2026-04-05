@@ -6,6 +6,7 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.EntityType;
@@ -163,7 +164,11 @@ public class BadgerEntity extends Animal implements GeoEntity {
         return this.entityData.get(ATTACKING);
     }
 
-
+    @Override
+    public boolean canAttack(LivingEntity pTarget) {
+        if (this.level().getDifficulty() == Difficulty.PEACEFUL) return false;
+        return super.canAttack(pTarget);
+    }
 
     @Override
     protected SoundEvent getAmbientSound() {

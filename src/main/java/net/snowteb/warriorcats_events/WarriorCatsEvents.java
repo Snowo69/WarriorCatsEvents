@@ -39,7 +39,7 @@ import java.util.concurrent.Executors;
 @Mod(WarriorCatsEvents.MODID)
 public class WarriorCatsEvents {
     public static final String MODID = "warriorcats_events";
-    public static final String MOD_VERSION = "1.5.0";
+    public static final String MOD_VERSION = "1.6.0";
     public static final Logger LOGGER = LogUtils.getLogger();
 
     public static final ExecutorService teleportExecutor = Executors.newSingleThreadExecutor();
@@ -51,7 +51,8 @@ public class WarriorCatsEvents {
                 UUID.fromString("380df991-f603-344c-a090-369bad2a924a"),
                 UUID.fromString("bd10cd3b-b641-4db7-839b-691339fcbfaf"),
                 UUID.fromString("02c910cd-3367-4ce8-80d3-04e803bf580a"),
-                UUID.fromString("cead1fe2-b208-4886-a17c-f486ba511d63")
+                UUID.fromString("cead1fe2-b208-4886-a17c-f486ba511d63"),
+                UUID.fromString("c10ad235-4fa9-4d3a-9343-0e59c424b1d3")
         );
 
         public static boolean isDev(UUID uuid) {
@@ -174,12 +175,7 @@ public class WarriorCatsEvents {
             event.accept(ModBlocks.LEAF_TRAPDOOR);
             event.accept(ModBlocks.MOSS_BED);
             event.accept(ModBlocks.HAY_BED);
-
-//            event.accept(ModBlocks.STRIPPED_DARK_LOG);
-//            event.accept(ModBlocks.DARK_LOG);
-//            event.accept(ModBlocks.STARRY_LOG);
-//            event.accept(ModBlocks.STRIPPED_STARRY_LOG);
-//            event.accept(ModBlocks.STARRY_LEAVES);
+            event.accept(ModBlocks.KELP_BED);
 
         }
 
@@ -199,10 +195,6 @@ public class WarriorCatsEvents {
             event.accept(ModItems.LEAF_MANE);
             event.accept(ModItems.TEETH_CLAWS);
         }
-
-
-
-
 
     }
 

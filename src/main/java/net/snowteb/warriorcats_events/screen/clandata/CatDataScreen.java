@@ -304,7 +304,7 @@ public class CatDataScreen extends Screen {
             catMate = Component.literal("Mate: ").append(wCatEntity.getMate().copy().withStyle(ChatFormatting.AQUA));
         }
 
-        if (wCatEntity.getClan().equals(Component.literal("None")) || wCatEntity.getClan() == null) {
+        if (wCatEntity.getClan().equals(Component.literal("None")) || wCatEntity.getClan() == null || wCatEntity.getClan().getString().isEmpty()) {
             clanName = Component.literal("No clan");
         } else {
             clanName = Component.literal("From ").append(wCatEntity.getClan().copy());
@@ -398,6 +398,7 @@ public class CatDataScreen extends Screen {
             case APPRENTICE -> Component.literal("Apprentice");
             case WARRIOR -> Component.literal("Warrior");
             case MEDICINE -> Component.literal("Medicine Cat");
+            case DEPUTY -> Component.literal("Deputy");
         };
 
         personalityText = switch (wCatEntity.getPersonality()) {
@@ -549,6 +550,17 @@ public class CatDataScreen extends Screen {
                     this.onClose();
                 }
         ).bounds(this.width - 85, this.height - 30, 80, 20).build());
+
+        if (wCatEntity.isTame() && wCatEntity.getOwner() == Minecraft.getInstance().player && wCatEntity.getRank() == WCatEntity.Rank.DEPUTY){
+            this.addRenderableWidget(Button.builder(
+                    Component.literal("Patrol"),
+                    btn -> {
+                        ModPackets.sendToServer(new CtSRequestPatrolData(wCatEntity.getId()));
+                        Minecraft.getInstance().setScreen(null);
+                    }
+            ).bounds(this.width - 85, 85, 80, 20).build());
+        }
+
     }
 
     private void drawInteractMenu() {

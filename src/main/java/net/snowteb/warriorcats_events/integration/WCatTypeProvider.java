@@ -103,14 +103,14 @@ public class WCatTypeProvider extends TypeProvider<WCatEntity> {
                 WCGenetics.GeneticalVariants variants = cap.getPlayerGeneticalVariants();
                 cat.setGeneticalVariants(variants.eyeColorLeft, variants.eyeColorRight, variants.rufousingVariant
                 ,variants.blueRufousingVariant, variants.orangeVar, variants.whiteVar, variants.tabbyVar
-                ,variants.albinoVar, variants.leftEyeVar, variants.rightEyeVar, variants.noise, variants.size);
+                ,variants.albinoVar, variants.leftEyeVar, variants.rightEyeVar, variants.noise, variants.size, variants.silverVar);
 
                 cat.setChimeraGenetics(cap.getPlayerChimeraGenetics());
 
                 WCGenetics.GeneticalChimeraVariants variantsChimera = cap.getPlayerChimeraVariants();
                 cat.setGeneticalVariantsChimera(variantsChimera.chimeraVariant, variantsChimera.rufousingVariant,
                         variantsChimera.blueRufousingVariant, variantsChimera.orangeVar, variantsChimera.whiteVar, variantsChimera.tabbyVar
-                        , variantsChimera.albinoVar, variantsChimera.noise);
+                        ,variantsChimera.albinoVar, variantsChimera.noise, variantsChimera.silverVar);
 
                 cat.setOnGeneticalSkin(true);
                 cat.setGender(1);

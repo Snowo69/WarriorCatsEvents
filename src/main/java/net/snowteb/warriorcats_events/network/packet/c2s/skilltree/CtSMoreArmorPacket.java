@@ -42,6 +42,7 @@ public class CtSMoreArmorPacket {
 
             if (!WCEServerConfig.SERVER.SKILL_TREE_SERVER.get()) {
                 player.sendSystemMessage(Component.literal("Skill tree is disabled for this world.").withStyle(ChatFormatting.RED));
+                return;
             }
 
             int currentLevel = player.getCapability(PlayerSkillProvider.SKILL_DATA)

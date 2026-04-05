@@ -5,6 +5,8 @@ import com.google.common.collect.Multimap;
 import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
@@ -14,6 +16,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -27,6 +30,8 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
@@ -37,15 +42,16 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ToolAction;
 import net.minecraftforge.common.ToolActions;
+import net.snowteb.warriorcats_events.block.ModBlocks;
+import net.snowteb.warriorcats_events.block.custom.MakeshiftBedBlock;
 import net.snowteb.warriorcats_events.block.custom.StoneCraftingTable;
-import net.snowteb.warriorcats_events.block.entity.StoneCraftingTableBlockEntity;
 import net.snowteb.warriorcats_events.clan.PlayerClanData;
 import net.snowteb.warriorcats_events.clan.PlayerClanDataProvider;
-import net.snowteb.warriorcats_events.entity.custom.EagleEntity;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.item.ModItems;
 import net.snowteb.warriorcats_events.network.ModPackets;
 import net.snowteb.warriorcats_events.network.packet.s2c.others.StCFishingScreenPacket;
+import net.snowteb.warriorcats_events.particles.WCEParticles;
 import net.snowteb.warriorcats_events.sound.ModSounds;
 import net.snowteb.warriorcats_events.util.CarryPlayerRequestManager;
 import org.jetbrains.annotations.Nullable;
@@ -54,6 +60,9 @@ import tocraft.walkers.api.PlayerShape;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+
+import static net.minecraft.world.level.block.HorizontalDirectionalBlock.FACING;
+import static net.snowteb.warriorcats_events.block.custom.MakeshiftBedBlock.STATE;
 
 public class ClawsTooltip extends ShearsItem {
     private static final UUID ATTACK_DAMAGE_UUID = UUID.fromString("11111111-1111-1111-1111-111111111111");
@@ -151,26 +160,202 @@ public class ClawsTooltip extends ShearsItem {
         ItemStack itemstack = pContext.getItemInHand();
         Optional<BlockState> optional3 = Optional.empty();
 
+
+        if (player != null) {
+            if (!level.isClientSide) {
+                if (blockstate.is(BlockTags.MINEABLE_WITH_SHOVEL)) {
+                    boolean isUnderTree = false;
+                    int count = 0;
+                    for (int i = 1; i <= 15; i++) {
+                        BlockPos checkPos = player.blockPosition().above(i);
+                        BlockState state = level.getBlockState(checkPos);
+
+                        if (state.is(BlockTags.LEAVES)) {
+                            count++;
+                        }
+                        if (count >= 2) {
+                            isUnderTree = true;
+                            break;
+                        }
+                    }
+                    if (isUnderTree) {
+                        BlockState thisState = level.getBlockState(player.blockPosition());
+                        BlockPos playerPos = player.blockPosition();
+
+                        int value = 0;
+                        boolean wasAir = false;
+                        if (thisState.isAir()) {
+                            BlockState newState = ModBlocks.MAKESHIFT_BED.get().defaultBlockState();
+
+                            level.setBlockAndUpdate(playerPos, newState.setValue(STATE, value).setValue(FACING, player.getDirection().getOpposite()));
+
+                            level.sendBlockUpdated(player.blockPosition(), thisState, newState, 3);
+                            wasAir = true;
+
+                        } else if (thisState.getBlock() instanceof MakeshiftBedBlock) {
+                            value = thisState.getValue(STATE);
+                            if (value == 3) return InteractionResult.PASS;
+
+                            if (level.getRandom().nextFloat() < 0.2f) {
+                                value = Mth.clamp(value + 1, 0, 3);
+
+                                BlockState newState = ModBlocks.MAKESHIFT_BED.get().defaultBlockState()
+                                        .setValue(STATE, value)
+                                        .setValue(FACING, player.getDirection().getOpposite());
+
+                                level.setBlockAndUpdate(playerPos, newState.setValue(STATE, value));
+
+                                level.sendBlockUpdated(player.blockPosition(), thisState, newState, 3);
+                            }
+                        }
+
+                        if (level instanceof ServerLevel sLevel) {
+
+                            Vec3 exactPos = playerPos.getCenter().add(0, -0.5, 0);
+
+                            sLevel.sendParticles(
+                                    new BlockParticleOption(ParticleTypes.BLOCK, ModBlocks.MAKESHIFT_BED.get().defaultBlockState()),
+                                    exactPos.x, exactPos.y, exactPos.z,
+                                    20, 0.0, 0.0, 0.0, 0.1
+                            );
+
+                            Vec3 exactPos2 = blockpos.getCenter().add(0, 0.55, 0);
+
+                            sLevel.sendParticles(
+                                    new BlockParticleOption(ParticleTypes.BLOCK, ModBlocks.MAKESHIFT_BED.get().defaultBlockState()),
+                                    exactPos2.x, exactPos2.y, exactPos2.z,
+                                    20, 0.0, 0.0, 0.0, 0.1
+                            );
+
+                            itemstack.hurtAndBreak(1, player, (p) -> {
+                                p.broadcastBreakEvent(pContext.getHand());
+                            });
+
+                            if (value == 3 || wasAir) {
+                                sLevel.sendParticles(
+                                        ParticleTypes.HAPPY_VILLAGER,
+                                        exactPos.x, exactPos.y + 0.3, exactPos.z,
+                                        10, 0.2, 0.2, 0.2, 0.1
+                                );
+
+                                sLevel.playSound(null, player.blockPosition(),
+                                        SoundEvents.CHERRY_LEAVES_BREAK, SoundSource.BLOCKS,
+                                        1.0F, 1.0F);
+                            } else {
+                                sLevel.playSound(null, player.blockPosition(),
+                                        SoundEvents.CHERRY_LEAVES_BREAK, SoundSource.BLOCKS,
+                                        0.4F, 1.0F);
+                            }
+
+                        }
+
+                        return InteractionResult.SUCCESS;
+                    }
+                }
+            }
+        }
+
+        if (player != null){
+            if (blockstate.is(Blocks.MOSSY_COBBLESTONE)) {
+                if (!level.isClientSide()) {
+                    itemstack.hurtAndBreak(3, player, (p) -> {
+                        p.broadcastBreakEvent(pContext.getHand());
+                    });
+                    ItemStack itemstack1 = Items.MOSS_BLOCK.asItem().getDefaultInstance();
+                    if (level.getRandom().nextFloat() < 0.05F) {
+                        itemstack1 = Items.BROWN_DYE.asItem().getDefaultInstance();
+                        itemstack1.setHoverName(Component.empty()
+                                .append("Fox dung")
+                                .append(Component.literal(" (Really stinky)").withStyle(ChatFormatting.GRAY)));
+                    }
+                    ItemEntity itemEntity = new ItemEntity(level, blockpos.getX(), blockpos.getY(), blockpos.getZ(), itemstack1);
+                    itemEntity.setItem(itemstack1.copyWithCount(1));
+
+                    Vec3 spawnPos = Vec3.atCenterOf(blockpos);
+
+                    Vec3 direction = player.position().subtract(spawnPos)
+                            .normalize().scale(0.35);
+
+                    itemEntity.setDeltaMovement(direction);
+                    level.addFreshEntity(itemEntity);
+
+
+                    level.setBlock(blockpos, Blocks.COBBLESTONE.defaultBlockState(), 11);
+                    level.gameEvent(GameEvent.BLOCK_CHANGE, blockpos, GameEvent.Context.of(player, blockstate));
+
+                    if (level instanceof ServerLevel sLevel) {
+                        Vec3 position = blockpos.getCenter();
+                        sLevel.playSound(null, blockpos,  ModSounds.SCRAPING_WOOD.get(),
+                                SoundSource.BLOCKS, 0.5F, 1F);
+                        sLevel.sendParticles(
+                                WCEParticles.HERBS_FALL.get(),
+                                position.x, position.y - 0.1, position.z,
+                                40, 0.1, 0.0, 0.1, 0.005);
+                    }
+                }
+                return InteractionResult.sidedSuccess(level.isClientSide());
+            } else if (blockstate.is(Blocks.MOSSY_STONE_BRICKS)) {
+                if (!level.isClientSide()) {
+
+                    itemstack.hurtAndBreak(3, player, (p) -> {
+                        p.broadcastBreakEvent(pContext.getHand());
+                    });
+
+                    ItemStack itemstack1 = Items.MOSS_BLOCK.asItem().getDefaultInstance();
+                    if (level.getRandom().nextFloat() < 0.05F) {
+                        itemstack1 = Items.BROWN_DYE.asItem().getDefaultInstance();
+                        itemstack1.setHoverName(Component.empty()
+                                .append("Fox dung")
+                                .append(Component.literal(" (Really stinky)").withStyle(ChatFormatting.GRAY)));
+                    }
+                    ItemEntity itemEntity = new ItemEntity(level, blockpos.getX(), blockpos.getY(), blockpos.getZ(), itemstack1);
+                    itemEntity.setItem(itemstack1.copyWithCount(1));
+
+                    Vec3 spawnPos = Vec3.atCenterOf(blockpos);
+
+                    Vec3 direction = player.position().subtract(spawnPos)
+                            .normalize().scale(0.35);
+
+                    itemEntity.setDeltaMovement(direction);
+                    level.addFreshEntity(itemEntity);
+
+
+                    level.setBlock(blockpos, Blocks.STONE_BRICKS.defaultBlockState(), 11);
+                    level.gameEvent(GameEvent.BLOCK_CHANGE, blockpos, GameEvent.Context.of(player, blockstate));
+
+                    if (level instanceof ServerLevel sLevel) {
+                        Vec3 position = blockpos.getCenter();
+                        sLevel.playSound(null, blockpos,  ModSounds.SCRAPING_WOOD.get(),
+                                SoundSource.BLOCKS, 0.5F, 1F);
+                        sLevel.sendParticles(
+                                WCEParticles.HERBS_FALL.get(),
+                                position.x, position.y - 0.1, position.z,
+                                10, 0.1, 0.0, 0.1, 0.005);
+                    }
+                }
+                return InteractionResult.sidedSuccess(level.isClientSide());
+            }
+        }
+
+
         if (optional.isPresent()) {
-            level.playSound(player, blockpos, SoundEvents.CROSSBOW_QUICK_CHARGE_3, SoundSource.BLOCKS, 0.7F, 1.2F);
-            level.playSound(player, blockpos, ModSounds.SCRAPING_WOOD.get(), SoundSource.BLOCKS, 0.5F, 1F);
+            level.playSound(null, blockpos, SoundEvents.CROSSBOW_QUICK_CHARGE_3, SoundSource.BLOCKS, 0.7F, 1.2F);
+            level.playSound(null, blockpos, ModSounds.SCRAPING_WOOD.get(), SoundSource.BLOCKS, 0.5F, 1F);
             optional3 = optional;
         }
 
         if (optional3.isPresent()) {
             if (player instanceof ServerPlayer) {
                 CriteriaTriggers.ITEM_USED_ON_BLOCK.trigger((ServerPlayer) player, blockpos, itemstack);
-                level.playSound(player, blockpos, SoundEvents.CHERRY_WOOD_FALL, SoundSource.BLOCKS, 0.7F, 1.0F);
-
+                level.playSound(null, blockpos, SoundEvents.CHERRY_WOOD_FALL, SoundSource.BLOCKS, 0.7F, 1.0F);
             }
 
             if (player != null) {
                 itemstack.hurtAndBreak(-3, player, (p) -> {
-
                     p.broadcastBreakEvent(pContext.getHand());
                 });
 
-                if (!level.isClientSide() && level.getRandom().nextFloat() < 0.006F) {
+                if (!level.isClientSide() && level.getRandom().nextFloat() < 0.01F) {
                     ItemStack itemstack1 = Items.MOSS_BLOCK.asItem().getDefaultInstance();
                     if (level.getRandom().nextFloat() < 0.05F) {
                         itemstack1 = Items.BROWN_DYE.asItem().getDefaultInstance();
@@ -229,6 +414,12 @@ public class ClawsTooltip extends ShearsItem {
     }
 
     public void damageTool(ItemStack stack, int amount, LivingEntity attacker) {
+        int unbreaking = stack.getEnchantmentLevel(Enchantments.UNBREAKING);
+        if (unbreaking > 0) {
+            if (attacker.level().random.nextInt(unbreaking) != 0) {
+                amount = 0;
+            }
+        }
         if (stack.hurt(amount, attacker.level().random, attacker instanceof ServerPlayer ? (ServerPlayer) attacker : null)) {
             stack.setDamageValue(stack.getMaxDamage());
         }
@@ -445,6 +636,25 @@ public class ClawsTooltip extends ShearsItem {
         }
 
         return super.interactLivingEntity(stack, playerIn, entity, hand);
+    }
+
+    @Override
+    public boolean isEnchantable(ItemStack pStack) {
+        return true;
+    }
+
+    @Override
+    public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
+        return (enchantment == Enchantments.SHARPNESS)
+                || (enchantment == Enchantments.FIRE_ASPECT)
+                || (enchantment == Enchantments.UNBREAKING)
+                || (enchantment == Enchantments.FISHING_SPEED)
+                ;
+    }
+
+    @Override
+    public int getEnchantmentValue(ItemStack stack) {
+        return 15;
     }
 }
 

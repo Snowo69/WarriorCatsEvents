@@ -28,11 +28,17 @@ public class WCEServerConfig {
         public final ForgeConfigSpec.BooleanValue TELEPORT_WHEN_JOIN;
         public static ForgeConfigSpec.BooleanValue CAN_EAGLES_BE_TAMED;
 
+        public static ForgeConfigSpec.BooleanValue ENFORCE_TERRITORIES;
+        public static ForgeConfigSpec.BooleanValue PROTECT_PLACE_AND_BREAK_BLOCKS;
+        public static ForgeConfigSpec.BooleanValue PROTECT_CONTAINERS;
+
         public final ForgeConfigSpec.DoubleValue SKILL_SPEED_MULTIPLIER;
         public final ForgeConfigSpec.DoubleValue SKILL_HP_MULTIPLIER;
         public final ForgeConfigSpec.DoubleValue SKILL_DMG_MULTIPLIER;
         public final ForgeConfigSpec.DoubleValue SKILL_JUMP_MULTIPLIER;
         public final ForgeConfigSpec.DoubleValue SKILL_ARMOR_MULTIPLIER;
+
+        public final ForgeConfigSpec.IntValue MAX_TERRITORY_TIME;
 
 
 
@@ -86,6 +92,29 @@ public class WCEServerConfig {
             CAN_EAGLES_BE_TAMED = builder
                     .comment("Whether eagles can be tamed")
                     .define("canEaglesBeTamed", true);
+
+            builder.push("wce_territories");
+
+            MAX_TERRITORY_TIME = builder
+                    .comment("The time in minutes it takes for a territory marker to fade.")
+                    .defineInRange("fadingTime", 240, 10, Integer.MAX_VALUE);
+
+            ENFORCE_TERRITORIES = builder
+                    .comment("Whether territories should be enforced.")
+                    .comment("If true, rules configured below will be enforced.")
+                    .comment("If false, all rules will be ignored, enforcement wont be set.")
+                    .define("enforceTerritories", true);
+
+            PROTECT_PLACE_AND_BREAK_BLOCKS = builder
+                    .comment("Whether blocks are protected by clan territory.")
+                    .define("placeBreakBlocks", true);
+
+            PROTECT_CONTAINERS = builder
+                    .comment("Whether containers are protected by clan territory.")
+                    .define("manageContainers", true);
+
+
+            builder.pop();
 
             builder.push("wce_skills");
 

@@ -185,24 +185,24 @@ public class WCEChangelogScreen extends Screen {
     }
 
     private void defineChangelogLines() {
-        line1 = "- Added Lavender and Lavender petals. You can now clean nests using Lavender petals.";
-        line2 = "- Added morphs storage. You can now save, load, and even share in chat the morphs you make. This menu is accessible through the morph create menu. ";
-        line3 = "- Added the new Golden Eagle entity. The Golden Eagle is agressive most of the time. If you ever find a friendly eagle, you might even be able to tame it! Tame Eagles can be called through the Ancient Stick. Model provided by bem te vi, feathers by Lightley.";
-        line4 = "- Added new type of recipes. This update introduces a type of recipe using the Crafting Rock. Vanilla recipes such as for Freshkill and herbs, poultice, and traveling herb are now obtained through the new crafting system. The vanilla recipes will be removed in future updates to adapt to this new system.";
-        line5 = "- Added cat collars! You can create your own collar and add spikes, a bell, and even make it glowy! Put a collar and a bell in a crafting table to add a bell to it. Put an iron ingot to add spikes, and glowstone, glowshroom, or glowberries to make it glow.";
-        line6 = "- Added Footprints! Every entity will now leave footprints which will only be visible while having the Sharp Nose effect. You can get this effect with the integrated shape ability woodwalkers provides.";
-        line7 = "- Improved AI for Wild Cats and added new behaviours. Also they will now periocally take naps and chill around hang out zones defined by Lavender Petals.";
-        line8 = "- Fixed an issue with Clans that kicked players when changing dimensions.";
-        line9 = "- Fixed and improved Sprint Leap.";
-        line10 = "- Befriending cats should now be easier";
-        line11 = "- Increased health for Wild Cats";
-        line12 = "- Added Sharp Nose effect and Eagle Escapist effect";
-        line13 = "- Added new Wiki for WCE";
-        line14 = "------ For full changelog, visit the website. -------";
-        line15 = "";
-        line16 = "";
-        line17 = "";
-        line18 = "";
+        line1 = "- Added compatibility with \"Curios API\". You can now equip many accessories using Curios.";
+        line2 = "- Added territories! You can now claim territory for your clan at the cost of XP. Territory must be taken care of and protected. You can see the claimed territory around you through the clan list menu.";
+        line3 = "- Added deputies! Wild Cats can now have the role of deputy, you can change it using Shift + Right-click with whiskers.";
+        line4 = "- Reworked Info setup screen. Removed clan name field.";
+        line5 = "- Added Silver gene! Cats can now have the Silver gene and it is also available for genetics and chimera genetics in the morph create menu. Made by Whimsy aka Mswolfy81.";
+        line6 = "- Added more noise options.";
+        line7 = "- Reworked create morph screen. It should now correctly fit despite how square your screen is.";
+        line8 = "- Added patrols! When you interact with whiskers with a deputy, you will have the option to send patrols. Select some cats, a piece of territory, and send them to either gather food, or remark territory. Beware, if your territory is not appropriate enough, your warriors might get stuck, lost or die.";
+        line9 = "- You can now use the vanilla bells to make collars with bells.";
+        line10 = "- Fixed chat emojis (now for real)";
+        line11 = "- Added makeshift nests! You can now use your claws on the ground while being under a tree to make a makeshift nest made of leaves.";
+        line12 = "- Increased health for all accessories and armor pieces.";
+        line13 = "- Made some accessories and items enchantable.";
+        line14 = "- Fixed eagles despawning";
+        line15 = "- Reduced eagles spawn rate";
+        line16 = "- Elytras will now show on cats (compatible with capes)";
+        line17 = "- Eagles wont drown in water anymore";
+        line18 = "- Other minor fixes and adjustments.";
     }
 
 //    private void defineChangelogLines() {

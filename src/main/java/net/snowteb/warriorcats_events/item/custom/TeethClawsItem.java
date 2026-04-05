@@ -25,7 +25,7 @@ public class TeethClawsItem extends ArmorItem {
             UUID.fromString("a1b2c3d4-abcc-cdcd-edde-1a1b1c123456");
 
     public TeethClawsItem() {
-        super(ArmorMaterials.IRON, Type.BOOTS, new Properties().stacksTo(1).durability(380));
+        super(ArmorMaterials.IRON, Type.BOOTS, new Properties().stacksTo(1).durability(500));
     }
 
 

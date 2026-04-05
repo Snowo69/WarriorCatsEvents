@@ -11,6 +11,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.Level;
 
 import java.util.UUID;
@@ -21,7 +22,7 @@ public class FlowerCrownItem extends ArmorItem {
             UUID.fromString("a1b2c3d4-aaaa-cccc-eeee-1a1b1c123456");
 
     public FlowerCrownItem() {
-        super(ArmorMaterials.IRON, Type.HELMET, new Item.Properties().stacksTo(1).durability(150));
+        super(ArmorMaterials.IRON, Type.HELMET, new Item.Properties().stacksTo(1).durability(300));
     }
 
 
@@ -73,9 +74,17 @@ public class FlowerCrownItem extends ArmorItem {
 
     @Override
     public boolean isEnchantable(ItemStack stack) {
-        return false;
+        return true;
     }
 
+    @Override
+    public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
+        return super.canApplyAtEnchantingTable(stack, enchantment);
+    }
 
+    @Override
+    public int getEnchantmentValue(ItemStack stack) {
+        return 15;
+    }
 
 }

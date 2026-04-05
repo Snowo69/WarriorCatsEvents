@@ -79,7 +79,7 @@ public class SavePlayerGeneticsPacket {
                         packet.variants.rufousingVariant, packet.variants.blueRufousingVariant,
                         packet.variants.orangeVar, packet.variants.whiteVar, packet.variants.tabbyVar,
                         packet.variants.albinoVar, packet.variants.leftEyeVar, packet.variants.rightEyeVar,
-                        packet.variants.noise, packet.variants.size);
+                        packet.variants.noise, packet.variants.size, packet.variants.silverVar);
                 cap.setOnGeneticalSkin(packet.onGeneticalSkin);
                 cap.setVariantData(packet.defaultVariant);
                 cap.setPlayerChimeraGenetics(packet.chimeraGenetics);
@@ -180,13 +180,13 @@ public class SavePlayerGeneticsPacket {
                 WCGenetics.GeneticalVariants variants = cap.getPlayerGeneticalVariants();
                 cat.setGeneticalVariants(variants.eyeColorLeft, variants.eyeColorRight, variants.rufousingVariant
                         ,variants.blueRufousingVariant, variants.orangeVar, variants.whiteVar, variants.tabbyVar
-                        ,variants.albinoVar, variants.leftEyeVar, variants.rightEyeVar, variants.noise, variants.size);
+                        ,variants.albinoVar, variants.leftEyeVar, variants.rightEyeVar, variants.noise, variants.size, variants.silverVar);
                 cat.setChimeraGenetics(cap.getPlayerChimeraGenetics());
 
                 WCGenetics.GeneticalChimeraVariants variantsChimera = cap.getPlayerChimeraVariants();
                 cat.setGeneticalVariantsChimera(variantsChimera.chimeraVariant, variantsChimera.rufousingVariant,
                         variantsChimera.blueRufousingVariant, variantsChimera.orangeVar, variantsChimera.whiteVar, variantsChimera.tabbyVar
-                , variantsChimera.albinoVar, variantsChimera.noise);
+                , variantsChimera.albinoVar, variantsChimera.noise, variantsChimera.silverVar);
 
                 cat.setOnGeneticalSkin(true);
                 cat.setGender(1);

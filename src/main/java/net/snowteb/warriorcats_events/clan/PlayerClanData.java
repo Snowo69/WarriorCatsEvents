@@ -55,6 +55,7 @@ public class PlayerClanData {
     private String agouti = "a-a";
     private String tabbyStripes = "mc-mc";
     private String eyesAnomaly = "H-h";
+    private String silver = "i-i";
     private int rufousing = 0;
     private int blueRufousing = 0;
     private int noise = 0;
@@ -70,6 +71,7 @@ public class PlayerClanData {
     private int albinoVar = 0;
     private int leftEyeVar = 0;
     private int rightEyeVar = 0;
+    private int silverVar = 0;
 
     private WCGenetics mateGenetics = new WCGenetics();
 
@@ -102,6 +104,7 @@ public class PlayerClanData {
         if (!genetics.agouti.isEmpty()) this.agouti = genetics.agouti;
         if (!genetics.tabbyStripes.isEmpty()) this.tabbyStripes = genetics.tabbyStripes;
         if (!genetics.eyesAnomaly.isEmpty()) this.eyesAnomaly = genetics.eyesAnomaly;
+        if (!genetics.silver.isEmpty()) this.silver = genetics.silver;
 
         this.rufousing = genetics.rufousing;
         this.blueRufousing = genetics.blueRufousing;
@@ -127,7 +130,7 @@ public class PlayerClanData {
     public void setPlayerGeneticalVariants(String eyesVariantLeft, String eyesVariantRight,
                                            int rufVar, int blueRufVar,
                                            int orangeVar, int whiteVar, int tabbyVar,
-                                           int albinoVar, int leftEyeVar, int rightEyeVar, int noise, float size) {
+                                           int albinoVar, int leftEyeVar, int rightEyeVar, int noise, float size, int silverVar) {
 
         if (!eyesVariantLeft.isEmpty()) this.eyeColorLeft = eyesVariantLeft;
         if (!eyesVariantRight.isEmpty()) this.eyeColorRight = eyesVariantRight;
@@ -141,6 +144,7 @@ public class PlayerClanData {
         this.rightEyeVar = rightEyeVar;
         this.noise = noise;
         this.size = size;
+        this.silverVar = silverVar;
     }
 
     public void setPlayerGeneticalVariants(WCGenetics.GeneticalVariants genetics) {
@@ -157,17 +161,18 @@ public class PlayerClanData {
         this.rightEyeVar = genetics.rightEyeVar;
         this.noise = genetics.noise;
         this.size = genetics.size;
+        this.silverVar = genetics.silverVar;
     }
 
     public WCGenetics getPlayerGenetics() {
         return new WCGenetics(bobtail, chestFur, bellyFur,
                 legsFur, headFur, cheekFur, tailFur, backFur, base, orangeBase, whiteRatio, albino,
-                dilute, agouti, tabbyStripes, eyesAnomaly, rufousing, blueRufousing, noise, chimeraPlayerVariants.chimeraGene);
+                dilute, agouti, tabbyStripes, eyesAnomaly, rufousing, blueRufousing, noise, chimeraPlayerVariants.chimeraGene, silver);
     }
 
     public WCGenetics.GeneticalVariants getPlayerGeneticalVariants() {
         return new WCGenetics.GeneticalVariants(eyeColorLeft, eyeColorRight, rufousingVariant,
-                blueRufousingVariant, orangeVar, whiteVar, tabbyVar, albinoVar, leftEyeVar, rightEyeVar, noise, size);
+                blueRufousingVariant, orangeVar, whiteVar, tabbyVar, albinoVar, leftEyeVar, rightEyeVar, noise, size, silverVar);
     }
 
     public boolean isOnGeneticalSkin() {
@@ -419,18 +424,6 @@ public class PlayerClanData {
         }
     }
 
-//    public void tick() {
-//        thirstDamageTimer++;
-//    }
-//
-//    public int getThirstDamageTimer() {
-//        return thirstDamageTimer;
-//    }
-//
-//    public void resetThirstDamageTimer() {
-//        thirstDamageTimer = 0;
-//    }
-
 
     public void saveNBT(CompoundTag nbt) {
         nbt.putString("morphName", this.morphName);
@@ -475,6 +468,7 @@ public class PlayerClanData {
         geneticsTag.putString("EyeColorLeft", eyeColorLeft);
         geneticsTag.putString("EyeColorRight", eyeColorRight);
         geneticsTag.putString("EyesAnomaly", eyesAnomaly);
+        geneticsTag.putString("Silver", silver);
 
         geneticsTag.putInt("Rufousing", rufousingVariant);
         geneticsTag.putInt("BlueRufousing", blueRufousingVariant);
@@ -485,6 +479,7 @@ public class PlayerClanData {
         geneticsTag.putInt("EyeColorVariantLeft", leftEyeVar);
         geneticsTag.putInt("EyeColorVariantRight", rightEyeVar);
         geneticsTag.putInt("Noise", noise);
+        geneticsTag.putInt("SilverVariant", silverVar);
         geneticsTag.putFloat("Size", size);
 
         geneticsTag.putString("BaseChimera", chimeraPlayerGenetics.base);
@@ -494,6 +489,7 @@ public class PlayerClanData {
         geneticsTag.putString("DiluteChimera", chimeraPlayerGenetics.dilute);
         geneticsTag.putString("AgoutiChimera", chimeraPlayerGenetics.agouti);
         geneticsTag.putString("TabbyStripesChimera", chimeraPlayerGenetics.tabbyStripes);
+        geneticsTag.putString("SilverChimera", chimeraPlayerGenetics.silver);
 
         geneticsTag.putInt("RufousingChimera", chimeraPlayerGenetics.rufousing);
         geneticsTag.putInt("BlueRufousingChimera", chimeraPlayerGenetics.blueRufousing);
@@ -502,6 +498,7 @@ public class PlayerClanData {
         geneticsTag.putInt("AlbinoVariantChimera", chimeraPlayerVariants.albinoVar);
         geneticsTag.putInt("TabbyStripesVariantChimera", chimeraPlayerVariants.tabbyVar);
         geneticsTag.putInt("NoiseChimera", chimeraPlayerVariants.noise);
+        geneticsTag.putInt("SilverVariantChimera", chimeraPlayerVariants.silverVar);
         geneticsTag.putString("ChimeraGene", chimeraPlayerGenetics.chimeraGene);
 
         nbt.put("Genetics", geneticsTag);
@@ -583,7 +580,8 @@ public class PlayerClanData {
                     geneticsTag.getInt("Rufousing"),
                     geneticsTag.getInt("BlueRufousing"),
                     geneticsTag.getInt("Noise"),
-                    geneticsTag.getString("ChimeraGene")
+                    geneticsTag.getString("ChimeraGene"),
+                    geneticsTag.getString("Silver")
             );
 
             this.setPlayerGenetics(genetics);
@@ -601,6 +599,7 @@ public class PlayerClanData {
             chimeraGens.agouti = geneticsTag.getString("AgoutiChimera");
             chimeraGens.tabbyStripes = geneticsTag.getString("TabbyStripesChimera");
             chimeraGens.chimeraGene = geneticsTag.getString("ChimeraGene");
+            chimeraGens.silver = geneticsTag.getString("SilverChimera");
 
             this.setPlayerChimeraGenetics(chimeraGens);
 
@@ -613,6 +612,7 @@ public class PlayerClanData {
             chimeraVariants.albinoVar = geneticsTag.getInt("AlbinoVariantChimera");
             chimeraVariants.tabbyVar = geneticsTag.getInt("TabbyStripesVariantChimera");
             chimeraVariants.noise = geneticsTag.getInt("NoiseChimera");
+            chimeraVariants.silverVar = geneticsTag.getInt("SilverVariantChimera");
 
             this.setPlayerChimeraVariants(chimeraVariants);
 
@@ -627,6 +627,7 @@ public class PlayerClanData {
             leftEyeVar = geneticsTag.getInt("EyeColorVariantLeft");
             rightEyeVar = geneticsTag.getInt("EyeColorVariantRight");
             size = geneticsTag.getFloat("Size");
+            silverVar = geneticsTag.getInt("SilverVariant");
         }
 
         if (nbt.contains("MateGenetics")) {
@@ -654,7 +655,8 @@ public class PlayerClanData {
                     mateTag.getInt("Rufousing"),
                     mateTag.getInt("BlueRufousing"),
                     mateTag.getInt("Noise"),
-                    mateTag.getString("ChimeraGene")
+                    mateTag.getString("ChimeraGene"),
+                    mateTag.getString("Silver")
             );
         }
 
@@ -683,6 +685,7 @@ public class PlayerClanData {
         tag.putInt("BlueRufousing", genetics.blueRufousing);
         tag.putInt("Noise", genetics.noise);
         tag.putString("ChimeraGene", genetics.chimeraGene);
+        tag.putString("Silver", genetics.silver);
 
     }
 }

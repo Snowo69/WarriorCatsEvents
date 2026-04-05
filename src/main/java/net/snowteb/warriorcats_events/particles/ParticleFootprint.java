@@ -3,13 +3,10 @@ package net.snowteb.warriorcats_events.particles;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Font;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.*;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.levelgen.Heightmap;
@@ -21,8 +18,6 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.snowteb.warriorcats_events.WCEClient;
 import net.snowteb.warriorcats_events.effect.ModEffects;
-import net.snowteb.warriorcats_events.skills.StealthClientState;
-import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
@@ -111,8 +106,6 @@ public class ParticleFootprint extends TextureSheetParticle {
         float cos = Mth.cos(halfAngle);
 
         Quaternionf rotation = new Quaternionf(0.0f, sin, 0.0f, cos);
-
-
 
         float size = this.getQuadSize(pPartialTicks);
 

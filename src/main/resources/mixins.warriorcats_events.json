@@ -5,6 +5,7 @@
   "refmap": "mixins.warriorcats_events.refmap.json",
   "minVersion": "0.8",
   "client": [
+    "ChatScreenMixin",
     "ClientChatPacketMixin",
     "GameRendererHitMixin",
     "ScreenClickedComponentMixin"
@@ -16,7 +17,7 @@
     "LivingEntityMixin",
     "ParrotDeathLootMobMixin",
     "PlayerEntityMixin",
-    "ServerChatListenerMixin",
-    "ServerGamePacketListenerMixin"
+    "ServerGamePacketListenerMixin",
+    "ServerLevelMixin"
   ]
 }

@@ -1,9 +1,14 @@
 package net.snowteb.warriorcats_events.screen.clandata;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractSelectionList;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.network.chat.FormattedText;
+import net.minecraft.util.FormattedCharSequence;
+
+import java.util.List;
 
 public class VariantScrollList extends AbstractSelectionList<VariantScrollList.VariantEntry> {
     private boolean visible = true;
@@ -80,13 +85,22 @@ public class VariantScrollList extends AbstractSelectionList<VariantScrollList.V
             boolean selected = VariantScrollList.this.getSelected() == this;
             int color = selected ? 0xFFf0ed43 : (pHovering ? 0xFFFFAA00 : 0xFFFFFFFF);
 
-            pGuiGraphics.drawString(
-                    Minecraft.getInstance().font,
-                    name,
-                    pLeft + 5,
-                    pTop + 5,
-                    color
-            );
+            pGuiGraphics.pose().pushPose();
+            pGuiGraphics.pose().translate(pLeft + 3, pTop + 1, 0);
+            float scale = 0.83f;
+            pGuiGraphics.pose().scale(scale, scale, scale);
+
+            Font font = Minecraft.getInstance().font;
+
+            int y = 0;
+            List<FormattedCharSequence> wrapped = font.split(FormattedText.of(name), pWidth + 10);
+            for (FormattedCharSequence subLine : wrapped) {
+
+                pGuiGraphics.drawString(font,subLine, 0, y, color);
+                y += font.lineHeight;
+            }
+
+            pGuiGraphics.pose().popPose();
         }
     }
 

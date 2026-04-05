@@ -9,6 +9,9 @@
   "block.warriorcats_events.hay_bed": "Hay Nest",
   "block.warriorcats_events.hay_bed.tooltip": "A comfortable hay nest made from wheat. The wheat might itch a little.",
 
+  "block.warriorcats_events.kelp_bed": "Kelp Nest",
+  "block.warriorcats_events.kelp_bed.tooltip": "A nest made of kelp and seagrass. Still smells like fish.",
+
   "item.warriorcats_events.dock_leaves": "Dock Leaves",
   "item.warriorcats_events.dock_leaves.tooltip": "Good for making poultices and wraping herbs",
 
@@ -188,5 +191,17 @@
   "item.warriorcats_events.cardinal_body_feathers": "Cardinal Body Feathers",
 
   "block.warriorcats_events.lavender": "Lavender",
-  "block.warriorcats_events.lavender_petals": "Lavender Petals"
-}
+  "block.warriorcats_events.lavender_petals": "Lavender Petals",
+
+  "block.warriorcats_events.tree_stump": "Tree Stump",
+
+
+  "curios.identifier.tail": "Tail",
+  "curios.identifier.body": "Body",
+  "curios.identifier.paws": "Paws",
+  "curios.identifier.head": "Head",
+
+  "block.warriorcats_events.makeshift_bed": "Makeshift Nest",
+  "item.warriorcats_events.makeshift_bed": "Makeshift Nest"
+
+  }

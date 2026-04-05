@@ -50,6 +50,21 @@ public class ModItems {
                         }
                     });
 
+    public static final RegistryObject<Item> KELP_BED_ITEM =
+            ITEMS.register("kelp_bed",
+                    () -> new BlockItem(ModBlocks.KELP_BED.get(), new Item.Properties()) {
+                        @Override
+                        public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
+                            tooltip.add(Component.translatable("block.warriorcats_events.kelp_bed.tooltip").withStyle(ChatFormatting.GRAY));
+                        }
+                    });
+
+    public static final RegistryObject<Item> MAKESHIFT_BED_ITEM =
+            ITEMS.register("makeshift_bed",
+                    () -> new BlockItem(ModBlocks.MAKESHIFT_BED.get(), new Item.Properties()));
+
+
+
     public static final RegistryObject<Item> STONE_CRAFTING_TABLE =
             ITEMS.register("stone_crafting_table",
                     () -> new BlockItem(ModBlocks.STONE_CRAFTING_TABLE.get(), new Item.Properties()) {

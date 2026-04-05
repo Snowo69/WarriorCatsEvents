@@ -14,6 +14,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.network.NetworkEvent;
 import net.snowteb.warriorcats_events.entity.custom.WCGenetics;
 import net.snowteb.warriorcats_events.util.GeneticsForVariant;
@@ -88,7 +89,8 @@ public class CtSCreateAndSpawnKitPacket {
                     }
 
 
-                    kit.setPos(clickedPos.getX(), clickedPos.getY(), clickedPos.getZ());
+                    Vec3 pos = clickedPos.getCenter();
+                    kit.setPos(pos.x, pos.y, pos.z);
 
                     kit.finalizeSpawn(server, server.getCurrentDifficultyAt(clickedPos),
                             MobSpawnType.MOB_SUMMONED, null, null);
@@ -96,6 +98,9 @@ public class CtSCreateAndSpawnKitPacket {
                     int minutes = WCEServerConfig.SERVER.KIT_GROWTH_MINUTES.get();
                     int growingTicks = minutes * 20 * 60;
                     kit.setAge(-growingTicks);
+
+                    kit.setOnGeneticalSkin(true);
+                    kit.inheritGeneticsFromParents(playerGens, mateGens);
 
                     server.addFreshEntity(kit);
 
@@ -106,9 +111,6 @@ public class CtSCreateAndSpawnKitPacket {
                     kit.kitBorn = true;
                     String finalName = "";
                     kit.setVariant(variant);
-
-                    kit.setOnGeneticalSkin(true);
-                    kit.inheritGeneticsFromParents(playerGens, mateGens);
 
                     kit.mode = WCatEntity.CatMode.FOLLOW;
 
@@ -187,7 +189,7 @@ public class CtSCreateAndSpawnKitPacket {
                     kit.setForbiddingFutureGensFromMatingPlayer(true);
                     kit.setFriendshipLevel(sPlayer.getUUID(), 50);
 
-                    if (player.getItemInHand(InteractionHand.MAIN_HAND).is(ModItems.KIT_ITEM.get())) player.getItemInHand(InteractionHand.MAIN_HAND).shrink(1);
+                    if (player.getItemInHand(InteractionHand.MAIN_HAND).is(ModItems.KIT_ITEM.get()) && !player.getAbilities().instabuild) player.getItemInHand(InteractionHand.MAIN_HAND).shrink(1);
                     server.sendParticles(ParticleTypes.HAPPY_VILLAGER, clickedPos.getX(), clickedPos.getY() + 0.5, clickedPos.getZ(), 15,0.3f,0.3f, 0.3f,0.2f);
 
                     Component messageLog = Component.literal(finalName).withStyle(ChatFormatting.GREEN)

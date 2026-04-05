@@ -27,6 +27,7 @@ public class WCEConfigScreen extends Screen {
     private GradientSwitchButton ambientMusicButton;
     private GradientSwitchButton chatEntityBubblesButton;
     private GradientSwitchButton ownChatBubblesButton;
+    private GradientSwitchButton displayTerritoryButton;
 
     private GradientToggleButton doneButton;
     private GradientToggleButton changelogButton;
@@ -36,6 +37,7 @@ public class WCEConfigScreen extends Screen {
     private boolean ambientMusicTemp;
     private boolean chatBubblesTemp;
     private boolean ownChatBubblesTemp;
+    private boolean displayTerritoryTemp;
 
     public WCEConfigScreen(Screen parent) {
         super(Component.literal("Warrior Cats Events"));
@@ -52,6 +54,7 @@ public class WCEConfigScreen extends Screen {
         ambientMusicTemp = WCEClientConfig.CLIENT.AMBIENT_MUSIC.get();
         chatBubblesTemp = WCEClientConfig.CLIENT.MORPH_CHAT_BUBBLES.get();
         ownChatBubblesTemp = WCEClientConfig.CLIENT.OWN_CHAT_BUBBLES.get();
+        displayTerritoryTemp = WCEClientConfig.CLIENT.DISPLAY_TERRITORY.get();
 
         centerY -= 10;
 
@@ -95,6 +98,14 @@ public class WCEConfigScreen extends Screen {
                 }
         );
 
+        displayTerritoryButton = new GradientSwitchButton(
+                centerX + 20, centerY + 40, 100, 20,
+                "Display Territory", displayTerritoryTemp,
+                btn -> {
+                    displayTerritoryTemp = !displayTerritoryTemp;
+                }
+        );
+
         doneButton = new GradientToggleButton(
                 centerX - 20, centerY + 100, 40, 17,
                 Component.literal("Done"),
@@ -118,6 +129,7 @@ public class WCEConfigScreen extends Screen {
         this.addRenderableWidget(ambientMusicButton);
         this.addRenderableWidget(chatEntityBubblesButton);
         this.addRenderableWidget(ownChatBubblesButton);
+        this.addRenderableWidget(displayTerritoryButton);
 
         this.addRenderableWidget(changelogButton);
 
@@ -161,6 +173,7 @@ public class WCEConfigScreen extends Screen {
         WCEClientConfig.CLIENT.AMBIENT_MUSIC.set(ambientMusicTemp);
         WCEClientConfig.CLIENT.MORPH_CHAT_BUBBLES.set(chatBubblesTemp);
         WCEClientConfig.CLIENT.OWN_CHAT_BUBBLES.set(ownChatBubblesTemp);
+        WCEClientConfig.CLIENT.DISPLAY_TERRITORY.set(displayTerritoryTemp);
 
         WCEClientConfig.SPEC.save();
         onClose();

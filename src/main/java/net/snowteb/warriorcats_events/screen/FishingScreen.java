@@ -7,7 +7,9 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.snowteb.warriorcats_events.zconfig.WCEClientConfig;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.network.ModPackets;
@@ -66,7 +68,7 @@ public class FishingScreen extends Screen {
     protected void init() {
         this.imageWidth = 176;
         this.imageHeight = 48;
-        this.randomTiming = 20 * 12 + RandomSource.create().nextInt(8) * 20;
+        this.randomTiming = (20 * 12 + RandomSource.create().nextInt(8) * 20) - Minecraft.getInstance().player.getItemInHand(InteractionHand.MAIN_HAND).getEnchantmentLevel(Enchantments.FISHING_SPEED)*40;
         this.randomYOffset = -(RandomSource.create().nextInt(16) * 2);
         this.randomFish = RandomSource.create().nextInt(8) + 1;
 

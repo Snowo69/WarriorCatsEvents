@@ -43,7 +43,7 @@ public class CollarRecipe extends CustomRecipe {
                 if (collar.hasBell(stack)) alreadyHasBell = true;
                 if (collar.hasGlow(stack)) alreadyHasGlow = true;
                 hasCollar = true;
-            } else if (stack.is(ModItems.COLLAR_BELL.get()) && !alreadyHasBell) {
+            } else if ((stack.is(ModItems.COLLAR_BELL.get()) || stack.is(Items.BELL)) && !alreadyHasBell) {
                 if (hasBell) return false;
                 hasBell = true;
             } else if (stack.is(Items.IRON_INGOT) && !alreadyHasSpikes) {
@@ -85,7 +85,7 @@ public class CollarRecipe extends CustomRecipe {
                 if (collarItem.hasGlow(stack)) alreadyHasGlow = true;
             }
 
-            if (stack.is(ModItems.COLLAR_BELL.get()) && !alreadyHasBell) hasBell = true;
+            if ((stack.is(ModItems.COLLAR_BELL.get()) || stack.is(Items.BELL)) && !alreadyHasBell) hasBell = true;
             if (stack.is(Items.IRON_INGOT) && !alreadyHasSpikes) hasSpikes = true;
             if ((stack.is(ModItems.GLOW_SHROOM.get()) || stack.is(Items.GLOW_BERRIES) ||
                     stack.is(Items.GLOWSTONE_DUST) || stack.is(Items.GLOW_INK_SAC))

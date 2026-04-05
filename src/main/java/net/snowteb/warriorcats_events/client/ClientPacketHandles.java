@@ -9,6 +9,7 @@ import net.snowteb.warriorcats_events.entity.custom.EagleEntity;
 import net.snowteb.warriorcats_events.entity.custom.WCGenetics;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.screen.AncientStickScreen;
+import net.snowteb.warriorcats_events.screen.PatrolScreen;
 import net.snowteb.warriorcats_events.screen.SaveChatMorphScreen;
 import net.snowteb.warriorcats_events.screen.clandata.*;
 
@@ -105,6 +106,22 @@ public class ClientPacketHandles {
 
 
             mc.setScreen(new SaveChatMorphScreen(key ,genetics, variants, chimeraGenetics, chimeraVariants));
+        });
+
+    }
+
+    public static void openPatrolScreen(List<Integer> entityIds, UUID clanUUID, int deputyID) {
+        Minecraft.getInstance().execute(() -> {
+            Minecraft mc = Minecraft.getInstance();
+            if (mc.level == null) return;
+
+            List<WCatEntity> cats = entityIds.stream()
+                    .map(mc.level::getEntity)
+                    .filter(e -> e instanceof WCatEntity)
+                    .map(e -> (WCatEntity) e)
+                    .toList();
+
+            mc.setScreen(new PatrolScreen(cats, clanUUID,  deputyID));
         });
 
     }

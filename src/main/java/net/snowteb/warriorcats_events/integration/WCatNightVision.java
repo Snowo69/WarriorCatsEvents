@@ -64,7 +64,7 @@ public class WCatNightVision<T extends LivingEntity> extends GenericShapeAbility
             }
         }
 
-        player.addEffect(new MobEffectInstance(ModEffects.SHARP_SCENT.get(), 1000, 0, true, false));
+        player.addEffect(new MobEffectInstance(ModEffects.SHARP_SCENT.get(), 1100, 0, true, false));
 
     }
 

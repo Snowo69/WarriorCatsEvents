@@ -5,6 +5,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
+import net.snowteb.warriorcats_events.compat.Compatibilities;
 import net.snowteb.warriorcats_events.entity.custom.WCGenetics;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.item.ModItems;
@@ -151,36 +152,44 @@ public class WCModel extends GeoModel<WCatEntity> {
 
         {
             boolean hasFlowerArmor = animatable.getItemBySlot(EquipmentSlot.CHEST).is(ModItems.FLOWER_ARMOR.get());
+            if (Compatibilities.hasCuriosItem(animatable.getPlayerBoundUuid(), ModItems.FLOWER_ARMOR.get()))
+                hasFlowerArmor = true;
 
-            getBone("flower_upper_armor").ifPresent(bone -> bone.setHidden(!hasFlowerArmor));
-            getBone("layer_2").ifPresent(bone -> bone.setHidden(!hasFlowerArmor));
-            getBone("layer_3").ifPresent(bone -> bone.setHidden(!hasFlowerArmor));
-        }
 
-        {
+            boolean finalHasFlowerArmor = hasFlowerArmor;
+            getBone("flower_upper_armor").ifPresent(bone -> bone.setHidden(!finalHasFlowerArmor));
+            getBone("layer_2").ifPresent(bone -> bone.setHidden(!finalHasFlowerArmor));
+            getBone("layer_3").ifPresent(bone -> bone.setHidden(!finalHasFlowerArmor));
 
-            boolean hasTeethClaws = animatable.getItemBySlot(EquipmentSlot.FEET).is(ModItems.TEETH_CLAWS.get());
+            {
 
-            getBone("teethclaws1").ifPresent(bone -> bone.setHidden(!hasTeethClaws));
-            getBone("teethclaws2").ifPresent(bone -> bone.setHidden(!hasTeethClaws));
-            getBone("teethclaws3").ifPresent(bone -> bone.setHidden(!hasTeethClaws));
-            getBone("teethclaws4").ifPresent(bone -> bone.setHidden(!hasTeethClaws));
-        }
+                boolean hasTeethClaws = animatable.getItemBySlot(EquipmentSlot.FEET).is(ModItems.TEETH_CLAWS.get());
+                if (Compatibilities.hasCuriosItem(animatable.getPlayerBoundUuid(), ModItems.TEETH_CLAWS.get()))
+                    hasTeethClaws = true;
 
-        if (head != null) {
-            EntityModelData entityModelData = animationState.getData(DataTickets.ENTITY_MODEL_DATA);
-            if (!animatable.isAnImage()) {
-                head.setRotX(entityModelData.headPitch() * Mth.DEG_TO_RAD);
-                head.setRotY(entityModelData.netHeadYaw() * Mth.DEG_TO_RAD);
+
+                boolean finalHasTeethClaws = hasTeethClaws;
+                getBone("teethclaws1").ifPresent(bone -> bone.setHidden(!finalHasTeethClaws));
+                getBone("teethclaws2").ifPresent(bone -> bone.setHidden(!finalHasTeethClaws));
+                getBone("teethclaws3").ifPresent(bone -> bone.setHidden(!finalHasTeethClaws));
+                getBone("teethclaws4").ifPresent(bone -> bone.setHidden(!finalHasTeethClaws));
+            }
+
+            if (head != null) {
+                EntityModelData entityModelData = animationState.getData(DataTickets.ENTITY_MODEL_DATA);
+                if (!animatable.isAnImage()) {
+                    head.setRotX(entityModelData.headPitch() * Mth.DEG_TO_RAD);
+                    head.setRotY(entityModelData.netHeadYaw() * Mth.DEG_TO_RAD);
+                }
+            }
+
+            if (head != null && animatable.isAnImage()) {
+                head.setRotX(0);
+                head.setRotY(0);
+                head.setRotZ(0);
             }
         }
 
-        if (head != null && animatable.isAnImage()) {
-            head.setRotX(0);
-            head.setRotY(0);
-            head.setRotZ(0);
-        }
+
     }
-
-
 }

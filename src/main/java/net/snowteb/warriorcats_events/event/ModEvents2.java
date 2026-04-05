@@ -1,6 +1,7 @@
 package net.snowteb.warriorcats_events.event;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -11,7 +12,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.TamableAnimal;
@@ -41,7 +41,6 @@ import net.snowteb.warriorcats_events.clan.ClanData;
 import net.snowteb.warriorcats_events.clan.PlayerClanData;
 import net.snowteb.warriorcats_events.clan.PlayerClanDataProvider;
 import net.snowteb.warriorcats_events.commands.*;
-import net.snowteb.warriorcats_events.effect.ModEffects;
 import net.snowteb.warriorcats_events.entity.custom.EagleEntity;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.item.ModItems;
@@ -75,9 +74,43 @@ public class ModEvents2 {
         tasks.add(new Task(ticksDelay, action));
     }
 
+    public static int sleepTick = 0;
+
     @SubscribeEvent
     public static void onServerTick(TickEvent.ServerTickEvent event) {
         if (event.phase != TickEvent.Phase.END) return;
+
+//
+//        List<ServerPlayer> playerList = event.getServer().getPlayerList().getPlayers();
+//        if(!playerList.isEmpty()) {
+//
+//            ServerLevel sLevel = event.getServer().getLevel(ServerLevel.OVERWORLD);
+//            if (sLevel != null) {
+//                boolean allPlayersSleeping = true;
+//                for (ServerPlayer it : playerList) {
+//                    if(!it.isSleeping() && !it.isSpectator()) {
+//                        allPlayersSleeping = false;
+//                        break;
+//                    }
+//                }
+//                if(allPlayersSleeping) {
+//                    if(sleepTick < 95) {
+//                        sleepTick++;
+//                    } else {
+//                        sLevel.setDayTime(sLevel.getDayTime() / 24000 * 24000 + 24000);
+//                        sLevel.setWeatherParameters(48000, 0, false, false);
+//                        for (ServerPlayer it : playerList) {
+//                            it.stopSleeping();
+//                        }
+//                        sleepTick = 0;
+//                    }
+//                } else {
+//                    sleepTick = 0;
+//                }
+//            }
+//        }
+
+
 
         MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
         if (server != null) {
@@ -96,6 +129,17 @@ public class ModEvents2 {
                 task.action.run();
                 it.remove();
             }
+        }
+
+        ClanData data = ClanData.get(event.getServer().overworld());
+        boolean shouldSync = data.territoryTick(event.getServer().overworld());
+        if (shouldSync) {
+            data.syncTerritoriesToClients(event.getServer().overworld());
+            data.setDirty();
+        }
+
+        if (event.getServer().overworld().getGameTime() % 600 == 0) {
+            data.setDirty();
         }
 
         ServerPlayerMorphsCache.tick();
@@ -646,6 +690,11 @@ public class ModEvents2 {
     public static void onPlayerJoinWorld(EntityJoinLevelEvent event) {
         if(!event.getLevel().isClientSide()) {
             if(event.getEntity() instanceof ServerPlayer player) {
+
+                if (player.level() instanceof ServerLevel serverLevel) {
+                    ClanData data = ClanData.get(serverLevel.getServer().overworld());
+                    data.syncTerritoriesToAClient(player);
+                }
 
                 player.getCapability(PlayerSkillProvider.SKILL_DATA).ifPresent(cap -> {
                    ModPackets.sendToPlayer(new SyncSkillDataPacket(cap.getSpeedLevel(), cap.getHPLevel(),

@@ -43,6 +43,21 @@ public class GradientButton extends AbstractButton {
                           Component text,
                           PressAction onPress,
                           ResourceLocation texture,
+                          int texWidth, int texHeight, int color, float scale) {
+
+        super(x, y, width, height, text);
+        this.onPress = onPress;
+        this.texture = texture;
+        this.texWidth = texWidth;
+        this.texHeight = texHeight;
+        this.color = color;
+        this.textScale = scale;
+    }
+
+    public GradientButton(int x, int y, int width, int height,
+                          Component text,
+                          PressAction onPress,
+                          ResourceLocation texture,
                           int texWidth, int texHeight, float textScale) {
 
         super(x, y, width, height, text);

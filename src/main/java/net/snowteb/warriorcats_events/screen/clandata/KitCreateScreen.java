@@ -305,7 +305,7 @@ public class KitCreateScreen extends Screen {
 
     private void onSave() {
         String kitPrefix = kitPrefixBox.getValue().trim();
-//        VariantScrollList.VariantEntry selectedVariant = variantScrollList.getSelectedEntry();
+//        VariantScrollList.CatEntry selectedVariant = variantScrollList.getSelectedEntry();
 
 //        if (kitPrefix.isEmpty() || (selectedVariant == null && !ClientClanData.get().isOnGeneticalSkin())) {
 //            textCooldown = 100;
@@ -321,7 +321,7 @@ public class KitCreateScreen extends Screen {
         String prefix = kitPrefixBox.getValue().trim();
 
         int variant = 0;
-//        VariantScrollList.VariantEntry selected = variantScrollList.getSelectedEntry();
+//        VariantScrollList.CatEntry selected = variantScrollList.getSelectedEntry();
 
 //        if (selected != null) {
 //            variant = selected.getId();

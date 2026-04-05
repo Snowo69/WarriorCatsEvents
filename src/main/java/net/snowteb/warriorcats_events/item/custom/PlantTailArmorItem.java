@@ -13,6 +13,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterials;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.Level;
 
 import java.util.UUID;
@@ -23,7 +24,7 @@ public class PlantTailArmorItem extends ArmorItem {
             UUID.fromString("a4b3c3b1-aaaa-cbc3-edbc-1a1b1c123456");
 
     public PlantTailArmorItem() {
-        super(ArmorMaterials.IRON, Type.LEGGINGS, new Properties().stacksTo(1).durability(140));
+        super(ArmorMaterials.IRON, Type.LEGGINGS, new Properties().stacksTo(1).durability(300));
     }
 
 
@@ -75,9 +76,17 @@ public class PlantTailArmorItem extends ArmorItem {
 
     @Override
     public boolean isEnchantable(ItemStack stack) {
-        return false;
+        return true;
     }
 
+    @Override
+    public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
+        return super.canApplyAtEnchantingTable(stack, enchantment);
+    }
 
+    @Override
+    public int getEnchantmentValue(ItemStack stack) {
+        return 15;
+    }
 
 }

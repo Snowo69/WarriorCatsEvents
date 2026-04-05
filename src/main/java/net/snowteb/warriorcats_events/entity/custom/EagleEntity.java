@@ -20,6 +20,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -268,10 +269,10 @@ public class EagleEntity extends FlyingMob implements GeoEntity, OwnableEntity {
                     EagleEntity.this.doHurtTarget(livingentity);
 
                     if (!livingentity.hasEffect(ModEffects.EAGLE_ESCAPIST.get())) {
-                        livingentity.startRiding(EagleEntity.this);
-                        if (livingentity.isShiftKeyDown()) {
-                            livingentity.startRiding(EagleEntity.this, true);
-                        }
+                        livingentity.startRiding(EagleEntity.this, true);
+                        livingentity.hurtMarked = true;
+                        livingentity.setDeltaMovement(Vec3.ZERO);
+
                         EagleEntity.this.isLatching = true;
                         if (livingentity instanceof WCatEntity cat && cat.isBaby()) {
                             EagleEntity.this.latchingTimer = 60;
@@ -640,7 +641,7 @@ public class EagleEntity extends FlyingMob implements GeoEntity, OwnableEntity {
                 Predicate<LivingEntity> predicate =
                         entity -> ((entity instanceof Player player && PlayerShape.getCurrentShape(player) instanceof WCatEntity)
                                 || (entity instanceof WCatEntity cat && cat.isBaby()) || (entity instanceof SquirrelEntity || entity instanceof MouseEntity || entity instanceof PigeonEntity))
-                                && !entity.hasEffect(ModEffects.EAGLE_ESCAPIST.get()) && !entity.isInvisible();
+                                && !entity.hasEffect(ModEffects.EAGLE_ESCAPIST.get()) && !entity.isInvisible() && entity.getVehicle() == null;
 
                 List<LivingEntity> list2 = EagleEntity.this.level().getEntitiesOfClass(LivingEntity.class,  EagleEntity.this.getBoundingBox().inflate(48.0D, 48.0D, 48.0D), predicate);
 
@@ -684,6 +685,8 @@ public class EagleEntity extends FlyingMob implements GeoEntity, OwnableEntity {
 
     @Override
     public boolean canAttack(LivingEntity pTarget) {
+        if (this.level().getDifficulty() == Difficulty.PEACEFUL) return false;
+
         if (this.isTame()) {
             if (this.getOwner() == pTarget) {
                 return false;
@@ -712,6 +715,7 @@ public class EagleEntity extends FlyingMob implements GeoEntity, OwnableEntity {
 //                    (target instanceof Player player && PlayerShape.getCurrentShape(player) instanceof WCatEntity));
 //        });
 
+
         this.goalSelector.addGoal(1, new EagleAttackStrategy());
         this.goalSelector.addGoal(2, new EagleSweepAttackGoal());
         this.goalSelector.addGoal(3, new EagleCircleAroundAnchorGoal());
@@ -736,7 +740,7 @@ public class EagleEntity extends FlyingMob implements GeoEntity, OwnableEntity {
     }
 
     public boolean isFlying() {
-        return !this.onGround() && !this.isInWater();
+        return !this.onGround() && !this.isInFluidType();
     }
 
     private <T extends GeoAnimatable> PlayState predicate(AnimationState<T> tAnimationState) {
@@ -1018,6 +1022,7 @@ public class EagleEntity extends FlyingMob implements GeoEntity, OwnableEntity {
         this.entityData.define(CONTROL_MODE, 0);
         this.entityData.define(DATA_FLAGS_ID, (byte)0);
         this.entityData.define(DATA_OWNERUUID_ID, Optional.empty());
+//        this.entityData.define(FLIGHT_SPEED, 0.0F);
     }
 
     @Override
@@ -1276,19 +1281,58 @@ public class EagleEntity extends FlyingMob implements GeoEntity, OwnableEntity {
         return MobType.UNDEFINED;
     }
 
-    private float speedMultiplier = 0;
+    private float flightSpeedModifier;
+
+//    public void setAdditionalSpeed(float additionalSpeed) {
+//        this.entityData.set(FLIGHT_SPEED, this.entityData.get(FLIGHT_SPEED) + additionalSpeed);
+//    }
+//
+//    public void setFlySpeed(float speed) {
+//        this.entityData.set(FLIGHT_SPEED, speed);
+//    }
+//
+//    public float getFlySpeed() {
+//        return this.entityData.get(FLIGHT_SPEED);
+//    }
+
+    public void setAdditionalSpeed(float additionalSpeed) {
+        this.flightSpeedModifier += additionalSpeed;
+    }
+
+    public void setFlySpeed(float speed) {
+        this.flightSpeedModifier = speed;
+    }
+
+    public float getFlySpeed() {
+        return this.flightSpeedModifier;
+    }
 
     @Override
     public void travel(Vec3 travelVector) {
+
+        if (this.isInWater()) {
+            this.setDeltaMovement(this.getDeltaMovement().add(0, 0.08, 0));
+        }
+
         if (this.isVehicle() && this.getControllingPassenger() instanceof Player player) {
 
+            float forward = player.zza;
+
             if (this.isFlying()) {
-                speedMultiplier += 0.0007f;
+                if ((forward < 0) && this.getFlySpeed() > 0.00F) {
+                    this.setAdditionalSpeed(-0.010f);
+                }
+                if ((this.getFlySpeed() > 0.4207)) {
+                    this.setAdditionalSpeed(-0.010f);
+                }
+
+                if (this.getFlySpeed() < 0.420F) {
+                    this.setAdditionalSpeed(0.0014f);
+                }
             } else {
-                speedMultiplier = 0f;
+                this.setFlySpeed(0f);
             }
 
-            speedMultiplier = Mth.clamp(speedMultiplier, 0.0F, 0.420F);
 
             this.setYRot(player.getYRot());
             this.yRotO = this.getYRot();
@@ -1298,11 +1342,11 @@ public class EagleEntity extends FlyingMob implements GeoEntity, OwnableEntity {
 
             Vec3 look = player.getLookAngle();
 
-            this.setDeltaMovement(look.scale(0.1 + speedMultiplier));
+            this.setDeltaMovement(look.scale(0.1 + this.getFlySpeed()));
             this.move(MoverType.SELF, this.getDeltaMovement());
             return;
         } else {
-            this.speedMultiplier = 0;
+            this.setFlySpeed(0f);
         }
 
         super.travel(travelVector);
@@ -1387,15 +1431,6 @@ public class EagleEntity extends FlyingMob implements GeoEntity, OwnableEntity {
                     }
                 }
 
-                if (pPlayer.getItemInHand(InteractionHand.MAIN_HAND).isEmpty()) {
-                    if (this.isTame() && WCEServerConfig.Server.CAN_EAGLES_BE_TAMED.get()) {
-                        if (!this.wasBornAgressive && !this.isLatching() && this.isOwnedBy(pPlayer)) {
-                            pPlayer.startRiding(this);
-                            return InteractionResult.SUCCESS;
-                        }
-                    }
-                }
-
                 if (pPlayer.getItemInHand(InteractionHand.MAIN_HAND).is(ModTags.Items.PREY)) {
                     if (this.isTame() && this.getHealth() < this.getMaxHealth()) {
                         double currentHealth = this.getHealth();
@@ -1420,6 +1455,18 @@ public class EagleEntity extends FlyingMob implements GeoEntity, OwnableEntity {
                         return InteractionResult.SUCCESS;
                     }
                 }
+
+
+
+
+                if (this.isTame() && WCEServerConfig.Server.CAN_EAGLES_BE_TAMED.get()) {
+                    if (!this.wasBornAgressive && !this.isLatching() && this.isOwnedBy(pPlayer)) {
+                        pPlayer.startRiding(this, true);
+                        pPlayer.hurtMarked = true;
+                        pPlayer.setDeltaMovement(Vec3.ZERO);
+                        return InteractionResult.SUCCESS;
+                    }
+                }
             }
         }
 
@@ -1435,5 +1482,15 @@ public class EagleEntity extends FlyingMob implements GeoEntity, OwnableEntity {
     @Override
     protected void positionRider(Entity pPassenger, MoveFunction pCallback) {
         super.positionRider(pPassenger, pCallback);
+    }
+
+    @Override
+    public boolean removeWhenFarAway(double distanceToClosestPlayer) {
+        return false;
+    }
+
+    @Override
+    public boolean isPersistenceRequired() {
+        return true;
     }
 }

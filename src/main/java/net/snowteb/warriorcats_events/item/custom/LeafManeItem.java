@@ -13,6 +13,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterials;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.Level;
 
 import java.util.UUID;
@@ -24,7 +25,7 @@ public class LeafManeItem extends ArmorItem {
 
     public LeafManeItem() {
         super(ArmorMaterials.IRON, Type.HELMET,
-                new Properties().stacksTo(1).durability(120));
+                new Properties().stacksTo(1).durability(240));
     }
 
 
@@ -77,9 +78,17 @@ public class LeafManeItem extends ArmorItem {
 
     @Override
     public boolean isEnchantable(ItemStack stack) {
-        return false;
+        return true;
     }
 
+    @Override
+    public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
+        return super.canApplyAtEnchantingTable(stack, enchantment);
+    }
 
+    @Override
+    public int getEnchantmentValue(ItemStack stack) {
+        return 15;
+    }
 
 }

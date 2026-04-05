@@ -77,6 +77,7 @@ import java.util.*;
 public class LayerTexture extends AbstractTexture {
     private final String[] texturePaths;
     private final Set<PixelCoords> blockedPixels = new HashSet<>();
+    private final Set<PixelCoords> subBlockedPixels = new HashSet<>();
 
     public record PixelCoords(int x, int y) {}
 
@@ -124,7 +125,7 @@ public class LayerTexture extends AbstractTexture {
         if (layer == null)
             return null;
 
-//        WarriorCatsEvents.LOGGER.debug("Attempting to load layer '" + layer + "'");
+//        WarriorCatsEvents.LOGGER.debug("Attempting to load layer '{}'", layer);
 
         try {
             Resource resource = manager.getResource(new ResourceLocation(layer)).orElseThrow();
@@ -136,33 +137,51 @@ public class LayerTexture extends AbstractTexture {
 
     public void blendLayer(NativeImage base, NativeImage image) {
 
-        boolean baseChimeraVariantOn = (image.getPixelRGBA(63, 63) == 0xFFFFFFFF ||
+        boolean isABaseForSelectivePattern = (image.getPixelRGBA(63, 63) == 0xFFFFFFFF ||
                 image.getPixelRGBA(63, 63) == 0xFEFFFFFF);
 
-        boolean chimeraSubPatternOn = (image.getPixelRGBA(0, 63) == 0xFFFFFFFF ||
+        boolean croppedSelectivePattern = (image.getPixelRGBA(0, 63) == 0xFFFFFFFF ||
                 image.getPixelRGBA(0, 63) == 0xFEFFFFFF);
+
+
+        boolean subBaseForSelectivePattern = (image.getPixelRGBA(63, 0) == 0xFFFFFFFF ||
+                image.getPixelRGBA(63, 0) == 0xFEFFFFFF);
+
+        boolean subCroppedSelectivePattern = (image.getPixelRGBA(0, 0) == 0xFFFFFFFF ||
+                image.getPixelRGBA(0, 0) == 0xFEFFFFFF);
+
+        boolean shouldClearSubSelectivePattern = (image.getPixelRGBA(32, 63) == 0xFFFFFFFF ||
+                image.getPixelRGBA(32, 63) == 0xFEFFFFFF);
 
         for (int i = 0; i < image.getHeight(); ++i) {
             for (int j = 0; j < image.getWidth(); ++j) {
                 int color = image.getPixelRGBA(j, i);
 
+                if (shouldClearSubSelectivePattern) {
+                    subBlockedPixels.clear();
+                }
 
-
-                if (baseChimeraVariantOn) {
-//                    System.out.println("Chimera Variant Detected");
-
+                if (isABaseForSelectivePattern) {
                     if (color == 0x00000000 || color == 0x00FFFFFF) {
                         blockedPixels.add(new PixelCoords(j, i));
-//                        System.out.println("Chimera Variant Pixel blocked");
+                    }
+                }
+                if (subBaseForSelectivePattern) {
+                    if (color == 0x00000000 || color == 0x00FFFFFF) {
+                        subBlockedPixels.add(new PixelCoords(j, i));
                     }
                 }
 
-                if (chimeraSubPatternOn) {
-//                    System.out.println("Chimera Pattern Variant Detected");
 
+
+                if (croppedSelectivePattern) {
                     if (blockedPixels.contains(new PixelCoords(j, i))) {
-//                        System.out.println("Pixel skipped");
-                      continue;
+                        continue;
+                    }
+                }
+                if (subCroppedSelectivePattern) {
+                    if (subBlockedPixels.contains(new PixelCoords(j, i))) {
+                        continue;
                     }
                 }
 

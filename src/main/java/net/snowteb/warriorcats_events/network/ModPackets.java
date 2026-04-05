@@ -11,10 +11,7 @@ import net.snowteb.warriorcats_events.network.packet.c2s.cats.*;
 import net.snowteb.warriorcats_events.network.packet.c2s.clan.*;
 import net.snowteb.warriorcats_events.network.packet.c2s.others.*;
 import net.snowteb.warriorcats_events.network.packet.c2s.skilltree.*;
-import net.snowteb.warriorcats_events.network.packet.s2c.cats.OpenAncientStickScreenPacket;
-import net.snowteb.warriorcats_events.network.packet.s2c.cats.OpenCatDataScreenPacket;
-import net.snowteb.warriorcats_events.network.packet.s2c.cats.StCKitCreateScreenPacket;
-import net.snowteb.warriorcats_events.network.packet.s2c.cats.SyncCatDataPacket;
+import net.snowteb.warriorcats_events.network.packet.s2c.cats.*;
 import net.snowteb.warriorcats_events.network.packet.s2c.clan.*;
 import net.snowteb.warriorcats_events.network.packet.s2c.others.StCFinallySaveMorph;
 import net.snowteb.warriorcats_events.network.packet.s2c.others.StCFishingScreenPacket;
@@ -387,6 +384,51 @@ public class ModPackets {
                 .encoder(CallEaglesPacket::encode)
                 .consumerMainThread(CallEaglesPacket::handle)
                 .add();
+
+        net.messageBuilder(SyncTerritoryToClients.class, 55, NetworkDirection.PLAY_TO_CLIENT)
+                .decoder(SyncTerritoryToClients::decode)
+                .encoder(SyncTerritoryToClients::encode)
+                .consumerMainThread(SyncTerritoryToClients::handle)
+                .add();
+
+        net.messageBuilder(CtSClaimTerritory.class, 56, NetworkDirection.PLAY_TO_SERVER)
+                .decoder(CtSClaimTerritory::decode)
+                .encoder(CtSClaimTerritory::encode)
+                .consumerMainThread(CtSClaimTerritory::handle)
+                .add();
+
+
+        net.messageBuilder(CtSUnclaimTerritory.class, 57, NetworkDirection.PLAY_TO_SERVER)
+                .decoder(CtSUnclaimTerritory::decode)
+                .encoder(CtSUnclaimTerritory::encode)
+                .consumerMainThread(CtSUnclaimTerritory::handle)
+                .add();
+
+        net.messageBuilder(CtSSendPatrol.class, 58, NetworkDirection.PLAY_TO_SERVER)
+                .decoder(CtSSendPatrol::decode)
+                .encoder(CtSSendPatrol::encode)
+                .consumerMainThread(CtSSendPatrol::handle)
+                .add();
+
+        net.messageBuilder(CtSRequestPatrolData.class, 59, NetworkDirection.PLAY_TO_SERVER)
+                .decoder(CtSRequestPatrolData::decode)
+                .encoder(CtSRequestPatrolData::encode)
+                .consumerMainThread(CtSRequestPatrolData::handle)
+                .add();
+
+        net.messageBuilder(StCOpenPatrolScreenPacket.class, 60, NetworkDirection.PLAY_TO_CLIENT)
+                .decoder(StCOpenPatrolScreenPacket::decode)
+                .encoder(StCOpenPatrolScreenPacket::encode)
+                .consumerMainThread(StCOpenPatrolScreenPacket::handle)
+                .add();
+
+
+//        net.messageBuilder(CtSStartSleep.class, 61, NetworkDirection.PLAY_TO_SERVER)
+//                .decoder(CtSStartSleep::decode)
+//                .encoder(CtSStartSleep::encode)
+//                .consumerMainThread(CtSStartSleep::handle)
+//                .add();
+
 
     }
 

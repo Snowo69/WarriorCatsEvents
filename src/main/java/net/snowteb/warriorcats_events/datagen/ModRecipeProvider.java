@@ -205,6 +205,16 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .unlockedBy("has_item", has(Items.HAY_BLOCK))
                 .save(pWriter);
 
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.KELP_BED.get(), 2)
+                .pattern("   ")
+                .pattern("BDB")
+                .pattern("CBC")
+                .define('B', Items.KELP)
+                .define('C', Items.SEAGRASS)
+                .define('D', Blocks.GRASS)
+                .unlockedBy("has_item", has(Items.KELP))
+                .save(pWriter);
+
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.FRESHKILL_PILE.get(), 1)
                 .pattern("BAB")
                 .pattern("ADA")

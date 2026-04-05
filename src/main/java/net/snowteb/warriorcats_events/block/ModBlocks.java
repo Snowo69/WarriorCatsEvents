@@ -26,11 +26,23 @@ public class ModBlocks {
                     () -> new MossBedBlock(
                             BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.MOSS).strength(0.2F).noOcclusion()
                     ));
-
     public static final RegistryObject<Block> HAY_BED = BLOCKS.register("hay_bed",
             () -> new MossBedBlock(
                     BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.MOSS).strength(0.2F).noOcclusion()
             ));
+    public static final RegistryObject<Block> KELP_BED = BLOCKS.register("kelp_bed",
+            () -> new MossBedBlock(
+                    BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.MOSS).strength(0.2F).noOcclusion()
+            ));
+
+
+
+    public static final RegistryObject<Block> MAKESHIFT_BED = BLOCKS.register("makeshift_bed",
+            () -> new MakeshiftBedBlock(
+                    BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.MOSS).strength(0.0F).noOcclusion()
+            ));
+
+
 
     public static final RegistryObject<Block> STONE_CRAFTING_TABLE = BLOCKS.register("stone_crafting_table",
             ()  -> new StoneCraftingTable(BlockBehaviour.Properties.copy(Blocks.STONE).strength(0.2F).noOcclusion()));
@@ -107,6 +119,9 @@ public class ModBlocks {
             () -> new LeafDoorBlock(BlockBehaviour.Properties.copy(Blocks.OAK_DOOR).sound(SoundType.CHERRY_LEAVES).noOcclusion(),
                     ModBlockSetTypes.LEAF));
 
+    public static final RegistryObject<Block> TREE_STUMP = registerBlock("tree_stump",
+            () -> new TreeStumpBlock(BlockBehaviour.Properties.of().noOcclusion().sound(SoundType.WOOD)));
+
     public static final RegistryObject<Block> LEAF_TRAPDOOR = registerBlock("leaf_trapdoor",
             () -> new LeafTrapdoorBlock(BlockBehaviour.Properties.copy(Blocks.OAK_DOOR).sound(SoundType.CHERRY_LEAVES).noOcclusion(),
                     ModBlockSetTypes.LEAF));
@@ -125,41 +140,6 @@ public class ModBlocks {
 
     public static  final RegistryObject<LavenderPetalsBlock> LAVENDER_PETALS = registerBlock("lavender_petals",
             () -> new LavenderPetalsBlock(BlockBehaviour.Properties.copy(Blocks.PINK_PETALS)));
-
-
-//    public static final RegistryObject<Block> DARK_LOG = registerBlock("dark_log",
-//            () -> new ModFlammableRotatedPillarBlock(BlockBehaviour.Properties.copy(Blocks.DARK_OAK_LOG).strength(3f).noLootTable()));
-//    public static final RegistryObject<Block> STRIPPED_DARK_LOG = registerBlock("stripped_dark_log",
-//            () -> new ModFlammableRotatedPillarBlock(BlockBehaviour.Properties.copy(Blocks.STRIPPED_DARK_OAK_WOOD).strength(3f).noLootTable()));
-//
-//    public static final RegistryObject<Block> STARRY_LOG = registerBlock("starry_log",
-//            () -> new ModFlammableRotatedPillarBlock(BlockBehaviour.Properties.copy(Blocks.DARK_OAK_LOG).strength(3f).noLootTable()));
-//    public static final RegistryObject<Block> STRIPPED_STARRY_LOG = registerBlock("stripped_starry_log",
-//            () -> new ModFlammableRotatedPillarBlock(BlockBehaviour.Properties.copy(Blocks.STRIPPED_OAK_LOG).strength(3f).noLootTable()));
-//    public static final RegistryObject<Block> STARRY_LEAVES = registerBlock("starry_leaves",
-//            () -> new LeavesBlock(BlockBehaviour.Properties.copy(Blocks.OAK_LEAVES).noLootTable()){
-//                @Override
-//                public boolean isFlammable(BlockState state, BlockGetter level, BlockPos pos, Direction direction) {
-//                    return true;
-//                }
-//
-//                @Override
-//                public int getFlammability(BlockState state, BlockGetter level, BlockPos pos, Direction direction) {
-//                    return 60;
-//                }
-//
-//                @Override
-//                public int getFireSpreadSpeed(BlockState state, BlockGetter level, BlockPos pos, Direction direction) {
-//                    return 30;
-//                }
-//            });
-//
-//
-//    public static final RegistryObject<Block> DARKTREE_SAPLING = registerBlock("darktree_sapling",
-//            () -> new SaplingBlock(new DarkTreeGrower(), BlockBehaviour.Properties.copy(Blocks.OAK_SAPLING)));
-//    public static final RegistryObject<Block> STARRYTREE_SAPLING = registerBlock("starrytree_sapling",
-//            () -> new SaplingBlock(new StarryTreeGrower(), BlockBehaviour.Properties.copy(Blocks.OAK_SAPLING)));
-
 
 
     private static <T extends Block> RegistryObject<T> registerBlock(String name, Supplier<T> block) {

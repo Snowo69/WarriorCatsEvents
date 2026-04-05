@@ -12,9 +12,10 @@ public class WCGenetics {
         public static final int MAX_ALBINO_VARIANTS = 3;
         public static final int MAX_TABBY_VARIANTS = 5;
         public static final int MAX_EYE_VARIANTS = 11;
-        public static final int MAX_NOISE_VARIANTS = 3;
+        public static final int MAX_NOISE_VARIANTS = 6;
         public static final int MAX_RUFOUSING_VARIANTS = 7;
         public static final int MAX_BLUE_RUFOUSING_VARIANTS = 7;
+        public static final int MAX_SILVER_VARIANTS = 3;
 
         public static final int MAX_CHIMERISM_VARIANTS = 8;
     }
@@ -36,6 +37,7 @@ public class WCGenetics {
     public String agouti = "a-a";
     public String tabbyStripes = "mc-mc";
     public String eyesAnomaly = "H-h";
+    public String silver = "i-i";
 
     public int rufousing = 0;
     public int blueRufousing = 0;
@@ -61,6 +63,7 @@ public class WCGenetics {
         this.dilute = copy.dilute;
         this.agouti = copy.agouti;
         this.tabbyStripes = copy.tabbyStripes;
+        this.silver = copy.silver;
         this.eyesAnomaly = copy.eyesAnomaly;
         this.rufousing = copy.rufousing;
         this.blueRufousing = copy.blueRufousing;
@@ -74,7 +77,7 @@ public class WCGenetics {
                       String tailFur, String backFur, String base,
                       String orangeBase, String whiteRatio, String albino, String dilute,
                       String agouti, String tabbyStripes, String eyesAnomaly,
-                      int rufousing, int blueRufousing, int noise, String chimeraGene) {
+                      int rufousing, int blueRufousing, int noise, String chimeraGene, String silver) {
         this.chestFur = chestFur;
         this.bellyFur = bellyFur;
         this.legsFur = legsFur;
@@ -95,6 +98,7 @@ public class WCGenetics {
         this.rufousing = rufousing;
         this.blueRufousing = blueRufousing;
         this.noise = noise;
+        this.silver = silver;
 
         this.chimeraGene = chimeraGene;
     }
@@ -127,6 +131,7 @@ public class WCGenetics {
         buf.writeInt(this.noise);
 
         buf.writeUtf(this.chimeraGene);
+        buf.writeUtf(this.silver);
     }
 
     public static WCGenetics decode(FriendlyByteBuf buf) {
@@ -152,6 +157,7 @@ public class WCGenetics {
                 buf.readInt(),
                 buf.readInt(),
                 buf.readInt(),
+                buf.readUtf(),
                 buf.readUtf()
         );
     }
@@ -168,6 +174,7 @@ public class WCGenetics {
         public int orangeVar = 0;
         public int whiteVar = 0;
         public int tabbyVar = 0;
+        public int silverVar = 0;
         public int albinoVar = 0;
         public int leftEyeVar = 0;
         public int rightEyeVar = 0;
@@ -180,7 +187,7 @@ public class WCGenetics {
 
         public GeneticalVariants(String eyeColorLeft, String eyeColorRight, int rufousingVariant,
                                  int blueRufousingVariant, int orangeVar, int whiteVar,
-                                 int tabbyVar, int albinoVar, int leftEyeVar, int rightEyeVar, int noise, float size) {
+                                 int tabbyVar, int albinoVar, int leftEyeVar, int rightEyeVar, int noise, float size, int silverVar) {
             this.eyeColorLeft = eyeColorLeft;
             this.eyeColorRight = eyeColorRight;
             this.rufousingVariant = rufousingVariant;
@@ -193,6 +200,7 @@ public class WCGenetics {
             this.rightEyeVar = rightEyeVar;
             this.noise = noise;
             this.size = size;
+            this.silverVar = silverVar;
         }
 
         public GeneticalVariants(GeneticalVariants copy) {
@@ -208,6 +216,7 @@ public class WCGenetics {
             this.rightEyeVar = copy.rightEyeVar;
             this.noise = copy.noise;
             this.size = copy.size;
+            this.silverVar = copy.silverVar;
         }
 
         public void encode(FriendlyByteBuf buf) {
@@ -224,6 +233,7 @@ public class WCGenetics {
             buf.writeInt(this.rightEyeVar);
             buf.writeInt(this.noise);
             buf.writeFloat(this.size);
+            buf.writeInt(this.silverVar);
         }
         public static GeneticalVariants decode(FriendlyByteBuf buf) {
             return new GeneticalVariants(
@@ -238,7 +248,8 @@ public class WCGenetics {
                     buf.readInt(),
                     buf.readInt(),
                     buf.readInt(),
-                    buf.readFloat()
+                    buf.readFloat(),
+                    buf.readInt()
             );
         }
     }
@@ -251,6 +262,7 @@ public class WCGenetics {
         public int tabbyVar = 0;
         public int albinoVar = 0;
         public int noise = 0;
+        public int silverVar = 0;
 
         public int chimeraVariant = 0;
 
@@ -262,7 +274,7 @@ public class WCGenetics {
 
         public GeneticalChimeraVariants(int chimeraVariant ,int rufousingVariant,
                                         int blueRufousingVariant, int orangeVar, int whiteVar,
-                                        int tabbyVar, int albinoVar, int noise, String chimeraGene) {
+                                        int tabbyVar, int albinoVar, int noise, String chimeraGene, int silverVar) {
             this.rufousingVariant = rufousingVariant;
             this.blueRufousingVariant = blueRufousingVariant;
             this.orangeVar = orangeVar;
@@ -272,6 +284,7 @@ public class WCGenetics {
             this.albinoVar = albinoVar;
             this.noise = noise;
             this.chimeraGene = chimeraGene;
+            this.silverVar = silverVar;
         }
 
         public GeneticalChimeraVariants(GeneticalChimeraVariants copy) {
@@ -284,6 +297,7 @@ public class WCGenetics {
             this.albinoVar = copy.albinoVar;
             this.noise = copy.noise;
             this.chimeraGene = copy.chimeraGene;
+            this.silverVar = copy.silverVar;
         }
 
         public void encode(FriendlyByteBuf buf) {
@@ -296,7 +310,7 @@ public class WCGenetics {
             buf.writeInt(this.albinoVar);
             buf.writeInt(this.noise);
             buf.writeUtf(this.chimeraGene);
-
+            buf.writeInt(this.silverVar);
         }
         public static GeneticalChimeraVariants decode(FriendlyByteBuf buf) {
             return new GeneticalChimeraVariants(
@@ -308,7 +322,8 @@ public class WCGenetics {
                     buf.readInt(),
                     buf.readInt(),
                     buf.readInt(),
-                    buf.readUtf()
+                    buf.readUtf(),
+                    buf.readInt()
             );
         }
     }
@@ -429,7 +444,7 @@ public class WCGenetics {
 
         public static String generateAlelo(RandomSource random) {
             float chance = random.nextFloat();
-            if (chance < 0.42f) {
+            if (chance < 0.32f) {
                 return ORANGE.getAlelo();
             } else {
                 return NOT_ORANGE.getAlelo();
@@ -466,9 +481,9 @@ public class WCGenetics {
 
         public static String generateAlelo(RandomSource random) {
             float chance = random.nextFloat();
-            if (chance < 0.15f) {
+            if (chance < 0.10f) {
                 return WHITE.getAlelo();
-            } else if (chance < 0.40f) {
+            } else if (chance < 0.30f) {
                 return SPOTTING.getAlelo();
             } else {
                 return  NO_WHITE.getAlelo();
@@ -589,7 +604,7 @@ public class WCGenetics {
 
         public static String generateAlelo(RandomSource random) {
             float chance = random.nextFloat();
-            if (chance < 0.3f) {
+            if (chance < 0.2f) {
                 return TABBY.getAlelo();
             } else {
                 return NON_TABBY.getAlelo();
@@ -619,7 +634,7 @@ public class WCGenetics {
 
         public static String generateAlelo(RandomSource random) {
             float chance = random.nextFloat();
-            if (chance < 0.3f) {
+            if (chance < 0.25f) {
                 return MACKEREL.getAlelo();
             } else {
                 return CLASSIC.getAlelo();
@@ -778,6 +793,46 @@ public class WCGenetics {
 
         public static boolean isChimera(String genotype) {
             return genotype.equals("c-c");
+        }
+
+    }
+
+    public enum Silver {
+        SILVER("I"),
+        NON_SILVER("i")
+
+        ;
+        private String alelo;
+
+        Silver(String alelo) {
+            this.alelo = alelo;
+        }
+
+        public String getAlelo() {
+            return alelo;
+        }
+
+        public static String generateAlelo(RandomSource random) {
+            float chance = random.nextFloat();
+
+            if (chance < 0.25f) {
+                return SILVER.getAlelo();
+            } else {
+                return  NON_SILVER.getAlelo();
+            }
+        }
+
+
+        public static boolean isSilver(String genotype, String agouti, String orange, int gender) {
+            return (genotype.contains("I")) && (Agouti.isTabby(agouti) || OrangeBase.isOrange(orange, gender));
+        }
+
+        public static boolean isSmokeTortie(String genotype, String agouti, String orange) {
+            return (genotype.contains("I")) && !Agouti.isTabby(agouti) && OrangeBase.isTortoiseshell(orange);
+        }
+
+        public static boolean isSmoke(String genotype, String agouti) {
+            return (genotype.contains("I")) && !Agouti.isTabby(agouti);
         }
 
     }

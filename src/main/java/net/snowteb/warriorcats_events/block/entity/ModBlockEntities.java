@@ -27,7 +27,16 @@ public class ModBlockEntities {
             BLOCK_ENTITIES.register("moss_bed", () ->
                     BlockEntityType.Builder.of(MossBedBlockEntity::new,
                             ModBlocks.MOSS_BED.get(),
-                            ModBlocks.HAY_BED.get())
+                            ModBlocks.HAY_BED.get(),
+                                    ModBlocks.KELP_BED.get()
+                            )
+                            .build(null)
+            );
+
+    public static final RegistryObject<BlockEntityType<MakeshiftBedBlockEntity>> MAKESHIFT_BED =
+            BLOCK_ENTITIES.register("makeshift_bed", () ->
+                    BlockEntityType.Builder.of(MakeshiftBedBlockEntity::new,
+                                    ModBlocks.MAKESHIFT_BED.get())
                             .build(null)
             );
 
@@ -37,6 +46,10 @@ public class ModBlockEntities {
                             ModBlocks.STONE_CRAFTING_TABLE.get()).build(null)
             );
 
+    public static final RegistryObject<BlockEntityType<TreeStumpBlockEntity>> TREE_STUMP =
+            BLOCK_ENTITIES.register("tree_stump", () ->
+                    BlockEntityType.Builder.of(TreeStumpBlockEntity::new,
+                            ModBlocks.TREE_STUMP.get()).build(null));
 
 
     public static void register(IEventBus eventBus) {

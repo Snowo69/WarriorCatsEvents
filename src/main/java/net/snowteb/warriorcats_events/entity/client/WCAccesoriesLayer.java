@@ -3,28 +3,36 @@ package net.snowteb.warriorcats_events.entity.client;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.item.Item;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.PlayerModelPart;
+import net.minecraft.world.item.ElytraItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
+import net.snowteb.warriorcats_events.compat.Compatibilities;
 import net.snowteb.warriorcats_events.entity.custom.WCGenetics;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.item.ModItems;
 import net.snowteb.warriorcats_events.item.custom.CatSocksArmorItem;
 import net.snowteb.warriorcats_events.item.custom.CollarArmorItem;
 import net.snowteb.warriorcats_events.item.custom.FeathersArmorItem;
+import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.renderer.GeoRenderer;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 import software.bernie.geckolib.util.RenderUtils;
+
+import java.util.Locale;
 
 @OnlyIn(Dist.CLIENT)
 public class WCAccesoriesLayer extends GeoRenderLayer<WCatEntity> {
@@ -103,6 +111,8 @@ public class WCAccesoriesLayer extends GeoRenderLayer<WCatEntity> {
             new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/head_sweetberry.png")
     );
 
+    private final ElytraModel elytraModel = new ElytraModel();
+
 
     private final AccessoryRenderer crownRenderer;
     private final AccessoryRenderer leafmaneRenderer;
@@ -116,6 +126,7 @@ public class WCAccesoriesLayer extends GeoRenderLayer<WCatEntity> {
     private final AccessoryRenderer bodyVultureFeathersRenderer;
     private final AccessoryRenderer collarRenderer;
     private final AccessoryRenderer berryRenderer;
+    private final AccessoryRenderer elytraRenderer;
 
 
     public WCAccesoriesLayer(GeoRenderer<WCatEntity> entityRendererIn, EntityRendererProvider.Context context) {
@@ -135,6 +146,7 @@ public class WCAccesoriesLayer extends GeoRenderLayer<WCatEntity> {
         this.collarRenderer = new AccessoryRenderer(context, collarModel);
 
         this.berryRenderer = new AccessoryRenderer(context, berryModel);
+        this.elytraRenderer = new AccessoryRenderer(context, elytraModel);
     }
 
     @Override
@@ -199,10 +211,6 @@ public class WCAccesoriesLayer extends GeoRenderLayer<WCatEntity> {
                 .getItemBySlot(EquipmentSlot.HEAD)
                 .is(ModItems.HEAD_LEAF.get());
 
-        boolean hasFlowerArmor = animatable
-                .getItemBySlot(EquipmentSlot.CHEST)
-                .is(ModItems.FLOWER_ARMOR.get());
-
         boolean hasTailVines = animatable
                 .getItemBySlot(EquipmentSlot.LEGS)
                 .is(ModItems.TAIL_VINES.get());
@@ -210,16 +218,24 @@ public class WCAccesoriesLayer extends GeoRenderLayer<WCatEntity> {
                 .getItemBySlot(EquipmentSlot.LEGS)
                 .is(ModItems.DRAPED_TAIL_VINES.get());
 
-        boolean hasVultureFeathers = animatable
-                .getItemBySlot(EquipmentSlot.CHEST)
-                .is(ModItems.VULTURE_BODY_FEATHERS.get());
-
+        if (Compatibilities.hasCuriosItem(animatable.getPlayerBoundUuid(), ModItems.FLOWER_CROWN.get())) hasCrown = true;
+        if (Compatibilities.hasCuriosItem(animatable.getPlayerBoundUuid(), ModItems.LEAF_MANE.get())) hasMane = true;
+        if (Compatibilities.hasCuriosItem(animatable.getPlayerBoundUuid(), ModItems.HEAD_FLOWER.get())) hasFlower = true;
+        if (Compatibilities.hasCuriosItem(animatable.getPlayerBoundUuid(), ModItems.HEAD_DANDELION.get())) hasDandelion = true;
+        if (Compatibilities.hasCuriosItem(animatable.getPlayerBoundUuid(), ModItems.HEAD_LEAF.get())) hasLeaf = true;
+        if (Compatibilities.hasCuriosItem(animatable.getPlayerBoundUuid(), ModItems.TAIL_VINES.get())) hasTailVines = true;
+        if (Compatibilities.hasCuriosItem(animatable.getPlayerBoundUuid(), ModItems.DRAPED_TAIL_VINES.get())) hasDrapedTailVines = true;
 
         boolean hasBerry = animatable
                 .getItemBySlot(EquipmentSlot.HEAD)
                 .is(ModItems.HEAD_SWEETBERRY.get()) || animatable
                 .getItemBySlot(EquipmentSlot.HEAD)
                 .is(ModItems.HEAD_GLOWBERRY.get());
+
+        if (Compatibilities.hasCuriosItem(animatable.getPlayerBoundUuid(), ModItems.HEAD_GLOWBERRY.get())
+        || Compatibilities.hasCuriosItem(animatable.getPlayerBoundUuid(), ModItems.HEAD_SWEETBERRY.get())) {
+            hasBerry = true;
+        }
 
         if (bone.getName().equals("head")) {
 
@@ -258,7 +274,8 @@ public class WCAccesoriesLayer extends GeoRenderLayer<WCatEntity> {
 
                 poseStack.popPose();
                 buffer = bufferSource.getBuffer(renderType);
-            } else if (hasMane) {
+            }
+            if (hasMane) {
                 var bakedModel = leafManeAccesoryModel.getBakedModel(leafManeAccesoryModel.getModelResource(animatable));
 
                 poseStack.pushPose();
@@ -292,7 +309,8 @@ public class WCAccesoriesLayer extends GeoRenderLayer<WCatEntity> {
 
                 poseStack.popPose();
                 buffer = bufferSource.getBuffer(renderType);
-            } else if (hasDandelion) {
+            }
+            if (hasDandelion) {
                 var bakedModel = dandelionModel.getBakedModel(dandelionModel.getModelResource(animatable));
 
                 poseStack.pushPose();
@@ -329,7 +347,8 @@ public class WCAccesoriesLayer extends GeoRenderLayer<WCatEntity> {
 
                 poseStack.popPose();
                 buffer = bufferSource.getBuffer(renderType);
-            } else if (hasFlower) {
+            }
+            if (hasFlower) {
                 var bakedModel = flowerAccesoryModel.getBakedModel(flowerAccesoryModel.getModelResource(animatable));
 
                 poseStack.pushPose();
@@ -365,8 +384,17 @@ public class WCAccesoriesLayer extends GeoRenderLayer<WCatEntity> {
                 poseStack.popPose();
                 buffer = bufferSource.getBuffer(renderType);
 
-            } else if (hasBerry) {
+            }
+            if (hasBerry) {
                 ItemStack stack = animatable.getItemBySlot(EquipmentSlot.HEAD);
+                ItemStack glowberry = Compatibilities.getCuriosItem(animatable.getPlayerBoundUuid(), ModItems.HEAD_GLOWBERRY.get());
+                ItemStack sweetberry = Compatibilities.getCuriosItem(animatable.getPlayerBoundUuid(), ModItems.HEAD_SWEETBERRY.get());
+
+                if (!glowberry.isEmpty()) {
+                    stack = glowberry;
+                } else if (!sweetberry.isEmpty()) {
+                    stack = sweetberry;
+                }
 
                 int light = packedLight;
 
@@ -575,7 +603,24 @@ public class WCAccesoriesLayer extends GeoRenderLayer<WCatEntity> {
         }
 
 
-        if ((animatable.getItemBySlot(EquipmentSlot.FEET).getItem() instanceof CatSocksArmorItem socks)) {
+        ItemStack socksStack = ItemStack.EMPTY;
+        ItemStack feetStack = animatable.getItemBySlot(EquipmentSlot.FEET);
+        if (feetStack.getItem() instanceof CatSocksArmorItem) {
+            socksStack = feetStack;
+        }
+
+        if (socksStack.isEmpty()) {
+            ItemStack curiosStack = Compatibilities.getCuriosItem(
+                    animatable.getPlayerBoundUuid(),
+                    CatSocksArmorItem.class
+            );
+
+            if (!curiosStack.isEmpty()) {
+                socksStack = curiosStack;
+            }
+        }
+
+        if (socksStack.getItem() instanceof CatSocksArmorItem socks) {
 
             float red = 1.0f;
             float green = 1.0f;
@@ -863,7 +908,25 @@ public class WCAccesoriesLayer extends GeoRenderLayer<WCatEntity> {
             }
         }
 
-        if (animatable.getItemBySlot(EquipmentSlot.CHEST).getItem() instanceof FeathersArmorItem featherArmor) {
+
+        ItemStack featherStack = ItemStack.EMPTY;
+        ItemStack featherChestStack = animatable.getItemBySlot(EquipmentSlot.CHEST);
+        if (featherChestStack.getItem() instanceof FeathersArmorItem) {
+            featherStack = featherChestStack;
+        }
+
+        if (featherStack.isEmpty()) {
+            ItemStack curiosStack = Compatibilities.getCuriosItem(
+                    animatable.getPlayerBoundUuid(),
+                    FeathersArmorItem.class
+            );
+
+            if (!curiosStack.isEmpty()) {
+                featherStack = curiosStack;
+            }
+        }
+
+        if (featherStack.getItem() instanceof FeathersArmorItem featherArmor) {
             if (featherArmor == ModItems.VULTURE_BODY_FEATHERS.get()) {
 
                 if (bone.getName().equals("moreup")) {
@@ -945,7 +1008,9 @@ public class WCAccesoriesLayer extends GeoRenderLayer<WCatEntity> {
                     buffer = bufferSource.getBuffer(renderType);
                 }
 
-            } else {
+            }
+
+            if (featherArmor != ModItems.VULTURE_BODY_FEATHERS.get()){
                 bodyFeathersModelUp.texture = AccessoryModel.FEATHER_TEXTURES[5];
                 bodyFeathersModelMid.texture = AccessoryModel.FEATHER_TEXTURES[5];
                 bodyFeathersModelDown.texture = AccessoryModel.FEATHER_TEXTURES[5];
@@ -1117,24 +1182,42 @@ public class WCAccesoriesLayer extends GeoRenderLayer<WCatEntity> {
 
             int light = packedLight;
 
-            if (animatable.getItemBySlot(EquipmentSlot.CHEST).getItem() instanceof CollarArmorItem collar) {
-                ItemStack stack = animatable.getItemBySlot(EquipmentSlot.CHEST);
+            boolean spaceKitty = false;
+
+
+            ItemStack collarStack = ItemStack.EMPTY;
+            ItemStack bodyCollarStack = animatable.getItemBySlot(EquipmentSlot.CHEST);
+            if (bodyCollarStack.getItem() instanceof CollarArmorItem) {
+                collarStack = bodyCollarStack;
+            }
+
+            if (collarStack.isEmpty()) {
+                ItemStack curiosStack = Compatibilities.getCuriosItem(
+                        animatable.getPlayerBoundUuid(), CollarArmorItem.class
+                );
+
+                if (!curiosStack.isEmpty()) {
+                    collarStack = curiosStack;
+                }
+            }
+
+            if (collarStack.getItem() instanceof CollarArmorItem collar) {
 
                 hasCollar = true;
 
-                if (collar.hasSpikes(stack)) {
+                if (collar.hasSpikes(collarStack)) {
                     hasSpikes = true;
                 } else {
                     hasSpikes = false;
                 }
 
-                if (collar.hasBell(stack)) {
+                if (collar.hasBell(collarStack)) {
                     hasBell = true;
                 } else {
                     hasBell = false;
                 }
 
-                if (collar.hasGlow(stack)) {
+                if (collar.hasGlow(collarStack)) {
                     light = 255;
                 }
 
@@ -1157,6 +1240,13 @@ public class WCAccesoriesLayer extends GeoRenderLayer<WCatEntity> {
                     collarModel.texture = AccessoryModel.COLLAR_TEXTURES[7];
                 }
 
+                if (collarStack.hasCustomHoverName()) {
+                    if (collarStack.getHoverName().getString().toLowerCase(Locale.ROOT).equals("space kitty")) {
+                        if (WarriorCatsEvents.Devs.isDev(animatable.getPlayerBoundUuid())) {
+                            spaceKitty = true;
+                        }
+                    }
+                }
 
             } else {
                 hasSpikes = false;
@@ -1182,6 +1272,8 @@ public class WCAccesoriesLayer extends GeoRenderLayer<WCatEntity> {
 
                 RenderType accessoryRenderType = RenderType.entityCutoutNoCull(collarModel.getTextureResource(animatable));
 
+                if (spaceKitty) accessoryRenderType = RenderType.endGateway();
+
                 VertexConsumer accessoryBuffer = bufferSource.getBuffer(accessoryRenderType);
 
                 float interpolatedYaw = Mth.lerp(partialTick, animatable.yBodyRotO, animatable.yBodyRot);
@@ -1199,5 +1291,126 @@ public class WCAccesoriesLayer extends GeoRenderLayer<WCatEntity> {
             }
         }
 
+        if (bone.getName().equals("up")) {
+
+            ItemStack elytraStack = ItemStack.EMPTY;
+            ItemStack bodyElytraStack = animatable.getItemBySlot(EquipmentSlot.CHEST);
+            if (bodyElytraStack.getItem() instanceof ElytraItem) {
+                elytraStack = bodyElytraStack;
+            }
+
+            if (elytraStack.isEmpty()) {
+                ItemStack curiosStack = Compatibilities.getCuriosItem(
+                        animatable.getPlayerBoundUuid(), ElytraItem.class
+                );
+
+                if (!curiosStack.isEmpty()) {
+                    elytraStack = curiosStack;
+                }
+            }
+
+            if (elytraStack.getItem() instanceof ElytraItem) {
+                var bakedModel = elytraModel.getBakedModel(elytraModel.getModelResource(animatable));
+
+                if (Minecraft.getInstance().level != null) {
+                    Player player = Minecraft.getInstance().level.getPlayerByUUID(animatable.getPlayerBoundUuid());
+                    elytraModel.setTexture(resolveElytraTexture(player, elytraStack));
+                    var processor = elytraModel.getAnimationProcessor();
+                    var leftWing = processor.getBone("left_wing");
+                    var rightWing = processor.getBone("right_wing");
+                    if (leftWing != null && rightWing != null) {
+                        if (player != null) {
+                            boolean flying = player.isFallFlying();
+
+                            if (flying) {
+                                float angle = (float) ((60  + 60*-Mth.abs(player.getXRot()/90))* animatable.getDeltaMovement().length()/1.5f);
+                                leftWing.setRotZ((float)Math.toRadians(194 + angle));
+                                rightWing.setRotZ(-(float)Math.toRadians(194 + angle));
+
+                            } else {
+                                leftWing.setRotZ((float)Math.toRadians(194));
+                                rightWing.setRotZ(-(float)Math.toRadians(194));
+                            }
+                        }
+                    }
+                }
+
+
+
+                poseStack.pushPose();
+
+                float scale = 0.8f;
+
+                poseStack.translate(0.00D, 0.43D, -0.0D);
+
+                poseStack.scale(scale, scale, scale);
+
+                poseStack.mulPose(Axis.XP.rotationDegrees(-5f));
+                poseStack.mulPose(Axis.YP.rotationDegrees(180f));
+
+                RenderUtils.translateMatrixToBone(poseStack, bone);
+
+                RenderType accessoryRenderType = RenderType.entityCutoutNoCull(elytraModel.getTextureResource(animatable));
+
+                if (WarriorCatsEvents.Devs.isDev(animatable.getPlayerBoundUuid())) {
+                    if (elytraStack.hasCustomHoverName() && elytraStack.getHoverName().getString().equalsIgnoreCase("space kitty")) {
+                        accessoryRenderType = RenderType.endGateway();
+                    }
+                }
+
+                VertexConsumer accessoryBuffer = bufferSource.getBuffer(accessoryRenderType);
+
+                float interpolatedYaw = Mth.lerp(partialTick, animatable.yBodyRotO, animatable.yBodyRot);
+                poseStack.mulPose(Axis.YP.rotationDegrees(interpolatedYaw + 180f));
+
+                elytraRenderer.reRender(
+                        bakedModel,
+                        poseStack,
+                        bufferSource,
+                        animatable,
+                        accessoryRenderType,
+                        accessoryBuffer,
+                        partialTick,
+                        packedLight,
+                        packedOverlay,
+                        1f, 1f, 1f, 1f
+                );
+
+                poseStack.popPose();
+
+                buffer = bufferSource.getBuffer(renderType);
+            }
+        }
+
+    }
+
+    @Override
+    public void render(PoseStack poseStack, WCatEntity animatable, BakedGeoModel bakedModel, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay) {
+
+        super.render(poseStack, animatable, bakedModel, renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay);
+    }
+
+    public static ResourceLocation resolveElytraTexture(LivingEntity entity, ItemStack stack) {
+
+        if (WarriorCatsEvents.Devs.isDev(entity.getUUID())) {
+            if (stack.hasCustomHoverName() && stack.getHoverName().getString().equalsIgnoreCase("wce")) {
+                return ElytraModel.DEV_TEXTURE2;
+            }
+            if (stack.hasCustomHoverName() && stack.getHoverName().getString().equalsIgnoreCase("starclan")) {
+                return ElytraModel.DEV_TEXTURE;
+            }
+        }
+
+        if (entity instanceof AbstractClientPlayer player) {
+            if (player.isElytraLoaded() && player.getElytraTextureLocation() != null) {
+                return player.getElytraTextureLocation();
+            }
+
+            if (player.isCapeLoaded() && player.getCloakTextureLocation() != null && player.isModelPartShown(PlayerModelPart.CAPE)) {
+                return player.getCloakTextureLocation();
+            }
+        }
+
+        return new ResourceLocation("textures/entity/elytra.png");
     }
 }

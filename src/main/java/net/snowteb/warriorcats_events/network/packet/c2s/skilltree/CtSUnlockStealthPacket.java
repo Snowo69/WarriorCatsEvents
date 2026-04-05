@@ -34,6 +34,7 @@ public class CtSUnlockStealthPacket {
 
             if (!WCEServerConfig.SERVER.SKILL_TREE_SERVER.get()) {
                 player.sendSystemMessage(Component.literal("Skill tree is disabled for this world.").withStyle(ChatFormatting.RED));
+                return;
             }
 
             int cost = PlayerSkill.getDefaultStealthcost();

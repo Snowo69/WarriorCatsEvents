@@ -18,6 +18,7 @@ import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterials;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,7 +31,7 @@ public class CollarArmorItem extends ArmorItem {
             UUID.fromString("a1b2d3d4-abbb-cbdc-e13e-1a1b1c124456");
 
     public CollarArmorItem() {
-        super(ArmorMaterials.IRON, Type.CHESTPLATE, new Properties().stacksTo(1).durability(280));
+        super(ArmorMaterials.IRON, Type.CHESTPLATE, new Properties().stacksTo(1).durability(380));
     }
 
 
@@ -81,11 +82,6 @@ public class CollarArmorItem extends ArmorItem {
     }
 
     @Override
-    public boolean isEnchantable(ItemStack stack) {
-        return false;
-    }
-
-    @Override
     public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltipComponents, TooltipFlag pIsAdvanced) {
 
         CompoundTag tag = pStack.getTag();
@@ -121,6 +117,21 @@ public class CollarArmorItem extends ArmorItem {
     public boolean hasGlow(ItemStack stack) {
         CompoundTag tag = stack.getTag();
         return tag != null && tag.getBoolean("HasGlow");
+    }
+
+    @Override
+    public boolean isEnchantable(ItemStack stack) {
+        return true;
+    }
+
+    @Override
+    public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
+        return super.canApplyAtEnchantingTable(stack, enchantment);
+    }
+
+    @Override
+    public int getEnchantmentValue(ItemStack stack) {
+        return 15;
     }
 
 }

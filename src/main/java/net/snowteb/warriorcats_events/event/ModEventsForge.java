@@ -3,8 +3,11 @@ package net.snowteb.warriorcats_events.event;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.BlockParticleOption;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -29,8 +32,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
@@ -41,6 +46,7 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
+import net.snowteb.warriorcats_events.block.custom.MakeshiftBedBlock;
 import net.snowteb.warriorcats_events.block.custom.MossBedBlock;
 import net.snowteb.warriorcats_events.block.custom.StoneCraftingTable;
 import net.snowteb.warriorcats_events.block.entity.StoneCraftingTableBlockEntity;
@@ -68,6 +74,63 @@ import java.util.UUID;
 
 @Mod.EventBusSubscriber(modid = WarriorCatsEvents.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ModEventsForge {
+
+//    @SubscribeEvent
+//    public static void onChat(ServerChatEvent event) {
+//
+//        ServerPlayer player = event.getPlayer();
+//
+//        Component message = (event.getMessage());
+//
+//        Component base = player.getDisplayName();
+//
+//        Component clanText = Component.empty()
+//                .append("[")
+//                .append(Component.literal(player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
+//                                .map(PlayerClanData::getClanName).orElse(""))
+//                        .append("] "));
+//
+//        Component morphName = Component.empty()
+//                .append("<")
+//                .append(Component.literal(player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
+//                        .map(PlayerClanData::getMorphName).orElse("")))
+//                .append("> ");
+//
+//        Component finalName = Component.empty();
+//
+//        if (!clanText.getString().isEmpty()) {
+//            UUID clanUUID = player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
+//                    .map(PlayerClanData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID);
+//            ClanData data = ClanData.get(player.getServer().overworld());
+//            ClanData.Clan clan = data.getClan(clanUUID);
+//            if (clan != null) {
+//                finalName = finalName.copy().append(clanText.copy().withStyle(Style.EMPTY.withColor(clan.color)));
+//            }
+//        }
+//
+//        if (!morphName.getString().isEmpty()) {
+//            finalName = finalName.copy().append(morphName.copy().withStyle(ChatFormatting.WHITE));
+//        }
+//
+//        if (!morphName.getString().isEmpty()) {
+//            finalName = finalName.copy()
+//                    .append(Component.literal("<").withStyle(ChatFormatting.DARK_GRAY))
+//                    .append(base.copy().withStyle(ChatFormatting.DARK_GRAY))
+//                    .append(Component.literal("> ").withStyle(ChatFormatting.DARK_GRAY));
+//        } else {
+//            finalName = finalName.copy()
+//                    .append(Component.literal("<").withStyle(ChatFormatting.WHITE))
+//                    .append(base.copy().withStyle(ChatFormatting.WHITE))
+//                    .append(Component.literal("> ").withStyle(ChatFormatting.WHITE));
+//        }
+//
+//        Component finalText = finalName.copy().append(message.copy());
+//
+//        event.setCanceled(true);
+//
+//        player.server.getPlayerList().broadcastSystemMessage(finalText, false);
+//
+//    }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
@@ -191,6 +254,28 @@ public class ModEventsForge {
                 });
 
             }
+        } else if (state.getBlock() instanceof MakeshiftBedBlock) {
+            if (level instanceof ServerLevel sLevel) {
+
+                Vec3 exactPos = sleepingPos.getCenter().add(0, -0.3, 0);
+
+                sLevel.sendParticles(
+                        new BlockParticleOption(ParticleTypes.BLOCK, state),
+                        exactPos.x, exactPos.y, exactPos.z,
+                        15, 0.5, 0.3, 0.5, 0.1
+                );
+
+                sLevel.playSound(null, player.blockPosition(), SoundEvents.CHERRY_LEAVES_BREAK,
+                        SoundSource.BLOCKS, 1.0F, 1.0F);
+
+            }
+
+            level.setBlock(
+                    sleepingPos,
+                    Blocks.AIR.defaultBlockState(),
+                    3
+            );
+
         }
     }
 
@@ -483,44 +568,70 @@ public class ModEventsForge {
             }
         }
 
-        if (!(target instanceof WCatEntity wcat)) {
+        if (!(target instanceof WCatEntity || target instanceof EagleEntity)) {
             return;
         }
+
+        WCatEntity wcat = null;
+        if (target instanceof WCatEntity) wcat = (WCatEntity) target;
+
+        EagleEntity eagle = null;
+        if (target instanceof EagleEntity) eagle = (EagleEntity) target;
 
         if (player.level().isClientSide()) {
             return;
         }
 
-        if (!wcat.isTame()) {
-            return;
-        }
+        if (wcat != null) {
 
-        LivingEntity owner = wcat.getOwner();
-        if (owner == null) {
-            return;
-        }
+            if (!wcat.isTame()) {
+                return;
+            }
 
-        if (!owner.getUUID().equals(player.getUUID())) {
-            return;
-        }
+            LivingEntity owner = wcat.getOwner();
+            if (owner == null) {
+                return;
+            }
 
-        if (player instanceof ServerPlayer serverPlayer) {
-            if (!wcat.getClanUUID().equals(ClanData.EMPTY_UUID)) {
-                UUID clanUUID = serverPlayer.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
-                        .map(PlayerClanData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID);
+            if (!owner.getUUID().equals(player.getUUID())) {
+                return;
+            }
 
-                ClanData data = ClanData.get(serverPlayer.serverLevel().getServer().overworld());
-                ClanData.Clan clan = data.getClan(clanUUID);
-                if (clan != null) {
-                    if (!wcat.getClanUUID().equals(clanUUID)) {
-                        return;
+            if (player instanceof ServerPlayer serverPlayer) {
+                if (!wcat.getClanUUID().equals(ClanData.EMPTY_UUID)) {
+                    UUID clanUUID = serverPlayer.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
+                            .map(PlayerClanData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID);
+
+                    ClanData data = ClanData.get(serverPlayer.serverLevel().getServer().overworld());
+                    ClanData.Clan clan = data.getClan(clanUUID);
+                    if (clan != null) {
+                        if (!wcat.getClanUUID().equals(clanUUID)) {
+                            return;
+                        }
                     }
                 }
             }
-        }
 
-        if (!player.isShiftKeyDown()) {
-            event.setCanceled(true);
+            if (!player.isShiftKeyDown()) {
+                event.setCanceled(true);
+            }
+        } else if (eagle != null) {
+            if (!eagle.isTame()) {
+                return;
+            }
+
+            LivingEntity owner = eagle.getOwner();
+            if (owner == null) {
+                return;
+            }
+
+            if (!owner.getUUID().equals(player.getUUID())) {
+                return;
+            }
+
+            if (!player.isShiftKeyDown()) {
+                event.setCanceled(true);
+            }
         }
     }
 

@@ -4,19 +4,27 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
+import net.minecraft.world.level.ChunkPos;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.client.ClanInfo;
+import net.snowteb.warriorcats_events.client.ClientTerritoryData;
 import net.snowteb.warriorcats_events.entity.ModEntities;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.network.ModPackets;
+import net.snowteb.warriorcats_events.network.packet.c2s.clan.CtSClaimTerritory;
 import net.snowteb.warriorcats_events.network.packet.c2s.clan.CtSManageClanMemberPacket;
+import net.snowteb.warriorcats_events.network.packet.c2s.clan.CtSUnclaimTerritory;
 import net.snowteb.warriorcats_events.util.ClanSymbol;
+import net.snowteb.warriorcats_events.util.GradientButton;
 import net.snowteb.warriorcats_events.util.MemberScrollList;
 import net.snowteb.warriorcats_events.util.ModButton;
 import org.joml.Matrix4f;
@@ -31,13 +39,28 @@ public class ManageClanScreen extends Screen {
     private final ClanInfo clanInfo;
     private MemberScrollList membersList;
     private ClanInfo.Member selectedMember;
-    private String currentMenu;
+    private String currentMenu = "";
     private String currentPermissionLevel = "";
 
     private ModButton changeRank;
     private ModButton kickPlayer;
     private ModButton changePerms;
     private ModButton closeTab;
+
+    private GradientButton claimTerritory;
+    private GradientButton unclaimTerritory;
+
+    private ModButton closeClaimTerritory;
+
+    private ModButton saveAndClaim;
+    private ModButton saveAndUnclaim;
+
+    private EditBox territoryName;
+
+    private ChunkPos currentChunkPos;
+    private boolean isInOwnTerritory = false;
+    private boolean isTheCore = false;
+
 
     public static final Quaternionf rotation = new Quaternionf(0.0F, 0.0F, 0.0F, 0.0F);
     public static final Quaternionf pose = new Quaternionf(1.9F, 0.0F, 0.6F, 0.0F);
@@ -58,6 +81,26 @@ public class ManageClanScreen extends Screen {
         if (thisMember != null) {
             currentPermissionLevel = thisMember.getPerms();
         }
+
+        claimTerritory = new GradientButton(
+                centerX - 85, 10,
+                80, 20,
+                Component.literal("Claim Territory"),
+                btn -> {
+                    drawClaimChunkMenu();
+                }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                80, 20, 0xFF00104C
+        );
+
+        unclaimTerritory = new GradientButton(
+                centerX + 5, 10,
+                80, 20,
+                Component.literal("Unclaim Territory"),
+                btn -> {
+                    drawUnclaimChunkMenu();
+                }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                80, 20, 0xFF00104C
+        );
 
         this.membersList = new MemberScrollList(
                 Minecraft.getInstance(),
@@ -128,6 +171,30 @@ public class ManageClanScreen extends Screen {
         changeRank.visible = false;
         changePerms.visible = false;
         kickPlayer.visible = false;
+
+        LocalPlayer player =  Minecraft.getInstance().player;
+
+        if (player != null) {
+            currentChunkPos = player.chunkPosition();
+            ClientTerritoryData.ClientClanTerritories clanTerritory = ClientTerritoryData.CLIENT_TERRITORIES.get(clanInfo.uuid);
+            if (clanTerritory != null) {
+
+                if (clanTerritory.core() != null) {
+                    if (clanTerritory.core().equals(currentChunkPos)) {
+                        isTheCore = true;
+                    }
+                }
+
+
+                for (ClientTerritoryData.ClientChunk chunk : clanTerritory.claimedTerritory()) {
+                    if (chunk.chunkPos.equals(currentChunkPos)) {
+                        isInOwnTerritory = true;
+                        break;
+                    }
+                }
+            }
+        }
+
 
         drawMainMenu();
 
@@ -364,6 +431,49 @@ public class ManageClanScreen extends Screen {
 
         }
 
+        if (currentMenu.equals("claimChunk") || currentMenu.equals("unclaimChunk")) {
+
+            pGuiGraphics.fill(centerX - 70, centerY - 80, centerX + 70, centerY + 65, 0, 0xFF000017);
+            pGuiGraphics.fillGradient(centerX - 70, centerY - 80, centerX + 70, centerY + 65, 0x8800104C, 0);
+            pGuiGraphics.renderOutline(centerX - 70, centerY - 80, 140, 145, 0xFFFFFFFF);
+
+            if (currentMenu.equals("claimChunk")) {
+                pGuiGraphics.drawCenteredString(this.font,
+                        Component.literal("Claim territory for").withStyle(ChatFormatting.GRAY),
+                        centerX, centerY - 70, 0xFFFFFF);
+
+                pGuiGraphics.drawCenteredString(this.font,
+                        Component.literal(clanInfo.name).withStyle(Style.EMPTY.withColor(clanInfo.color)),
+                        centerX, centerY - 60, 0xFFFFFF);
+
+                pGuiGraphics.drawCenteredString(this.font,
+                        Component.literal("Cost: 300XP").withStyle(ChatFormatting.GRAY),
+                        centerX, centerY - 40, 0xFFFFFF);
+            } else {
+                String message = "";
+                if (isInOwnTerritory) {
+                    if (isTheCore) {
+                        message = "You are in core territory! Unclaiming this piece will unclaim every other piece of territory.";
+                    } else {
+                        message = "Unclaiming territory might also unclaim territory not connected to the core. Proceed with caution.";
+                    }
+                    saveAndUnclaim.visible = true;
+                } else {
+                    message = "You cannot unclaim territory you don't own.";
+                    saveAndUnclaim.visible = false;
+                }
+                int y = 60;
+
+                List<FormattedCharSequence> wrapped = this.font.split(FormattedText.of(message), 120);
+                for (FormattedCharSequence subLine : wrapped) {
+
+                    pGuiGraphics.drawCenteredString(this.font,subLine, centerX, y, 0xFFFFFFFF);
+
+                    y += this.font.lineHeight;
+                }
+            }
+        }
+
         super.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
 
         pGuiGraphics.pose().popPose();
@@ -378,6 +488,9 @@ public class ManageClanScreen extends Screen {
         this.addRenderableWidget(kickPlayer);
         this.addRenderableWidget(changePerms);
         this.addRenderableWidget(membersList);
+
+        this.addRenderableWidget(claimTerritory);
+        this.addRenderableWidget(unclaimTerritory);
     }
 
     private void drawChangeRankMenu() {
@@ -632,12 +745,116 @@ public class ManageClanScreen extends Screen {
         ));
     }
 
+    private void drawClaimChunkMenu() {
+        this.removeWidget(territoryName);
+        this.removeWidget(closeClaimTerritory);
+        this.removeWidget(saveAndClaim);
+        this.removeWidget(saveAndUnclaim);
+
+        currentMenu = "claimChunk";
+
+        int centerY = this.height / 2;
+        int centerX = this.width / 2;
+
+
+        territoryName = new EditBox(this.font, centerX - 50, centerY,
+                100, 20,
+                Component.literal("Optional name"));
+        territoryName.setHint(Component.literal("Optional name").withStyle(ChatFormatting.DARK_GRAY));
+        territoryName.setMaxLength(25);
+
+        closeClaimTerritory = new ModButton(
+                centerX - 65,
+                centerY + 40,
+                60, 15,
+                Component.literal("Back"),
+                btn -> {
+                    drawMainMenu();
+                },
+                new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                80, 20
+        );
+
+        saveAndClaim = new ModButton(
+                centerX + 5,
+                centerY + 40,
+                60, 15,
+                Component.literal("Claim"),
+                btn -> {
+                    saveAndClaimChunk();
+                },
+                new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                80, 20
+        );
+
+        this.addRenderableWidget(saveAndClaim);
+        this.addRenderableWidget(closeClaimTerritory);
+        this.addRenderableWidget(territoryName);
+
+    }
+
+    private void saveAndClaimChunk() {
+        if (territoryName != null) {
+            String chunkName = territoryName.getValue();
+
+            ModPackets.sendToServer(new CtSClaimTerritory(chunkName));
+            this.onClose();
+        }
+    }
+
+    private void drawUnclaimChunkMenu() {
+        this.removeWidget(territoryName);
+        this.removeWidget(closeClaimTerritory);
+        this.removeWidget(saveAndClaim);
+        this.removeWidget(saveAndUnclaim);
+
+        currentMenu = "unclaimChunk";
+
+        int centerY = this.height / 2;
+        int centerX = this.width / 2;
+
+        closeClaimTerritory = new ModButton(
+                centerX - 65,
+                centerY + 40,
+                60, 15,
+                Component.literal("Back"),
+                btn -> {
+                    drawMainMenu();
+                },
+                new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                80, 20
+        );
+
+        saveAndUnclaim = new ModButton(
+                centerX + 5,
+                centerY + 40,
+                60, 15,
+                Component.literal("Unclaim"),
+                btn -> {
+                    saveAndUnclaimChunk();
+                },
+                new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                80, 20
+        );
+
+        this.addRenderableWidget(saveAndUnclaim);
+        this.addRenderableWidget(closeClaimTerritory);
+
+    }
+
+    private void saveAndUnclaimChunk() {
+        ModPackets.sendToServer(new CtSUnclaimTerritory(currentChunkPos));
+        this.onClose();
+    }
+
     @Override
     public boolean keyPressed(int pKeyCode, int pScanCode, int pModifiers) {
-        if (pKeyCode == GLFW.GLFW_KEY_E) {
-            this.onClose();
-            return true;
+        if (territoryName != null && territoryName.isFocused()) {
+            if (territoryName.keyPressed(pKeyCode, pScanCode, pModifiers)) {
+                return true;
+            }
         }
+
         return super.keyPressed(pKeyCode, pScanCode, pModifiers);
     }
 

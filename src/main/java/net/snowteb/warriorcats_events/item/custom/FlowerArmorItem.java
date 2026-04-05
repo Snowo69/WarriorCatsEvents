@@ -13,6 +13,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterials;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.Level;
 
 import java.util.UUID;
@@ -23,7 +24,7 @@ public class FlowerArmorItem extends ArmorItem {
             UUID.fromString("a1b2c3d4-abbb-cccc-eeee-1a1b1c123456");
 
     public FlowerArmorItem() {
-        super(ArmorMaterials.IRON, Type.CHESTPLATE, new Properties().stacksTo(1).durability(220));
+        super(ArmorMaterials.IRON, Type.CHESTPLATE, new Properties().stacksTo(1).durability(350));
     }
 
 
@@ -75,9 +76,18 @@ public class FlowerArmorItem extends ArmorItem {
 
     @Override
     public boolean isEnchantable(ItemStack stack) {
-        return false;
+        return true;
     }
 
+    @Override
+    public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
+        return super.canApplyAtEnchantingTable(stack, enchantment);
+    }
+
+    @Override
+    public int getEnchantmentValue(ItemStack stack) {
+        return 15;
+    }
 
 
 }

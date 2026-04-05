@@ -53,12 +53,14 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -71,6 +73,7 @@ import net.snowteb.warriorcats_events.block.custom.LavenderPetalsBlock;
 import net.snowteb.warriorcats_events.block.custom.MossBedBlock;
 import net.snowteb.warriorcats_events.block.entity.FreshkillPileBlockEntity;
 import net.snowteb.warriorcats_events.block.entity.MossBedBlockEntity;
+import net.snowteb.warriorcats_events.block.entity.TreeStumpBlockEntity;
 import net.snowteb.warriorcats_events.clan.ClanData;
 import net.snowteb.warriorcats_events.clan.PlayerClanData;
 import net.snowteb.warriorcats_events.clan.PlayerClanDataProvider;
@@ -78,6 +81,7 @@ import net.snowteb.warriorcats_events.client.LeapClientState;
 import net.snowteb.warriorcats_events.effect.ModEffects;
 import net.snowteb.warriorcats_events.entity.ModEntities;
 import net.snowteb.warriorcats_events.entity.client.WCModel;
+import net.snowteb.warriorcats_events.event.ModEvents2;
 import net.snowteb.warriorcats_events.item.ModItems;
 import net.snowteb.warriorcats_events.network.ModPackets;
 import net.snowteb.warriorcats_events.network.packet.s2c.cats.OpenCatDataScreenPacket;
@@ -121,7 +125,8 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         KIT,
         APPRENTICE,
         WARRIOR,
-        MEDICINE
+        MEDICINE,
+        DEPUTY
     }
 
     private static final EntityDataAccessor<Integer> VARIANT =
@@ -356,6 +361,8 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
             SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<String> EYES_ANOMALY =
             SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.STRING);
+    private static final EntityDataAccessor<String> SILVER =
+            SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.STRING);
 
     public static final EntityDataAccessor<String> EYE_COLOR_LEFT =
             SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.STRING);
@@ -379,6 +386,8 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
             SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.INT);
     public static final EntityDataAccessor<Integer> NOISE =
             SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.INT);
+    public static final EntityDataAccessor<Integer> SILVER_VARIANT =
+            SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.INT);
 
 
     private static final EntityDataAccessor<String> BASE_CHIMERA =
@@ -395,6 +404,8 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
             SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<String> TABBY_STRIPES_CHIMERA =
             SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.STRING);
+    private static final EntityDataAccessor<String> SILVER_CHIMERA =
+            SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.STRING);
 
     public static final EntityDataAccessor<Integer> RUFOUSING_VARIANT_CHIMERA =
             SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.INT);
@@ -410,6 +421,8 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
             SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.INT);
     public static final EntityDataAccessor<Integer> NOISE_CHIMERA =
             SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.INT);
+    public static final EntityDataAccessor<Integer> SILVER_VARIANT_CHIMERA =
+            SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.INT);
 
 
     public static final EntityDataAccessor<Float> SIZE =
@@ -421,7 +434,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
     private WCGenetics storedFatherGenetics;
     public String textureKey;
-    private final String[] textureLayersPaths = new String[20];
+    private final String[] textureLayersPaths = new String[24];
 
     // GENETICS
 
@@ -2041,93 +2054,186 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
     }
 
 
-    private static final String[] PREFIX_1 = {
-            // 1, 10, 11
-            //MultiColor
-            "Leaf", "Marble", "Fleck", "Dapple", "Spotted",
-            "Tawny", "Mottle", "Speckle", "Brindle", "Splotch",
-            "Bumble", "Bright", "Sun", "Rainbow", "Pollen",
-            "Drift", "Freckle", "Blotch", "Petal", "Shimmer",
-            "Bloom"
-
+    private static final String[] PREFIXES = {
+            "Adder", "Alder", "Allium", "Almond", "Amber", "Amethyst", "Andesite",
+            "Ant", "Apple", "Armadillo", "Ash", "Ashen", "Ashy", "Aspen", "Aster",
+            "Axolotl", "Azure", "Badger", "Bark", "Barley", "Bat", "Bear", "Beige",
+            "Bengal", "Bent", "Berry", "Big", "Birch", "Bird", "Black", "Blaze",
+            "Blazing", "Blizzard", "Bloom", "Blooming", "Blossom", "Blotch",
+            "Blotched", "Blotchy", "Blue", "Bluet", "Blueberry", "Boa", "Bold",
+            "Bone", "Bracken", "Branch", "Bramble", "Bright", "Brindle", "Broken",
+            "Bubble", "Bug", "Bumble", "Burn", "Burnet", "Burning", "Burnt", "Butterfly",
+            "Cactus", "Camel", "Carp", "Chamomile", "Cherry", "Chestnut", "Chervil",
+            "Chirp", "Chirping", "Chisel", "Cinder", "Cinnamon", "Clay", "Cloud", "Clouded",
+            "Coal", "Cobble", "Cocoa", "Cod", "Cold", "Cornflower", "Cranberry",
+            "Crane", "Cream", "Crow", "Crystal", "Current", "Daisy", "Damp", "Dandelion",
+            "Dapple", "Dappled", "Dark", "Dawn", "Deep", "Deer", "Destiny", "Dew",
+            "Diamond", "Diorite", "Dock", "Dog", "Dolphin", "Donkey", "Dove", "Dragonfly",
+            "Drift", "Drip", "Drizzle", "Duck", "Dull", "Dusk", "Dust", "Dusty", "Eagle",
+            "Echo", "Eel", "Egg", "Elk", "Ember", "Emerald", "Evening", "Faded", "Falcon",
+            "Fallen", "Fallow", "Fang", "Fawn", "Feather", "Fennel", "Fierce", "Fig", "Fin",
+            "Finch", "Fir", "Fire", "Fish", "Flame", "Flare", "Fleck", "Flecked", "Fleet",
+            "Float", "Flow", "Flower", "Flowering", "Flurry", "Flutter", "Flying", "Fog",
+            "Fox", "Freckle", "Frog", "Frost", "Frosted", "Frosty", "Fuzzy", "Gecko",
+            "Gentle", "Glade", "Glow", "Glowing", "Goat", "Gold", "Golden", "Goldenrod",
+            "Goose", "Granite", "Green", "Grey", "Guppy", "Hail", "Hallow", "Hallowed",
+            "Happy", "Hare", "Hawk", "Hay", "Haze", "Hazel", "Hazy", "Heavy", "Heather",
+            "Heron", "Hollow", "Holly", "Hop", "Hope", "Hornet", "Horse", "Hound", "Howl",
+            "Howling", "Hunch", "Hurricane", "Ice", "Icicle", "Icy", "Indigo", "Iron",
+            "Ivory", "Ivy", "Jackdaw", "Jay", "Joy", "Jump", "Jumping", "Jungle", "Juniper",
+            "Kestrel", "Kink", "Kite", "Kiwi", "Lake", "Lantern", "Large", "Lark",
+            "Lavender", "Leaf", "Leopard", "Light", "Lightning", "Lilac", "Lily",
+            "Lion", "Little", "Lizard", "Llama", "Long", "Loud", "Magpie", "Mallow",
+            "Maple", "Marble", "Marbled", "Marigold", "Marsh", "Meadow", "Mellow",
+            "Melon", "Milk", "Minnow", "Mint", "Minty", "Mist", "Misted", "Misty",
+            "Mold", "Mole", "Moon", "Morning", "Moss", "Mossy", "Moth", "Mouse",
+            "Mule", "Mushroom", "Nectar", "Needle", "Nettle", "Newt", "Night", "Noble",
+            "Nut", "Nutmeg", "Oak", "Oat", "Ocean", "Ocelot", "Odd", "Olive", "Otter",
+            "Orange", "Orchid", "Owl", "Pale", "Panda", "Parrot", "Parsley", "Patch",
+            "Patched", "Peanut", "Pear", "Pearl", "Pecan", "Pebble", "Peony", "Perch",
+            "Petal", "Pigeon", "Pike", "Pine", "Pink", "Pistachio", "Plum", "Plump",
+            "Pollen", "Pond", "Pool", "Pop", "Poppy", "Pounce", "Prickle", "Proud",
+            "Puddle", "Pumpkin", "Python", "Quail", "Quick", "Quiet", "Rabbit", "Raccoon",
+            "Radiant", "Rain", "Rainbow", "Raspberry", "Rat", "Rattle", "Rattlesnake",
+            "Raven", "Ravenous", "Red", "Reed", "River", "Robin", "Rook", "Rooster", "Root",
+            "Rose", "Rosemary", "Rowan", "Running", "Rust", "Sage", "Salmon", "Sand", "Scarlet",
+            "Scorch", "Scorpion", "Shade", "Shaded", "Shadow", "Shark", "Sheep", "Shell",
+            "Shimmer", "Shimmering", "Shivering", "Short", "Shrew", "Shy", "Silk", "Silver",
+            "Skunk", "Sky", "Slate", "Sleet", "Sloe", "Small", "Smoke", "Smolder", "Smoldering",
+            "Sniff", "Snow", "Snowdrop", "Soft", "Soot", "Sorrel", "Speckled", "Spark", "Sparkle",
+            "Sparkling", "Sparrow", "Speck", "Speckle", "Speckled", "Spider", "Splinter",
+            "Spot", "Spotted", "Splash", "Splotch", "Splotched", "Spruce", "Squid", "Squirrel",
+            "Starling", "Steady", "Stone", "Stomp", "Storm", "Storming", "Stormy", "Strawberry",
+            "Stream", "Sun", "Sunflower", "Sunny", "Sunset", "Swallow", "Swan", "Sweet", "Swift",
+            "Sycamore", "Tadpole", "Tall", "Tan", "Tawny", "Thicket", "Thistle", "Thorn", "Thorny",
+            "Thrush", "Thunder", "Thyme", "Tide", "Tiger", "Tiny", "Toad", "Torch", "Trout", "Trudge",
+            "Tsunami", "Tulip", "Turtle", "Twig", "Twitch", "Typhoon", "Umber", "Valley", "Vine",
+            "Violet", "Viper", "Void", "Vole", "Walnut", "Warm", "Wasp", "Wave", "Waving", "Web",
+            "Wheat", "Whirl", "Whisper", "Whispering", "White", "Whorl", "Wild", "Willow", "Wilted",
+            "Wind", "Winding", "Wish", "Wisp", "Wolf", "Wood", "Woods", "Wren", "Yarrow", "Yellow",
+            "Yew", "Zap", "Zip"
     };
-    private static final String[] PREFIX_2 = {
-            // 2, 3, 9
-            // Gray and cream
-            "Pearl", "Mist", "Ivory", "Silk", "Feather",
-            "Leaf", "Ash", "Fawn", "Soft", "Frost", "Snow",
-            "Cloud", "Storm", "Sparrow", "Rat", "Bengal",
-            "Willow", "Sand", "Dove", "Smoke", "Haze",
-            "Drizzle", "Silver"
-    };
-    private static final String[] PREFIX_3 = {
-            // 4, 8
-            // Tabbies
-            "Tiger", "Flame", "Ember", "Bracken", "Fire",
-            "Oak", "Rust", "Maple", "Amber", "Hare",
-            "Lion", "Dawn", "Dark", "Bumble", "Mole",
-            "Sun", "Blaze", "Chestnut", "Fox", "Cinder",
-            "Scorch", "Rowan", "Thorn", "Soot", "Red"
-    };
-    private static final String[] PREFIX_4 = {
-            // 5, 6, 7, 12
-            // Stone colors
-            "Stone", "Jay", "Pebble", "Dark", "Ash",
-            "Night", "Dust", "Mist", "Swift", "Shade",
-            "Holly", "Mole", "Storm", "Sparrow", "Twitch",
-            "Slate", "Raven", "Crow", "Dusk"
 
-
+    public static final String[] SUFIXES = {
+            "ash", "bark", "beak", "beam", "bee", "belly", "berry", "bird",
+            "bite", "blaze", "bloom", "blossom", "bound", "bracken", "branch",
+            "breeze", "briar", "bright", "brush", "brook", "bush", "burn",
+            "burr", "burrow", "bush", "call", "charm", "chill", "claw",
+            "cleft", "cliff", "cloud", "crash", "crawl", "crouch", "creek",
+            "creep", "cry", "curl", "dapple", "dappled", "dapples", "dash",
+            "dawn", "dew", "dig", "dot", "dream", "drop", "dusk", "dust",
+            "echo", "ear", "eater", "eye", "eyes", "face", "fall", "fang",
+            "fate", "fawn", "feather", "feet", "fern", "field", "fig", "fin",
+            "fire", "fish", "flake", "flame", "flap", "flight", "flow", "flutter",
+            "foot", "footed", "forest", "fox", "frond", "frost", "fur", "gaze",
+            "ghost", "glaze", "gleam", "glimmer", "glow", "gorse", "grass", "hawk",
+            "haze", "heart", "horn", "hunt", "ice", "ivy", "jaw", "jump", "keep",
+            "keeper", "leaf", "leap", "leg", "light", "mask", "minnow", "mint",
+            "mist", "moon", "morning", "mound", "mountain", "mouse", "muzzle",
+            "needle", "nose", "orb", "orbs", "pad", "patch", "patches", "path",
+            "peak", "pelt", "petal", "pit", "plant", "pond", "pool", "poppy",
+            "pounce", "pride", "puddle", "puff", "quail", "race", "rain", "reed",
+            "ripple", "river", "rock", "rose", "runner", "rustle", "scar", "scratch",
+            "seed", "shade", "shadow", "shell", "shimmer", "shine", "shiver",
+            "shore", "sight", "skip", "sky", "slash", "slice", "slide", "slip",
+            "smudge", "snap", "sneeze", "snout", "snow", "soar", "song", "soul",
+            "spark", "speck", "speckle", "speckles", "spirit", "splash", "splotch",
+            "splotches", "spot", "spots", "spring", "spout", "squeak", "stalk",
+            "stem", "step", "sting", "stomp", "stone", "storm", "stream", "strike",
+            "stripe", "surge", "sweep", "swoop", "tail", "talon", "teeth", "thistle",
+            "thorn", "throat", "thump", "thunder", "tide", "toe", "tooth", "trail",
+            "trickle", "tuft", "twist", "vine", "wander", "watcher", "water", "wave",
+            "whisker", "whisper", "whistle", "willow", "wind", "winds", "wing", "wish"
     };
 
-
-    private static final String[] SUFIX = {
-            "claw", "fur", "feather", "pelt", "eye",
-            "heart", "tail", "wing", "whisker", "blaze",
-            "fang", "shade", "step", "fall", "song",
-            "stripe", "light", "leap", "foot", "spring",
-            "pit", "stream", "patch", "scar", "ear",
-            "frost"
-    };
+//    private static final String[] PREFIX_1 = {
+//            // 1, 10, 11
+//            //MultiColor
+//            "Leaf", "Marble", "Fleck", "Dapple", "Spotted",
+//            "Tawny", "Mottle", "Speckle", "Brindle", "Splotch",
+//            "Bumble", "Bright", "Sun", "Rainbow", "Pollen",
+//            "Drift", "Freckle", "Blotch", "Petal", "Shimmer",
+//            "Bloom"
+//
+//    };
+//    private static final String[] PREFIX_2 = {
+//            // 2, 3, 9
+//            // Gray and cream
+//            "Pearl", "Mist", "Ivory", "Silk", "Feather",
+//            "Leaf", "Ash", "Fawn", "Soft", "Frost", "Snow",
+//            "Cloud", "Storm", "Sparrow", "Rat", "Bengal",
+//            "Willow", "Sand", "Dove", "Smoke", "Haze",
+//            "Drizzle", "Silver"
+//    };
+//    private static final String[] PREFIX_3 = {
+//            // 4, 8
+//            // Tabbies
+//            "Tiger", "Flame", "Ember", "Bracken", "Fire",
+//            "Oak", "Rust", "Maple", "Amber", "Hare",
+//            "Lion", "Dawn", "Dark", "Bumble", "Mole",
+//            "Sun", "Blaze", "Chestnut", "Fox", "Cinder",
+//            "Scorch", "Rowan", "Thorn", "Soot", "Red"
+//    };
+//    private static final String[] PREFIX_4 = {
+//            // 5, 6, 7, 12
+//            // Stone colors
+//            "Stone", "Jay", "Pebble", "Dark", "Ash",
+//            "Night", "Dust", "Mist", "Swift", "Shade",
+//            "Holly", "Mole", "Storm", "Sparrow", "Twitch",
+//            "Slate", "Raven", "Crow", "Dusk"
+//
+//
+//    };
+//
+//
+//    private static final String[] SUFIX = {
+//            "claw", "fur", "feather", "pelt", "eye",
+//            "heart", "tail", "wing", "whisker", "blaze",
+//            "fang", "shade", "step", "fall", "song",
+//            "stripe", "light", "leap", "foot", "spring",
+//            "pit", "stream", "patch", "scar", "ear",
+//            "frost"
+//    };
 
     /**
      * Depending on the variant, pick a set of prefixes
      */
-    private String[] getPrefixForVariant(int variant) {
-        return switch (variant) {
-            case 0 -> PREFIX_1;
-            case 1 -> PREFIX_2;
-            case 2 -> PREFIX_2;
-            case 3 -> PREFIX_3;
-            case 4 -> PREFIX_4;
-            case 5 -> PREFIX_4;
-            case 6 -> PREFIX_4;
-            case 7 -> PREFIX_3;
-            case 8 -> PREFIX_2;
-            case 9 -> PREFIX_1;
-            case 10 -> PREFIX_1;
-            case 11 -> PREFIX_4;
-            case 12 -> PREFIX_3; // chestnutpatch
-            case 13 -> PREFIX_2; // ratstar
-            case 14 -> PREFIX_4; // twitchstream
-            case 15 -> PREFIX_3; // blazepit
-            case 16 -> PREFIX_2; // bengalpelt
-            case 17 -> PREFIX_2; // sparrowstar
-            case 18 -> PREFIX_3; // foxeater
-            case 19 -> PREFIX_2; // willowsong
-            case 20 -> PREFIX_2; //13
-            case 21 -> PREFIX_2; //14
-            case 22 -> PREFIX_4; //15
-            case 23 -> PREFIX_3; //16
-            case 24 -> PREFIX_2; //17
-            case 25 -> PREFIX_4; //18
-            case 26 -> PREFIX_3; //19
-            case 27 -> PREFIX_2; //20
-            case 28 -> PREFIX_3; //21
-            case 29 -> PREFIX_1; //22
-
-            default -> PREFIX_1; // fallback
-        };
+    private String[] getPrefixForVariant() {
+//        return switch (variant) {
+//            case 0 -> PREFIX_1;
+//            case 1 -> PREFIX_2;
+//            case 2 -> PREFIX_2;
+//            case 3 -> PREFIX_3;
+//            case 4 -> PREFIX_4;
+//            case 5 -> PREFIX_4;
+//            case 6 -> PREFIX_4;
+//            case 7 -> PREFIX_3;
+//            case 8 -> PREFIX_2;
+//            case 9 -> PREFIX_1;
+//            case 10 -> PREFIX_1;
+//            case 11 -> PREFIX_4;
+//            case 12 -> PREFIX_3; // chestnutpatch
+//            case 13 -> PREFIX_2; // ratstar
+//            case 14 -> PREFIX_4; // twitchstream
+//            case 15 -> PREFIX_3; // blazepit
+//            case 16 -> PREFIX_2; // bengalpelt
+//            case 17 -> PREFIX_2; // sparrowstar
+//            case 18 -> PREFIX_3; // foxeater
+//            case 19 -> PREFIX_2; // willowsong
+//            case 20 -> PREFIX_2; //13
+//            case 21 -> PREFIX_2; //14
+//            case 22 -> PREFIX_4; //15
+//            case 23 -> PREFIX_3; //16
+//            case 24 -> PREFIX_2; //17
+//            case 25 -> PREFIX_4; //18
+//            case 26 -> PREFIX_3; //19
+//            case 27 -> PREFIX_2; //20
+//            case 28 -> PREFIX_3; //21
+//            case 29 -> PREFIX_1; //22
+//
+//            default -> PREFIX_1; // fallback
+//        };
+        return PREFIXES;
     }
 
 
@@ -2177,6 +2283,10 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
     public BlockPos getHomePosition() {
         return homePosition;
+    }
+
+    public boolean hasHomePosition() {
+        return homePosition != null && !homePosition.equals(BlockPos.ZERO);
     }
 
     public void setHomePosition(BlockPos pos) {
@@ -2364,7 +2474,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
     @Override
     protected void registerGoals() {
         this.preyTarget = new NearestAttackableTargetGoal<>(this, Animal.class, 10, false, false, (target) -> {
-            return mode == CatMode.WANDER && !this.returnHomeFlag && (target instanceof MouseEntity || target instanceof PigeonEntity || target instanceof SquirrelEntity);
+            return mode == CatMode.WANDER && !this.returnHomeFlag && !this.onBorderPatrolFlag && (target instanceof MouseEntity || target instanceof PigeonEntity || target instanceof SquirrelEntity);
         });
 
         this.monsterTarget = new NearestAttackableTargetGoal<>(this, LivingEntity.class,
@@ -2383,20 +2493,25 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         this.goalSelector.addGoal(3, new WCGoals.WCatSeekShelterGoal(this, 1.2D));
         this.goalSelector.addGoal(3, new WCGoals.WCatMedicineHealsCats(this));
         this.goalSelector.addGoal(4, new WCGoals.WCatPickupItemGoal(this));
-        this.goalSelector.addGoal(5, new WCGoals.WCatDepositFreshkill(this));
-        this.goalSelector.addGoal(6, new BreedGoal(this, 0.8D));
-        this.goalSelector.addGoal(7, new WCGoals.WCatRunWithPlayerGoal(this, 1f));
-        this.goalSelector.addGoal(7, new WCGoals.WCatFollowOwnerGoal(this, 1.2D, 1.2F, 7.0F));
-        this.targetSelector.addGoal(8, new HurtByTargetGoal(this));
-        this.targetSelector.addGoal(9, this.monsterTarget);
-        this.targetSelector.addGoal(10, this.preyTarget);
-        this.goalSelector.addGoal(11, new WCAttackGoal(this, 1.2D, true));
-        this.goalSelector.addGoal(12, new WCGoals.WCatMoveToMateGoal(this));
-        if (!this.isAnImage()) this.goalSelector.addGoal(13, new WCGoals.WCatBoundedWanderGoal(this, 0.8D));
-        this.goalSelector.addGoal(14, new WCGoals.WCatGiveRandomItemGoal(this));
-        if (!this.isAnImage()) this.goalSelector.addGoal(14, new WCGoals.WCatRandomLookAroundGoal(this));
-        if (!this.isAnImage()) this.goalSelector.addGoal(14, new WCGoals.WCatLookAtPlayerGoal(this, Player.class, 8.0F));
-        if (!this.isAnImage()) this.goalSelector.addGoal(15, new WCGoals.WCatCasualBlockSeekGoal(this, 0.8D, 15, 0.07D));
+
+        this.goalSelector.addGoal(5, new WCGoals.WCatDeputySendsPatrols(this));
+        this.goalSelector.addGoal(5, new WCGoals.WCatBorderPatrolGoal(this));
+        this.goalSelector.addGoal(5, new WCGoals.WCatHuntingPatrolGoal(this));
+
+        this.goalSelector.addGoal(6, new WCGoals.WCatDepositFreshkill(this));
+        this.goalSelector.addGoal(7, new BreedGoal(this, 0.8D));
+        this.goalSelector.addGoal(8, new WCGoals.WCatRunWithPlayerGoal(this, 1f));
+        this.goalSelector.addGoal(8, new WCGoals.WCatFollowOwnerGoal(this, 1.2D, 1.2F, 7.0F));
+        this.targetSelector.addGoal(9, new HurtByTargetGoal(this));
+        this.targetSelector.addGoal(10, this.monsterTarget);
+        this.targetSelector.addGoal(11, this.preyTarget);
+        this.goalSelector.addGoal(12, new WCAttackGoal(this, 1.2D, true));
+        this.goalSelector.addGoal(13, new WCGoals.WCatMoveToMateGoal(this));
+        if (!this.isAnImage()) this.goalSelector.addGoal(14, new WCGoals.WCatBoundedWanderGoal(this, 0.8D));
+        this.goalSelector.addGoal(15, new WCGoals.WCatGiveRandomItemGoal(this));
+        if (!this.isAnImage()) this.goalSelector.addGoal(15, new WCGoals.WCatRandomLookAroundGoal(this));
+        if (!this.isAnImage()) this.goalSelector.addGoal(15, new WCGoals.WCatLookAtPlayerGoal(this, Player.class, 8.0F));
+        if (!this.isAnImage()) this.goalSelector.addGoal(16, new WCGoals.WCatCasualBlockSeekGoal(this, 0.8D, 15, 0.07D));
 
     }
 
@@ -2568,7 +2683,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
                     if (!this.hasCustomName()) {
                         int variant = this.getVariant();
-                        String[] prefixSet = getPrefixForVariant(variant);
+                        String[] prefixSet = getPrefixForVariant();
 
                         String genderS;
                         if (this.getGender() == 0) {
@@ -2578,14 +2693,14 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                         }
 
                         int i = this.random.nextInt(prefixSet.length);
-                        int j = this.random.nextInt(SUFIX.length);
+                        int j = this.random.nextInt(SUFIXES.length);
 
                         String finalName;
                         if (this.isBaby()) {
                             finalName = prefixSet[i] + "paw" + genderS;
                             this.setRank(APPRENTICE);
                         } else {
-                            finalName = prefixSet[i] + SUFIX[j] + genderS;
+                            finalName = prefixSet[i] + SUFIXES[j] + genderS;
                             this.setRank(WARRIOR);
                         }
                         //String finalName = prefixSet[i] + SUFIX[j] + genderS;
@@ -2625,6 +2740,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                     });
 
                     this.rewardGeneticsAdvancements();
+                    this.rewardMoonmoon();
 
                     mode = CatMode.FOLLOW;
                     sendModeMessage(pPlayer);
@@ -2706,6 +2822,9 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                     this.setRank(MEDICINE);
                     break;
                 case MEDICINE:
+                    this.setRank(DEPUTY);
+                    break;
+                case DEPUTY:
                     this.setRank(NONE);
                     break;
             }
@@ -3008,8 +3127,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                 Component oldName = this.hasCustomName() ? this.getCustomName() : Component.literal("Unnamed cat");
 
 
-                int variantS = this.getVariant();
-                String[] prefixSet = getPrefixForVariant(variantS);
+                String[] prefixSet = getPrefixForVariant();
 
                 String genderV;
                 if (this.getGender() == 0) {
@@ -3019,7 +3137,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                 }
 
                 int i = this.random.nextInt(prefixSet.length);
-                int j = this.random.nextInt(SUFIX.length);
+                int j = this.random.nextInt(SUFIXES.length);
 
 
                 String finalName;
@@ -3029,7 +3147,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                 } else if (this.getRank() == APPRENTICE) {
                     finalName = prefixSet[i] + "paw" + genderV;
                 } else {
-                    finalName = prefixSet[i] + SUFIX[j] + genderV;
+                    finalName = prefixSet[i] + SUFIXES[j] + genderV;
                 }
 
                 this.setPrefix(Component.literal(prefixSet[i]));
@@ -3055,7 +3173,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                 this.registerClanLog(message);
                 this.updateClanCatData();
                 this.updateMatesName();
-
+                this.rewardMoonmoon();
 
             }
             return InteractionResult.sidedSuccess(this.level().isClientSide);
@@ -3099,6 +3217,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                         case APPRENTICE -> "Apprentice";
                         case WARRIOR -> "Warrior";
                         case MEDICINE -> "Medicine Cat";
+                        case DEPUTY -> "Deputy";
                     };
 
                     String personalityText = switch (this.getPersonality()) {
@@ -3143,10 +3262,12 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                     this.lookAtLeaderFlag = true;
 
                     if (!pPlayer.level().isClientSide && pPlayer instanceof ServerPlayer sPlayer) {
-                        ModPackets.INSTANCE.send(
-                                PacketDistributor.PLAYER.with(() -> sPlayer),
-                                new OpenCatDataScreenPacket(this.getId())
-                        );
+                        ModEvents2.schedule(1, () -> {
+                            ModPackets.INSTANCE.send(
+                                    PacketDistributor.PLAYER.with(() -> sPlayer),
+                                    new OpenCatDataScreenPacket(this.getId())
+                            );
+                        });
                     }
 
                 } else {
@@ -3624,6 +3745,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
     @Override
     public boolean canAttack(LivingEntity target) {
         if (this.mode == CatMode.SIT) return false;
+        if (this.level().getDifficulty() == Difficulty.PEACEFUL) return false;
 
         if (target instanceof Player player) {
             if (player instanceof ServerPlayer sPlayer) {
@@ -3839,6 +3961,9 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         tag.putInt("AnimIndex", this.entityData.get(ANIM_INDEX));
         tag.putBoolean("ShowMorphName", this.entityData.get(SHOW_MORPH_NAME));
 
+
+        CompoundTag patrolData = this.savePatrolDataNBT();
+        tag.put("PatrolData", patrolData);
     }
 
     @Override
@@ -3890,7 +4015,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
         if (tag.contains("Rank")) {
             int value = tag.getInt("Rank");
-            this.setRank(Rank.values()[value]);
+            this.setRank(values()[value]);
         }
 
         if (tag.contains("Personality")) {
@@ -4032,7 +4157,8 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                     fatherTag.getInt("Rufousing"),
                     fatherTag.getInt("BlueRufousing"),
                     fatherTag.getInt("Noise"),
-                    fatherTag.getString("Chimera")
+                    fatherTag.getString("Chimera"),
+                    fatherTag.getString("Silver")
             );
         }
 
@@ -4047,6 +4173,8 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         if (tag.contains("ShowMorphName")) {
             this.setShowMorphName(tag.getBoolean("ShowMorphName"));
         }
+
+        this.loadPatrolDataNBT(tag);
 
     }
 
@@ -4463,6 +4591,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         TextColor apprentice = TextColor.fromRgb(0xeefc90);
         TextColor warrior = TextColor.fromRgb(0xffac3b);
         TextColor medicine = TextColor.fromRgb(0x56bdfc);
+        TextColor deputy = TextColor.fromRgb(0xfc6951);
 
         TextColor colorToUse;
         switch (rank) {
@@ -4470,6 +4599,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
             case APPRENTICE -> colorToUse = apprentice;
             case WARRIOR -> colorToUse = warrior;
             case MEDICINE -> colorToUse = medicine;
+            case DEPUTY -> colorToUse = deputy;
             default -> colorToUse = none;
         }
 
@@ -4531,6 +4661,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
             case APPRENTICE -> player.displayClientMessage(Component.literal(name + " is now an apprentice."), true);
             case WARRIOR -> player.displayClientMessage(Component.literal(name + " is now a warrior."), true);
             case MEDICINE -> player.displayClientMessage(Component.literal(name + " is now a medicine cat."), true);
+            case DEPUTY -> player.displayClientMessage(Component.literal(name + " is now a deputy."), true);
         }
     }
 
@@ -4600,7 +4731,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
                 if (!kit.hasCustomName()) {
                     int variant = kit.getVariant();
-                    String[] prefixSet = getPrefixForVariant(variant);
+                    String[] prefixSet = getPrefixForVariant();
 
 
                     String genderS;
@@ -4711,9 +4842,9 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         Component prefix = this.getPrefix();
         if (prefix != null && this.isTame()) {
             String genderV = this.getGender() == 0 ? " ♂" : " ♀";
-            int i = this.random.nextInt(SUFIX.length);
+            int i = this.random.nextInt(SUFIXES.length);
 
-            String newName = prefix.getString() + SUFIX[i] + genderV;
+            String newName = prefix.getString() + SUFIXES[i] + genderV;
 
             Entity owner = this.getOwner();
             if (owner instanceof Player) {
@@ -4742,7 +4873,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
             this.level().broadcastEntityEvent(this, (byte) 6);
             this.level().playSound(null, this.blockPosition(), SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.AMBIENT, 0.8f, 1.2f);
 
-
+            this.rewardMoonmoon();
         }
     }
 
@@ -4817,6 +4948,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         this.entityData.define(EYE_COLOR_LEFT, "green");
         this.entityData.define(EYE_COLOR_RIGHT, "green");
         this.entityData.define(EYES_ANOMALY, "H-h");
+        this.entityData.define(SILVER, "i-i");
 
         this.entityData.define(RUFOUSING_VARIANT, 0);
         this.entityData.define(BLUE_RUFOUSING_VARIANT, 0);
@@ -4827,6 +4959,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         this.entityData.define(EYE_COLOR_VARIANT_LEFT, 0);
         this.entityData.define(EYE_COLOR_VARIANT_RIGHT, 0);
         this.entityData.define(NOISE, 0);
+        this.entityData.define(SILVER_VARIANT, 0);
 
         //
         this.entityData.define(CHIMERA_GENE, "C-C");
@@ -4839,6 +4972,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         this.entityData.define(DILUTE_CHIMERA, "d-d");
         this.entityData.define(AGOUTI_CHIMERA, "a-a");
         this.entityData.define(TABBY_STRIPES_CHIMERA, "mc-mc");
+        this.entityData.define(SILVER_CHIMERA, "i-i");
 
         this.entityData.define(RUFOUSING_VARIANT_CHIMERA, 0);
         this.entityData.define(BLUE_RUFOUSING_VARIANT_CHIMERA, 0);
@@ -4847,6 +4981,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         this.entityData.define(ALBINO_VARIANT_CHIMERA, 0);
         this.entityData.define(TABBY_STRIPES_VARIANT_CHIMERA, 0);
         this.entityData.define(NOISE_CHIMERA, 0);
+        this.entityData.define(SILVER_VARIANT_CHIMERA, 0);
         //
 
         this.entityData.define(GENETICAL_SKIN, false);
@@ -4920,7 +5055,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         genetics.blueRufousing = (this.entityData.get(BLUE_RUFOUSING_VARIANT));
         genetics.noise = (this.entityData.get(NOISE));
         genetics.chimeraGene = this.entityData.get(CHIMERA_GENE);
-
+        genetics.silver = this.entityData.get(SILVER);
 
         return genetics;
     }
@@ -4950,8 +5085,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         genetics.blueRufousing = (this.entityData.get(BLUE_RUFOUSING_VARIANT_CHIMERA));
         genetics.noise = (this.entityData.get(NOISE_CHIMERA));
         genetics.chimeraGene = this.entityData.get(CHIMERA_GENE);
-
-
+        genetics.silver = this.entityData.get(SILVER_CHIMERA);
 
         return genetics;
     }
@@ -4979,6 +5113,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         this.entityData.set(BLUE_RUFOUSING_VARIANT, genetics.blueRufousing);
         this.entityData.set(NOISE, genetics.noise);
         this.entityData.set(CHIMERA_GENE, genetics.chimeraGene);
+        this.entityData.set(SILVER, genetics.silver);
     }
 
     public void initializeGenetics() {
@@ -5012,6 +5147,9 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         this.entityData.set(TABBY_STRIPES_VARIANT, this.random.nextInt(WCGenetics.Values.MAX_TABBY_VARIANTS));
 
         this.entityData.set(EYES_ANOMALY, WCGenetics.EyesAnomaly.generateAlelo(this.random) + "-" + WCGenetics.EyesAnomaly.generateAlelo(this.random));
+
+        this.entityData.set(SILVER, WCGenetics.Silver.generateAlelo(this.random) + "-" + WCGenetics.Silver.generateAlelo(this.random));
+        this.entityData.set(SILVER_VARIANT, this.random.nextInt(WCGenetics.Values.MAX_SILVER_VARIANTS));
 
         String leftEyeColor = WCGenetics.EyeColor.generateAlelo(this.random, this.entityData.get(WHITE_RATIO), this.entityData.get(ALBINO));
         int eyeLeftVariant = this.random.nextInt(WCGenetics.Values.MAX_EYE_VARIANTS);
@@ -5069,6 +5207,9 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         this.entityData.set(TABBY_STRIPES_CHIMERA, WCGenetics.TabbyStripeTypes.generateAlelo(this.random) + "-" + WCGenetics.TabbyStripeTypes.generateAlelo(this.random));
         this.entityData.set(TABBY_STRIPES_VARIANT_CHIMERA, this.random.nextInt(WCGenetics.Values.MAX_TABBY_VARIANTS));
 
+        this.entityData.set(SILVER_CHIMERA, WCGenetics.Silver.generateAlelo(this.random) + "-" + WCGenetics.Silver.generateAlelo(this.random));
+        this.entityData.set(SILVER_VARIANT_CHIMERA, this.random.nextInt(WCGenetics.Values.MAX_SILVER_VARIANTS));
+
         this.entityData.set(EYES_ANOMALY, "h-h");
         String leftEyeColor = WCGenetics.EyeColor.generateAlelo(this.random, this.entityData.get(WHITE_RATIO), this.entityData.get(ALBINO));
         int eyeLeftVariant = this.random.nextInt(WCGenetics.Values.MAX_EYE_VARIANTS);
@@ -5124,12 +5265,14 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         geneticsTag.putString("EyeColorLeft", this.entityData.get(EYE_COLOR_LEFT));
         geneticsTag.putString("EyeColorRight", this.entityData.get(EYE_COLOR_RIGHT));
         geneticsTag.putString("EyesAnomaly", this.entityData.get(EYES_ANOMALY));
+        geneticsTag.putString("Silver", this.entityData.get(SILVER));
 
         geneticsTag.putInt("Rufousing", this.entityData.get(RUFOUSING_VARIANT));
         geneticsTag.putInt("BlueRufousing", this.entityData.get(BLUE_RUFOUSING_VARIANT));
         geneticsTag.putInt("OrangeBaseVariant", this.entityData.get(ORANGE_BASE_VARIANT));
         geneticsTag.putInt("WhiteRatioVariant", this.entityData.get(WHITE_RATIO_VARIANT));
         geneticsTag.putInt("AlbinoVariant", this.entityData.get(ALBINO_VARIANT));
+        geneticsTag.putInt("SilverVariant", this.entityData.get(SILVER_VARIANT));
 
         geneticsTag.putInt("TabbyStripesVariant", this.entityData.get(TABBY_STRIPES_VARIANT));
         geneticsTag.putInt("EyeColorVariantLeft", this.entityData.get(EYE_COLOR_VARIANT_LEFT));
@@ -5157,6 +5300,8 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
         geneticsTag.putString("Chimera", this.entityData.get(CHIMERA_GENE));
         geneticsTag.putInt("ChimeraVariant", this.entityData.get(CHIMERA_VARIANT));
+        geneticsTag.putInt("SilverVariantChimera", this.entityData.get(SILVER_VARIANT_CHIMERA));
+        geneticsTag.putString("SilverChimera", this.entityData.get(SILVER_CHIMERA));
 
         tag.put("Genetics", geneticsTag);
     }
@@ -5190,7 +5335,8 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                     geneticsTag.getInt("Rufousing"),
                     geneticsTag.getInt("BlueRufousing"),
                     geneticsTag.getInt("Noise"),
-                    geneticsTag.getString("Chimera")
+                    geneticsTag.getString("Chimera"),
+                    geneticsTag.getString("Silver")
             );
 
             WCGenetics geneticsChimera = new WCGenetics(
@@ -5215,7 +5361,8 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                     geneticsTag.getInt("RufousingChimera"),
                     geneticsTag.getInt("BlueRufousingChimera"),
                     geneticsTag.getInt("NoiseChimera"),
-                    geneticsTag.getString("Chimera")
+                    geneticsTag.getString("Chimera"),
+                    geneticsTag.getString("SilverChimera")
             );
 
             this.setGenetics(genetics);
@@ -5234,6 +5381,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
             this.entityData.set(EYE_COLOR_VARIANT_LEFT, geneticsTag.getInt("EyeColorVariantLeft"));
             this.entityData.set(EYE_COLOR_VARIANT_RIGHT, geneticsTag.getInt("EyeColorVariantRight"));
             this.entityData.set(SIZE, geneticsTag.getFloat("Size"));
+            this.entityData.set(SILVER_VARIANT, geneticsTag.getInt("SilverVariant"));
 
 
 
@@ -5241,6 +5389,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
             this.entityData.set(WHITE_RATIO_VARIANT_CHIMERA, geneticsTag.getInt("WhiteRatioVariantChimera"));
             this.entityData.set(ALBINO_VARIANT_CHIMERA, geneticsTag.getInt("AlbinoVariantChimera"));
             this.entityData.set(TABBY_STRIPES_VARIANT_CHIMERA, geneticsTag.getInt("TabbyStripesVariantChimera"));
+            this.entityData.set(SILVER_VARIANT_CHIMERA, geneticsTag.getInt("SilverVariantChimera"));
 
         }
     }
@@ -5284,6 +5433,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         tag.putInt("BlueRufousing", genetics.blueRufousing);
         tag.putInt("Noise", genetics.noise);
         tag.putString("Chimera", genetics.chimeraGene);
+        tag.putString("Silver", genetics.silver);
 
     }
 
@@ -5476,13 +5626,63 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
         int rufousingRatio = this.entityData.get(RUFOUSING_VARIANT);
         int rufousingIntKey = rufousingRatio * 5;
-        if (!WCGenetics.Albino.isNotAlbino(this.entityData.get(ALBINO))) rufousingIntKey = 0;
+        if (WCGenetics.Albino.isTrueAlbino(this.entityData.get(ALBINO))) rufousingIntKey = 0;
         String rufousing = folderPath + "details/rufousing_" + rufousingIntKey;
 
         int bluerufousingRatio = this.entityData.get(BLUE_RUFOUSING_VARIANT);
         int bluerufousingIntKey = bluerufousingRatio * 5;
-        if (!WCGenetics.Albino.isNotAlbino(this.entityData.get(ALBINO))) bluerufousingIntKey = 0;
+        if (WCGenetics.Albino.isTrueAlbino(this.entityData.get(ALBINO))) bluerufousingIntKey = 0;
         String bluerufousing = folderPath + "details/blue_rufousing_" + bluerufousingIntKey;
+
+
+        String silver = folderPath + "silver/";
+        String silver2 = folderPath + "silver/";
+        if (WCGenetics.Silver.isSilver(this.entityData.get(SILVER), this.entityData.get(AGOUTI), this.entityData.get(ORANGE_BASE), this.getGender())) {
+            silver2 = folderPath + "empty";
+            if (WCGenetics.TabbyStripeTypes.isClassic(this.entityData.get(TABBY_STRIPES))) {
+                silver += "classic_";
+            } else {
+                silver += "mackerel_";
+            }
+            silver += this.entityData.get(TABBY_STRIPES_VARIANT) + "_silver_" + this.entityData.get(SILVER_VARIANT);
+        } else if (WCGenetics.Silver.isSmokeTortie(this.entityData.get(SILVER), this.entityData.get(AGOUTI), this.entityData.get(ORANGE_BASE))) {
+            if (this.entityData.get(SILVER_VARIANT) == 2) {
+                if (WCGenetics.TabbyStripeTypes.isClassic(this.entityData.get(TABBY_STRIPES))) {
+                    silver += "classic_";
+                } else {
+                    silver += "mackerel_";
+                }
+                silver += this.entityData.get(TABBY_STRIPES_VARIANT) + "_smoke_" + this.entityData.get(SILVER_VARIANT);
+            } else {
+                silver += "smoke_" +  this.entityData.get(SILVER_VARIANT);
+            }
+
+            if (WCGenetics.TabbyStripeTypes.isClassic(this.entityData.get(TABBY_STRIPES))) {
+                silver2 += "classic_";
+            } else {
+                silver2 += "mackerel_";
+            }
+            silver2 += this.entityData.get(TABBY_STRIPES_VARIANT) + "_silver_" + this.entityData.get(SILVER_VARIANT);
+
+        } else if (WCGenetics.Silver.isSmoke(this.entityData.get(SILVER), this.entityData.get(AGOUTI))) {
+            if (this.entityData.get(SILVER_VARIANT) == 2) {
+                if (WCGenetics.TabbyStripeTypes.isClassic(this.entityData.get(TABBY_STRIPES))) {
+                    silver += "classic_";
+                } else {
+                    silver += "mackerel_";
+                }
+                silver += this.entityData.get(TABBY_STRIPES_VARIANT) + "_smoke_" + this.entityData.get(SILVER_VARIANT);
+            } else {
+                silver += "smoke_" +  this.entityData.get(SILVER_VARIANT);
+            }
+
+            silver2 = folderPath + "empty";
+
+        } else {
+            silver = folderPath + "empty";
+            silver2 = folderPath + "empty";
+        }
+
 
         String armorOverlay = folderPath + "details/armor";
 
@@ -5494,6 +5694,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                     WCGenetics.encodeGene(this.entityData.get(ORANGE_BASE_CHIMERA)) + this.entityData.get(ORANGE_BASE_VARIANT_CHIMERA) +
                     WCGenetics.encodeGene(this.entityData.get(AGOUTI_CHIMERA)) +
                     WCGenetics.encodeGene(this.entityData.get(TABBY_STRIPES_CHIMERA)) + this.entityData.get(TABBY_STRIPES_VARIANT_CHIMERA) +
+                    WCGenetics.encodeGene(this.entityData.get(SILVER_CHIMERA)) + this.entityData.get(SILVER_VARIANT_CHIMERA) +
                     WCGenetics.encodeGene(this.entityData.get(WHITE_RATIO_CHIMERA)) + this.entityData.get(WHITE_RATIO_VARIANT_CHIMERA) +
                     WCGenetics.encodeGene(this.entityData.get(DILUTE_CHIMERA)) +
                     WCGenetics.encodeGene(this.entityData.get(ALBINO_CHIMERA)) + this.entityData.get(ALBINO_VARIANT_CHIMERA) +
@@ -5518,23 +5719,28 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         this.textureLayersPaths[2] = orangeBasePath + ".png";
         this.textureLayersPaths[3] = rufousing + ".png";
         this.textureLayersPaths[4] = bluerufousing + ".png";
-        this.textureLayersPaths[5] = whiteMarks + ".png";
-        this.textureLayersPaths[6] = albinoPath + ".png";
-        this.textureLayersPaths[7] = noisePath + ".png";
+        this.textureLayersPaths[5] = silver + ".png";
+        this.textureLayersPaths[6] = silver2 + ".png";
+        this.textureLayersPaths[7] = whiteMarks + ".png";
+        this.textureLayersPaths[8] = albinoPath + ".png";
+        this.textureLayersPaths[9] = noisePath + ".png";
 
-        this.textureLayersPaths[8] = chimeraArray[0];
-        this.textureLayersPaths[9] = chimeraArray[1];
-        this.textureLayersPaths[10] = chimeraArray[2];
-        this.textureLayersPaths[11] = chimeraArray[3];
-        this.textureLayersPaths[12] = chimeraArray[4];
-        this.textureLayersPaths[13] = chimeraArray[5];
-        this.textureLayersPaths[14] = chimeraArray[6];
-        this.textureLayersPaths[15] = chimeraArray[7];
+        this.textureLayersPaths[10] = chimeraArray[0];
+        this.textureLayersPaths[11] = chimeraArray[1];
+        this.textureLayersPaths[12] = chimeraArray[2];
+        this.textureLayersPaths[13] = chimeraArray[3];
+        this.textureLayersPaths[14] = chimeraArray[4];
+        this.textureLayersPaths[15] = chimeraArray[5];
+        this.textureLayersPaths[16] = chimeraArray[6];
+        //
+        this.textureLayersPaths[17] = chimeraArray[7];
+        this.textureLayersPaths[18] = chimeraArray[8];
+        this.textureLayersPaths[19] = chimeraArray[9];
 
-        this.textureLayersPaths[16] = skinDetails + ".png";
-        this.textureLayersPaths[17] = eyeColorLeft + ".png";
-        this.textureLayersPaths[18] = eyeColorRight + ".png";
-        this.textureLayersPaths[19] = armorOverlay + ".png";
+        this.textureLayersPaths[20] = skinDetails + ".png";
+        this.textureLayersPaths[21] = eyeColorLeft + ".png";
+        this.textureLayersPaths[22] = eyeColorRight + ".png";
+        this.textureLayersPaths[23] = armorOverlay + ".png";
 
         this.textureKey =
                 "wcat/" + WCGenetics.encodeGene(this.entityData.get(BASE)) +
@@ -5542,6 +5748,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                         WCGenetics.encodeGene(this.entityData.get(AGOUTI)) +
                         WCGenetics.encodeGene(this.entityData.get(TABBY_STRIPES)) + this.entityData.get(TABBY_STRIPES_VARIANT) +
                         WCGenetics.encodeGene(this.entityData.get(WHITE_RATIO)) + this.entityData.get(WHITE_RATIO_VARIANT) +
+                        WCGenetics.encodeGene(this.entityData.get(SILVER)) + this.entityData.get(SILVER_VARIANT) +
                         WCGenetics.encodeGene(this.entityData.get(DILUTE)) +
                         WCGenetics.encodeGene(this.entityData.get(ALBINO)) + this.entityData.get(ALBINO_VARIANT) +
                         WCGenetics.encodeGene(this.entityData.get(EYES_ANOMALY)) + "eyel" +
@@ -5556,7 +5763,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
     private String[] defineTextureLayersChimera() {
         String folderPath = "warriorcats_events:textures/entity/wcat/genetics/genetics_chimera/";
 
-        String[] chimeraArray = new String[8];
+        String[] chimeraArray = new String[10];
 
         chimeraArray[0] = folderPath + "empty.png";
         chimeraArray[1] = folderPath + "empty.png";
@@ -5566,6 +5773,8 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         chimeraArray[5] = folderPath + "empty.png";
         chimeraArray[6] = folderPath + "empty.png";
         chimeraArray[7] = folderPath + "empty.png";
+        chimeraArray[8] = folderPath + "empty.png";
+        chimeraArray[9] = folderPath + "empty.png";
 
         if (!this.isOnGeneticalSkin()) return chimeraArray;
         if (!WCGenetics.Chimerism.isChimera(this.entityData.get(CHIMERA_GENE))) return chimeraArray;
@@ -5705,14 +5914,61 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
         int rufousingRatio = this.entityData.get(RUFOUSING_VARIANT_CHIMERA);
         int rufousingIntKey = rufousingRatio * 5;
-        if (!WCGenetics.Albino.isNotAlbino(this.entityData.get(ALBINO_CHIMERA))) rufousingIntKey = 0;
+        if (WCGenetics.Albino.isTrueAlbino(this.entityData.get(ALBINO_CHIMERA))) rufousingIntKey = 0;
         String rufousing = folderPath + "details/rufousing_" + rufousingIntKey;
 
         int bluerufousingRatio = this.entityData.get(BLUE_RUFOUSING_VARIANT_CHIMERA);
         int bluerufousingIntKey = bluerufousingRatio * 5;
-        if (!WCGenetics.Albino.isNotAlbino(this.entityData.get(ALBINO_CHIMERA))) bluerufousingIntKey = 0;
+        if (WCGenetics.Albino.isTrueAlbino(this.entityData.get(ALBINO_CHIMERA))) bluerufousingIntKey = 0;
         String bluerufousing = folderPath + "details/blue_rufousing_" + bluerufousingIntKey;
 
+        String silver = folderPath + "silver/";
+        String silver2 = folderPath + "silver/";
+        if (WCGenetics.Silver.isSilver(this.entityData.get(SILVER_CHIMERA), this.entityData.get(AGOUTI_CHIMERA), this.entityData.get(ORANGE_BASE_CHIMERA), this.getGender())) {
+            silver2 = folderPath + "empty";
+            if (WCGenetics.TabbyStripeTypes.isClassic(this.entityData.get(TABBY_STRIPES_CHIMERA))) {
+                silver += "classic_";
+            } else {
+                silver += "mackerel_";
+            }
+            silver += this.entityData.get(TABBY_STRIPES_VARIANT_CHIMERA) + "_silver_" + this.entityData.get(SILVER_VARIANT_CHIMERA);
+        } else if (WCGenetics.Silver.isSmokeTortie(this.entityData.get(SILVER_CHIMERA), this.entityData.get(AGOUTI_CHIMERA), this.entityData.get(ORANGE_BASE_CHIMERA))) {
+            if (this.entityData.get(SILVER_VARIANT_CHIMERA) == 2) {
+                if (WCGenetics.TabbyStripeTypes.isClassic(this.entityData.get(TABBY_STRIPES_CHIMERA))) {
+                    silver += "classic_";
+                } else {
+                    silver += "mackerel_";
+                }
+                silver += this.entityData.get(TABBY_STRIPES_VARIANT_CHIMERA) + "_smoke_" + this.entityData.get(SILVER_VARIANT_CHIMERA);
+            } else {
+                silver += "smoke_" +  this.entityData.get(SILVER_VARIANT_CHIMERA);
+            }
+
+            if (WCGenetics.TabbyStripeTypes.isClassic(this.entityData.get(TABBY_STRIPES_CHIMERA))) {
+                silver2 += "classic_";
+            } else {
+                silver2 += "mackerel_";
+            }
+            silver2 += this.entityData.get(TABBY_STRIPES_VARIANT_CHIMERA) + "_silver_" + this.entityData.get(SILVER_VARIANT_CHIMERA);
+
+        } else if (WCGenetics.Silver.isSmoke(this.entityData.get(SILVER_CHIMERA), this.entityData.get(AGOUTI_CHIMERA))) {
+            if (this.entityData.get(SILVER_VARIANT_CHIMERA) == 2) {
+                if (WCGenetics.TabbyStripeTypes.isClassic(this.entityData.get(TABBY_STRIPES_CHIMERA))) {
+                    silver += "classic_";
+                } else {
+                    silver += "mackerel_";
+                }
+                silver += this.entityData.get(TABBY_STRIPES_VARIANT_CHIMERA) + "_smoke_" + this.entityData.get(SILVER_VARIANT_CHIMERA);
+            } else {
+                silver += "smoke_" +  this.entityData.get(SILVER_VARIANT_CHIMERA);
+            }
+
+            silver2 = folderPath + "empty";
+
+        } else {
+            silver = folderPath + "empty";
+            silver2 = folderPath + "empty";
+        }
         /**
          *  // BASE -> 0-4
          *  // ORANGE_BASE -> 0-4
@@ -5729,9 +5985,11 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         chimeraArray[2] = orangeBasePath + ".png";
         chimeraArray[3] = rufousing + ".png";
         chimeraArray[4] = bluerufousing + ".png";
-        chimeraArray[5] = whiteMarks + ".png";
-        chimeraArray[6] = albinoPath + ".png";
-        chimeraArray[7] = noisePath + ".png";
+        chimeraArray[5] = silver + ".png";
+        chimeraArray[6] = silver2 + ".png";
+        chimeraArray[7] = whiteMarks + ".png";
+        chimeraArray[8] = albinoPath + ".png";
+        chimeraArray[9] = noisePath + ".png";
 
 
         return chimeraArray;
@@ -5748,8 +6006,6 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
     public void inheritGeneticsFromParents(WCGenetics mother, WCGenetics father) {
         WCGenetics childGenes = new WCGenetics();
-
-
 
         childGenes.chestFur = inheritGenetics(mother.chestFur, father.chestFur, random);
         childGenes.bellyFur = inheritGenetics(mother.bellyFur, father.bellyFur, random);
@@ -5769,6 +6025,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         childGenes.tabbyStripes = inheritGenetics(mother.tabbyStripes, father.tabbyStripes, random);
         childGenes.eyesAnomaly = inheritGenetics(mother.eyesAnomaly, father.eyesAnomaly, random);
         childGenes.chimeraGene = inheritGenetics(mother.chimeraGene, father.chimeraGene, random);
+        childGenes.silver = inheritGenetics(mother.silver, father.silver, random);
 
 
         this.setGenetics(childGenes);
@@ -5793,6 +6050,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
             chimeraChildGenes.whiteRatio = inheritGenetics(toInheritFrom.whiteRatio, toInheritFrom.whiteRatio, random);
             chimeraChildGenes.albino = inheritGenetics(toInheritFrom.albino, toInheritFrom.albino, random);
             chimeraChildGenes.dilute = inheritGenetics(toInheritFrom.dilute, toInheritFrom.dilute, random);
+            chimeraChildGenes.silver = inheritGenetics(toInheritFrom.silver, toInheritFrom.silver, random);
             chimeraChildGenes.agouti = inheritGenetics(toInheritFrom.agouti, toInheritFrom.agouti, random);
             chimeraChildGenes.tabbyStripes = inheritGenetics(toInheritFrom.tabbyStripes, toInheritFrom.tabbyStripes, random);
             chimeraChildGenes.rufousing = (father.rufousing + mother.rufousing)/2;
@@ -5809,10 +6067,9 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
             chimeraChildVariants.tabbyVar = this.random.nextInt(WCGenetics.Values.MAX_TABBY_VARIANTS);
             chimeraChildVariants.albinoVar = this.random.nextInt(WCGenetics.Values.MAX_ALBINO_VARIANTS);
             chimeraChildVariants.noise = this.random.nextInt(WCGenetics.Values.MAX_NOISE_VARIANTS);
+            chimeraChildVariants.silverVar = this.random.nextInt(WCGenetics.Values.MAX_SILVER_VARIANTS);
 
-            this.setGeneticalVariantsChimera(chimeraChildVariants.chimeraVariant, chimeraChildVariants.rufousingVariant,
-                    chimeraChildVariants.blueRufousingVariant, chimeraChildVariants.orangeVar, chimeraChildVariants.whiteVar,
-                    chimeraChildVariants.tabbyVar, chimeraChildVariants.albinoVar, chimeraChildVariants.noise);
+            this.setGeneticalVariantsChimera(chimeraChildVariants);
 
         }
 
@@ -5834,6 +6091,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         this.entityData.set(WHITE_RATIO_VARIANT, this.random.nextInt(WCGenetics.Values.MAX_WHITE_VARIANTS));
         this.entityData.set(ALBINO_VARIANT, this.random.nextInt(WCGenetics.Values.MAX_ALBINO_VARIANTS));
         this.entityData.set(TABBY_STRIPES_VARIANT, this.random.nextInt(WCGenetics.Values.MAX_TABBY_VARIANTS));
+        this.entityData.set(SILVER_VARIANT, this.random.nextInt(WCGenetics.Values.MAX_SILVER_VARIANTS));
 
         int rufousingVar = (mother.rufousing + father.rufousing)/2;
         int blueRufousingVar = (mother.blueRufousing + father.blueRufousing)/2;
@@ -5854,7 +6112,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
     public void setGeneticalVariants(String eyesVariantLeft, String eyesVariantRight, int rufVar, int blueRufVar,
                                      int orangeVar, int whiteVar, int tabbyVar,
-                                     int albinoVar, int leftEyeVar, int rightEyeVar, int noise, float size) {
+                                     int albinoVar, int leftEyeVar, int rightEyeVar, int noise, float size, int silverVar) {
 
         this.entityData.set(EYE_COLOR_LEFT, eyesVariantLeft);
         this.entityData.set(EYE_COLOR_RIGHT, eyesVariantRight);
@@ -5867,6 +6125,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         this.entityData.set(EYE_COLOR_VARIANT_LEFT, Math.min(leftEyeVar, WCGenetics.Values.MAX_EYE_VARIANTS-1));
         this.entityData.set(EYE_COLOR_VARIANT_RIGHT, Math.min(rightEyeVar, WCGenetics.Values.MAX_EYE_VARIANTS-1));
         this.entityData.set(NOISE, Math.min(noise, WCGenetics.Values.MAX_NOISE_VARIANTS-1));
+        this.entityData.set(SILVER_VARIANT, Math.min(silverVar, WCGenetics.Values.MAX_SILVER_VARIANTS-1));
         this.entityData.set(SIZE, size);
 
     }
@@ -5884,13 +6143,14 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         this.entityData.set(EYE_COLOR_VARIANT_LEFT, Math.min(variants.leftEyeVar, WCGenetics.Values.MAX_EYE_VARIANTS-1));
         this.entityData.set(EYE_COLOR_VARIANT_RIGHT, Math.min(variants.rightEyeVar, WCGenetics.Values.MAX_EYE_VARIANTS-1));
         this.entityData.set(NOISE, Math.min(variants.noise, WCGenetics.Values.MAX_NOISE_VARIANTS-1));
+        this.entityData.set(SILVER_VARIANT, Math.min(variants.silverVar, WCGenetics.Values.MAX_SILVER_VARIANTS-1));
         this.entityData.set(SIZE, variants.size);
 
     }
 
     public void setGeneticalVariantsChimera(int chimeraVariant, int rufVar, int blueRufVar,
                                             int orangeVar, int whiteVar, int tabbyVar,
-                                            int albinoVar, int noise) {
+                                            int albinoVar, int noise, int silverVar) {
 
         this.entityData.set(CHIMERA_VARIANT, Math.min(chimeraVariant, WCGenetics.Values.MAX_CHIMERISM_VARIANTS-1));
 
@@ -5901,6 +6161,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         this.entityData.set(TABBY_STRIPES_VARIANT_CHIMERA, Math.min(tabbyVar, WCGenetics.Values.MAX_TABBY_VARIANTS-1));
         this.entityData.set(ALBINO_VARIANT_CHIMERA, Math.min(albinoVar, WCGenetics.Values.MAX_ALBINO_VARIANTS-1));
         this.entityData.set(NOISE_CHIMERA, Math.min(noise, WCGenetics.Values.MAX_NOISE_VARIANTS-1));
+        this.entityData.set(SILVER_VARIANT_CHIMERA, Math.min(silverVar, WCGenetics.Values.MAX_SILVER_VARIANTS-1));
 
     }
 
@@ -5915,6 +6176,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         this.entityData.set(TABBY_STRIPES_VARIANT_CHIMERA, Math.min(variants.tabbyVar, WCGenetics.Values.MAX_TABBY_VARIANTS-1));
         this.entityData.set(ALBINO_VARIANT_CHIMERA, Math.min(variants.albinoVar, WCGenetics.Values.MAX_ALBINO_VARIANTS-1));
         this.entityData.set(NOISE_CHIMERA, Math.min(variants.noise, WCGenetics.Values.MAX_NOISE_VARIANTS-1));
+        this.entityData.set(SILVER_VARIANT_CHIMERA, Math.min(variants.silverVar, WCGenetics.Values.MAX_SILVER_VARIANTS-1));
 
     }
 
@@ -5933,6 +6195,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         this.entityData.set(RUFOUSING_VARIANT_CHIMERA, genetics.rufousing);
         this.entityData.set(BLUE_RUFOUSING_VARIANT_CHIMERA, genetics.blueRufousing);
         this.entityData.set(NOISE_CHIMERA, genetics.noise);
+        this.entityData.set(SILVER_CHIMERA, genetics.silver);
     }
 
     public void setSize(float value) {
@@ -5973,6 +6236,21 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                 }
 
 
+            }
+        }
+    }
+
+    public void rewardMoonmoon() {
+        if (this.hasCustomName() && this.getCustomName().getString().toLowerCase().contains("moonmoon")) {
+            if (this.getOwner() instanceof ServerPlayer serverPlayer) {
+                MinecraftServer server = serverPlayer.getServer();
+                if (server != null) {
+                    Advancement adv = server.getAdvancements()
+                            .getAdvancement(new ResourceLocation("warriorcats_events:moonmoon"));
+                    if (adv != null) {
+                        serverPlayer.getAdvancements().award(adv, "moonmoon");
+                    }
+                }
             }
         }
     }
@@ -6164,6 +6442,8 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
          * then change its name and apply the new attributes.
          */
         if (!this.level().isClientSide()) {
+
+            this.patrolTick();
 
             if (this.isPassenger()) {
                 Entity vehicle = this.getVehicle();
@@ -6892,8 +7172,8 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                 this.angleOffset = cat.getId() * 0.8;
 
 
-                if (cat instanceof WCatEntity wCatEntity && (wCatEntity.getPersonality() == WCatEntity.Personality.INDEPENDENT || wCatEntity.getPersonality() == WCatEntity.Personality.SHY)) {
-                    if (wCatEntity.getPersonality() == WCatEntity.Personality.SHY) {
+                if (cat instanceof WCatEntity wCatEntity && (wCatEntity.getPersonality() == Personality.INDEPENDENT || wCatEntity.getPersonality() == Personality.SHY)) {
+                    if (wCatEntity.getPersonality() == Personality.SHY) {
                         this.stopDistance = stopDistance * 5;
                         this.startDistance = startDistance * 5;
                     } else {
@@ -6916,7 +7196,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
 
                 if (!cat.isTame()) return false;
-                if (wcat.mode != WCatEntity.CatMode.FOLLOW) return false;
+                if (wcat.mode != CatMode.FOLLOW) return false;
                 if (cat.isOrderedToSit()) return false;
 
                 if (cat.getTarget() != null && cat.getTarget().isAlive()) return false;
@@ -6934,7 +7214,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                 if (!(cat instanceof WCatEntity)) return false;
                 WCatEntity wcat = (WCatEntity) cat;
 
-                if (wcat.mode != WCatEntity.CatMode.FOLLOW) return false;
+                if (wcat.mode != CatMode.FOLLOW) return false;
                 if (cat.isOrderedToSit()) return false;
 
                 if (cat.getTarget() != null && cat.getTarget().isAlive()) return false;
@@ -6993,7 +7273,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                 List<WCatEntity> entities = cat.level().getEntitiesOfClass(
                         WCatEntity.class,
                         box,
-                        kitty -> kitty.isAlive() && kitty != this.cat && kitty.mode == WCatEntity.CatMode.FOLLOW
+                        kitty -> kitty.isAlive() && kitty != this.cat && kitty.mode == CatMode.FOLLOW
                 );
                 return !entities.isEmpty();
             }
@@ -7115,7 +7395,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                 }
 
 
-                if (cat.mode != WCatEntity.CatMode.WANDER) return false;
+                if (cat.mode != CatMode.WANDER) return false;
 
                 if (cat.isExpectingKits()) {
                     if (cat.getRandom().nextDouble() >= this.chance * 2) return false;
@@ -7221,7 +7501,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
                 WCatEntity wcat = cat;
 
-                if (wcat.mode != WCatEntity.CatMode.WANDER) return false;
+                if (wcat.mode != CatMode.WANDER) return false;
                 if (cat.isOrderedToSit()) return false;
 
 
@@ -7244,34 +7524,36 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
                 cooldown = cat.getRandom().nextInt(5) * 20 + 140;
 
-                if (cat.getRandom().nextFloat() < 0.013 || cat.distanceToSqr(cat.getHomePosition().getCenter()) < 1.5*1.5) {
-                    int counterBonus = 0;
-                    if (cat.distanceToSqr(cat.getHomePosition().getCenter()) < 1.5*1.5) {
-                        Vec3 pos = cat.getHomePosition().getCenter();
-                        cat.teleportTo(pos.x, pos.y, pos.z);
+                if (!(cat.onBorderPatrolFlag || cat.onHuntingPatrolFlag)) {
+                    if (cat.getRandom().nextFloat() < 0.013 || cat.distanceToSqr(cat.getHomePosition().getCenter()) < 1.5 * 1.5) {
+                        int counterBonus = 0;
+                        if (cat.distanceToSqr(cat.getHomePosition().getCenter()) < 1.5 * 1.5) {
+                            Vec3 pos = cat.getHomePosition().getCenter();
+                            cat.teleportTo(pos.x, pos.y, pos.z);
 
-                        if (cat.level().isNight()) counterBonus = (2 + cat.getRandom().nextInt(5))*800;
-                    }
-                    cat.setResting(true, ((1 + cat.getRandom().nextInt(5))*800) + counterBonus);
-                } else if (shouldSearchForLavender) {
-
-                    BlockPos catPos = cat.blockPosition();
-                    boolean foundLavender = false;
-
-                    for (int dx = -1; dx <= 1; dx++) {
-                        for (int dz = -1; dz <= 1; dz++) {
-                            BlockPos checkPos = catPos.offset(dx, 0, dz);
-                            if (cat.level().getBlockState(checkPos).getBlock() instanceof LavenderPetalsBlock) {
-                                foundLavender = true;
-                                break;
-                            }
+                            if (cat.level().isNight()) counterBonus = (2 + cat.getRandom().nextInt(5)) * 800;
                         }
-                        if (foundLavender) break;
-                    }
+                        cat.setResting(true, ((1 + cat.getRandom().nextInt(5)) * 800) + counterBonus);
+                    } else if (shouldSearchForLavender) {
 
-                    if (foundLavender) {
-                        cat.setChilling(true, (1 + cat.getRandom().nextInt(5)) * 800);
-                        shouldSearchForLavender = false;
+                        BlockPos catPos = cat.blockPosition();
+                        boolean foundLavender = false;
+
+                        for (int dx = -1; dx <= 1; dx++) {
+                            for (int dz = -1; dz <= 1; dz++) {
+                                BlockPos checkPos = catPos.offset(dx, 0, dz);
+                                if (cat.level().getBlockState(checkPos).getBlock() instanceof LavenderPetalsBlock) {
+                                    foundLavender = true;
+                                    break;
+                                }
+                            }
+                            if (foundLavender) break;
+                        }
+
+                        if (foundLavender) {
+                            cat.setChilling(true, (1 + cat.getRandom().nextInt(5)) * 800);
+                            shouldSearchForLavender = false;
+                        }
                     }
                 }
             }
@@ -7391,7 +7673,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
             public boolean canContinueToUse() {
                 if (!(cat instanceof WCatEntity)) return false;
 
-                if (cat.mode != WCatEntity.CatMode.WANDER) return false;
+                if (cat.mode != CatMode.WANDER) return false;
                 if (cat.isOrderedToSit()) return false;
 
                 return !cat.getNavigation().isDone();
@@ -7414,13 +7696,15 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
             }
 
             public boolean canUse() {
-                if (cat.getMood() == WCatEntity.Mood.SAD || cat.getMood() == WCatEntity.Mood.STRESSED) return false;
+                if (cat.getMood() == Mood.SAD || cat.getMood() == Mood.STRESSED) return false;
+
+                if (cat.onBorderPatrolFlag || cat.onHuntingPatrolFlag) return false;
 
                 if (this.cat.getRank() != WARRIOR) return false;
 
                 if (cat.isResting() || cat.isChilling()) return false;
 
-                if (this.cat.mode != WCatEntity.CatMode.WANDER) return false;
+                if (this.cat.mode != CatMode.WANDER) return false;
 
                 if (cat.getTarget() != null && cat.getTarget().isAlive()) return false;
 
@@ -7558,7 +7842,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
             public boolean canUse() {
                 if (this.cat.getRank() != WARRIOR) return false;
 
-                if (this.cat.mode != WCatEntity.CatMode.FOLLOW) return false;
+                if (this.cat.mode != CatMode.FOLLOW) return false;
 
                 if (cat.getTarget() != null && cat.getTarget().isAlive()) return false;
 
@@ -7643,9 +7927,11 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
             @Override
             public void start() {
                 this.cat.returnHomeFlag = false;
-                this.cat.mode = WCatEntity.CatMode.WANDER;
+                this.cat.mode = CatMode.WANDER;
                 this.cat.setResting(false, 0);
                 this.cat.setChilling(false, 0);
+                this.cat.onBorderPatrolFlag = false;
+                this.cat.onHuntingPatrolFlag = false;
 //            this.cat.getNavigation().moveTo(ownerPosition.getX(), ownerPosition.getY(), ownerPosition.getZ(), speed);
             }
 
@@ -7655,7 +7941,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                     this.obeyingLeaderCallForTicks = BASE_OBEY_TICKS;
                     cat.leaderCallingToFollowFlag = false;
                     cat.leaderCallingToSitFlag = false;
-                    cat.mode = WCatEntity.CatMode.SIT;
+                    cat.mode = CatMode.SIT;
                     cat.setOrderedToSit(true);
                     cat.lookAtLeaderFlag = true;
                     this.ownerPosition = null;
@@ -7664,7 +7950,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                     this.obeyingLeaderCallForTicks = BASE_OBEY_TICKS;
                     cat.leaderCallingToFollowFlag = false;
                     cat.leaderCallingToSitFlag = false;
-                    cat.mode = WCatEntity.CatMode.FOLLOW;
+                    cat.mode = CatMode.FOLLOW;
                     cat.setOrderedToSit(false);
                     this.ownerPosition = null;
                 }
@@ -7738,7 +8024,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                     return false;
                 }
 
-                return cat.mode == WCatEntity.CatMode.WANDER && cat.distanceToSqr(homeTarget.getX(), homeTarget.getY(), homeTarget.getZ()) > 2 * 2;
+                return cat.mode == CatMode.WANDER && cat.distanceToSqr(homeTarget.getX(), homeTarget.getY(), homeTarget.getZ()) > 2 * 2;
             }
 
             @Override
@@ -7749,10 +8035,22 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
             @Override
             public void stop() {
                 cat.wanderCenter = cat.blockPosition();
-                cat.mode = WCatEntity.CatMode.SIT;
+                cat.mode = CatMode.WANDER;
                 cat.returnHomeFlag = false;
                 this.homeTarget = null;
                 cat.getNavigation().stop();
+                if (cat.returningFromPatrol) {
+                    cat.returningFromPatrol = false;
+                    Component log = Component.empty()
+                            .append(cat.hasCustomName() ? cat.getCustomName().copy() : Component.literal("A cat"))
+                            .append(" has returned from their patrol!");
+
+                    ClanData data = ClanData.get(cat.getServer().overworld());
+                    ClanData.Clan clan = data.getClan(cat.getClanUUID());
+                    if (clan != null) {
+                        data.registerLog(cat.getServer().overworld(), clan.clanUUID, log);
+                    }
+                }
             }
 
             @Override
@@ -7873,12 +8171,12 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
                 if (cat.isResting() || cat.isChilling()) return false;
 
-                if (cat.mode != WCatEntity.CatMode.WANDER) return false;
+                if (cat.mode != CatMode.WANDER) return false;
 
                 if (cat.getMateUUID() == null) return false;
                 if (cat.getMateUUID().equals(emptyUUID)) return false;
 
-                if (cat.getMood() == WCatEntity.Mood.SAD || cat.getMood() == WCatEntity.Mood.STRESSED) return false;
+                if (cat.getMood() == Mood.SAD || cat.getMood() == Mood.STRESSED) return false;
 
                 if (cat.getRandom().nextFloat() > 0.0001667f) return false;
 
@@ -7887,7 +8185,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
             @Override
             public boolean canContinueToUse() {
-                return targetMate != null && cat.mode == WCatEntity.CatMode.WANDER;
+                return targetMate != null && cat.mode == CatMode.WANDER;
             }
 
             @Override
@@ -8011,7 +8309,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
                 if (cat.getTarget() != null && cat.getTarget().isAlive()) return false;
 
-                if (cat.mode != WCatEntity.CatMode.WANDER || cat.getTarget() != null) return false;
+                if (cat.mode != CatMode.WANDER || cat.getTarget() != null) return false;
                 BlockPos pos = cat.blockPosition();
 
                 boolean isExposed = this.level.canSeeSky(pos);
@@ -8328,12 +8626,13 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
             @Override
             public boolean canUse() {
                 if (cat.returnHomeFlag) return false;
+                if (cat.onBorderPatrolFlag) return false;
 
                 if (cat.isResting()) return false;
 
                 if (cat.getTarget() != null && cat.getTarget().isAlive()) return false;
 
-                if (target != null && (!target.isAlive() || cat.distanceTo(target) > 25D)) {
+                if (target != null && (!target.isAlive() || cat.distanceTo(target) > 20D)) {
                     target = null;
                 }
 
@@ -8349,7 +8648,6 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                 target = findNearestItem();
 
                 if (target != null) {
-                    cooldown = (int) ((BASE_COOLDOWN + cat.getRandom().nextInt(10)) * cat.itemPickupChanceMultiplier());
                     return true;
                 }
 
@@ -8361,6 +8659,14 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
             @Override
             public boolean canContinueToUse() {
                 if (target != null && cat.distanceTo(target) > 20D) return false;
+
+                if (!isValidTarget(target)) {
+                    stop();
+                    return false;
+                }
+
+                if (cat.getTarget() != null && cat.getTarget().isAlive()) return false;
+
                 return target != null
                         && target.isAlive()
                         && !cat.isOrderedToSit();
@@ -8391,17 +8697,22 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                     return;
                 }
 
+                if (!isValidTarget(target)) {
+                    stop();
+                    return;
+                }
+
                 /**
                  * If it is not moving, then move to the target.
                  */
-                if (!cat.getNavigation().isInProgress()) {
+                if (cat.getNavigation().isDone()) {
                     cat.getNavigation().moveTo(target, 1.1D);
                 }
 
                 /**
                  * If it still is not moving, start counting.
                  */
-                if (cat.getNavigation().isInProgress()) {
+                if (!cat.getNavigation().isDone()) {
                     keepTicks = 0;
                 } else {
                     keepTicks++;
@@ -8450,7 +8761,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                     /**
                      * If the distance to the item is not enough and this is not moving, then move around the item.
                      */
-                    if (target != null && !cat.getNavigation().isInProgress()) {
+                    if (target != null && cat.getNavigation().isDone()) {
                         List<BlockPos> positions = List.of(
                                 target.blockPosition().offset(2, 1, 2),
                                 target.blockPosition().offset(2, 1, -2),
@@ -8469,6 +8780,12 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                 }
             }
 
+            private boolean isValidTarget(ItemEntity item) {
+                return item != null
+                        && item.isAlive()
+                        && !item.getItem().isEmpty()
+                        && cat.canAccept(item.getItem());
+            }
 
             /**
              * In certain are, make a list of droped items.
@@ -8499,6 +8816,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                         closest = item;
                     }
                 }
+                cooldown = (int) ((BASE_COOLDOWN + cat.getRandom().nextInt(10)) * cat.itemPickupChanceMultiplier());
 
                 return closest;
             }
@@ -8519,11 +8837,6 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
             }
 
             @Override
-            protected int adjustedTickDelay(int pAdjustment) {
-                return super.adjustedTickDelay(pAdjustment);
-            }
-
-            @Override
             public boolean canUse() {
                 if (cat.returnHomeFlag) return false;
 
@@ -8534,7 +8847,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
                 if (cat.isResting())  return false;
 
-                if (cat.mode != WCatEntity.CatMode.WANDER) return false;
+                if (cat.mode != CatMode.WANDER) return false;
 
                 if (cat.getCatInventory().isEmpty()) return false;
 
@@ -8544,7 +8857,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                     }
                 }
 
-                checkCooldown = 100 + cat.getId()*2;
+                checkCooldown = 100 + (6 + cat.getRandom().nextInt(4))*20;
 
                 return false;
             }
@@ -8552,7 +8865,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
             @Override
             public boolean canContinueToUse() {
 
-                return cat.mode == WCatEntity.CatMode.WANDER
+                return cat.mode == CatMode.WANDER
                         && !cat.getCatInventory().isEmpty();
             }
 
@@ -8576,7 +8889,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
                 if (freshKillPos == null) {
 
-                    checkCooldown = 100 + cat.getId()*2;
+                    checkCooldown = 100 + (6 + cat.getRandom().nextInt(4))*20;
 
                     freshKillPos = findTargetBlock();
                     if (freshKillPos == null) return;
@@ -8660,6 +8973,562 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                 return null;
             }
 
+        }
+
+        public static class WCatDeputySendsPatrols extends Goal {
+            private final WCatEntity cat;
+            private List<WCatEntity> catsInRange = new ArrayList<>();
+            private int patrolType;
+            private Map<Integer, BlockPos> territoryToPatrol = new HashMap<>();
+            private int currentIndex = 0;
+            private int stuckTicks = 0;
+
+            public WCatDeputySendsPatrols(WCatEntity cat) {
+                this.cat = cat;
+            }
+
+            @Override
+            public boolean canUse() {
+                if (cat.getRank() != DEPUTY) return false;
+
+                if (cat.isResting() || cat.returnHomeFlag) return false;
+
+                if (cat.getClanUUID().equals(ClanData.EMPTY_UUID)) return false;
+
+                if (cat.catsToTell.isEmpty()) return false;
+
+                if (!cat.tellingCatsToPatrol) return false;
+
+                return true;
+            }
+
+            @Override
+            public void stop() {
+                this.catsInRange = new ArrayList<>();
+                cat.tellingCatsToPatrol = false;
+                cat.catsToTell = new ArrayList<>();
+                this.currentIndex = 0;
+                super.stop();
+            }
+
+            @Override
+            public void start() {
+                this.catsInRange = cat.catsToTell;
+                this.patrolType = cat.patrolType;
+
+                this.territoryToPatrol = cat.areasToPatrol;
+            }
+
+            @Override
+            public void tick() {
+                if (territoryToPatrol == null || territoryToPatrol.isEmpty()) {
+                    stop();
+                    return;
+                }
+                if (catsInRange == null || catsInRange.isEmpty()) {
+                    stop();
+                    return;
+                }
+
+                if (currentIndex >= catsInRange.size()) {
+                    stop();
+                    return;
+                }
+
+                WCatEntity target = catsInRange.get(currentIndex);
+
+                if (target == null) {
+                    currentIndex++;
+                    return;
+                }
+
+                if (catsInRange.contains(cat)) {
+                    for (WCatEntity cat : catsInRange) {
+                        if (cat != this.cat) {
+                            if (this.patrolType == 0) {
+                                cat.setOnBorderPatrol(this.territoryToPatrol);
+                            } else {
+                                cat.setOnHuntingPatrol(this.territoryToPatrol);
+                            }
+                        }
+                    }
+                    if (this.patrolType == 0) {
+                        cat.setOnBorderPatrol(this.territoryToPatrol);
+                    } else {
+                        cat.setOnHuntingPatrol(this.territoryToPatrol);
+                    }
+
+                    cat.level().playSound(null, cat.blockPosition(), ModSounds.LEADER_CALL.get(), SoundSource.AMBIENT, 0.7F, 0.9f);
+
+                    stop();
+                    return;
+                }
+
+                if (cat.distanceTo(target) > 1.5) {
+                    cat.getNavigation().moveTo(target, 1.0);
+                    stuckTicks++;
+                    if (stuckTicks >= 300) {
+                        currentIndex++;
+                        stuckTicks = 0;
+                    }
+                } else {
+                    if (this.patrolType == 0) {
+                        target.setOnBorderPatrol(this.territoryToPatrol);
+                    } else {
+                        target.setOnHuntingPatrol(this.territoryToPatrol);
+                    }
+                    currentIndex++;
+                    stuckTicks = 0;
+                }
+            }
+        }
+
+        public static class WCatBorderPatrolGoal extends Goal {
+            private final WCatEntity cat;
+            private final double speed = 1f;
+            private BlockPos goalPos = null;
+            private int territoryNotReachable = 0;
+
+            private int tickCounterUntilHorizontalImpulse = 0;
+            private boolean countUntilHorizontalImpulse;
+
+            public WCatBorderPatrolGoal(WCatEntity cat) {
+                this.cat = cat;
+                this.setFlags(EnumSet.of(Flag.MOVE));
+            }
+
+            @Override
+            public boolean canUse() {
+                if (cat.returnHomeFlag) return false;
+
+                if (!cat.onBorderPatrolFlag) return false;
+
+                if (cat.mode != CatMode.WANDER) return false;
+
+
+                if (cat.onAreaToPatrolForTicks > 0) {
+                    return false;
+                }
+
+                if (cat.getAreaToPatrolIndex(0) == null) return false;
+
+                return true;
+            }
+
+            @Override
+            public boolean canContinueToUse() {
+                if (cat.returnHomeFlag) return false;
+
+                if (cat.mode != CatMode.WANDER) return false;
+
+                if (!cat.onBorderPatrolFlag) return false;
+
+                if (cat.onAreaToPatrolForTicks > 0) {
+                    return false;
+                }
+
+                if (cat.getAreaToPatrolIndex(0) == null) return false;
+
+                return true;
+            }
+
+            @Override
+            public void start() {
+
+                this.goalPos = cat.getAreaToPatrolIndex(cat.patrolIndex);
+
+                super.start();
+            }
+
+            @Override
+            public void stop() {
+                super.stop();
+            }
+
+            @Override
+            public void tick() {
+
+                if (this.goalPos == null) {
+                    cat.finishPatrol();
+                    return;
+                }
+
+                double distanceToGoal = cat.distanceToSqr(this.goalPos.getCenter());
+                if (distanceToGoal > 2*2) {
+                    cat.getNavigation().moveTo(this.goalPos.getX(), this.goalPos.getY() ,this.goalPos.getZ(), speed);
+                    this.territoryNotReachable++;
+                    if (this.territoryNotReachable >= 3000) {
+                        cat.finishPatrol();
+                    }
+
+                    if (this.countUntilHorizontalImpulse) {
+                        this.tickCounterUntilHorizontalImpulse++;
+                        if (this.tickCounterUntilHorizontalImpulse >= 7) {
+                            Vec3 lookAngleImpulse = cat.getLookAngle().normalize().scale(0.8);
+                            Vec3 impulse = new Vec3(lookAngleImpulse.x, 0.2, lookAngleImpulse.z);
+                            cat.setDeltaMovement(cat.getDeltaMovement().add(impulse));
+                            cat.hasImpulse = true;
+                            this.countUntilHorizontalImpulse = false;
+                            this.tickCounterUntilHorizontalImpulse = 0;
+                            this.cat.addEffect(new MobEffectInstance(MobEffects.SLOW_FALLING, 50, 0, false, false));
+                        }
+                    }
+
+                    if (territoryNotReachable > 1500 && territoryNotReachable < 1502) {
+                        if (cat.horizontalCollision || cat.verticalCollision) {
+                            Vec3 lookAngleImpulse = cat.getLookAngle().normalize().scale(2);
+
+                            Vec3 impulse = new Vec3(lookAngleImpulse.x, 0.8, lookAngleImpulse.z);
+
+                            cat.setDeltaMovement(cat.getDeltaMovement().add(impulse));
+
+                            cat.hasImpulse = true;
+                            this.countUntilHorizontalImpulse = true;
+                        }
+                    }
+
+                } else {
+                    cat.onAreaToPatrolForTicks = 1200;
+                    cat.patrolIndex++;
+                    cat.wanderCenter = cat.blockPosition();
+
+                    ChunkPos pos = cat.chunkPosition();
+                    UUID clanUUID = cat.getClanUUID();
+
+                    if (cat.level() instanceof ServerLevel sLevel) {
+                        LevelChunk chunk = sLevel.getChunkAt(this.goalPos);
+                        for (BlockEntity ent : chunk.getBlockEntities().values()) {
+                            if (ent instanceof TreeStumpBlockEntity treeStumpBlock) {
+                                if (treeStumpBlock.getTimeUntilRenewScent() <= 0) {
+                                    if (clanUUID != ClanData.EMPTY_UUID) {
+                                        ClanData data = ClanData.get(cat.getServer().overworld());
+                                        ClanData.Clan clan = data.getClan(clanUUID);
+                                        if (clan != null) {
+                                            if (clan.claimedTerritory.containsKey(pos)) {
+                                                data.reclaimChunk(clanUUID, pos, cat.getServer().overworld());
+
+                                                Component name = cat.hasCustomName() ? cat.getCustomName() : Component.literal("A cat");
+                                                Component log = Component.empty()
+                                                        .append(name.copy())
+                                                        .append(" has remarked territory for ")
+                                                        .append(Component.literal(clan.name).withStyle(Style.EMPTY.withColor(clan.color)))
+                                                        .append(" at: ")
+                                                        .append(Component.literal(
+                                                                String.format("X=%d, Z=%d", pos.x, pos.z)
+                                                        ).withStyle(ChatFormatting.AQUA));
+                                                data.registerLog(cat.getServer().overworld(), clanUUID, log);
+
+                                                treeStumpBlock.resetTimer();
+                                                sLevel.sendBlockUpdated(treeStumpBlock.getBlockPos(),
+                                                        treeStumpBlock.getBlockState(), treeStumpBlock.getBlockState(), 2);
+
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    BlockPos next = cat.getAreaToPatrolIndex(cat.patrolIndex);
+                    if (next != null) {
+                        this.goalPos = next;
+                    }
+
+                }
+
+            }
+        }
+
+        public static class WCatHuntingPatrolGoal extends Goal {
+            private final WCatEntity cat;
+            private final double speed = 1f;
+            private BlockPos goalPos = null;
+            private int territoryNotReachable = 0;
+
+            private int tickCounterUntilHorizontalImpulse = 0;
+            private boolean countUntilHorizontalImpulse;
+
+            public WCatHuntingPatrolGoal(WCatEntity cat) {
+                this.cat = cat;
+                this.setFlags(EnumSet.of(Flag.MOVE));
+            }
+
+            @Override
+            public boolean canUse() {
+                if (cat.returnHomeFlag) return false;
+
+                if (!cat.onHuntingPatrolFlag) return false;
+
+                if (cat.mode != CatMode.WANDER) return false;
+
+
+                if (cat.onAreaToPatrolForTicks > 0) {
+                    return false;
+                }
+
+                if (cat.getAreaToPatrolIndex(0) == null) return false;
+
+                return true;
+            }
+
+            @Override
+            public boolean canContinueToUse() {
+                if (cat.returnHomeFlag) return false;
+
+                if (cat.mode != CatMode.WANDER) return false;
+
+                if (!cat.onHuntingPatrolFlag) return false;
+
+                if (cat.onAreaToPatrolForTicks > 0) {
+                    return false;
+                }
+
+                if (cat.getAreaToPatrolIndex(0) == null) return false;
+
+                return true;
+            }
+
+            @Override
+            public void start() {
+
+                this.goalPos = cat.getAreaToPatrolIndex(cat.patrolIndex);
+
+                super.start();
+            }
+
+            @Override
+            public void stop() {
+                super.stop();
+            }
+
+            @Override
+            public void tick() {
+
+                if (this.goalPos == null) {
+                    cat.finishPatrol();
+                    return;
+                }
+
+                double distanceToGoal = cat.distanceToSqr(this.goalPos.getCenter());
+                if (distanceToGoal > 4*4) {
+                    cat.getNavigation().moveTo(this.goalPos.getX(), this.goalPos.getY() ,this.goalPos.getZ(), speed);
+                    this.territoryNotReachable++;
+                    if (this.territoryNotReachable >= 3000) {
+                        cat.finishPatrol();
+                    }
+
+                    if (this.countUntilHorizontalImpulse) {
+                        this.tickCounterUntilHorizontalImpulse++;
+                        if (this.tickCounterUntilHorizontalImpulse >= 7) {
+                            Vec3 lookAngleImpulse = cat.getLookAngle().normalize().scale(0.8);
+                            Vec3 impulse = new Vec3(lookAngleImpulse.x, 0.2, lookAngleImpulse.z);
+                            cat.setDeltaMovement(cat.getDeltaMovement().add(impulse));
+                            cat.hasImpulse = true;
+                            this.countUntilHorizontalImpulse = false;
+                            this.tickCounterUntilHorizontalImpulse = 0;
+                            this.cat.addEffect(new MobEffectInstance(MobEffects.SLOW_FALLING, 50, 0, false, false));
+                        }
+                    }
+
+
+                    if (territoryNotReachable > 1500 && territoryNotReachable < 1502) {
+                        if (cat.horizontalCollision || cat.verticalCollision) {
+                            Vec3 lookAngleImpulse = cat.getLookAngle().normalize().scale(2);
+
+                            Vec3 impulse = new Vec3(lookAngleImpulse.x, 0.8, lookAngleImpulse.z);
+
+                            cat.setDeltaMovement(cat.getDeltaMovement().add(impulse));
+
+                            cat.hasImpulse = true;
+                            this.countUntilHorizontalImpulse = true;
+                        }
+                    }
+
+
+                } else {
+                    cat.onAreaToPatrolForTicks = 2400;
+                    cat.patrolIndex++;
+                    cat.wanderCenter = cat.blockPosition();
+
+                    BlockPos next = cat.getAreaToPatrolIndex(cat.patrolIndex);
+                    if (next != null) {
+                        this.goalPos = next;
+                    }
+
+                }
+
+            }
+        }
+
+    }
+
+    private void patrolTick() {
+
+        if (this.mode != CatMode.WANDER) {
+            if (this.tellingCatsToPatrol) tellingCatsToPatrol = false;
+        }
+
+        if (!(this.onBorderPatrolFlag || this.onHuntingPatrolFlag)) return;
+
+        if (this.mode != CatMode.WANDER) {
+            this.finishPatrol();
+        }
+
+        if (this.onAreaToPatrolForTicks > 0) {
+            this.onAreaToPatrolForTicks--;
+            if (this.onAreaToPatrolForTicks <= 0) {
+                BlockPos next = this.getAreaToPatrolIndex(this.patrolIndex);
+                if (next == null) {
+                    this.finishPatrol();
+                }
+            }
+        }
+    }
+
+    private void finishPatrol() {
+        this.returnHomeFlag = true;
+        this.onBorderPatrolFlag = false;
+        this.onHuntingPatrolFlag = false;
+        this.returningFromPatrol = true;
+        this.onAreaToPatrolForTicks = 0;
+        this.setAreasToPatrol(new HashMap<>());
+    }
+
+    private int patrolIndex = 0;
+    public boolean onBorderPatrolFlag = false;
+    public boolean onHuntingPatrolFlag = false;
+    public boolean returningFromPatrol = false;
+
+    public boolean tellingCatsToPatrol = false;
+    public List<WCatEntity> catsToTell = new ArrayList<>();
+    public int patrolType = 0;
+
+    private Map<Integer, BlockPos> areasToPatrol = new HashMap<>();
+
+    private int onAreaToPatrolForTicks = 0;
+
+    public void setAreasToPatrol(Map<Integer, BlockPos> map) {
+        this.areasToPatrol = map;
+    }
+
+    public Map<Integer, BlockPos> getAreasToPatrol() {
+        return this.areasToPatrol;
+    }
+
+    @Nullable
+    public BlockPos getAreaToPatrolIndex(int index) {
+        return this.areasToPatrol.get(index);
+    }
+
+    public void setOnBorderPatrol(Map<Integer, BlockPos> map) {
+        this.onBorderPatrolFlag = true;
+        this.onHuntingPatrolFlag = false;
+        this.returningFromPatrol = false;
+        this.mode = CatMode.WANDER;
+        this.setInSittingPose(false);
+        this.setOrderedToSit(false);
+
+        if (this.isResting()) this.setResting(false, 0);
+        if (this.isChilling()) this.setChilling(false, 0);
+
+        this.patrolIndex = 0;
+
+        this.setAreasToPatrol(map);
+        this.onAreaToPatrolForTicks = 0;
+    }
+
+
+    public void setOnHuntingPatrol(Map<Integer, BlockPos> map) {
+        this.onBorderPatrolFlag = false;
+        this.onHuntingPatrolFlag = true;
+        this.returningFromPatrol = false;
+        this.mode = CatMode.WANDER;
+        this.setInSittingPose(false);
+        this.setOrderedToSit(false);
+
+        if (this.isResting()) this.setResting(false, 0);
+        if (this.isChilling()) this.setChilling(false, 0);
+
+        this.patrolIndex = 0;
+
+        this.setAreasToPatrol(map);
+        this.onAreaToPatrolForTicks = 0;
+    }
+
+    public void setDeputyToSetPatrols(Map<Integer, BlockPos> map, List<WCatEntity> cats, int patrolType) {
+        this.mode = CatMode.WANDER;
+        this.setInSittingPose(false);
+        this.setOrderedToSit(false);
+
+        this.catsToTell = cats;
+        this.setAreasToPatrol(map);
+        this.tellingCatsToPatrol = true;
+        this.patrolType = patrolType;
+    }
+
+    public CompoundTag savePatrolDataNBT() {
+        CompoundTag tag = new CompoundTag();
+        ListTag list = new ListTag();
+
+        for (Map.Entry<Integer, BlockPos> entry : this.areasToPatrol.entrySet()) {
+            CompoundTag t = new CompoundTag();
+            t.putInt("Index", entry.getKey());
+
+            BlockPos pos = entry.getValue();
+            t.putInt("X", pos.getX());
+            t.putInt("Y", pos.getY());
+            t.putInt("Z", pos.getZ());
+
+            list.add(t);
+        }
+
+        tag.put("Areas", list);
+
+        tag.putBoolean("OnBorderPatrol", this.onBorderPatrolFlag);
+        tag.putBoolean("OnHuntingPatrol", this.onHuntingPatrolFlag);
+        tag.putBoolean("ReturningPatrol", this.returningFromPatrol);
+
+        tag.putInt("PatrolIndex", this.patrolIndex);
+        tag.putInt("PatrolType", this.patrolType);
+        tag.putInt("PatrolWait", this.onAreaToPatrolForTicks);
+
+        return tag;
+    }
+
+    public void loadPatrolDataNBT(CompoundTag superTag) {
+        if (superTag.contains("PatrolData")) {
+            CompoundTag tag = superTag.getCompound("PatrolData");
+            this.onBorderPatrolFlag = tag.getBoolean("OnBorderPatrol");
+            this.onHuntingPatrolFlag = tag.getBoolean("OnHuntingPatrol");
+            this.returningFromPatrol = tag.getBoolean("ReturningPatrol");
+
+            this.patrolIndex = tag.getInt("PatrolIndex");
+            this.patrolType = tag.getInt("PatrolType");
+            this.onAreaToPatrolForTicks = tag.getInt("PatrolWait");
+
+            if (tag.contains("Areas")) {
+                Map<Integer, BlockPos> map = new HashMap<>();
+
+                ListTag list = tag.getList("Areas", Tag.TAG_COMPOUND);
+
+                for (int i = 0; i < list.size(); i++) {
+                    CompoundTag tag2 = list.getCompound(i);
+
+                    int index = tag2.getInt("Index");
+                    BlockPos pos = new BlockPos(
+                            tag2.getInt("X"),
+                            tag2.getInt("Y"),
+                            tag2.getInt("Z")
+                    );
+
+                    map.put(index, pos);
+                }
+
+                this.setAreasToPatrol(map);
+            } else {
+                this.areasToPatrol = new HashMap<>();
+            }
         }
 
     }

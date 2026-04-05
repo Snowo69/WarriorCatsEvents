@@ -71,11 +71,11 @@ public class GradientToggleButton extends AbstractButton {
 
 
     @Override
-    protected void renderWidget(GuiGraphics gui, int mouseX, int mouseY, float partialTicks) {
+    protected void renderWidget(GuiGraphics pGuiGraphics, int mouseX, int mouseY, float partialTicks) {
 
         boolean hovered = this.isHoveredOrFocused();
 
-        gui.blit(texture,
+        pGuiGraphics.blit(texture,
                 this.getX(), this.getY(),
                 0, 0,
                 this.width, this.height,
@@ -85,14 +85,14 @@ public class GradientToggleButton extends AbstractButton {
         int alpha = 0x55;
         int colorGradient = (alpha << 24) | (this.color & 0xFFFFFF);
 
-        gui.fillGradient(this.getX(), this.getY(), this.width + this.getX(),this.height + this.getY(), 0x44000000, colorGradient);
-        gui.fillGradient(this.getX(), this.getY(), this.width + this.getX(),this.height + this.getY(), 0, 0x55000000);
-        gui.renderOutline(this.getX(), this.getY(), this.width,this.height, selected ? 0xFFFFFFA0 : 0x61FFFFFF);
+        pGuiGraphics.fillGradient(this.getX(), this.getY(), this.width + this.getX(),this.height + this.getY(), 0x44000000, colorGradient);
+        pGuiGraphics.fillGradient(this.getX(), this.getY(), this.width + this.getX(),this.height + this.getY(), 0, 0x55000000);
+        pGuiGraphics.renderOutline(this.getX(), this.getY(), this.width,this.height, selected ? 0xFFFFFFA0 : 0x61FFFFFF);
 
 
 
         if (hovered && active) {
-            gui.fill(this.getX(), this.getY(),
+            pGuiGraphics.fill(this.getX(), this.getY(),
                     this.getX() + this.width,
                     this.getY() + this.height,
                     0x20FFFFFF);
@@ -101,22 +101,22 @@ public class GradientToggleButton extends AbstractButton {
 
         float scale = this.textScale;
 
-        gui.pose().pushPose();
-        gui.pose().scale(scale, scale, 1.0f);
+        pGuiGraphics.pose().pushPose();
+        pGuiGraphics.pose().scale(scale, scale, 1.0f);
         int textX = (int)((this.getX() + this.width / 2) / scale);
         int textY = (int)((this.getY() + (this.height - 5) / 2) / scale);
-        gui.drawCenteredString(
+        pGuiGraphics.drawCenteredString(
                 Minecraft.getInstance().font,
                 this.getMessage(),
                 textX,
                 textY,
                 this.active ? (this.isHoveredOrFocused() ? 0xFFFFA0 : 0xFFFFFF) : 0xFF555555
         );
-        gui.pose().popPose();
+        pGuiGraphics.pose().popPose();
 
 
         if (!this.active) {
-            gui.fill(this.getX(), this.getY(), this.width + this.getX(),this.height + this.getY(), 0, 0x55000000);
+            pGuiGraphics.fill(this.getX(), this.getY(), this.width + this.getX(),this.height + this.getY(), 0, 0x55000000);
         }
 
     }

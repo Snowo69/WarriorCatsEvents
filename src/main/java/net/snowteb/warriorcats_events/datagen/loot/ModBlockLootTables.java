@@ -200,6 +200,17 @@ public class ModBlockLootTables extends BlockLootSubProvider {
 
         );
 
+        this.add(ModBlocks.KELP_BED.get(),
+                block -> createSingleItemTableWithSilkTouch(
+                        block,
+                        Items.KELP,
+                        UniformGenerator.between(1.0F, 3.0F)
+                )
+        );
+
+        this.add(ModBlocks.MAKESHIFT_BED.get(), noDrop());
+        this.add(ModBlocks.TREE_STUMP.get(), noDrop());
+
         this.add(ModBlocks.LEAF_DOOR.get(),
                 block -> createDoorTable(ModBlocks.LEAF_DOOR.get()));
 

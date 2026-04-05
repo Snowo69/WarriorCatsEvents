@@ -20,14 +20,13 @@ public class ThirstHUD {
 
     public static final IGuiOverlay HUD_THIRST = ((gui, guiGraphics, partialTick, screenWidth, screenHeight) -> {
         var player = net.minecraft.client.Minecraft.getInstance().player;
-        if (player == null || player.isCreative()) return;
+        if (player == null || player.isCreative() || player.isSpectator()) return;
         Minecraft mc = Minecraft.getInstance();
         if (!mc.isWindowActive()) return;
         if (mc.level == null) return;
         if (mc.screen != null) {
             if (!(mc.screen instanceof ChatScreen)) return;
         }
-
 
         int x = screenWidth / 2 + 7;
         int y = screenHeight - 51;

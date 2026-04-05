@@ -52,16 +52,18 @@ public class LeapClientState {
 
         if (!WCEClientConfig.CLIENT.LEAP.get()) return;
 
-        if (Minecraft.getInstance().player != null) {
-            if (!(PlayerShape.getCurrentShape(Minecraft.getInstance().player) instanceof Animal)) return;
-            if (Minecraft.getInstance().player.getItemInHand(InteractionHand.MAIN_HAND).getItem() instanceof PickaxeItem
-            || Minecraft.getInstance().player.getItemInHand(InteractionHand.MAIN_HAND).getItem() instanceof AxeItem
-            || Minecraft.getInstance().player.getItemInHand(InteractionHand.MAIN_HAND).getItem() instanceof ShovelItem) return;
+        boolean hasTool = false;
 
+        if (Minecraft.getInstance().player != null) {
+            hasTool = (Minecraft.getInstance().player.getItemInHand(InteractionHand.MAIN_HAND).getItem() instanceof PickaxeItem
+                    || Minecraft.getInstance().player.getItemInHand(InteractionHand.MAIN_HAND).getItem() instanceof AxeItem
+                    || Minecraft.getInstance().player.getItemInHand(InteractionHand.MAIN_HAND).getItem() instanceof ShovelItem);
+
+            if (!(PlayerShape.getCurrentShape(Minecraft.getInstance().player) instanceof Animal)) return;
         }
 
 
-        if (shifting && Minecraft.getInstance().player.onGround() ) {
+        if (shifting && Minecraft.getInstance().player.onGround() && !hasTool) {
             sprintingCounter = 0;
 
             if (shiftKeyDownCounter > 142 || !Minecraft.getInstance().player.onGround()) return;
@@ -124,7 +126,7 @@ public class LeapClientState {
                         .map(ISkillData::getSpeedLevel).orElse(0);
             }
 
-            if (runSkillLevel >= 8) {
+            if (runSkillLevel >= 8 && !hasTool) {
                 if (PlayerShape.getCurrentShape(localPlayer) instanceof WCatEntity && localPlayer.isSprinting()) {
                     sprintingCounter = Math.min(sprintingCounter, 300);
 
@@ -253,6 +255,7 @@ public class LeapClientState {
 
 
         player.setYRot(Mth.lerp(0.25F, player.getYRot(), yaw));
+        player.setYBodyRot(Mth.lerp(0.25F, player.getYRot(), yaw));
         player.yRotO = yaw;
         player.xRotO = pitch;
     }

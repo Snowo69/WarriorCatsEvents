@@ -71,6 +71,7 @@ public class C2SRegisterClanPacket {
             }
 
             ClanData.Clan clan = data.createClan(packet.name, packet.color, leaderUUID, leaderName, finalClanSentence, packet.clanSymbolIndex);
+            data.syncTerritoriesToClients(level);
 
             player.sendSystemMessage(Component.literal("Clan successfully created!").withStyle(ChatFormatting.GRAY));
 

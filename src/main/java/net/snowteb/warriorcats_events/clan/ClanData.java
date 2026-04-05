@@ -1,6 +1,7 @@
 package net.snowteb.warriorcats_events.clan;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -8,11 +9,18 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.saveddata.SavedData;
+import net.snowteb.warriorcats_events.block.entity.TreeStumpBlockEntity;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.network.ModPackets;
 import net.snowteb.warriorcats_events.network.packet.s2c.clan.S2CSyncClanDataPacket;
+import net.snowteb.warriorcats_events.network.packet.s2c.clan.SyncTerritoryToClients;
+import net.snowteb.warriorcats_events.zconfig.WCEServerConfig;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -21,7 +29,6 @@ public class ClanData extends SavedData {
     public Map<UUID, Clan> clans = new HashMap<>();
     public Map<UUID, String> playerMorphNames = new HashMap<>();
     public Map<UUID, Integer> playerMorphData = new HashMap<>();
-
 
     public static final UUID EMPTY_UUID = UUID.fromString("00000000-0000-0000-0000-000000000000");
 
@@ -166,7 +173,342 @@ public class ClanData extends SavedData {
         public Map<UUID, ClanPermissions> memberPerms = new HashMap<>();
         public Map<UUID, ClanCat> clanCats = new HashMap<>();
         public List<ClanLogEntry> logs = new ArrayList<>();
+
+        public Map<ChunkPos, TerritoryChunk> claimedTerritory = new HashMap<>();
+        public ChunkPos coreTerritory;
     }
+
+
+
+
+
+
+
+
+
+
+    public static boolean isInEnemyTerritory(ServerPlayer player, ChunkPos pos) {
+        ClanData data = ClanData.get(player.serverLevel());
+
+        UUID playerClanUUID = player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
+                .map(PlayerClanData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID);
+
+        for (ClanData.Clan clan : data.clans.values()) {
+            if (clan.claimedTerritory.containsKey(pos)) {
+                if (!clan.clanUUID.equals(playerClanUUID)) {
+                    return true;
+                } else {
+                    if (!data.canCommandWarriors(clan, player.getUUID())) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public static class TerritoryChunk{
+        public ChunkPos chunkPos;
+        public String name;
+        public int time;
+        public int timeToReclaim;
+
+        public TerritoryChunk(ChunkPos chunkPos, String name, int time, int timeToReclaim) {
+            this.chunkPos = chunkPos;
+            this.name = name;
+            this.time = time;
+            this.timeToReclaim = timeToReclaim;
+        }
+    }
+
+    public record ClanTerritories(List<TerritoryChunk> claimedTerritory, String clanName, int color, ChunkPos core) {}
+
+    public void syncTerritoriesToClients(ServerLevel level) {
+
+        Map<UUID, ClanTerritories> list = new HashMap<>();
+        for (Clan clan : clans.values()) {
+
+            List<TerritoryChunk> chunksClaimed = clan.claimedTerritory.values().stream().toList();
+
+            ClanTerritories clanTerritory = new ClanTerritories(chunksClaimed, clan.name, clan.color, clan.coreTerritory);
+
+            list.put(clan.clanUUID, clanTerritory);
+        }
+
+        SyncTerritoryToClients packet = new SyncTerritoryToClients(list);
+
+        for (ServerPlayer player : level.getServer().getPlayerList().getPlayers()) {
+            ModPackets.sendToPlayer(packet, player);
+        }
+    }
+
+    public void syncTerritoriesToAClient(ServerPlayer serverPlayer) {
+
+        Map<UUID, ClanTerritories> list = new HashMap<>();
+        for (Clan clan : clans.values()) {
+
+            List<TerritoryChunk> chunksClaimed = clan.claimedTerritory.values().stream().toList();
+
+            ClanTerritories clanTerritory = new ClanTerritories(chunksClaimed, clan.name, clan.color, clan.coreTerritory);
+
+            list.put(clan.clanUUID, clanTerritory);
+        }
+
+        SyncTerritoryToClients packet = new SyncTerritoryToClients(list);
+
+        ModPackets.sendToPlayer(packet, serverPlayer);
+
+    }
+
+    public boolean isChunkClaimedByOtherClan(ChunkPos chunkPos, UUID clanUUID) {
+        for (Clan clan : clans.values()) {
+            if (!clan.clanUUID.equals(clanUUID) && clan.claimedTerritory.containsKey(chunkPos)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean claimChunk(UUID clanUUID, ChunkPos pos, String name) {
+        Clan clan = getClan(clanUUID);
+        if (clan == null) return false;
+
+        if (clan.claimedTerritory.containsKey(pos)) return false;
+
+        if (isChunkClaimedByOtherClan(pos, clanUUID)) return false;
+
+        TerritoryChunk claimedChunk = new TerritoryChunk(pos, name,
+                (WCEServerConfig.SERVER.MAX_TERRITORY_TIME.get()*60*20)/2,
+                ((WCEServerConfig.SERVER.MAX_TERRITORY_TIME.get()*20*60)/8));
+        clan.claimedTerritory.put(pos, claimedChunk);
+
+        setDirty();
+        return true;
+    }
+
+    public boolean reclaimChunk(UUID clanUUID, ChunkPos pos, ServerLevel level) {
+        Clan clan = getClan(clanUUID);
+        if (clan == null) return false;
+
+        TerritoryChunk claimedChunk = clan.claimedTerritory.get(pos);
+        if (claimedChunk == null) return false;
+
+        int time = Mth.clamp(claimedChunk.time + (getMaxTerritoryTime()/3), 0, getMaxTerritoryTime());
+
+        TerritoryChunk newClaimedChunk = new TerritoryChunk(pos, claimedChunk.name, time, (WCEServerConfig.SERVER.MAX_TERRITORY_TIME.get()*20*60)/8);
+
+        clan.claimedTerritory.put(pos, newClaimedChunk);
+
+        syncTerritoriesToClients(level.getServer().overworld());
+
+        setDirty();
+        return true;
+    }
+
+    public int getMaxTerritoryTime() {
+        return WCEServerConfig.SERVER.MAX_TERRITORY_TIME.get()*60*20;
+    }
+
+    public boolean unclaimChunk(UUID clanUUID, ChunkPos pos, ServerLevel level) {
+        Clan clan = getClan(clanUUID);
+        if (clan == null) return false;
+
+        if (!clan.claimedTerritory.containsKey(pos)) return false;
+
+        removeMarkersFromChunk(level.getServer().overworld(), pos);
+
+        clan.claimedTerritory.remove(pos);
+
+        removeTerritoryNotConnected(clan, level);
+
+        setDirty();
+        return true;
+    }
+
+    public static CompoundTag saveTerritory(Map<ChunkPos, TerritoryChunk> map) {
+        CompoundTag tag = new CompoundTag();
+        ListTag list = new ListTag();
+
+        for (TerritoryChunk territory : map.values()) {
+            CompoundTag entry = new CompoundTag();
+
+            ChunkPos pos = territory.chunkPos;
+
+            entry.putInt("x", pos.x);
+            entry.putInt("z", pos.z);
+            entry.putString("name", territory.name);
+            entry.putInt("time", territory.time);
+            entry.putInt("timeToReclaim", territory.timeToReclaim);
+
+            list.add(entry);
+        }
+
+        tag.put("claimedTerritory", list);
+        return tag;
+    }
+
+    public static Map<ChunkPos, TerritoryChunk> loadTerritory(CompoundTag tag) {
+        Map<ChunkPos, TerritoryChunk> map = new HashMap<>();
+
+        if (!tag.contains("claimedTerritory", Tag.TAG_LIST)) {
+            return map;
+        }
+
+        ListTag list = tag.getList("claimedTerritory", Tag.TAG_COMPOUND);
+
+        for (int i = 0; i < list.size(); i++) {
+            CompoundTag entry = list.getCompound(i);
+
+            int x = entry.getInt("x");
+            int z = entry.getInt("z");
+            String name = entry.getString("name");
+            int time = entry.getInt("time");
+            int timeToReclaim = entry.getInt("timeToReclaim");
+
+            ChunkPos pos = new ChunkPos(x, z);
+            TerritoryChunk territory = new TerritoryChunk(pos, name, time, timeToReclaim);
+
+            map.put(pos, territory);
+        }
+
+        return map;
+    }
+
+    public boolean territoryTick(ServerLevel serverLevel) {
+        Iterator<Clan> clanIterator = clans.values().iterator();
+        boolean result = false;
+
+        while (clanIterator.hasNext()) {
+            Clan clan = clanIterator.next();
+            boolean shouldCheckForConnection = false;
+            Iterator<TerritoryChunk> chunkIterator = clan.claimedTerritory.values().iterator();
+
+            while (chunkIterator.hasNext()) {
+                TerritoryChunk chunk = chunkIterator.next();
+
+                boolean corePresent = false;
+
+                if (chunk.chunkPos.equals(clan.coreTerritory) || isAdjacentToCore(chunk.chunkPos, clan.coreTerritory)) {
+                    corePresent = true;
+                }
+
+                if (!corePresent) chunk.time--;
+                if (chunk.timeToReclaim > 0) chunk.timeToReclaim--;
+
+                if (chunk.time <= 0) {
+                    removeMarkersFromChunk(serverLevel, chunk.chunkPos);
+
+                    chunkIterator.remove();
+
+                    result = true;
+                    shouldCheckForConnection = true;
+                }
+
+            }
+
+            if (shouldCheckForConnection) {
+                removeTerritoryNotConnected(clan, serverLevel);
+            }
+
+        }
+
+        return result;
+    }
+
+    public static final ChunkPos[] SQUARE_ADJACENT_CHUNKS = new ChunkPos[]{
+            new ChunkPos(-1, 1), new ChunkPos(0, 1), new ChunkPos(1, 1),
+            new ChunkPos(-1, 0),                              new ChunkPos(1, 0),
+            new ChunkPos(-1, -1), new ChunkPos(0, -1), new ChunkPos(1, -1)
+    };
+
+    public boolean isAdjacentToCore(ChunkPos pos, ChunkPos core) {
+        if (core == null) return false;
+        if (pos == null) return false;
+
+        for (ChunkPos chunk : SQUARE_ADJACENT_CHUNKS) {
+            ChunkPos checking = new ChunkPos(pos.x + chunk.x, pos.z + chunk.z);
+            if (checking.equals(core)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void removeTerritoryNotConnected(Clan clan, ServerLevel sLevel) {
+
+        ChunkPos[] axisSet = new ChunkPos[]{
+                new ChunkPos(1, 0), new ChunkPos(-1, 0),
+                new ChunkPos(0, 1), new ChunkPos(0, -1)
+        };
+
+        Set<ChunkPos> valid = new HashSet<>();
+        Queue<ChunkPos> toCheck = new ArrayDeque<>();
+
+        ChunkPos core = clan.coreTerritory;
+
+        if (core != null && clan.claimedTerritory.containsKey(core)) {
+            valid.add(core);
+            toCheck.add(core);
+
+            while (!toCheck.isEmpty()) {
+                ChunkPos currentChunk = toCheck.poll();
+
+                for (ChunkPos axis : axisSet) {
+                    ChunkPos adjacent = new ChunkPos(currentChunk.x + axis.x, currentChunk.z + axis.z);
+
+                    if (clan.claimedTerritory.containsKey(adjacent) && !valid.contains(adjacent)) {
+                        valid.add(adjacent);
+                        toCheck.add(adjacent);
+                    }
+                }
+            }
+
+            Iterator<ChunkPos> iterator = clan.claimedTerritory.keySet().iterator();
+            while (iterator.hasNext()) {
+                ChunkPos chunk = iterator.next();
+                if (!valid.contains(chunk)) {
+                    removeMarkersFromChunk(sLevel, chunk);
+
+                    iterator.remove();
+                }
+            }
+
+        } else {
+            Iterator<ChunkPos> iterator = clan.claimedTerritory.keySet().iterator();
+            while (iterator.hasNext()) {
+                ChunkPos chunk = iterator.next();
+                removeMarkersFromChunk(sLevel, chunk);
+                iterator.remove();
+            }
+        }
+
+    }
+
+    public void removeMarkersFromChunk(ServerLevel sLevel, ChunkPos chunk) {
+        if (chunk == null) return;
+
+        Map<BlockPos, BlockEntity> map = sLevel.getChunk(chunk.x, chunk.z).getBlockEntities();
+
+        List<BlockEntity> blockEntities = new ArrayList<>(map.values());
+        for (BlockEntity blockEntity : blockEntities) {
+            if (blockEntity instanceof TreeStumpBlockEntity stump) {
+                sLevel.setBlock(stump.getBlockPos(), Blocks.AIR.defaultBlockState(), 3);
+            }
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     public Clan createClan(String name, int color, UUID leader, String leaderName, String clanBioSentence, int clanSymbolIndex) {
@@ -461,6 +803,10 @@ public class ClanData extends SavedData {
         clan.members.clear();
         clan.memberPerms.clear();
 
+        for (ChunkPos chunkPos : clan.claimedTerritory.keySet()) {
+            removeMarkersFromChunk(level.getServer().overworld(), chunkPos);
+        }
+
         clans.remove(clanUUID);
 
         for (ServerPlayer player : level.getServer().getPlayerList().getPlayers()) {
@@ -483,6 +829,8 @@ public class ClanData extends SavedData {
                 }
             }
         }
+
+        syncTerritoriesToClients(level.getServer().overworld());
 
         setDirty();
         return true;
@@ -631,6 +979,19 @@ public class ClanData extends SavedData {
             clanTag.put("Permissions", permsList);
 
             clanList.add(clanTag);
+
+            CompoundTag territoryTag = new CompoundTag();
+            territoryTag = saveTerritory(clan.claimedTerritory);
+            clanTag.put("Territory", territoryTag);
+
+            if (clan.coreTerritory != null) {
+                CompoundTag coreTag = new CompoundTag();
+                coreTag.putInt("x", clan.coreTerritory.x);
+                coreTag.putInt("z", clan.coreTerritory.z);
+
+                clanTag.put("CoreTerritory", coreTag);
+            }
+
         }
         tag.put("Clans", clanList);
 
@@ -720,6 +1081,19 @@ public class ClanData extends SavedData {
                             ClanPermissions.valueOf(pt.getString("Perm"))
                     );
                 }
+            }
+
+            if (clanTag.contains("Territory", Tag.TAG_COMPOUND)) {
+                clan.claimedTerritory = loadTerritory(clanTag.getCompound("Territory"));
+            }
+
+            if (clanTag.contains("CoreTerritory", Tag.TAG_COMPOUND)) {
+                CompoundTag coreTag = clanTag.getCompound("CoreTerritory");
+
+                int x = coreTag.getInt("x");
+                int z = coreTag.getInt("z");
+
+                clan.coreTerritory = new ChunkPos(x, z);
             }
 
 

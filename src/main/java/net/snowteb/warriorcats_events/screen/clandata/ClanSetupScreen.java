@@ -13,6 +13,7 @@ import net.snowteb.warriorcats_events.WCEClient;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.clan.PlayerClanData;
 import net.snowteb.warriorcats_events.client.ClientClanData;
+import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.network.ModPackets;
 import net.snowteb.warriorcats_events.network.packet.c2s.clan.SaveClanDataPacket;
 
@@ -23,7 +24,7 @@ import java.util.Optional;
 public class ClanSetupScreen extends Screen {
     private int textCooldown = 0;
 
-    private EditBox clanNameBox;
+//    private EditBox clanNameBox;
     private EditBox morphPrefixBox;
     private EditBox morphSufixBox;
 
@@ -50,15 +51,15 @@ public class ClanSetupScreen extends Screen {
     private final float endX = -700;
     private float menuX = 0;
 
-    private static final String[] SUFIX = {
-            "claw", "fur", "feather", "pelt", "eye",
-            "heart", "tail", "wing", "whisker", "blaze",
-            "fang", "shade", "step", "fall", "song",
-            "stripe", "light", "leap", "foot", "spring",
-            "pit", "stream", "patch"
-    };
+//    private static final String[] SUFIX = {
+//            "claw", "fur", "feather", "pelt", "eye",
+//            "heart", "tail", "wing", "whisker", "blaze",
+//            "fang", "shade", "step", "fall", "song",
+//            "stripe", "light", "leap", "foot", "spring",
+//            "pit", "stream", "patch"
+//    };
 
-    private int randomSufix = Minecraft.getInstance().player.getRandom().nextInt(SUFIX.length);
+    private int randomSufix = Minecraft.getInstance().player.getRandom().nextInt(WCatEntity.SUFIXES.length);
 
     public ClanSetupScreen() {
         super(Component.literal("Clan Setup"));
@@ -105,18 +106,7 @@ public class ClanSetupScreen extends Screen {
                 250, 125,250,125);
 
 
-        boolean prefixToolTip = pMouseX >= centerx - 220 && pMouseY >= centery - 40
-                && pMouseX <= centerx - 130 && pMouseY <= centery - 20;
-        boolean suffixToolTip =  pMouseX >= centerx - 120 && pMouseY >= centery - 40
-                && pMouseX <= centerx - 60 && pMouseY <= centery - 20;
-        boolean useSuffixToolTip =  pMouseX >= centerx + 30 && pMouseY >= centery - 40
-                && pMouseX <= centerx + 80 && pMouseY <= centery - 20;
-        boolean clanNameTooltip = pMouseX >= centerx - 220 && pMouseY >= centery - 10
-                && pMouseX <= centerx - 120 && pMouseY <= centery + 10;
-        boolean ageTooltip = pMouseX >= centerx - 230 && pMouseY >= centery + 20
-                && pMouseX <= centerx - 20 && pMouseY <= centery + 40;
-
-        if (prefixToolTip) {
+        if (morphPrefixBox.isHovered()) {
             if (useSufixes.getValue()) {
                 pGuiGraphics.renderTooltip(Minecraft.getInstance().font,
                         Component.empty()
@@ -134,13 +124,13 @@ public class ClanSetupScreen extends Screen {
             }
         }
 
-        if (suffixToolTip && useSufixes.getValue()) pGuiGraphics.renderTooltip(Minecraft.getInstance().font,
+        if (morphSufixBox.isHovered() && useSufixes.getValue()) pGuiGraphics.renderTooltip(Minecraft.getInstance().font,
                 Component.empty()
                         .append(Component.literal("The suffix of your morph. eg: Bengal").withStyle(ChatFormatting.GRAY))
                         .append(Component.literal("'pelt'").withStyle(ChatFormatting.YELLOW))
                 ,pMouseX, pMouseY);
 
-        if (useSuffixToolTip) {
+        if (useSufixes.isHovered()) {
             List<Component> tooltip = new ArrayList<>();
 
             tooltip.add(Component.literal("Controls whether your morph uses")
@@ -152,27 +142,21 @@ public class ClanSetupScreen extends Screen {
 
             pGuiGraphics.renderTooltip(
                     Minecraft.getInstance().font,
-                    tooltip,
-                    Optional.empty(),
-                    pMouseX,
-                    pMouseY
+                    tooltip, Optional.empty(),
+                    pMouseX, pMouseY
             );
         }
 
-        if (clanNameTooltip) pGuiGraphics.renderTooltip(Minecraft.getInstance().font,
-                Component.literal("The name of your clan. eg: 'Bengalclan'")
-                        .withStyle(ChatFormatting.GRAY)
-                ,pMouseX, pMouseY);
-
-        if (ageTooltip) pGuiGraphics.renderTooltip(Minecraft.getInstance().font,
-                Component.literal("The age your character begins with.")
-                        .withStyle(ChatFormatting.GRAY)
-                ,pMouseX, pMouseY);
-
+        if (ageKit.isHovered() || ageApprentice.isHovered() || ageAdult.isHovered()) {
+            pGuiGraphics.renderTooltip(Minecraft.getInstance().font,
+                    Component.literal("The age your character begins with.")
+                            .withStyle(ChatFormatting.GRAY)
+                    , pMouseX, pMouseY);
+        }
 
         String morphPrefix = morphPrefixBox.getValue().trim();
         String morphSufix = morphSufixBox.getValue().trim();
-        String clanName = clanNameBox.getValue().trim();
+//        String clanName = clanNameBox.getValue().trim();
         Boolean isUseSufixes = useSufixes.getValue();
 
         String sufix = "";
@@ -183,13 +167,13 @@ public class ClanSetupScreen extends Screen {
                 sufix = "paw";
             } else {
                 if (automaticSufix.getValue()) {
-                    sufix = SUFIX[randomSufix];
+                    sufix = WCatEntity.SUFIXES[randomSufix];
                 } else {
                     sufix = morphSufixBox.getValue().trim();
                 }
             }
         }
-        String clanNameShow = "...";
+//        String clanNameShow = "...";
         String morphNameShow = "...";
         String genderS = "";
         if (genderFemale.isSelected()) {
@@ -201,28 +185,22 @@ public class ClanSetupScreen extends Screen {
         if (!morphPrefix.isEmpty()) {
             morphNameShow = morphPrefix + sufix + genderS;
         }
-        if (!clanNameBox.getValue().isEmpty()) {
-            clanNameShow = clanNameBox.getValue();
-        }
+//        if (!clanNameBox.getValue().isEmpty()) {
+//            clanNameShow = clanNameBox.getValue();
+//        }
 
-        pGuiGraphics.drawString(Minecraft.getInstance().font,
-                "''I am " + morphNameShow + " from " +  clanNameShow + "!''",
-                centerx-217, centery - 54, 0xFFFFFFFF);
+//        pGuiGraphics.drawString(Minecraft.getInstance().font,
+//                "''I am " + morphNameShow + " from " +  clanNameShow + "!''",
+//                centerx-217, centery - 54, 0xFFFFFFFF);
 
+        pGuiGraphics.drawCenteredString(Minecraft.getInstance().font,
+                "''I am " + morphNameShow + "!''",
+                centerx, centery - 54, 0xFFFFFFFF);
 
-        if (clanName.isEmpty()) {
-            pGuiGraphics.drawString(Minecraft.getInstance().font, "<Warriorclan>", centerx-217, centery - 4, 0xFF7d7d7d);
-        }
-        if (morphPrefix.isEmpty()) {
-            if (isUseSufixes){
-                pGuiGraphics.drawString(Minecraft.getInstance().font, "<Prefix>", centerx-217, centery -34, 0xFF7d7d7d);
-            } else {
-                pGuiGraphics.drawString(Minecraft.getInstance().font, "<Name>", centerx-217, centery -34, 0xFF7d7d7d);
-            }
-        }
-        if (morphSufix.isEmpty() && isUseSufixes) {
-            pGuiGraphics.drawString(Minecraft.getInstance().font, "<Suffix>", centerx-117, centery -34, 0xFF7d7d7d);
-        }
+//        if (clanName.isEmpty()) {
+//            pGuiGraphics.drawString(Minecraft.getInstance().font, "<Warriorclan>", centerx-217, centery - 4, 0xFF7d7d7d);
+//        }
+
 
         if (textCooldown > 0) {
             pGuiGraphics.drawString(Minecraft.getInstance().font, "Some fields are empty",
@@ -230,7 +208,7 @@ public class ClanSetupScreen extends Screen {
         }
 
         boolean autoSufix = automaticSufix.getValue();
-        String sufixText = SUFIX[randomSufix];
+        String sufixText = WCatEntity.SUFIXES[randomSufix];
 
         if (autoSufix) {
             morphSufixBox.setValue(sufixText);
@@ -240,18 +218,23 @@ public class ClanSetupScreen extends Screen {
         super.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
 
 
-        int xPosition = -230;
-        int yPosition = -120;
+        int xPosition = 10;
+        int yPosition = 0;
 
-        pGuiGraphics.enableScissor((int) (centerx + xPosition + menuX), centery + yPosition, (int) (centerx + xPosition + 200  + menuX), centery + yPosition + 56);
+        float scale = 0.8f;
+        pGuiGraphics.enableScissor((int) (xPosition*scale + menuX), yPosition, (int) ((int) (10 + 200*scale  + menuX)), (int) (yPosition + 56*scale));
+        pGuiGraphics.pose().pushPose();
+        pGuiGraphics.pose().translate(xPosition, yPosition, 0);
+        pGuiGraphics.pose().scale(scale, scale, scale);
         pGuiGraphics.blit(
                 BANNER,
-                (int) (centerx - 230), centery - 120,
+                0, 0,
                 0, 0,
                 800, 225,
                 200, 56
         );
         pGuiGraphics.disableScissor();
+        pGuiGraphics.pose().popPose();
 
         pGuiGraphics.pose().popPose();
 
@@ -285,7 +268,7 @@ public class ClanSetupScreen extends Screen {
 
         morphPrefixBox = new EditBox(
                 this.font,
-                centerX - 220, centerY - 40,
+                centerX - 150, centerY - 40,
                 90, 20,
                 Component.literal("Prefix")
         );
@@ -294,7 +277,7 @@ public class ClanSetupScreen extends Screen {
 
         morphSufixBox = new EditBox(
                 this.font,
-                centerX - 120, centerY - 40,
+                centerX - 50, centerY - 40,
                 60, 20,
                 Component.literal("Suffix")
         );
@@ -302,71 +285,80 @@ public class ClanSetupScreen extends Screen {
         this.addRenderableWidget(morphSufixBox);
 
         automaticSufix = new SwitchButton(
-                centerX - 50, centerY - 40,
+                centerX + 20, centerY - 40,
                 50, 20,
                 "Random Suffix",
                 false,
                 btn -> {
-                    randomSufix = Minecraft.getInstance().player.getRandom().nextInt(SUFIX.length);
+                    randomSufix = Minecraft.getInstance().player.getRandom().nextInt(WCatEntity.SUFIXES.length);
                     if (automaticSufix.getValue()) useSufixes.setValue(true);
                 }
         );
 
         randomizeButton = Button.builder(
                 Component.literal("@"),
-                btn -> randomSufix = Minecraft.getInstance().player.getRandom().nextInt(SUFIX.length)
-        ).bounds(centerX + 5, centerY - 40, 20, 20).build();
+                btn -> randomSufix = Minecraft.getInstance().player.getRandom().nextInt(WCatEntity.SUFIXES.length)
+        ).bounds(centerX + 75, centerY - 40, 20, 20).build();
         this.addRenderableWidget(randomizeButton);
 
+        morphSufixBox.setHint(Component.literal("<Suffix>").withStyle(ChatFormatting.DARK_GRAY));
+        morphPrefixBox.setHint(Component.literal("<Prefix>").withStyle(ChatFormatting.DARK_GRAY));
         useSufixes = new SwitchButton(
-                centerX + 30, centerY - 40,
+                centerX + 100, centerY - 40,
                 50, 20,
                 "Use suffixes",
                 true,
                 btn -> {
+                    if (useSufixes.getValue()) {
+                        morphSufixBox.setHint(Component.literal("<Suffix>").withStyle(ChatFormatting.DARK_GRAY));
+                        morphPrefixBox.setHint(Component.literal("<Prefix>").withStyle(ChatFormatting.DARK_GRAY));
+                    } else {
+                        morphPrefixBox.setHint(Component.literal("<Name>").withStyle(ChatFormatting.DARK_GRAY));
+                        morphSufixBox.setHint(Component.empty());
+                    }
                 }
         );
         this.addRenderableWidget(useSufixes);
 
-        clanNameBox = new EditBox(
-                this.font,
-                centerX - 220, centerY - 10,
-                100, 20,
-                Component.literal("Clan Name")
-        );
-        clanNameBox.setMaxLength(15);
-        this.addRenderableWidget(clanNameBox);
+//        clanNameBox = new EditBox(
+//                this.font,
+//                centerX - 220, centerY - 10,
+//                100, 20,
+//                Component.literal("Clan Name")
+//        );
+//        clanNameBox.setMaxLength(15);
+//        this.addRenderableWidget(clanNameBox);
 
         ageKit = new ToggleButton(
-                centerX - 230, centerY + 20, 60, 20,
+                centerX - 110, centerY + 20, 60, 20,
                 "Kit",
                 btn -> selectAge(ageKit)
         );
 
         ageApprentice = new ToggleButton(
-                centerX - 165, centerY + 20, 80, 20,
+                centerX - 40, centerY + 20, 80, 20,
                 "Apprentice",
                 btn -> selectAge(ageApprentice)
         );
 
         ageAdult = new ToggleButton(
-                centerX - 80, centerY + 20, 60, 20,
+                centerX + 50, centerY + 20, 60, 20,
                 "Adult",
                 btn -> selectAge(ageAdult)
         );
 
         genderMale = new ToggleButton(
-                centerX - 230, centerY + 45, 70, 20,
+                centerX - 110, centerY + 45, 70, 20,
                 "Tom-cat",
                 btn -> selectGender(genderMale)
         );
         genderFemale = new ToggleButton(
-                centerX - 155, centerY + 45, 70, 20,
+                centerX - 35, centerY + 45, 70, 20,
                 "She-cat",
                 btn -> selectGender(genderFemale)
         );
         genderNone = new ToggleButton(
-                centerX - 80, centerY + 45, 70, 20,
+                centerX + 40, centerY + 45, 70, 20,
                 "Non-binary",
                 btn -> selectGender(genderNone)
         );
@@ -405,18 +397,26 @@ public class ClanSetupScreen extends Screen {
     private void selectGender(ToggleButton selected) {
         genderFemale.setSelected(false);
         genderMale.setSelected(false);
+        genderNone.setSelected(false);
 
         selected.setSelected(true);
     }
 
     private void onBeforeSave() {
-        String clanName = clanNameBox.getValue().trim();
+//        String clanName = clanNameBox.getValue().trim();
         String morphPrefix = morphPrefixBox.getValue().trim();
         String morphSufix = morphSufixBox.getValue().trim();
         boolean isAgeSelected = (ageKit.isSelected() || ageApprentice.isSelected() || ageAdult.isSelected());
         boolean autoSufix = automaticSufix.getValue();
+//
+//        if (clanName.isEmpty() || morphPrefix.isEmpty()
+//                || (useSufixes.getValue() && morphSufix.isEmpty())
+//                || !isAgeSelected) {
+//            textCooldown = 100;
+//            return;
+//        }
 
-        if (clanName.isEmpty() || morphPrefix.isEmpty()
+        if (morphPrefix.isEmpty()
                 || (useSufixes.getValue() && morphSufix.isEmpty())
                 || !isAgeSelected) {
             textCooldown = 100;
@@ -427,13 +427,20 @@ public class ClanSetupScreen extends Screen {
         animationTime = 0f;
     }
     private void onSave() {
-        String clanName = clanNameBox.getValue().trim();
+//        String clanName = clanNameBox.getValue().trim();
         String morphPrefix = morphPrefixBox.getValue().trim();
         String morphSufix = morphSufixBox.getValue().trim();
         boolean isAgeSelected = (ageKit.isSelected() || ageApprentice.isSelected() || ageAdult.isSelected());
         boolean autoSufix = automaticSufix.getValue();
 
-        if (clanName.isEmpty() || morphPrefix.isEmpty()
+//        if (clanName.isEmpty() || morphPrefix.isEmpty()
+//                || (useSufixes.getValue() && morphSufix.isEmpty())
+//                || !isAgeSelected) {
+//            textCooldown = 100;
+//            return;
+//        }
+
+        if (morphPrefix.isEmpty()
                 || (useSufixes.getValue() && morphSufix.isEmpty())
                 || !isAgeSelected) {
             textCooldown = 100;
@@ -448,7 +455,7 @@ public class ClanSetupScreen extends Screen {
                 sufix = "paw";
             } else {
                 if (autoSufix) {
-                    sufix = SUFIX[randomSufix];
+                    sufix = WCatEntity.SUFIXES[randomSufix];
                 } else {
                     sufix = morphSufixBox.getValue().trim();
                 }
@@ -461,7 +468,7 @@ public class ClanSetupScreen extends Screen {
 
         PlayerClanData data = new PlayerClanData();
 
-        data.setClanName(clanNameBox.getValue());
+//        data.setClanName(clanNameBox.getValue());
         data.setPrefix(morphPrefixBox.getValue());
         data.setSufix(morphSufixBox.getValue());
         data.setMorphName(Name);

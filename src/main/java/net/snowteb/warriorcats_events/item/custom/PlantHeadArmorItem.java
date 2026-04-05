@@ -23,7 +23,7 @@ public class PlantHeadArmorItem extends ArmorItem {
             UUID.fromString("a1b2c3d4-aaaa-cbc3-edbe-1a1b1c123456");
 
     public PlantHeadArmorItem() {
-        super(ArmorMaterials.IRON, Type.HELMET, new Properties().stacksTo(1).durability(80));
+        super(ArmorMaterials.IRON, Type.HELMET, new Properties().stacksTo(1).durability(240));
     }
 
 

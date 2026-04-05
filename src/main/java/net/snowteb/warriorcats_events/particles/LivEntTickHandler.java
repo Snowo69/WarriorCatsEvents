@@ -4,7 +4,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -12,7 +11,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.snowteb.warriorcats_events.WCEClient;
+import net.snowteb.warriorcats_events.compat.Compatibilities;
 import net.snowteb.warriorcats_events.item.custom.CollarArmorItem;
 import net.snowteb.warriorcats_events.sound.ModSounds;
 import tocraft.walkers.api.PlayerShape;
@@ -30,11 +29,26 @@ public class LivEntTickHandler {
             if (entity.onGround() && entity.getDeltaMovement().horizontalDistanceSqr() > 0.001) {
                 spawnFootprint(entity);
 
-                if (entity.getItemBySlot(EquipmentSlot.CHEST).getItem() instanceof CollarArmorItem collar) {
+
+                ItemStack collarStack = ItemStack.EMPTY;
+                ItemStack bodyCollarStack = entity.getItemBySlot(EquipmentSlot.CHEST);
+                if (bodyCollarStack.getItem() instanceof CollarArmorItem) {
+                    collarStack = bodyCollarStack;
+                }
+
+                if (collarStack.isEmpty()) {
+                    ItemStack curiosStack = Compatibilities.getCuriosItem(entity.getUUID(), CollarArmorItem.class);
+
+                    if (!curiosStack.isEmpty()) {
+                        collarStack = curiosStack;
+                    }
+                }
+
+                if (collarStack.getItem() instanceof CollarArmorItem collar) {
                     ItemStack stack = entity.getItemBySlot(EquipmentSlot.CHEST);
                     if (collar.hasBell(stack)) {
                         entity.level().playLocalSound(entity.getX(), entity.getY(), entity.getZ(),
-                                ModSounds.COLLAR_BELL.get(), SoundSource.AMBIENT, 0.25f , 1.13f + (entity.getRandom().nextFloat() - 0.5f)*0.03f, false);
+                                ModSounds.COLLAR_BELL.get(), SoundSource.AMBIENT, 0.25f, 1.13f + (entity.getRandom().nextFloat() - 0.5f) * 0.03f, false);
                     }
                 }
             }
@@ -55,12 +69,12 @@ public class LivEntTickHandler {
         float yaw = entity.getYRot();
 
         double forwardX = -Mth.sin((float) Math.toRadians(yaw));
-        double forwardZ =  Mth.cos((float) Math.toRadians(yaw));
+        double forwardZ = Mth.cos((float) Math.toRadians(yaw));
 
-        float sideOffset = (entity.getRandom().nextFloat() - 0.5f) * 0.34f*entity.getScale();
+        float sideOffset = (entity.getRandom().nextFloat() - 0.5f) * 0.34f * entity.getScale();
 
-        double finalX = x + -forwardZ * sideOffset ;
-        double finalZ = z + forwardX * sideOffset ;
+        double finalX = x + -forwardZ * sideOffset;
+        double finalZ = z + forwardX * sideOffset;
 
         if (entity instanceof Player player && player != Minecraft.getInstance().player) {
             LivingEntity shape = PlayerShape.getCurrentShape(player);

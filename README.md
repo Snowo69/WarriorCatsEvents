@@ -13,7 +13,7 @@ WCE introduces plenty of mechanics, blocks, items, and systems, all mainly focus
 ## [Wiki](https://github.com/Snowo69/WarriorCatsEvents/wiki)
 ___
 
-![img](https://github.com/Snowo69/WarriorCatsEvents/blob/011fca747582e97b55d194a3105a10b6871e5842/assets/wce_title_bg.jpeg)
+![](https://github.com/Snowo69/WarriorCatsEvents/blob/011fca747582e97b55d194a3105a10b6871e5842/assets/wce_title_bg.jpeg)
 ___
 If you wish to support by donating to this project, you can do it via Ko-fi
 

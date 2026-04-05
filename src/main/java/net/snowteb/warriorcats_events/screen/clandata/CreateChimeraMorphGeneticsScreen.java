@@ -47,6 +47,7 @@ public class CreateChimeraMorphGeneticsScreen extends Screen {
     private GradientToggleButton albinoSection;
     private GradientToggleButton diluteSection;
     private GradientToggleButton agoutiAndTabbySection;
+    private GradientToggleButton silverSection;
     private GradientToggleButton noiseSection;
     private GradientToggleButton extraSection;
 
@@ -55,6 +56,8 @@ public class CreateChimeraMorphGeneticsScreen extends Screen {
     private IntSliderButton rufousingSlider;
     private IntSliderButton blueRufousingSlider;
 
+    private GradientSwitchButton silverSwitch;
+    private VariantScrollList silverVariantList;
 
     private GradientToggleButton setBlackButton;
     private GradientToggleButton setChocolateButton;
@@ -121,11 +124,14 @@ public class CreateChimeraMorphGeneticsScreen extends Screen {
     private static final String setSiamese = "cs-c";
     // 1 SCROLL MENU
 
-
     // 1 SWITCH BUTTON
     private static final String setDilute = "D-d";
     private static final String setNonDilute = "d-d";
 
+    // 1 SWITCH BUTTON
+    private static final String setSilver = "I-i";
+    private static final String setNonSilver = "i-i";
+    // 1 SCROLL MENU
 
     // 1 SWITCH BUTTON
     private static final String setAgoutiTabby = "A-a";
@@ -184,14 +190,14 @@ public class CreateChimeraMorphGeneticsScreen extends Screen {
 
 
         saveButton = new GradientToggleButton(
-                this.width - 80, 10,
-                70, 20,
+                this.width - 70, 10,
+                60, 15,
                 Component.literal("Done"),
                 btn -> {
                     closing = true;
                     animationTime = 0f;
                 }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
-                60, 20, 1f, 0xFFFFFFFF
+                60, 20, 0.8f, 0xFFFFFFFF
         );
 
 
@@ -203,7 +209,7 @@ public class CreateChimeraMorphGeneticsScreen extends Screen {
             int xOffset1 = -0;
 
             baseSection = new GradientToggleButton(
-                    centerX - 135 + xOffset1, buttonHeight, 60, 16,
+                    centerX - 105 + xOffset1, buttonHeight, 50, 15,
                     Component.literal("Base"),
                     btn -> {
                         selectMainSection(baseSection);
@@ -211,11 +217,11 @@ public class CreateChimeraMorphGeneticsScreen extends Screen {
                         this.removeWidget(baseChimeraVariantList);
                         this.addRenderableWidget(baseChimeraVariantList);
                     }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
-                    80, 20, 1f, 0xFFFFFFFF
+                    80, 20, 0.8f, 0xFFFFFFFF
             );
 
             orangeSection = new GradientToggleButton(
-                    centerX - 65 + xOffset1, buttonHeight, 60, 16,
+                    centerX - 50 + xOffset1, buttonHeight, 50, 15,
                     Component.literal("Orange"),
                     btn -> {
                         selectMainSection(orangeSection);
@@ -224,11 +230,11 @@ public class CreateChimeraMorphGeneticsScreen extends Screen {
 
 
                     }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
-                    80, 20, 1f, 0xFFFFFFFF
+                    80, 20, 0.8f, 0xFFFFFFFF
             );
 
             whiteSection = new GradientToggleButton(
-                    centerX + 5 + xOffset1, buttonHeight, 60, 16,
+                    centerX + 5 + xOffset1, buttonHeight, 50, 15,
                     Component.literal("White"),
                     btn -> {
                         selectMainSection(whiteSection);
@@ -237,11 +243,11 @@ public class CreateChimeraMorphGeneticsScreen extends Screen {
 
 
                     }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
-                    80, 20, 1f, 0xFFFFFFFF
+                    80, 20, 0.8f, 0xFFFFFFFF
             );
 
             albinoSection = new GradientToggleButton(
-                    centerX + 75 + xOffset1, buttonHeight, 60, 16,
+                    centerX + 60 + xOffset1, buttonHeight, 50, 15,
                     Component.literal("Albinism"),
                     btn -> {
                         selectMainSection(albinoSection);
@@ -251,39 +257,54 @@ public class CreateChimeraMorphGeneticsScreen extends Screen {
 
 
                     }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
-                    80, 20, 1f, 0xFFFFFFFF
+                    80, 20, 0.8f, 0xFFFFFFFF
             );
 
             buttonHeight += 20;
 
-            int xOffset = -0;
+            int xOffset = -30;
 
             diluteSection = new GradientToggleButton(
-                    centerX - 135 + xOffset, buttonHeight, 60, 16,
+                    centerX - 105 + xOffset, buttonHeight, 50, 15,
                     Component.literal("Dilute"),
                     btn -> {
                         selectMainSection(diluteSection);
                         mainSectionActiveMenu = "dilute";
 
                     }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
-                    80, 20, 1f, 0xFFFFFFFF
+                    80, 20, 0.8f, 0xFFFFFFFF
             );
 
             agoutiAndTabbySection = new GradientToggleButton(
-                    centerX - 65 + xOffset, buttonHeight, 60, 16,
+                    centerX - 50 + xOffset, buttonHeight, 50, 15,
                     Component.literal("Agouti"),
                     btn -> {
                         selectMainSection(agoutiAndTabbySection);
                         mainSectionActiveMenu = "agouti";
-
+                        if (agoutiSwitch.getValue() || silverSwitch.getValue() || setOrangeButton.isSelected()) {
+                            this.removeWidget(tabbyVariantList);
+                            this.addRenderableWidget(tabbyVariantList);
+                        }
                     }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
-                    80, 20, 1f, 0xFFFFFFFF
+                    80, 20, 0.8f, 0xFFFFFFFF
             );
 
-
+            silverSection = new GradientToggleButton(
+                    centerX + 5 + xOffset, buttonHeight, 50, 15,
+                    Component.literal("Silver"),
+                    btn -> {
+                        selectMainSection(silverSection);
+                        mainSectionActiveMenu = "silver";
+                        if (silverSwitch.getValue()) {
+                            this.removeWidget(silverVariantList);
+                            this.addRenderableWidget(silverVariantList);
+                        }
+                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    80, 20, 0.8f, 0xFFFFFFFF
+            );
 
             noiseSection = new GradientToggleButton(
-                    centerX + 5 + xOffset, buttonHeight, 60, 16,
+                    centerX + 60 + xOffset, buttonHeight, 50, 15,
                     Component.literal("Details"),
                     btn -> {
                         selectMainSection(noiseSection);
@@ -291,11 +312,11 @@ public class CreateChimeraMorphGeneticsScreen extends Screen {
                         this.removeWidget(noiseList);
                         this.addRenderableWidget(noiseList);
                     }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
-                    80, 20, 1f, 0xFFFFFFFF
+                    80, 20, 0.8f, 0xFFFFFFFF
             );
 
             extraSection = new GradientToggleButton(
-                    centerX + 75 + xOffset, buttonHeight, 60, 16,
+                    centerX + 115 + xOffset, buttonHeight, 50, 15,
                     Component.literal("Extra"),
                     btn -> {
                         selectMainSection(extraSection);
@@ -305,7 +326,7 @@ public class CreateChimeraMorphGeneticsScreen extends Screen {
                         this.removeWidget(blueRufousingSlider);
                         this.addRenderableWidget(blueRufousingSlider);
                     }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
-                    80, 20, 1f, 0xFFFFFFFF
+                    80, 20, 0.8f, 0xFFFFFFFF
             );
 
         }
@@ -313,47 +334,47 @@ public class CreateChimeraMorphGeneticsScreen extends Screen {
         // BASE BUTTONS
         {
             setBlackButton = new GradientToggleButton(
-                    35, centerY - 15, 80, 16,
+                    centerX - 150, centerY - 15, 50, 15,
                     Component.literal("Black"),
                     btn -> {
                         selectBase(setBlackButton);
                         geneticsChimera.base = setBlack;
                     }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
-                    80, 20, 1f, 0xFFFFFFFF
+                    80, 20, 0.8f, 0xFFFFFFFF
             );
 
             setChocolateButton = new GradientToggleButton(
-                    35, centerY + 10, 80, 16,
+                    centerX - 150, centerY + 10, 50, 15,
                     Component.literal("Chocolate"),
                     btn -> {
                         selectBase(setChocolateButton);
                         geneticsChimera.base = setChocolate;
                     }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
-                    80, 20, 1f, 0xFFFFFFFF
+                    80, 20, 0.8f, 0xFFFFFFFF
             );
 
             setCinnamonButton = new GradientToggleButton(
-                    35, centerY + 35, 80, 16,
+                    centerX - 150, centerY + 35, 50, 15,
                     Component.literal("Cinnamon"),
                     btn -> {
                         selectBase(setCinnamonButton);
                         geneticsChimera.base = setCinnamon;
                     }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
-                    80, 20, 1f, 0xFFFFFFFF
+                    80, 20, 0.8f, 0xFFFFFFFF
             );
 
             int top = centerY - 20;
             int bottom = centerY + 110;
             this.baseChimeraVariantList = new VariantScrollList(
                     Minecraft.getInstance(),
-                    80,
+                    65,
                     40,
                     top,
                     bottom,
                     20
             );
             this.baseChimeraVariantList.setRenderTopAndBottom(false);
-            this.baseChimeraVariantList.setLeftPos(((centerX + 120)));
+            this.baseChimeraVariantList.setLeftPos(((centerX + 100)));
 
             for (int i = 0; i < WCGenetics.Values.MAX_CHIMERISM_VARIANTS; i++) {
                 baseChimeraVariantList.addOption("Chimera " + (i + 1), i);
@@ -365,18 +386,18 @@ public class CreateChimeraMorphGeneticsScreen extends Screen {
         // ORANGE BUTTONS
         {
             setOrangeButton = new GradientToggleButton(
-                    35, centerY - 15, 80, 16,
+                    centerX - 150, centerY - 15, 50, 15,
                     Component.literal("Orange"),
                     btn -> {
                         selectOrange(setOrangeButton);
                         geneticsChimera.orangeBase = setOrange;
                         this.removeWidget(orangeVariantList);
                     }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
-                    80, 20, 1f, 0xFFFFFFFF
+                    80, 20, 0.8f, 0xFFFFFFFF
             );
 
             setTortieButton = new GradientToggleButton(
-                    35, centerY + 10, 80, 16,
+                    centerX - 150, centerY + 10, 50, 15,
                     Component.literal("Tortie"),
                     btn -> {
                         selectOrange(setTortieButton);
@@ -384,32 +405,32 @@ public class CreateChimeraMorphGeneticsScreen extends Screen {
                         this.addRenderableWidget(orangeVariantList);
 
                     }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
-                    80, 20, 1f, 0xFFFFFFFF
+                    80, 20, 0.8f, 0xFFFFFFFF
             );
 
             setNotOrangeButton = new GradientToggleButton(
-                    35, centerY + 35, 80, 16,
+                    centerX - 150, centerY + 35, 50, 15,
                     Component.literal("No orange"),
                     btn -> {
                         selectOrange(setNotOrangeButton);
                         geneticsChimera.orangeBase = setNotOrange;
                         this.removeWidget(orangeVariantList);
                     }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
-                    80, 20, 1f, 0xFFFFFFFF
+                    80, 20, 0.8f, 0xFFFFFFFF
             );
 
             int top = centerY - 20;
             int bottom = centerY + 110;
             this.orangeVariantList = new VariantScrollList(
                     Minecraft.getInstance(),
-                    80,
+                    65,
                     40,
                     top,
                     bottom,
                     20
             );
             this.orangeVariantList.setRenderTopAndBottom(false);
-            this.orangeVariantList.setLeftPos(((centerX + 120)));
+            this.orangeVariantList.setLeftPos(((centerX + 100)));
 
             for (int i = 0; i < WCGenetics.Values.MAX_ORANGE_VARIANTS; i++) {
                 orangeVariantList.addOption("Tortie " + (i + 1), i);
@@ -419,18 +440,18 @@ public class CreateChimeraMorphGeneticsScreen extends Screen {
         // WHITE BUTTONS
         {
             setFullWhiteButton = new GradientToggleButton(
-                    35, centerY - 15, 80, 16,
+                    centerX - 150, centerY - 15, 50, 15,
                     Component.literal("Full white"),
                     btn -> {
                         selectWhite(setFullWhiteButton);
                         geneticsChimera.whiteRatio = setFullWhite;
                         this.removeWidget(whiteVariantList);
                     }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
-                    80, 20, 1f, 0xFFFFFFFF
+                    80, 20, 0.8f, 0xFFFFFFFF
             );
 
             setHighWhiteButton = new GradientToggleButton(
-                    35, centerY + 10, 80, 16,
+                    centerX - 150, centerY + 10, 50, 15,
                     Component.literal("High spots"),
                     btn -> {
                         selectWhite(setHighWhiteButton);
@@ -439,11 +460,11 @@ public class CreateChimeraMorphGeneticsScreen extends Screen {
                         this.addRenderableWidget(whiteVariantList);
 
                     }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
-                    80, 20, 1f, 0xFFFFFFFF
+                    80, 20, 0.8f, 0xFFFFFFFF
             );
 
             setLowWhiteButton = new GradientToggleButton(
-                    35, centerY + 35, 80, 16,
+                    centerX - 150, centerY + 35, 50, 15,
                     Component.literal("Low spots"),
                     btn -> {
                         selectWhite(setLowWhiteButton);
@@ -451,32 +472,32 @@ public class CreateChimeraMorphGeneticsScreen extends Screen {
                         this.removeWidget(whiteVariantList);
                         this.addRenderableWidget(whiteVariantList);
                     }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
-                    80, 20, 1f, 0xFFFFFFFF
+                    80, 20, 0.8f, 0xFFFFFFFF
             );
 
             setNoWhiteButton = new GradientToggleButton(
-                    35, centerY + 60, 80, 16,
+                    centerX - 150, centerY + 60, 50, 15,
                     Component.literal("No white"),
                     btn -> {
                         selectWhite(setNoWhiteButton);
                         geneticsChimera.whiteRatio = setNotWhite;
                         this.removeWidget(whiteVariantList);
                     }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
-                    80, 20, 1f, 0xFFFFFFFF
+                    80, 20, 0.8f, 0xFFFFFFFF
             );
 
             int top = centerY - 20;
             int bottom = centerY + 110;
             this.whiteVariantList = new VariantScrollList(
                     Minecraft.getInstance(),
-                    80,
+                    65,
                     40,
                     top,
                     bottom,
                     20
             );
             this.whiteVariantList.setRenderTopAndBottom(false);
-             this.whiteVariantList.setLeftPos(((centerX + 120)));
+             this.whiteVariantList.setLeftPos(((centerX + 100)));
 
             for (int i = 0; i < WCGenetics.Values.MAX_WHITE_VARIANTS; i++) {
                 whiteVariantList.addOption("Spots " + (i + 1), i);
@@ -486,18 +507,18 @@ public class CreateChimeraMorphGeneticsScreen extends Screen {
         // ALBINO BUTTONS
         {
             setNotAlbinoButton = new GradientToggleButton(
-                    35, centerY - 15, 80, 16,
+                    centerX - 150, centerY - 15, 50, 15,
                     Component.literal("Not albino"),
                     btn -> {
                         selectAlbino(setNotAlbinoButton);
                         geneticsChimera.albino = setNotAlbino;
                         this.removeWidget(albinoVariantList);
                     }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
-                    80, 20, 1f, 0xFFFFFFFF
+                    80, 20, 0.8f, 0xFFFFFFFF
             );
 
             setTrueAlbinoButton = new GradientToggleButton(
-                    35, centerY + 10, 80, 16,
+                    centerX - 150, centerY + 10, 50, 15,
                     Component.literal("True albino"),
                     btn -> {
                         selectAlbino(setTrueAlbinoButton);
@@ -505,23 +526,11 @@ public class CreateChimeraMorphGeneticsScreen extends Screen {
                         this.removeWidget(albinoVariantList);
 
                     }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
-                    80, 20, 1f, 0xFFFFFFFF
-            );
-
-            setMinkButton = new GradientToggleButton(
-                    35, centerY + 35, 80, 16,
-                    Component.literal("Mink"),
-                    btn -> {
-                        selectAlbino(setMinkButton);
-                        geneticsChimera.albino = setMink;
-                        this.removeWidget(albinoVariantList);
-                        this.addRenderableWidget(albinoVariantList);
-                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
-                    80, 20, 1f, 0xFFFFFFFF
+                    80, 20, 0.8f, 0xFFFFFFFF
             );
 
             setSepiaButton = new GradientToggleButton(
-                    35, centerY + 60, 80, 16,
+                    centerX - 150, centerY + 35, 50, 15,
                     Component.literal("Sepia"),
                     btn -> {
                         selectAlbino(setSepiaButton);
@@ -530,11 +539,23 @@ public class CreateChimeraMorphGeneticsScreen extends Screen {
                         this.addRenderableWidget(albinoVariantList);
 
                     }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
-                    80, 20, 1f, 0xFFFFFFFF
+                    80, 20, 0.8f, 0xFFFFFFFF
+            );
+
+            setMinkButton = new GradientToggleButton(
+                    centerX - 150, centerY + 60, 50, 15,
+                    Component.literal("Mink"),
+                    btn -> {
+                        selectAlbino(setMinkButton);
+                        geneticsChimera.albino = setMink;
+                        this.removeWidget(albinoVariantList);
+                        this.addRenderableWidget(albinoVariantList);
+                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    80, 20, 0.8f, 0xFFFFFFFF
             );
 
             setSiameseButton = new GradientToggleButton(
-                    35, centerY + 85, 80, 16,
+                    centerX - 150, centerY + 85, 50, 15,
                     Component.literal("Siamese"),
                     btn -> {
                         selectAlbino(setSiameseButton);
@@ -543,14 +564,14 @@ public class CreateChimeraMorphGeneticsScreen extends Screen {
                         this.addRenderableWidget(albinoVariantList);
 
                     }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
-                    80, 20, 1f, 0xFFFFFFFF
+                    80, 20, 0.8f, 0xFFFFFFFF
             );
 
             int top = centerY - 20;
             int bottom = centerY + 110;
             this.albinoVariantList = new VariantScrollList(
                     Minecraft.getInstance(),
-                    80,
+                    65,
                     40,
                     top,
                     bottom,
@@ -558,7 +579,7 @@ public class CreateChimeraMorphGeneticsScreen extends Screen {
             );
             this.albinoVariantList.setRenderTopAndBottom(false);
 //            this.orangeVariantList.setRenderBackground(false);
-            this.albinoVariantList.setLeftPos(((centerX + 120)));
+            this.albinoVariantList.setLeftPos(((centerX + 100)));
 
             for (int i = 0; i < WCGenetics.Values.MAX_ALBINO_VARIANTS; i++) {
                 albinoVariantList.addOption("Albino " + (i + 1), i);
@@ -568,7 +589,7 @@ public class CreateChimeraMorphGeneticsScreen extends Screen {
         // DILUTE SWITCH
         {
             diluteSwitch = new GradientSwitchButton(
-                    35, centerY - 15, 80, 16,
+                    centerX - 150, centerY - 15, 50, 15,
                     "Dilute",
                     false,
                     btn -> {
@@ -581,10 +602,47 @@ public class CreateChimeraMorphGeneticsScreen extends Screen {
             );
         }
 
+        // SILVER SWITCH
+        {
+            silverSwitch = new GradientSwitchButton(
+                    centerX - 150, centerY - 15, 50, 15,
+                    "Silver",
+                    false,
+                    btn -> {
+
+                        this.removeWidget(silverVariantList);
+                        if (silverSwitch.getValue()) {
+                            geneticsChimera.silver = setSilver;
+                            this.addRenderableWidget(silverVariantList);
+                        } else {
+                            geneticsChimera.silver = setNonSilver;
+                        }
+
+                    }, 0xFFFFFFFF
+            );
+
+            int top = centerY - 20;
+            int bottom = centerY + 110;
+            this.silverVariantList = new VariantScrollList(
+                    Minecraft.getInstance(),
+                    65,
+                    40,
+                    top,
+                    bottom,
+                    20
+            );
+            this.silverVariantList.setRenderTopAndBottom(false);
+            this.silverVariantList.setLeftPos(((centerX + 100)));
+
+            for (int i = 0; i < WCGenetics.Values.MAX_SILVER_VARIANTS; i++) {
+                silverVariantList.addOption("Silver " + (i + 1), i);
+            }
+        }
+
         // AGOUTI SWITCH, BUTTONS, VARIANT LIST
         {
             agoutiSwitch = new GradientSwitchButton(
-                    35, centerY - 15, 80, 16,
+                    centerX - 150, centerY - 15, 50, 15,
                     "Agouti",
                     false,
                     btn -> {
@@ -597,7 +655,7 @@ public class CreateChimeraMorphGeneticsScreen extends Screen {
             );
 
             setMackerelButton = new GradientToggleButton(
-                    35, centerY + 15, 80, 16,
+                    centerX - 150, centerY + 15, 50, 15,
                     Component.literal("Mackerel"),
                     btn -> {
                         selectAgoutiPattern(setMackerelButton);
@@ -606,11 +664,11 @@ public class CreateChimeraMorphGeneticsScreen extends Screen {
                         this.addRenderableWidget(tabbyVariantList);
 
                     }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
-                    80, 20, 1f, 0xFFFFFFFF
+                    80, 20, 0.8f, 0xFFFFFFFF
             );
 
             setClassicButton = new GradientToggleButton(
-                    35, centerY + 45, 80, 16,
+                    centerX - 150, centerY + 45, 50, 15,
                     Component.literal("Classic"),
                     btn -> {
                         selectAgoutiPattern(setClassicButton);
@@ -618,21 +676,21 @@ public class CreateChimeraMorphGeneticsScreen extends Screen {
                         this.removeWidget(tabbyVariantList);
                         this.addRenderableWidget(tabbyVariantList);
                     }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
-                    80, 20, 1f, 0xFFFFFFFF
+                    80, 20, 0.8f, 0xFFFFFFFF
             );
 
             int top = centerY - 20;
             int bottom = centerY + 110;
             this.tabbyVariantList = new VariantScrollList(
                     Minecraft.getInstance(),
-                    80,
+                    65,
                     40,
                     top,
                     bottom,
                     20
             );
             this.tabbyVariantList.setRenderTopAndBottom(false);
-            this.tabbyVariantList.setLeftPos(((centerX + 120)));
+            this.tabbyVariantList.setLeftPos(((centerX + 100)));
 
             for (int i = 0; i < WCGenetics.Values.MAX_TABBY_VARIANTS; i++) {
                 tabbyVariantList.addOption("Tabby " + (i + 1), i);
@@ -647,28 +705,32 @@ public class CreateChimeraMorphGeneticsScreen extends Screen {
             int bottom = centerY + 110;
             this.noiseList = new VariantScrollList(
                     Minecraft.getInstance(),
-                    80,
+                    60,
                     40,
                     top,
                     bottom,
                     20
             );
             this.noiseList.setRenderTopAndBottom(false);
-            this.noiseList.setLeftPos(((35)));
+            this.noiseList.setLeftPos(((centerX - 155)));
 
             for (int i = 0; i < WCGenetics.Values.MAX_NOISE_VARIANTS; i++) {
+                if (i == 5) {
+                    noiseList.addOption("No Noise", i);
+                    continue;
+                }
                 noiseList.addOption("Noise " + (i + 1), i);
             }
         }
 
         // EXTRA
         {
-            rufousingSlider = new IntSliderButton(36, centerY + 5,
-                    80, 20,
+            rufousingSlider = new IntSliderButton(centerX - 160, centerY + 5,
+                    65, 20,
                     0, 6, 0);
 
-            blueRufousingSlider = new IntSliderButton(36, centerY + 45,
-                    80, 20,
+            blueRufousingSlider = new IntSliderButton(centerX - 160, centerY + 45,
+                    65, 20,
                     0, 6, 0);
         }
 
@@ -677,6 +739,8 @@ public class CreateChimeraMorphGeneticsScreen extends Screen {
         this.addRenderableWidget(setMackerelButton);
 
         this.addRenderableWidget(diluteSwitch);
+
+        this.addRenderableWidget(silverSwitch);
 
         this.addRenderableWidget(setNotAlbinoButton);
         this.addRenderableWidget(setTrueAlbinoButton);
@@ -702,6 +766,7 @@ public class CreateChimeraMorphGeneticsScreen extends Screen {
         this.addRenderableWidget(whiteSection);
         this.addRenderableWidget(albinoSection);
         this.addRenderableWidget(diluteSection);
+        this.addRenderableWidget(silverSection);
         this.addRenderableWidget(agoutiAndTabbySection);
         this.addRenderableWidget(noiseSection);
         this.addRenderableWidget(extraSection);
@@ -741,13 +806,13 @@ public class CreateChimeraMorphGeneticsScreen extends Screen {
         pGuiGraphics.pose().pushPose();
         pGuiGraphics.pose().translate(menuX, 0, 0);
 
-        pGuiGraphics.enableScissor((int) (10 + menuX), 5, (int) (143 + menuX), 5 + 37);
+        pGuiGraphics.enableScissor((int) (10 + menuX), 5, (int) (124 + menuX), 5 + 34);
         pGuiGraphics.blit(
                 BANNER,
                 10, 5,
                 0, 0,
                 800, 225,
-                133, 37
+                114, 32
         );
         pGuiGraphics.disableScissor();
 
@@ -777,6 +842,7 @@ public class CreateChimeraMorphGeneticsScreen extends Screen {
         whiteSection.visible = false;
         albinoSection.visible = false;
         diluteSection.visible = false;
+        silverSection.visible = false;
         noiseSection.visible = false;
         extraSection.visible = false;
         agoutiAndTabbySection.visible = false;
@@ -800,6 +866,7 @@ public class CreateChimeraMorphGeneticsScreen extends Screen {
         setSepiaButton.visible = false;
         diluteSwitch.visible = false;
         agoutiSwitch.visible = false;
+        silverSwitch.visible = false;
         setMackerelButton.visible = false;
         setClassicButton.visible = false;
 
@@ -809,6 +876,7 @@ public class CreateChimeraMorphGeneticsScreen extends Screen {
             whiteSection.visible = true;
             albinoSection.visible = true;
             diluteSection.visible = true;
+            silverSection.visible = true;
             noiseSection.visible = true;
             extraSection.visible = true;
             agoutiAndTabbySection.visible = true;
@@ -823,7 +891,7 @@ public class CreateChimeraMorphGeneticsScreen extends Screen {
                     variantsChimera.chimeraVariant = baseChimeraVariantList.getSelectedEntry().getId();
                 }
 
-                pGuiGraphics.drawCenteredString(font, "Black base", 76, centerY - 30, 0xFFFFFFFF);
+                pGuiGraphics.drawCenteredString(font, "Black base", centerX - 125, centerY - 30, 0xFFFFFFFF);
             }
             if (mainSectionActiveMenu.equals("orange")) {
                 setOrangeButton.visible = true;
@@ -835,7 +903,7 @@ public class CreateChimeraMorphGeneticsScreen extends Screen {
                     variantsChimera.orangeVar = orangeVariantList.getSelectedEntry().getId();
                 }
 
-                pGuiGraphics.drawCenteredString(font, "Orange base", 76, centerY - 30, 0xFFFFFFFF);
+                pGuiGraphics.drawCenteredString(font, "Orange base", centerX - 125, centerY - 30, 0xFFFFFFFF);
             }
 
             if (mainSectionActiveMenu.equals("white")) {
@@ -849,7 +917,7 @@ public class CreateChimeraMorphGeneticsScreen extends Screen {
                     variantsChimera.whiteVar = whiteVariantList.getSelectedEntry().getId();
                 }
 
-                pGuiGraphics.drawCenteredString(font, "White", 76, centerY - 30, 0xFFFFFFFF);
+                pGuiGraphics.drawCenteredString(font, "White", centerX - 125, centerY - 30, 0xFFFFFFFF);
             }
 
             if (mainSectionActiveMenu.equals("albinism")) {
@@ -864,12 +932,12 @@ public class CreateChimeraMorphGeneticsScreen extends Screen {
                     variantsChimera.albinoVar = albinoVariantList.getSelectedEntry().getId();
                 }
 
-                pGuiGraphics.drawCenteredString(font, "Albinism", 76, centerY - 30, 0xFFFFFFFF);
+                pGuiGraphics.drawCenteredString(font, "Albinism", centerX - 125, centerY - 30, 0xFFFFFFFF);
             }
 
             if (mainSectionActiveMenu.equals("dilute")) {
                 diluteSwitch.visible = true;
-                pGuiGraphics.drawCenteredString(font, "Dilute", 76, centerY - 30, 0xFFFFFFFF);
+                pGuiGraphics.drawCenteredString(font, "Dilute", centerX - 125, centerY - 30, 0xFFFFFFFF);
             }
 
             if (mainSectionActiveMenu.equals("agouti")) {
@@ -882,7 +950,18 @@ public class CreateChimeraMorphGeneticsScreen extends Screen {
                     variantsChimera.tabbyVar = tabbyVariantList.getSelectedEntry().getId();
                 }
 
-                pGuiGraphics.drawCenteredString(font, "Agouti", 76, centerY - 30, 0xFFFFFFFF);
+                pGuiGraphics.drawCenteredString(font, "Agouti", centerX - 125, centerY - 30, 0xFFFFFFFF);
+            }
+
+            if (mainSectionActiveMenu.equals("silver")) {
+                silverSwitch.visible = true;
+                silverVariantList.setVisible(true);
+
+                if (silverVariantList.getSelectedEntry() != null) {
+                    variantsChimera.silverVar = silverVariantList.getSelectedEntry().getId();
+                }
+
+                pGuiGraphics.drawCenteredString(font, "Silver", centerX - 125, centerY - 30, 0xFFFFFFFF);
             }
 
             if (mainSectionActiveMenu.equals("details")) {
@@ -893,7 +972,7 @@ public class CreateChimeraMorphGeneticsScreen extends Screen {
                     variantsChimera.noise = noiseList.getSelectedEntry().getId();
                 }
 
-                pGuiGraphics.drawCenteredString(font, "Details", 76, centerY - 30, 0xFFFFFFFF);
+                pGuiGraphics.drawCenteredString(font, "Details", centerX - 125, centerY - 30, 0xFFFFFFFF);
 
             }
 
@@ -902,9 +981,9 @@ public class CreateChimeraMorphGeneticsScreen extends Screen {
                 variantsChimera.rufousingVariant = rufousingSlider.getActualValue();
                 variantsChimera.blueRufousingVariant = blueRufousingSlider.getActualValue();
 
-                pGuiGraphics.drawCenteredString(font, "Extra", 76, centerY - 30, 0xFFFFFFFF);
+                pGuiGraphics.drawCenteredString(font, "Extra", centerX - 125, centerY - 30, 0xFFFFFFFF);
                 pGuiGraphics.pose().pushPose();
-                pGuiGraphics.pose().translate(76, centerY - 3, 0);
+                pGuiGraphics.pose().translate(centerX - 125, centerY - 3, 0);
                 pGuiGraphics.pose().scale(0.8f,0.8f,0.7f);
                 pGuiGraphics.drawCenteredString(font, "Rufousing", 0, 0, 0xFFFFFFFF);
                 pGuiGraphics.drawCenteredString(font, "Blue tint", 0, 50, 0xFFFFFFFF);
@@ -914,7 +993,7 @@ public class CreateChimeraMorphGeneticsScreen extends Screen {
 
             if (mainSectionActiveMenu.equals("chimera")) {
 
-                pGuiGraphics.drawCenteredString(font, "Chimerism", 76, centerY - 30, 0xFFFFFFFF);
+                pGuiGraphics.drawCenteredString(font, "Chimerism", centerX - 125, centerY - 30, 0xFFFFFFFF);
             }
 
         }
@@ -931,13 +1010,13 @@ public class CreateChimeraMorphGeneticsScreen extends Screen {
         entityToRender.setGender(1);
         entityToRender.setGeneticalVariants(storedVariants.eyeColorLeft, storedVariants.eyeColorRight, storedVariants.rufousingVariant, storedVariants.blueRufousingVariant,
                 storedVariants.orangeVar, storedVariants.whiteVar, storedVariants.tabbyVar, storedVariants.albinoVar, storedVariants.leftEyeVar,
-                storedVariants.rightEyeVar, storedVariants.noise, storedVariants.size);
+                storedVariants.rightEyeVar, storedVariants.noise, storedVariants.size, storedVariants.silverVar);
 
         entityToRender.setChimeraGenetics(geneticsChimera);
 
         entityToRender.setGeneticalVariantsChimera(variantsChimera.chimeraVariant, variantsChimera.rufousingVariant,
                 variantsChimera.blueRufousingVariant, variantsChimera.orangeVar, variantsChimera.whiteVar, variantsChimera.tabbyVar,
-                variantsChimera.albinoVar, variantsChimera.noise);
+                variantsChimera.albinoVar, variantsChimera.noise, variantsChimera.silverVar);
 
         entityToRender.setOnGround(true);
         entityToRender.setYRot(0);
@@ -950,7 +1029,7 @@ public class CreateChimeraMorphGeneticsScreen extends Screen {
 
         pGuiGraphics.pose().pushPose();
 
-        pGuiGraphics.pose().translate(centerX, centerY + 90, 0);
+        pGuiGraphics.pose().translate(centerX, centerY + 90, 40);
 
         float scale = 3.0f;
 
@@ -981,6 +1060,7 @@ public class CreateChimeraMorphGeneticsScreen extends Screen {
         albinoSection.setSelected(false);
         diluteSection.setSelected(false);
         agoutiAndTabbySection.setSelected(false);
+        silverSection.setSelected(false);
         noiseSection.setSelected(false);
         extraSection.setSelected(false);
 
@@ -992,6 +1072,7 @@ public class CreateChimeraMorphGeneticsScreen extends Screen {
         this.removeWidget(rufousingSlider);
         this.removeWidget(blueRufousingSlider);
         this.removeWidget(baseChimeraVariantList);
+        this.removeWidget(silverVariantList);
 
         if (button != null) button.setSelected(true);
     }

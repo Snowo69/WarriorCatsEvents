@@ -1,14 +1,11 @@
 package net.snowteb.warriorcats_events.event;
 
-import com.eliotlash.mclib.math.functions.limit.Min;
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.math.Axis;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -17,18 +14,14 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.BedBlock;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.*;
@@ -36,8 +29,8 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.snowteb.warriorcats_events.WCEClient;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
-import net.snowteb.warriorcats_events.block.custom.MossBedBlock;
 import net.snowteb.warriorcats_events.client.LeapClientState;
+import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.network.ModPackets;
 import net.snowteb.warriorcats_events.network.packet.c2s.skilltree.ReqSkillDataPacket;
 import net.snowteb.warriorcats_events.screen.EmoteMenu;
@@ -92,67 +85,82 @@ public class ClientEventsForge {
         Player player = event.getEntity();
 
         if (player.isSleeping()) {
-            player.getSleepingPos().ifPresent(bedPos -> {
-
-                if (player.level()
-                        .getBlockState(bedPos)
-                        .getBlock() instanceof MossBedBlock) {
-
+             {
+                if (PlayerShape.getCurrentShape(player) instanceof WCatEntity) {
                     PoseStack poseStack = event.getPoseStack();
                     poseStack.pushPose();
                     poseStack.scale(0.95F, 0.95F, 0.95F);
                     poseStack.translate(0.0D, 0.0D, -0.0D);
 
-                    if (PlayerShape.getCurrentShape(player) instanceof Animal) {
-                        if (player != Minecraft.getInstance().player) {
-                            poseStack.translate(0.0D, -0.6D, 0.0D);
-                            player.setOnGround(true);
-                        }
-                        poseStack.mulPose(Axis.ZP.rotationDegrees(90.0F));
-                        poseStack.mulPose(Axis.YP.rotationDegrees(180f));
-
-                        player.swinging = false;
+                    if (player != Minecraft.getInstance().player) {
+                        poseStack.translate(0.0D, -0.6D, 0.0D);
+                        player.setOnGround(true);
                     }
+                    poseStack.mulPose(Axis.ZP.rotationDegrees(90.0F));
+                    poseStack.mulPose(Axis.YP.rotationDegrees(180f));
 
-                } else if (player.level()
-                        .getBlockState(bedPos)
-                        .getBlock() instanceof BedBlock) {
-
-                    PoseStack poseStack = event.getPoseStack();
-
-                    if (PlayerShape.getCurrentShape(player) instanceof Animal) {
-                        poseStack.pushPose();
-
-                        poseStack.translate(0.5D, 0.1D, -0.3D);
-                        poseStack.scale(0.95F, 0.95F, 0.95F);
-
-                        if (player != Minecraft.getInstance().player) {
-                            poseStack.translate(0.0D, -0.15D, 0.0D);
-                            player.setOnGround(true);
-                        }
-                        BlockState state = player.level().getBlockState(bedPos);
-                        Direction facing = state.getValue(BedBlock.FACING);
-
-                        poseStack.mulPose(Axis.ZP.rotationDegrees(90.0F));
-                        poseStack.mulPose(Axis.YP.rotationDegrees(90.0F));
-                        if (facing == Direction.WEST) {
-
-                        } else if (facing == Direction.EAST) {
-                            poseStack.translate(0.0D, 1D, 0.0D);
-                        } else if (facing == Direction.SOUTH) {
-                            poseStack.mulPose(Axis.ZP.rotationDegrees(90.0F));
-                            poseStack.translate(1D, -0.0D, 0.0D);
-                        } else if (facing == Direction.NORTH) {
-                            poseStack.mulPose(Axis.ZP.rotationDegrees(-90.0F));
-                            poseStack.translate(-0D, -1.0D, 0.0D);
-                        }
-
-
-                        player.swinging = false;
-                    }
-
+                    player.swinging = false;
                 }
-            });
+
+//                if (player.level()
+//                        .getBlockState(bedPos)
+//                        .getBlock() instanceof MossBedBlock) {
+//
+//                    PoseStack poseStack = event.getPoseStack();
+//                    poseStack.pushPose();
+//                    poseStack.scale(0.95F, 0.95F, 0.95F);
+//                    poseStack.translate(0.0D, 0.0D, -0.0D);
+//
+//                    if (PlayerShape.getCurrentShape(player) instanceof Animal) {
+//                        if (player != Minecraft.getInstance().player) {
+//                            poseStack.translate(0.0D, -0.6D, 0.0D);
+//                            player.setOnGround(true);
+//                        }
+//                        poseStack.mulPose(Axis.ZP.rotationDegrees(90.0F));
+//                        poseStack.mulPose(Axis.YP.rotationDegrees(180f));
+//
+//                        player.swinging = false;
+//                    }
+//
+//                } else if (player.level()
+//                        .getBlockState(bedPos)
+//                        .getBlock() instanceof BedBlock) {
+//
+//                    PoseStack poseStack = event.getPoseStack();
+//
+//                    if (PlayerShape.getCurrentShape(player) instanceof Animal) {
+//                        poseStack.pushPose();
+//
+//                        poseStack.translate(0.5D, 0.1D, -0.3D);
+//                        poseStack.scale(0.95F, 0.95F, 0.95F);
+//
+//                        if (player != Minecraft.getInstance().player) {
+//                            poseStack.translate(0.0D, -0.15D, 0.0D);
+//                            player.setOnGround(true);
+//                        }
+//                        BlockState state = player.level().getBlockState(bedPos);
+//                        Direction facing = state.getValue(BedBlock.FACING);
+//
+//                        poseStack.mulPose(Axis.ZP.rotationDegrees(90.0F));
+//                        poseStack.mulPose(Axis.YP.rotationDegrees(90.0F));
+//                        if (facing == Direction.WEST) {
+//
+//                        } else if (facing == Direction.EAST) {
+//                            poseStack.translate(0.0D, 1D, 0.0D);
+//                        } else if (facing == Direction.SOUTH) {
+//                            poseStack.mulPose(Axis.ZP.rotationDegrees(90.0F));
+//                            poseStack.translate(1D, -0.0D, 0.0D);
+//                        } else if (facing == Direction.NORTH) {
+//                            poseStack.mulPose(Axis.ZP.rotationDegrees(-90.0F));
+//                            poseStack.translate(-0D, -1.0D, 0.0D);
+//                        }
+//
+//
+//                        player.swinging = false;
+//                    }
+//
+//                }
+            };
         }
     }
 
@@ -161,23 +169,26 @@ public class ClientEventsForge {
         Player player = event.getEntity();
 
         if (player.isSleeping()) {
-            player.getSleepingPos().ifPresent(bedPos -> {
+            {
 
-                if (player.level()
-                        .getBlockState(bedPos)
-                        .getBlock() instanceof MossBedBlock) {
+                if (PlayerShape.getCurrentShape(player) instanceof WCatEntity)  event.getPoseStack().popPose();
 
-                    event.getPoseStack().popPose();
 
-                } else if (player.level()
-                        .getBlockState(bedPos)
-                        .getBlock() instanceof BedBlock) {
-
-                    if (PlayerShape.getCurrentShape(player) instanceof Animal) {
-                        event.getPoseStack().popPose();
-                    }
-                }
-            });
+//                if (player.level()
+//                        .getBlockState(bedPos)
+//                        .getBlock() instanceof MossBedBlock) {
+//
+//                    event.getPoseStack().popPose();
+//
+//                } else if (player.level()
+//                        .getBlockState(bedPos)
+//                        .getBlock() instanceof BedBlock) {
+//
+//                    if (PlayerShape.getCurrentShape(player) instanceof Animal) {
+//                        event.getPoseStack().popPose();
+//                    }
+//                }
+            };
         }
     }
 

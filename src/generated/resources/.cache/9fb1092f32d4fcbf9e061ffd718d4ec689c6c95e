@@ -1,4 +1,4 @@
-// 1.20.1	2026-03-23T16:41:01.2034209	Recipes
+// 1.20.1	2026-04-04T10:01:06.4468125	Recipes
 1f5aba143e39f6fad5edce9421bff8497106ac54 data/warriorcats_events/advancements/recipes/misc/ancient_stick.json
 cf95ddf3c9b27fec33ae84ee7601f33f953a616a data/warriorcats_events/advancements/recipes/misc/animal_teeth.json
 dc8c6fecefce619061a89dd2c02be87e99257150 data/warriorcats_events/advancements/recipes/misc/black_cat_collar.json
@@ -38,6 +38,7 @@ f85b8bc546a345f6cd6760c4819b0f6419a5ea33 data/warriorcats_events/advancements/re
 18cbb7e031e4de7e13032899c9a35f3ff7c8a96f data/warriorcats_events/advancements/recipes/misc/head_glowberry.json
 b0543e5d73decc5513c1f057e42847fc1470c7f2 data/warriorcats_events/advancements/recipes/misc/head_leaf.json
 d4a92157d74ea0da5f1ba0a343057dbb6f1e549c data/warriorcats_events/advancements/recipes/misc/head_sweetberry.json
+95345234958a4b2807ab3909070a9ffcfde162e7 data/warriorcats_events/advancements/recipes/misc/kelp_bed.json
 6fe283d6acb7857b1dac43d571eb5179b87cbbfc data/warriorcats_events/advancements/recipes/misc/lavender_petals.json
 17aa263b6d7eb010ddea28bec19ab9f8a06116f6 data/warriorcats_events/advancements/recipes/misc/leaf_door.json
 9cde59f55025a299d34e02196dba0f8a949be2df data/warriorcats_events/advancements/recipes/misc/leaf_mane.json
@@ -113,6 +114,7 @@ f7667a48cbf77235e14b5cb32d4778a4d070bf07 data/warriorcats_events/recipes/green_p
 88729291d3ddb5ebc7036ff17b8169bb0c0e97a9 data/warriorcats_events/recipes/head_glowberry.json
 dce1aedf1a9619ec05c59b472b695aacffda065b data/warriorcats_events/recipes/head_leaf.json
 24e01afaad80254e0b53e7c56c842d5e5d0575ae data/warriorcats_events/recipes/head_sweetberry.json
+46241f5a8e31dda0d9ae2657c433a05ad7cee6c0 data/warriorcats_events/recipes/kelp_bed.json
 caff8e1fb70626d9cd87a922b2c410a92789a74b data/warriorcats_events/recipes/lavender_petals.json
 c806cb5426c237c699715181ee12871a3917785d data/warriorcats_events/recipes/leaf_door.json
 53d8b3797c4c6d2a7a5e4696cfa8e0dde1dcc1b7 data/warriorcats_events/recipes/leaf_mane.json
