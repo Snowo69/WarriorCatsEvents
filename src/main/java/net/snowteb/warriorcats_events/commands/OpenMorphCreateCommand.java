@@ -27,7 +27,7 @@ public class OpenMorphCreateCommand {
     private static int openScreen(CommandSourceStack source) throws CommandSyntaxException {
         ServerPlayer player = source.getPlayerOrException();
 
-        ModPackets.sendToPlayer(new OpenCreateMorphPacket(), player);
+        ModPackets.sendToPlayer(new OpenCreateMorphPacket(false), player);
 
         source.sendSuccess(
                 () -> Component.literal("Opening Create Morph menu..."),

@@ -7,7 +7,7 @@ public class WCGenetics {
 
 
     public class Values {
-        public static final int MAX_ORANGE_VARIANTS = 11;
+        public static final int MAX_ORANGE_VARIANTS = 18;
         public static final int MAX_WHITE_VARIANTS = 21;
         public static final int MAX_ALBINO_VARIANTS = 3;
         public static final int MAX_TABBY_VARIANTS = 5;
@@ -16,6 +16,8 @@ public class WCGenetics {
         public static final int MAX_RUFOUSING_VARIANTS = 7;
         public static final int MAX_BLUE_RUFOUSING_VARIANTS = 7;
         public static final int MAX_SILVER_VARIANTS = 3;
+        public static final int MAX_SCAR_VARIANTS = 26;
+        public static final int MAX_IDLE_POSES = 4;
 
         public static final int MAX_CHIMERISM_VARIANTS = 8;
     }
@@ -180,6 +182,7 @@ public class WCGenetics {
         public int rightEyeVar = 0;
         public int noise = 0;
         public float size = 0;
+        public int scars = 0;
 
         public GeneticalVariants() {
 
@@ -187,7 +190,8 @@ public class WCGenetics {
 
         public GeneticalVariants(String eyeColorLeft, String eyeColorRight, int rufousingVariant,
                                  int blueRufousingVariant, int orangeVar, int whiteVar,
-                                 int tabbyVar, int albinoVar, int leftEyeVar, int rightEyeVar, int noise, float size, int silverVar) {
+                                 int tabbyVar, int albinoVar, int leftEyeVar, int rightEyeVar,
+                                 int noise, float size, int silverVar, int scars) {
             this.eyeColorLeft = eyeColorLeft;
             this.eyeColorRight = eyeColorRight;
             this.rufousingVariant = rufousingVariant;
@@ -201,6 +205,7 @@ public class WCGenetics {
             this.noise = noise;
             this.size = size;
             this.silverVar = silverVar;
+            this.scars = scars;
         }
 
         public GeneticalVariants(GeneticalVariants copy) {
@@ -217,6 +222,7 @@ public class WCGenetics {
             this.noise = copy.noise;
             this.size = copy.size;
             this.silverVar = copy.silverVar;
+            this.scars = copy.scars;
         }
 
         public void encode(FriendlyByteBuf buf) {
@@ -234,6 +240,7 @@ public class WCGenetics {
             buf.writeInt(this.noise);
             buf.writeFloat(this.size);
             buf.writeInt(this.silverVar);
+            buf.writeInt(this.scars);
         }
         public static GeneticalVariants decode(FriendlyByteBuf buf) {
             return new GeneticalVariants(
@@ -249,6 +256,7 @@ public class WCGenetics {
                     buf.readInt(),
                     buf.readInt(),
                     buf.readFloat(),
+                    buf.readInt(),
                     buf.readInt()
             );
         }
@@ -325,6 +333,141 @@ public class WCGenetics {
                     buf.readUtf(),
                     buf.readInt()
             );
+        }
+    }
+
+
+    public static class RandomizedGenetics {
+        public final WCGenetics genetics;
+        public final WCGenetics chimeraGenetics;
+        public final WCGenetics.GeneticalVariants variants;
+        public final WCGenetics.GeneticalChimeraVariants chimeraVariants;
+
+        public RandomizedGenetics(WCGenetics genetics, WCGenetics chimeraGenetics, GeneticalVariants variants, GeneticalChimeraVariants chimeraVariants) {
+            this.genetics = genetics;
+            this.chimeraGenetics = chimeraGenetics;
+            this.variants = variants;
+            this.chimeraVariants = chimeraVariants;
+        }
+
+        public static RandomizedGenetics randomize(RandomSource random) {
+            WCGenetics genetics = new WCGenetics();
+            WCGenetics geneticsChimera = new WCGenetics();
+            WCGenetics.GeneticalVariants variants = new GeneticalVariants();
+            WCGenetics.GeneticalChimeraVariants variantsChimera = new GeneticalChimeraVariants();
+            
+            genetics.chestFur = WCGenetics.FurGene.generateAlelo(random) + "-" + WCGenetics.FurGene.generateAlelo(random);
+            genetics.bellyFur = WCGenetics.FurGene.generateAlelo(random) + "-" + WCGenetics.FurGene.generateAlelo(random);
+            genetics.legsFur = WCGenetics.FurGene.generateAlelo(random) + "-" + WCGenetics.FurGene.generateAlelo(random);
+            genetics.headFur = WCGenetics.FurGene.generateAlelo(random) + "-" + WCGenetics.FurGene.generateAlelo(random);
+            genetics.cheekFur = WCGenetics.FurGene.generateAlelo(random) + "-" + WCGenetics.FurGene.generateAlelo(random);
+            genetics.backFur = WCGenetics.FurGene.generateAlelo(random) + "-" + WCGenetics.FurGene.generateAlelo(random);
+            genetics.bobtail = WCGenetics.FurGene.generateAlelo(random) + "-" + WCGenetics.FurGene.generateAlelo(random);
+            genetics.tailFur = WCGenetics.FurGene.generateAlelo(random) + "-" + WCGenetics.FurGene.generateAlelo(random);
+
+            genetics.base = WCGenetics.Base.generateAlelo(random) + "-" + WCGenetics.Base.generateAlelo(random);
+
+
+            genetics.orangeBase = WCGenetics.OrangeBase.generateAlelo(random) + "-" + WCGenetics.OrangeBase.generateAlelo(random);
+            variants.orangeVar = random.nextInt(WCGenetics.Values.MAX_ORANGE_VARIANTS);
+
+            genetics.whiteRatio = WCGenetics.WhiteRatio.generateAlelo(random) + "-" + WCGenetics.WhiteRatio.generateAlelo(random);
+            variants.whiteVar = random.nextInt(WCGenetics.Values.MAX_WHITE_VARIANTS);
+
+            genetics.albino = WCGenetics.Albino.generateAlelo(random) + "-" + WCGenetics.Albino.generateAlelo(random);
+            variants.albinoVar = random.nextInt(WCGenetics.Values.MAX_ALBINO_VARIANTS);
+
+            genetics.dilute = WCGenetics.Dilute.generateAlelo(random) + "-" + WCGenetics.Dilute.generateAlelo(random);
+
+            genetics.agouti = WCGenetics.Agouti.generateAlelo(random) + "-" + WCGenetics.Agouti.generateAlelo(random);
+
+            genetics.tabbyStripes = WCGenetics.TabbyStripeTypes.generateAlelo(random) + "-" + WCGenetics.TabbyStripeTypes.generateAlelo(random);
+            variants.tabbyVar = random.nextInt(WCGenetics.Values.MAX_TABBY_VARIANTS);
+
+            genetics.eyesAnomaly = WCGenetics.EyesAnomaly.generateAlelo(random) + "-" + WCGenetics.EyesAnomaly.generateAlelo(random);
+
+            genetics.silver = WCGenetics.Silver.generateAlelo(random) + "-" + WCGenetics.Silver.generateAlelo(random);
+            variants.silverVar = random.nextInt(WCGenetics.Values.MAX_SILVER_VARIANTS);
+
+            variants.eyeColorLeft = WCGenetics.EyeColor.generateAlelo(random, genetics.whiteRatio, genetics.albino);
+            variants.leftEyeVar = random.nextInt(WCGenetics.Values.MAX_EYE_VARIANTS);
+
+            if (WCGenetics.EyesAnomaly.isHeteroChromic(genetics.eyesAnomaly)) {
+                variants.eyeColorRight = WCGenetics.EyeColor.generateAlelo(random, genetics.whiteRatio, genetics.albino);
+                variants.rightEyeVar = random.nextInt(WCGenetics.Values.MAX_EYE_VARIANTS);
+            } else {
+                variants.eyeColorRight = variants.eyeColorLeft;
+                variants.rightEyeVar = variants.leftEyeVar;
+            }
+
+            variants.noise = random.nextInt(WCGenetics.Values.MAX_NOISE_VARIANTS);
+
+            if (WCGenetics.Base.isBlack(genetics.base)) {
+                variants.rufousingVariant = random.nextInt(3);
+            } else {
+                variants.rufousingVariant = random.nextInt(WCGenetics.Values.MAX_RUFOUSING_VARIANTS);
+            }
+
+            if (WCGenetics.Dilute.isDilute(genetics.dilute)) {
+                variants.blueRufousingVariant = random.nextInt(3);
+            } else {
+                variants.blueRufousingVariant = random.nextInt(WCGenetics.Values.MAX_BLUE_RUFOUSING_VARIANTS);
+            }
+
+            genetics.chimeraGene = WCGenetics.Chimerism.generateAlelo(random) + "-" + WCGenetics.Chimerism.generateAlelo(random);
+
+            if (WCGenetics.Chimerism.isChimera(genetics.chimeraGene)) {
+                geneticsChimera.base = WCGenetics.Base.generateAlelo(random) + "-" + WCGenetics.Base.generateAlelo(random);
+
+                variantsChimera.chimeraVariant = random.nextInt(WCGenetics.Values.MAX_CHIMERISM_VARIANTS);
+
+                geneticsChimera.orangeBase = WCGenetics.OrangeBase.generateAlelo(random) + "-" + WCGenetics.OrangeBase.generateAlelo(random);
+                variantsChimera.orangeVar = random.nextInt(WCGenetics.Values.MAX_ORANGE_VARIANTS);
+
+                geneticsChimera.whiteRatio = WCGenetics.WhiteRatio.generateAlelo(random) + "-" + WCGenetics.WhiteRatio.generateAlelo(random);
+                variantsChimera.whiteVar = random.nextInt(WCGenetics.Values.MAX_WHITE_VARIANTS);
+
+                geneticsChimera.albino = WCGenetics.Albino.generateAlelo(random) + "-" + WCGenetics.Albino.generateAlelo(random);
+                variantsChimera.albinoVar = random.nextInt(WCGenetics.Values.MAX_ALBINO_VARIANTS);
+
+                geneticsChimera.dilute = WCGenetics.Dilute.generateAlelo(random) + "-" + WCGenetics.Dilute.generateAlelo(random);
+
+                geneticsChimera.agouti = WCGenetics.Agouti.generateAlelo(random) + "-" + WCGenetics.Agouti.generateAlelo(random);
+
+                geneticsChimera.tabbyStripes = WCGenetics.TabbyStripeTypes.generateAlelo(random) + "-" + WCGenetics.TabbyStripeTypes.generateAlelo(random);
+                variantsChimera.tabbyVar = random.nextInt(WCGenetics.Values.MAX_TABBY_VARIANTS);
+
+                geneticsChimera.silver = WCGenetics.Silver.generateAlelo(random) + "-" + WCGenetics.Silver.generateAlelo(random);
+                variantsChimera.silverVar = random.nextInt(WCGenetics.Values.MAX_SILVER_VARIANTS);
+
+                genetics.eyesAnomaly = "h-h";
+                variants.eyeColorLeft = WCGenetics.EyeColor.generateAlelo(random, geneticsChimera.whiteRatio, geneticsChimera.albino);
+                variants.leftEyeVar = random.nextInt(WCGenetics.Values.MAX_EYE_VARIANTS);
+
+                if (WCGenetics.EyesAnomaly.isHeteroChromic(genetics.eyesAnomaly)) {
+                    variants.eyeColorRight = WCGenetics.EyeColor.generateAlelo(random, geneticsChimera.whiteRatio, geneticsChimera.albino);
+                    variants.rightEyeVar = random.nextInt(WCGenetics.Values.MAX_EYE_VARIANTS);
+                } else {
+                    variants.eyeColorRight = variants.eyeColorLeft;
+                    variants.rightEyeVar = variants.leftEyeVar;
+                }
+
+                geneticsChimera.noise = random.nextInt(WCGenetics.Values.MAX_NOISE_VARIANTS);
+
+                if (WCGenetics.Base.isBlack(geneticsChimera.base)) {
+                    geneticsChimera.rufousing = random.nextInt(3);
+                } else {
+                    geneticsChimera.rufousing = random.nextInt(WCGenetics.Values.MAX_BLUE_RUFOUSING_VARIANTS);
+                }
+
+                if (WCGenetics.Dilute.isDilute(geneticsChimera.dilute)) {
+                    geneticsChimera.blueRufousing = random.nextInt(3);
+                } else {
+                    geneticsChimera.blueRufousing = random.nextInt(WCGenetics.Values.MAX_BLUE_RUFOUSING_VARIANTS);
+                }
+            }
+
+            return new RandomizedGenetics(genetics, geneticsChimera, variants, variantsChimera);
         }
     }
 
@@ -655,6 +798,7 @@ public class WCGenetics {
         BLUE("blue"),
         GREEN("green"),
         RED("red"),
+        BLIND("blind"),
 
         ;
         private String alelo;
@@ -722,6 +866,10 @@ public class WCGenetics {
 
                 case "red" -> {
                     return RED;
+                }
+
+                case "blind" -> {
+                    return BLIND;
                 }
 
                 default -> {
@@ -815,7 +963,7 @@ public class WCGenetics {
         public static String generateAlelo(RandomSource random) {
             float chance = random.nextFloat();
 
-            if (chance < 0.25f) {
+            if (chance < 0.08f) {
                 return SILVER.getAlelo();
             } else {
                 return  NON_SILVER.getAlelo();

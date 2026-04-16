@@ -9,9 +9,9 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.server.level.ServerPlayer;
 import net.snowteb.warriorcats_events.clan.ClanData;
-import net.snowteb.warriorcats_events.clan.PlayerClanData;
-import net.snowteb.warriorcats_events.clan.PlayerClanDataProvider;
-import net.snowteb.warriorcats_events.util.ClanInviteManager;
+import net.snowteb.warriorcats_events.clan.WCEPlayerData;
+import net.snowteb.warriorcats_events.clan.WCEPlayerDataProvider;
+import net.snowteb.warriorcats_events.managers.ClanInviteManager;
 
 import java.util.UUID;
 
@@ -49,8 +49,8 @@ public class ClanInviteDenyCommand {
             ClanData data = ClanData.get(player.serverLevel().getServer().overworld());
             ClanData.Clan clan = data.getClan(clanUUID);
 
-            String deniedPlayerName = player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
-                    .map(PlayerClanData::getMorphName)
+            String deniedPlayerName = player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+                    .map(WCEPlayerData::getMorphName)
                     .orElse(player.getName().getString());
 
             if (clan != null) {

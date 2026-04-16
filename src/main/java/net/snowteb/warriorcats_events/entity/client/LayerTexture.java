@@ -21,16 +21,22 @@ import java.util.*;
  *
  * Copyright (C) 2007 Free Software Foundation, Inc. http://fsf.org
  *
- * Everyone is permitted to copy and distribute verbatim copies of this license document, but changing it is not allowed.
+ * Everyone is permitted to copy and distribute verbatim copies of this license document,
+ * but changing it is not allowed.
  *
- * This version of the GNU Lesser General Public License incorporates the terms and conditions of version 3 of the GNU General Public License, supplemented by the additional permissions listed below.
+ * This version of the GNU Lesser General Public License incorporates the terms and conditions
+ * of version 3 of the GNU General Public License, supplemented by the additional permissions listed below.
  *
  * 0. Additional Definitions.
- * As used herein, “this License” refers to version 3 of the GNU Lesser General Public License, and the “GNU GPL” refers to version 3 of the GNU General Public License.
+ * As used herein, “this License” refers to version 3 of the GNU Lesser General Public License,
+ * and the “GNU GPL” refers to version 3 of the GNU General Public License.
  *
- * “The Library” refers to a covered work governed by this License, other than an Application or a Combined Work as defined below.
+ * “The Library” refers to a covered work governed by this License, other than an Application or a
+ * Combined Work as defined below.
  *
- * An “Application” is any work that makes use of an interface provided by the Library, but which is not otherwise based on the Library. Defining a subclass of a class defined by the Library is deemed a mode of using an interface provided by the Library.
+ * An “Application” is any work that makes use of an interface provided by the Library,
+ * but which is not otherwise based on the Library. Defining a subclass of a class defined by
+ * the Library is deemed a mode of using an interface provided by the Library.
  *
  * A “Combined Work” is a work produced by combining or linking an Application with the Library. The particular version of the Library with which the Combined Work was made is also called the “Linked Version”.
  *
@@ -74,10 +80,24 @@ import java.util.*;
  * If the Library as you received it specifies that a proxy can decide whether future versions of the GNU Lesser General Public License shall apply, that proxy's public statement of acceptance of any version is permanent authorization for you to choose that version for the Library
  */
 
+
+/**
+ * Modified version by Klyonstar
+ *
+ * This class has been modified from the original version by Mnesikos.
+ * Changes include additional logic for restricted pixels, used in chimera genetics.
+ *
+ * These modifications are distributed under the same GNU Lesser General Public License v3.
+ *
+ * You may use, modify, and redistribute this code under the terms of the LGPL v3.
+ */
+
 public class LayerTexture extends AbstractTexture {
     private final String[] texturePaths;
     private final Set<PixelCoords> blockedPixels = new HashSet<>();
     private final Set<PixelCoords> subBlockedPixels = new HashSet<>();
+
+    private final Map<PixelCoords, Float> subAvailablePixelsAlpha = new HashMap<>();
 
     public record PixelCoords(int x, int y) {}
 
@@ -106,24 +126,25 @@ public class LayerTexture extends AbstractTexture {
         Iterator<String> iterator = layers.iterator();
         String baseLayer = iterator.next();
         NativeImage baseImage = tryLayer(manager, baseLayer);
-        if (baseImage == null)
-            return null;
+
+        if (baseImage == null) return null;
 
         while (iterator.hasNext()) {
             String layer = iterator.next();
-            if (layer == null)
-                continue;
+
+            if (layer == null) continue;
+
             NativeImage image = tryLayer(manager, layer);
-            if (image != null)
-                blendLayer(baseImage, image);
+
+            if (image != null) blendLayer(baseImage, image);
         }
 
         return baseImage;
     }
 
     public NativeImage tryLayer(ResourceManager manager, String layer) {
-        if (layer == null)
-            return null;
+
+        if (layer == null) return null;
 
 //        WarriorCatsEvents.LOGGER.debug("Attempting to load layer '{}'", layer);
 
@@ -169,6 +190,8 @@ public class LayerTexture extends AbstractTexture {
                 if (subBaseForSelectivePattern) {
                     if (color == 0x00000000 || color == 0x00FFFFFF) {
                         subBlockedPixels.add(new PixelCoords(j, i));
+                    } else {
+                        subAvailablePixelsAlpha.put(new PixelCoords(j, i), FastColor.ABGR32.alpha(color) / 255.0F);
                     }
                 }
 
@@ -182,10 +205,13 @@ public class LayerTexture extends AbstractTexture {
                 if (subCroppedSelectivePattern) {
                     if (subBlockedPixels.contains(new PixelCoords(j, i))) {
                         continue;
+                    } else {
+                        blendPixel(base, j, i, FastColor.ABGR32.color(FastColor.ABGR32.alpha(color), FastColor.ABGR32.blue(color), FastColor.ABGR32.green(color), FastColor.ABGR32.red(color)), true);
+                        continue;
                     }
                 }
 
-                blendPixel(base, j, i, FastColor.ABGR32.color(FastColor.ABGR32.alpha(color), FastColor.ABGR32.blue(color), FastColor.ABGR32.green(color), FastColor.ABGR32.red(color)));
+                blendPixel(base, j, i, FastColor.ABGR32.color(FastColor.ABGR32.alpha(color), FastColor.ABGR32.blue(color), FastColor.ABGR32.green(color), FastColor.ABGR32.red(color)), false);
             }
         }
     }
@@ -195,9 +221,13 @@ public class LayerTexture extends AbstractTexture {
         image.upload(0, 0, 0, true);
     }
 
-    public void blendPixel(NativeImage image, int x, int y, int color) {
+    public void blendPixel(NativeImage image, int x, int y, int color, boolean shouldMindAlpha) {
         int baseColor = image.getPixelRGBA(x, y);
         float a = (float) FastColor.ABGR32.alpha(color) / 255.0F;
+        if (shouldMindAlpha) {
+            float max = subAvailablePixelsAlpha.get(new PixelCoords(x, y)) != null ? subAvailablePixelsAlpha.get(new PixelCoords(x, y)) : 1.0f;
+            a = Math.min(a, max);
+        }
         float blue = (float) FastColor.ABGR32.blue(color);
         float green = (float) FastColor.ABGR32.green(color);
         float red = (float) FastColor.ABGR32.red(color);
@@ -228,4 +258,6 @@ public class LayerTexture extends AbstractTexture {
 
         image.setPixelRGBA(x, y, FastColor.ABGR32.color(finalAlpha, finalBlue, finalGreen, finalRed));
     }
+
+
 }

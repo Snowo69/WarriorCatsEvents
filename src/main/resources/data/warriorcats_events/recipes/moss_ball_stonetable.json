@@ -1,0 +1,10 @@
+{
+  "type": "warriorcats_events:herbs",
+  "ingredients": [
+    { "item": "minecraft:moss_block" }
+  ],
+  "result": {
+    "item": "warriorcats_events:moss_ball",
+    "count": 2
+  }
+}

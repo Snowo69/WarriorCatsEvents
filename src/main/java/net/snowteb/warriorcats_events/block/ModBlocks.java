@@ -14,6 +14,7 @@ import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.block.custom.*;
 import net.snowteb.warriorcats_events.util.ModBlockSetTypes;
 import net.snowteb.warriorcats_events.item.ModItems;
+import net.snowteb.warriorcats_events.util.ModSoundTypes;
 
 import java.util.function.Supplier;
 
@@ -35,12 +36,34 @@ public class ModBlocks {
                     BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.MOSS).strength(0.2F).noOcclusion()
             ));
 
+    public static final RegistryObject<Block> STONE_BED = BLOCKS.register("stone_bed",
+            () -> new MossBedBlock(
+                    BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.STONE).strength(0.4F).noOcclusion()
+            ));
+
+    public static final RegistryObject<Block> LAVENDER_BED = BLOCKS.register("lavender_bed",
+            () -> new MossBedBlock(
+                    BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.MOSS).strength(0.2F).noOcclusion()
+            ));
+
+
 
 
     public static final RegistryObject<Block> MAKESHIFT_BED = BLOCKS.register("makeshift_bed",
             () -> new MakeshiftBedBlock(
                     BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.MOSS).strength(0.0F).noOcclusion()
             ));
+
+    public static final RegistryObject<Block> PREY_BONES = BLOCKS.register("prey_bones",
+            () -> new PreyBonesBlock(
+                    BlockBehaviour.Properties.of().sound(ModSoundTypes.PREY_BONES).strength(0.0F).noOcclusion()
+            ));
+
+    public static final RegistryObject<Block> PEBBLES = BLOCKS.register("pebbles",
+            () -> new PebblesBlock(
+                    BlockBehaviour.Properties.of().sound(SoundType.STONE).strength(0.25F).noOcclusion()
+            ));
+
 
 
 

@@ -6,7 +6,7 @@
       "tag": "minecraft:leaves"
     },
     "C": {
-      "item": "minecraft:feather"
+      "tag": "warriorcats_events:feathers"
     },
     "D": {
       "item": "minecraft:moss_block"

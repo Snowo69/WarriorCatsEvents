@@ -28,7 +28,9 @@ public class ModBlockEntities {
                     BlockEntityType.Builder.of(MossBedBlockEntity::new,
                             ModBlocks.MOSS_BED.get(),
                             ModBlocks.HAY_BED.get(),
-                                    ModBlocks.KELP_BED.get()
+                            ModBlocks.KELP_BED.get(),
+                            ModBlocks.STONE_BED.get(),
+                            ModBlocks.LAVENDER_BED.get()
                             )
                             .build(null)
             );

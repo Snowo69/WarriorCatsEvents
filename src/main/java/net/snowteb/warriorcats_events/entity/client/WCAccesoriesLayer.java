@@ -1242,9 +1242,7 @@ public class WCAccesoriesLayer extends GeoRenderLayer<WCatEntity> {
 
                 if (collarStack.hasCustomHoverName()) {
                     if (collarStack.getHoverName().getString().toLowerCase(Locale.ROOT).equals("space kitty")) {
-                        if (WarriorCatsEvents.Devs.isDev(animatable.getPlayerBoundUuid())) {
-                            spaceKitty = true;
-                        }
+                        spaceKitty = true;
                     }
                 }
 
@@ -1352,7 +1350,7 @@ public class WCAccesoriesLayer extends GeoRenderLayer<WCatEntity> {
 
                 RenderType accessoryRenderType = RenderType.entityCutoutNoCull(elytraModel.getTextureResource(animatable));
 
-                if (WarriorCatsEvents.Devs.isDev(animatable.getPlayerBoundUuid())) {
+                if (WarriorCatsEvents.Collaborators.isContributor(animatable.getPlayerBoundUuid())) {
                     if (elytraStack.hasCustomHoverName() && elytraStack.getHoverName().getString().equalsIgnoreCase("space kitty")) {
                         accessoryRenderType = RenderType.endGateway();
                     }
@@ -1392,7 +1390,7 @@ public class WCAccesoriesLayer extends GeoRenderLayer<WCatEntity> {
 
     public static ResourceLocation resolveElytraTexture(LivingEntity entity, ItemStack stack) {
 
-        if (WarriorCatsEvents.Devs.isDev(entity.getUUID())) {
+        if (WarriorCatsEvents.Collaborators.isContributor(entity.getUUID())) {
             if (stack.hasCustomHoverName() && stack.getHoverName().getString().equalsIgnoreCase("wce")) {
                 return ElytraModel.DEV_TEXTURE2;
             }
@@ -1402,6 +1400,8 @@ public class WCAccesoriesLayer extends GeoRenderLayer<WCatEntity> {
         }
 
         if (entity instanceof AbstractClientPlayer player) {
+
+
             if (player.isElytraLoaded() && player.getElytraTextureLocation() != null) {
                 return player.getElytraTextureLocation();
             }

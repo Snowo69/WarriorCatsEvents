@@ -37,6 +37,7 @@ import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.block.ModBlocks;
 import net.snowteb.warriorcats_events.block.custom.GenericBushBlock;
 import net.snowteb.warriorcats_events.block.custom.LavenderPetalsBlock;
+import net.snowteb.warriorcats_events.block.custom.PebblesBlock;
 
 import java.util.List;
 
@@ -53,6 +54,9 @@ public class ModConfiguredFeatures {
     public static final ResourceKey<ConfiguredFeature<?,?>> YARROW_KEY = registerKey("yarrow");
 
     public static final ResourceKey<ConfiguredFeature<?,?>> LAVENDER_KEY = registerKey("lavender");
+
+    public static final ResourceKey<ConfiguredFeature<?,?>> PEBBLES_KEY = registerKey("pebbles");
+
 
 //    public static final ResourceKey<ConfiguredFeature<?,?>> DARKTREE_KEY = registerKey("darktree_key");
 //    public static final ResourceKey<ConfiguredFeature<?,?>> STARRYTREE_KEY = registerKey("starrytree_key");
@@ -291,7 +295,22 @@ public class ModConfiguredFeatures {
 
 
 
-
+        register(context, PEBBLES_KEY, Feature.RANDOM_PATCH,
+                new RandomPatchConfiguration(
+                        15,
+                        10,
+                        2,
+                        PlacementUtils.onlyWhenEmpty(
+                                Feature.SIMPLE_BLOCK,
+                                new SimpleBlockConfiguration(
+                                        new WeightedStateProvider(
+                                                SimpleWeightedRandomList.<BlockState>builder()
+                                                        .add(ModBlocks.PEBBLES.get().defaultBlockState().setValue(PebblesBlock.FACING, Direction.EAST), 1)
+                                                        .add(ModBlocks.PEBBLES.get().defaultBlockState().setValue(PebblesBlock.FACING, Direction.WEST), 1)
+                                                        .add(ModBlocks.PEBBLES.get().defaultBlockState().setValue(PebblesBlock.FACING, Direction.SOUTH), 1)
+                                                        .add(ModBlocks.PEBBLES.get().defaultBlockState().setValue(PebblesBlock.FACING, Direction.NORTH), 1)
+                                                        .build()
+                                        )))));
 
 
 

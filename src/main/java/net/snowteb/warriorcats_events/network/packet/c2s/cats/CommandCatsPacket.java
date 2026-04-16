@@ -10,8 +10,8 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.network.NetworkEvent;
-import net.snowteb.warriorcats_events.clan.PlayerClanData;
-import net.snowteb.warriorcats_events.clan.PlayerClanDataProvider;
+import net.snowteb.warriorcats_events.clan.WCEPlayerData;
+import net.snowteb.warriorcats_events.clan.WCEPlayerDataProvider;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.item.ModItems;
 import net.snowteb.warriorcats_events.sound.ModSounds;
@@ -84,8 +84,8 @@ public class CommandCatsPacket {
         };
 
         float pitch = 0.9f;
-        PlayerClanData.Age morphAge = player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
-                .map(PlayerClanData::getMorphAge).orElse(PlayerClanData.Age.ADULT);
+        WCEPlayerData.Age morphAge = player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+                .map(WCEPlayerData::getMorphAge).orElse(WCEPlayerData.Age.ADULT);
         switch (morphAge) {
             case KIT -> pitch = 1.3f;
             case APPRENTICE -> pitch = 1.1f;

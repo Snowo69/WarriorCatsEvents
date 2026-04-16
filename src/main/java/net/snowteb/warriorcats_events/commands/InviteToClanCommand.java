@@ -12,9 +12,9 @@ import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.server.level.ServerPlayer;
 import net.snowteb.warriorcats_events.clan.ClanData;
-import net.snowteb.warriorcats_events.clan.PlayerClanData;
-import net.snowteb.warriorcats_events.clan.PlayerClanDataProvider;
-import net.snowteb.warriorcats_events.util.ClanInviteManager;
+import net.snowteb.warriorcats_events.clan.WCEPlayerData;
+import net.snowteb.warriorcats_events.clan.WCEPlayerDataProvider;
+import net.snowteb.warriorcats_events.managers.ClanInviteManager;
 
 import java.util.UUID;
 
@@ -38,15 +38,15 @@ public class InviteToClanCommand {
         ServerPlayer sPlayer = source.getPlayerOrException();
 
 
-        String hostMorphName = sPlayer.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
-                .map(PlayerClanData::getMorphName).orElse(sPlayer.getName().getString());
-        String invitedMorphName = invitedPlayer.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
-                .map(PlayerClanData::getMorphName).orElse(invitedPlayer.getName().getString());
+        String hostMorphName = sPlayer.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+                .map(WCEPlayerData::getMorphName).orElse(sPlayer.getName().getString());
+        String invitedMorphName = invitedPlayer.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+                .map(WCEPlayerData::getMorphName).orElse(invitedPlayer.getName().getString());
 
-        UUID invitingClanId = sPlayer.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
-                .map(PlayerClanData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID);
-        UUID currentClanId = invitedPlayer.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
-                .map(PlayerClanData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID);
+        UUID invitingClanId = sPlayer.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+                .map(WCEPlayerData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID);
+        UUID currentClanId = invitedPlayer.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+                .map(WCEPlayerData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID);
 
         ClanData data = ClanData.get(invitedPlayer.serverLevel().getServer().overworld());
         ClanData.Clan clan = data.getClan(invitingClanId);
@@ -77,7 +77,7 @@ public class InviteToClanCommand {
         if (!currentClanId.equals(ClanData.EMPTY_UUID)) {
             if (data.getClan(currentClanId) ==  null) {
                 sPlayer.sendSystemMessage(Component.literal("The target is in a clan that doesn't exist. Resetting their clan info...").withStyle(ChatFormatting.GRAY));
-                invitedPlayer.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {
+                invitedPlayer.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {
                     cap.setCurrentClanUUID(ClanData.EMPTY_UUID);
                 });
             } else {

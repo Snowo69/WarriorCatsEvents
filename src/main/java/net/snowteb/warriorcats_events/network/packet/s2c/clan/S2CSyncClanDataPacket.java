@@ -3,21 +3,21 @@ package net.snowteb.warriorcats_events.network.packet.s2c.clan;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.NetworkEvent;
-import net.snowteb.warriorcats_events.clan.PlayerClanData;
+import net.snowteb.warriorcats_events.clan.WCEPlayerData;
 import net.snowteb.warriorcats_events.client.ClientClanData;
 
 import java.util.function.Supplier;
 
 public class S2CSyncClanDataPacket {
 
-    private final PlayerClanData data;
+    private final WCEPlayerData data;
 
-    public S2CSyncClanDataPacket(PlayerClanData data) {
+    public S2CSyncClanDataPacket(WCEPlayerData data) {
         this.data = data;
     }
 
     public static S2CSyncClanDataPacket decode(FriendlyByteBuf buf) {
-        PlayerClanData data = new PlayerClanData();
+        WCEPlayerData data = new WCEPlayerData();
         CompoundTag tag = buf.readNbt();
         if (tag != null) {
             data.loadNBT(tag);

@@ -10,7 +10,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.snowteb.warriorcats_events.clan.PlayerClanDataProvider;
+import net.snowteb.warriorcats_events.clan.WCEPlayerDataProvider;
 import net.snowteb.warriorcats_events.item.ModItems;
 import net.snowteb.warriorcats_events.network.ModPackets;
 import net.snowteb.warriorcats_events.network.packet.s2c.cats.StCKitCreateScreenPacket;
@@ -45,7 +45,7 @@ public class KitItem extends Item {
                 blockpos1 = blockpos.relative(direction);
             }
 
-            pContext.getPlayer().getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {
+            pContext.getPlayer().getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {
                 cap.setTempClickedPosData(blockpos1);
             });
 

@@ -22,7 +22,6 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.network.NetworkHooks;
 import net.snowteb.warriorcats_events.block.entity.FreshkillPileBlockEntity;
-import net.snowteb.warriorcats_events.block.entity.StoneCleftBlockEntity;
 import org.jetbrains.annotations.Nullable;
 
 public class FreshkillPileBlock extends BaseEntityBlock {

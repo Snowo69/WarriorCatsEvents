@@ -22,6 +22,7 @@ public class WCEClientConfig {
         public final ForgeConfigSpec.BooleanValue MORPH_CHAT_BUBBLES;
         public final ForgeConfigSpec.BooleanValue OWN_CHAT_BUBBLES;
         public final ForgeConfigSpec.BooleanValue DISPLAY_TERRITORY;
+        public final ForgeConfigSpec.BooleanValue CUSTOM_PANORAMA;
 
         public Client(ForgeConfigSpec.Builder builder) {
             builder.push("wce_client");
@@ -53,6 +54,11 @@ public class WCEClientConfig {
             DISPLAY_TERRITORY = builder
                     .comment("Whether territory info will display on your HUD")
                     .define("displayTerritory", true);
+
+            CUSTOM_PANORAMA = builder
+                    .comment("Whether WCE panorama will show")
+                    .define("wcePanorama", true);
+
 
             builder.pop();
         }

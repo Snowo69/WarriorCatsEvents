@@ -3,7 +3,7 @@ package net.snowteb.warriorcats_events.network.packet.c2s.clan;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.NetworkEvent;
-import net.snowteb.warriorcats_events.clan.PlayerClanDataProvider;
+import net.snowteb.warriorcats_events.clan.WCEPlayerDataProvider;
 
 import java.util.function.Supplier;
 
@@ -29,7 +29,7 @@ public class C2SSetVariantPacket {
             ServerPlayer player = ctx.get().getSender();
             if (player == null) return;
 
-            player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {
+            player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {
                 cap.setVariantData(packet.variant);
             });
         });

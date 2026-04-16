@@ -165,7 +165,6 @@ dependencies {
     compileOnly fg.deobf("vazkii.patchouli:Patchouli:1.20.1-84-FORGE:api")
     runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:1.20.1-84-FORGE")
 
-
     // Compile against only the API artifact
     compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}:api")
     runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")

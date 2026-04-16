@@ -7,8 +7,28 @@
   "pages": [
     {
       "type": "patchouli:crafting",
-      "title": "Moss Bed",
+      "title": "Moss Nest",
       "recipe": "warriorcats_events:moss_bed"
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Hay Nest",
+      "recipe": "warriorcats_events:hay_bed"
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Kelp Nest",
+      "recipe": "warriorcats_events:kelp_bed"
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Stone Nest",
+      "recipe": "warriorcats_events:stone_bed"
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Lavender Nest",
+      "recipe": "warriorcats_events:lavender_bed"
     },
     {
       "type": "patchouli:crafting",
@@ -39,11 +59,6 @@
       "type": "patchouli:crafting",
       "title": "Head Dandelion",
       "recipe": "warriorcats_events:head_dandelion"
-    },
-    {
-      "type": "patchouli:crafting",
-      "title": "Hay Bed",
-      "recipe": "warriorcats_events:hay_bed"
     },
     {
       "type": "patchouli:crafting",

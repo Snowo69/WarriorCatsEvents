@@ -11,8 +11,8 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraftforge.network.NetworkEvent;
 import net.snowteb.warriorcats_events.clan.ClanData;
-import net.snowteb.warriorcats_events.clan.PlayerClanData;
-import net.snowteb.warriorcats_events.clan.PlayerClanDataProvider;
+import net.snowteb.warriorcats_events.clan.WCEPlayerData;
+import net.snowteb.warriorcats_events.clan.WCEPlayerDataProvider;
 import net.snowteb.warriorcats_events.entity.ModEntities;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.event.ModEvents2;
@@ -46,15 +46,15 @@ public class UpdateClanDataPacket {
             if (player == null) return;
 
             if (packet.data == 0) {
-                player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {
-                    cap.setMorphAge(PlayerClanData.Age.APPRENTICE);
+                player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {
+                    cap.setMorphAge(WCEPlayerData.Age.APPRENTICE);
                     cap.setMorphName(cap.getPrefix() + "paw");
                     ModPackets.sendToPlayer(new S2CSyncClanDataPacket(cap), player);
                 });
             }
             if (packet.data == 1) {
-                player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {
-                    cap.setMorphAge(PlayerClanData.Age.ADULT);
+                player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {
+                    cap.setMorphAge(WCEPlayerData.Age.ADULT);
                     cap.setMorphName(cap.getPrefix() + cap.getSufix());
                     ModPackets.sendToPlayer(new S2CSyncClanDataPacket(cap), player);
                 });
@@ -62,7 +62,7 @@ public class UpdateClanDataPacket {
 
 
             int variantData = player
-                    .getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
+                    .getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
                     .map(cap -> cap.getVariantData())
                     .orElse(0);
 
@@ -80,26 +80,26 @@ public class UpdateClanDataPacket {
 
                         player.level().playSound(null, player.blockPosition(), SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.PLAYERS, 0.7f, 1.2f);
                 String playerMorphName = player
-                        .getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
+                        .getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
                         .map(cap -> cap.getMorphName())
                         .orElse("<player>");
                 String playerMorphPrefix = player
-                        .getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
+                        .getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
                         .map(cap -> cap.getPrefix())
                         .orElse("<player>");
                 String playerMorphClan = player
-                        .getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
+                        .getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
                         .map(cap -> cap.getClanName())
                         .orElse("<clan>");
                 Boolean usesSufix = player
-                        .getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
+                        .getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
                         .map(cap -> cap.isUseSufixes())
                         .orElse(false);
 
-                PlayerClanData.Age playerMorphAge = player
-                        .getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
+                WCEPlayerData.Age playerMorphAge = player
+                        .getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
                         .map(cap -> cap.getMorphAge())
-                        .orElse(PlayerClanData.Age.ADULT);
+                        .orElse(WCEPlayerData.Age.ADULT);
 
                 String lastSufix = "";
                 switch (playerMorphAge) {
@@ -130,7 +130,7 @@ public class UpdateClanDataPacket {
                     );
                 }
 
-                player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {
+                player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {
                     if (cap.getMateUUID() != null) {
                         if (!cap.getMateUUID().equals(WCatEntity.emptyUUID)) {
                             Entity entity = ((ServerLevel) player.level()).getEntity(cap.getMateUUID());
@@ -145,7 +145,7 @@ public class UpdateClanDataPacket {
 
             ClanData data = ClanData.get(player.serverLevel());
 
-            player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {
+            player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {
                 data.playerMorphNames.put(player.getUUID(), cap.getMorphName());
                 data.playerMorphData.put(player.getUUID(), cap.getVariantData());
                 data.setDirty();

@@ -5,6 +5,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.BiomeColors;
+import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.network.chat.ClickEvent;
@@ -45,9 +46,10 @@ import net.snowteb.warriorcats_events.network.packet.s2c.cats.OpenCatDataScreenP
 import net.snowteb.warriorcats_events.network.packet.s2c.clan.OpenClanSetupScreenPacket;
 import net.snowteb.warriorcats_events.network.packet.s2c.others.StCFishingScreenPacket;
 import net.snowteb.warriorcats_events.particles.*;
-import net.snowteb.warriorcats_events.screen.*;
-import net.snowteb.warriorcats_events.screen.clandata.CatDataScreen;
-import net.snowteb.warriorcats_events.screen.clandata.ClanSetupScreen;
+import net.snowteb.warriorcats_events.screen.screens.CatDataScreen;
+import net.snowteb.warriorcats_events.screen.screens.ClanSetupScreen;
+import net.snowteb.warriorcats_events.screen.menus.ModMenuTypes;
+import net.snowteb.warriorcats_events.screen.screens.*;
 import net.snowteb.warriorcats_events.skills.StealthClientState;
 import net.snowteb.warriorcats_events.sound.ModSounds;
 import net.snowteb.warriorcats_events.stealth.PlayerStealthProvider;
@@ -97,7 +99,7 @@ public class ClientEvents {
 
                 emoteOffset -= (int) event.getScrollDelta();
 
-                if (WarriorCatsEvents.Devs.isDev(Minecraft.getInstance().player.getUUID())) {
+                if (WarriorCatsEvents.Collaborators.isContributor(Minecraft.getInstance().player.getUUID())) {
                     emoteOffset = Mth.clamp(emoteOffset, -2, MAX_EMOTES);
                 } else {
                     emoteOffset = Mth.clamp(emoteOffset, -1, MAX_EMOTES);
@@ -284,7 +286,7 @@ public class ClientEvents {
                                                     )
                                     )
                                     .append(" available: "
-                                            + UpdateCheck.latestVersion).withStyle(style -> style.withColor(TextColor.fromRgb(0xfffb00))
+                                            + UpdateCheck.latestVersion).withStyle(style -> style.withColor(0xfffb00)
                                     ));
 
 
@@ -334,6 +336,8 @@ public class ClientEvents {
             event.registerEntityRenderer(ModEntities.PIGEON.get(), PigeonRenderer::new);
             event.registerEntityRenderer(ModEntities.BADGER.get(), BadgerRenderer::new);
             event.registerEntityRenderer(ModEntities.EAGLE.get(), EagleRenderer::new);
+
+            event.registerEntityRenderer(ModEntities.MOSS_BALL.get(), MossBallRenderer::new);
 
         }
 

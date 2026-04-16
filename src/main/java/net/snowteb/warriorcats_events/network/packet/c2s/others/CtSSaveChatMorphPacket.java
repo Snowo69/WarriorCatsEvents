@@ -7,7 +7,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.NetworkEvent;
 import net.snowteb.warriorcats_events.network.ModPackets;
 import net.snowteb.warriorcats_events.network.packet.s2c.others.StCFinallySaveMorph;
-import net.snowteb.warriorcats_events.util.ServerPlayerMorphsCache;
+import net.snowteb.warriorcats_events.managers.ServerPlayerMorphsCache;
 
 import java.util.function.Supplier;
 

@@ -9,7 +9,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.NetworkEvent;
 import net.snowteb.warriorcats_events.entity.custom.WCGenetics;
-import net.snowteb.warriorcats_events.util.ServerPlayerMorphsCache;
+import net.snowteb.warriorcats_events.managers.ServerPlayerMorphsCache;
 
 import java.util.Map;
 import java.util.function.Supplier;

@@ -11,6 +11,7 @@ import net.minecraft.world.level.block.SweetBerryBushBlock;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.entries.AlternativesEntry;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.functions.ApplyBonusCount;
 import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
@@ -20,9 +21,12 @@ import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import net.minecraftforge.registries.RegistryObject;
 import net.snowteb.warriorcats_events.block.ModBlocks;
 import net.snowteb.warriorcats_events.block.custom.LavenderPetalsBlock;
+import net.snowteb.warriorcats_events.block.custom.PreyBonesBlock;
 import net.snowteb.warriorcats_events.item.ModItems;
 
 import java.util.Set;
+
+import static net.minecraft.data.models.blockstates.Condition.condition;
 
 public class ModBlockLootTables extends BlockLootSubProvider {
     public ModBlockLootTables() {
@@ -38,6 +42,8 @@ public class ModBlockLootTables extends BlockLootSubProvider {
         this.dropSelf(ModBlocks.STONE_CRAFTING_TABLE.get());
 
         this.dropSelf(ModBlocks.LEAF_TRAPDOOR.get());
+
+        this.dropSelf(ModBlocks.PEBBLES.get());
 
         //DOCK
         {this.add(ModBlocks.DOCK.get(), block -> this.applyExplosionDecay(
@@ -208,6 +214,23 @@ public class ModBlockLootTables extends BlockLootSubProvider {
                 )
         );
 
+        this.add(ModBlocks.STONE_BED.get(),
+                block -> createSingleItemTableWithSilkTouch(
+                        block,
+                        Items.COBBLESTONE,
+                        UniformGenerator.between(1.0F, 3.0F)
+                )
+        );
+
+        this.add(ModBlocks.LAVENDER_BED.get(),
+                block -> createSingleItemTableWithSilkTouch(
+                        block,
+                        ModBlocks.LAVENDER_PETALS.get(),
+                        UniformGenerator.between(4.0F, 14.0F)
+                )
+        );
+
+
         this.add(ModBlocks.MAKESHIFT_BED.get(), noDrop());
         this.add(ModBlocks.TREE_STUMP.get(), noDrop());
 
@@ -258,6 +281,101 @@ public class ModBlockLootTables extends BlockLootSubProvider {
                                                                         )
                                                         )
                                         )
+                        )
+        );
+
+
+        this.add(ModBlocks.PREY_BONES.get(), block ->
+                LootTable.lootTable()
+
+                        .withPool(
+                                LootPool.lootPool().add(
+                                        AlternativesEntry.alternatives(
+
+                                                LootItem.lootTableItem(Items.BONE)
+                                                        .when(LootItemBlockStatePropertyCondition
+                                                                .hasBlockStateProperties(block)
+                                                                .setProperties(StatePropertiesPredicate.Builder.properties()
+                                                                        .hasProperty(PreyBonesBlock.BONES, PreyBonesBlock.Bones.STAGE_1)
+                                                                )
+                                                        ).apply(SetItemCountFunction.setCount(UniformGenerator.between(0.0F, 1.0F))),
+
+                                                LootItem.lootTableItem(Items.BONE)
+                                                        .when(LootItemBlockStatePropertyCondition
+                                                                .hasBlockStateProperties(block)
+                                                                .setProperties(StatePropertiesPredicate.Builder.properties()
+                                                                        .hasProperty(PreyBonesBlock.BONES, PreyBonesBlock.Bones.STAGE_2)
+                                                                )
+                                                        ).apply(SetItemCountFunction.setCount(UniformGenerator.between(1.0F, 2.0F))),
+
+                                                LootItem.lootTableItem(Items.BONE)
+                                                        .when(LootItemBlockStatePropertyCondition
+                                                                .hasBlockStateProperties(block)
+                                                                .setProperties(StatePropertiesPredicate.Builder.properties()
+                                                                        .hasProperty(PreyBonesBlock.BONES, PreyBonesBlock.Bones.STAGE_3)
+                                                                )
+                                                        ).apply(SetItemCountFunction.setCount(UniformGenerator.between(2.0F, 3.0F))),
+
+                                                LootItem.lootTableItem(Items.BONE)
+                                                        .when(LootItemBlockStatePropertyCondition
+                                                                .hasBlockStateProperties(block)
+                                                                .setProperties(StatePropertiesPredicate.Builder.properties()
+                                                                        .hasProperty(PreyBonesBlock.BONES, PreyBonesBlock.Bones.STAGE_BADGER)
+                                                                )
+                                                        ).apply(SetItemCountFunction.setCount(UniformGenerator.between(2.0F, 3.0F))),
+
+                                                LootItem.lootTableItem(Items.BONE)
+                                                        .when(LootItemBlockStatePropertyCondition
+                                                                .hasBlockStateProperties(block)
+                                                                .setProperties(StatePropertiesPredicate.Builder.properties()
+                                                                        .hasProperty(PreyBonesBlock.BONES, PreyBonesBlock.Bones.STAGE_SQUIRREL)
+                                                                )
+                                                        ).apply(SetItemCountFunction.setCount(UniformGenerator.between(2.0F, 3.0F))),
+
+                                                LootItem.lootTableItem(Items.BONE)
+                                                        .when(LootItemBlockStatePropertyCondition
+                                                                .hasBlockStateProperties(block)
+                                                                .setProperties(StatePropertiesPredicate.Builder.properties()
+                                                                        .hasProperty(PreyBonesBlock.BONES, PreyBonesBlock.Bones.STAGE_EAGLE)
+                                                                )
+                                                        ).apply(SetItemCountFunction.setCount(UniformGenerator.between(2.0F, 3.0F))),
+
+                                                LootItem.lootTableItem(Items.BONE)
+                                        )
+                                )
+                        )
+                        .withPool(
+                                LootPool.lootPool().add(
+                                        LootItem.lootTableItem(ModItems.BADGER_SKULL.get())
+                                                .when(LootItemBlockStatePropertyCondition
+                                                        .hasBlockStateProperties(block)
+                                                        .setProperties(StatePropertiesPredicate.Builder.properties()
+                                                                .hasProperty(PreyBonesBlock.BONES, PreyBonesBlock.Bones.STAGE_BADGER)
+                                                        )
+                                                )
+                                )
+                        )
+                        .withPool(
+                                LootPool.lootPool().add(
+                                        LootItem.lootTableItem(ModItems.SQUIRREL_SKULL.get())
+                                                .when(LootItemBlockStatePropertyCondition
+                                                        .hasBlockStateProperties(block)
+                                                        .setProperties(StatePropertiesPredicate.Builder.properties()
+                                                                .hasProperty(PreyBonesBlock.BONES, PreyBonesBlock.Bones.STAGE_SQUIRREL)
+                                                        )
+                                                )
+                                )
+                        )
+                        .withPool(
+                                LootPool.lootPool().add(
+                                        LootItem.lootTableItem(ModItems.GOLDEN_EAGLE_SKULL.get())
+                                                .when(LootItemBlockStatePropertyCondition
+                                                        .hasBlockStateProperties(block)
+                                                        .setProperties(StatePropertiesPredicate.Builder.properties()
+                                                                .hasProperty(PreyBonesBlock.BONES, PreyBonesBlock.Bones.STAGE_EAGLE)
+                                                        )
+                                                )
+                                )
                         )
         );
 

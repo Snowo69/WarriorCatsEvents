@@ -34,6 +34,12 @@
       "item": "warriorcats_events:dock_poultice",
       "text": "$(8)- 1 Dock Leaves$(br)",
       "title": "Dock Poultice"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "warriorcats_events:moss_ball",
+      "text": "$(8)- 1 Moss Block$(br)",
+      "title": "Moss Balls"
     }
   ]
 

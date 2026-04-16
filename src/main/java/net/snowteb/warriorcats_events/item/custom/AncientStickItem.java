@@ -10,6 +10,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.snowteb.warriorcats_events.entity.custom.EagleEntity;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
@@ -28,7 +30,7 @@ public class AncientStickItem extends Item {
     @Override
     public InteractionResultHolder<ItemStack> use(Level pLevel, Player pPlayer, InteractionHand pUsedHand) {
 
-        if (!pLevel.isClientSide) {
+        if (!pLevel.isClientSide && pUsedHand == InteractionHand.MAIN_HAND) {
 
             List<Integer> catIDs = pLevel.getEntitiesOfClass(
                     WCatEntity.class,
@@ -53,21 +55,7 @@ public class AncientStickItem extends Item {
 
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
-
-        boolean active = stack.hasTag()
-                && stack.getTag().getBoolean("dismissClanSwitchActive");
-
-        if (active) {
-            tooltip.add(Component.literal("Right-click to command all or certain cats around").withStyle(ChatFormatting.GRAY));
-        } else {
-            tooltip.add(Component.literal("Right-click to command all or certain cats around").withStyle(ChatFormatting.GRAY));
-        }
+        tooltip.add(Component.literal("Right-click to command all or certain cats around").withStyle(ChatFormatting.GRAY));
     }
-
-    @Override
-    public boolean isFoil(ItemStack stack) {
-        return stack.hasTag() && stack.getTag().getBoolean("dismissClanSwitchActive");
-    }
-
 
 }

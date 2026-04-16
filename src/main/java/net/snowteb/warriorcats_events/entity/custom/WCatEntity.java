@@ -3,6 +3,7 @@ package net.snowteb.warriorcats_events.entity.custom;
 import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
@@ -75,8 +76,8 @@ import net.snowteb.warriorcats_events.block.entity.FreshkillPileBlockEntity;
 import net.snowteb.warriorcats_events.block.entity.MossBedBlockEntity;
 import net.snowteb.warriorcats_events.block.entity.TreeStumpBlockEntity;
 import net.snowteb.warriorcats_events.clan.ClanData;
-import net.snowteb.warriorcats_events.clan.PlayerClanData;
-import net.snowteb.warriorcats_events.clan.PlayerClanDataProvider;
+import net.snowteb.warriorcats_events.clan.WCEPlayerData;
+import net.snowteb.warriorcats_events.clan.WCEPlayerDataProvider;
 import net.snowteb.warriorcats_events.client.LeapClientState;
 import net.snowteb.warriorcats_events.effect.ModEffects;
 import net.snowteb.warriorcats_events.entity.ModEntities;
@@ -87,7 +88,7 @@ import net.snowteb.warriorcats_events.network.ModPackets;
 import net.snowteb.warriorcats_events.network.packet.s2c.cats.OpenCatDataScreenPacket;
 import net.snowteb.warriorcats_events.network.packet.s2c.clan.S2CSyncClanDataPacket;
 import net.snowteb.warriorcats_events.particles.WCEParticles;
-import net.snowteb.warriorcats_events.screen.WCatMenu;
+import net.snowteb.warriorcats_events.screen.menus.WCatMenu;
 import net.snowteb.warriorcats_events.sound.ModSounds;
 import net.snowteb.warriorcats_events.util.GeneticsForVariant;
 import net.snowteb.warriorcats_events.util.ModTags;
@@ -146,6 +147,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
     private Goal monsterTarget;
     public boolean kitBorn = false;
     boolean animPlayed;
+    boolean playerAnimPlayed;
     public CatMode mode = CatMode.WANDER;
     public CatMode lastMode = CatMode.WANDER;
     public BlockPos wanderCenter = null;
@@ -276,7 +278,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         return this.entityData.get(AGE_SYNC);
     }
 
-//    @Nullable
+    //    @Nullable
 //    private Vec3 leaderCallTarget;
 
 
@@ -428,13 +430,19 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
     public static final EntityDataAccessor<Float> SIZE =
             SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.FLOAT);
 
+    public static final EntityDataAccessor<Integer> SCARS =
+            SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.INT);
+
+    public static final EntityDataAccessor<Integer> IDLE_POSE =
+            SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.INT);
+
 
     private static final EntityDataAccessor<Boolean> GENETICAL_SKIN =
             SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.BOOLEAN);
 
     private WCGenetics storedFatherGenetics;
     public String textureKey;
-    private final String[] textureLayersPaths = new String[24];
+    private final String[] textureLayersPaths = new String[27];
 
     // GENETICS
 
@@ -1519,8 +1527,8 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
     public void sendInteractionMessage(UUID playerUUID, String result) {
         ServerPlayer player = this.level().getServer().getPlayerList().getPlayer(playerUUID);
-        String morphName = player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
-                .map(PlayerClanData::getMorphName).orElse(player.getName().toString());
+        String morphName = player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+                .map(WCEPlayerData::getMorphName).orElse(player.getName().toString());
         String resultCooked = result.replace("<morph.name>", morphName);
 
         if (player != null) {
@@ -2054,7 +2062,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
     }
 
 
-    private static final String[] PREFIXES = {
+    public static final String[] PREFIXES = {
             "Adder", "Alder", "Allium", "Almond", "Amber", "Amethyst", "Andesite",
             "Ant", "Apple", "Armadillo", "Ash", "Ashen", "Ashy", "Aspen", "Aster",
             "Axolotl", "Azure", "Badger", "Bark", "Barley", "Bat", "Bear", "Beige",
@@ -2474,7 +2482,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
     @Override
     protected void registerGoals() {
         this.preyTarget = new NearestAttackableTargetGoal<>(this, Animal.class, 10, false, false, (target) -> {
-            return mode == CatMode.WANDER && !this.returnHomeFlag && !this.onBorderPatrolFlag && (target instanceof MouseEntity || target instanceof PigeonEntity || target instanceof SquirrelEntity);
+            return mode == CatMode.WANDER && !this.returnHomeFlag && !this.onBorderPatrolFlag && (target instanceof MouseEntity || target instanceof PigeonEntity || target instanceof SquirrelEntity || target.getType().is(ModTags.EntityTypes.PREY_MOBS));
         });
 
         this.monsterTarget = new NearestAttackableTargetGoal<>(this, LivingEntity.class,
@@ -2482,6 +2490,11 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                 target -> target instanceof Monster && !(target instanceof Creeper || target instanceof Piglin || target instanceof ZombifiedPiglin || target instanceof PiglinBrute)
                         && this.distanceTo(target) <= getThreatDetectionRange() && willAttackMonsters() && this.getRank() != KIT
                         && this.mode != CatMode.SIT && !this.returnHomeFlag && target.isAlive() && !target.isDeadOrDying());
+
+
+//        this.mossBallTarget = new NearestAttackableTargetGoal<>(this, MossBallEntity.class,
+//                10, false, false,
+//                target -> target instanceof MossBallEntity mossBall && );
 
 
         this.goalSelector.addGoal(0, new FloatGoal(this));
@@ -2492,6 +2505,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         this.targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
         this.goalSelector.addGoal(3, new WCGoals.WCatSeekShelterGoal(this, 1.2D));
         this.goalSelector.addGoal(3, new WCGoals.WCatMedicineHealsCats(this));
+        this.goalSelector.addGoal(3, new WCGoals.WCatAttackMossBall(this));
         this.goalSelector.addGoal(4, new WCGoals.WCatPickupItemGoal(this));
 
         this.goalSelector.addGoal(5, new WCGoals.WCatDeputySendsPatrols(this));
@@ -2570,8 +2584,8 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
         if (this.isOwnedBy(pPlayer)) {
             if (pPlayer instanceof ServerPlayer sPlayer) {
-                UUID currentUUID = sPlayer.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
-                        .map(PlayerClanData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID);
+                UUID currentUUID = sPlayer.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+                        .map(WCEPlayerData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID);
 
 
                 if (!this.getClanUUID().equals(currentUUID)) {
@@ -2716,7 +2730,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                     this.setNameColor(this.getRank());
 
 
-                    pPlayer.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {
+                    pPlayer.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {
                         String clanName = cap.getClanName();
                         this.setClan(Component.literal(clanName));
                         this.setClanUUID(cap.getCurrentClanUUID());
@@ -2760,8 +2774,8 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
             if (!this.level().isClientSide() && pPlayer instanceof ServerPlayer sPlayer) {
                 ClanData data = ClanData.get(sPlayer.serverLevel().getServer().overworld());
-                UUID clanUUID = sPlayer.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
-                        .map(PlayerClanData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID);
+                UUID clanUUID = sPlayer.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+                        .map(WCEPlayerData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID);
                 ClanData.Clan clan = data.getClan(clanUUID);
                 boolean clanExistsAndIsValid = (!clanUUID.equals(ClanData.EMPTY_UUID) && clan != null);
                 boolean canAlsoCommand = false;
@@ -2774,8 +2788,8 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                     if (canAlsoCommand) {
                         this.setOwnerUUID(pPlayer.getUUID());
 
-                        String morphName = pPlayer.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
-                                .map(PlayerClanData::getMorphName).orElse(pPlayer.getName().getString());
+                        String morphName = pPlayer.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+                                .map(WCEPlayerData::getMorphName).orElse(pPlayer.getName().getString());
 
                         Component message = Component.empty()
                                 .append(Component.literal(morphName).withStyle(ChatFormatting.AQUA))
@@ -2832,8 +2846,8 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
             this.setNameColor(this.getRank());
 
 
-            String morphName = pPlayer.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
-                    .map(PlayerClanData::getMorphName).orElse(pPlayer.getName().getString());
+            String morphName = pPlayer.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+                    .map(WCEPlayerData::getMorphName).orElse(pPlayer.getName().getString());
 
             Component message = Component.empty()
                     .append(Component.literal(morphName).withStyle(ChatFormatting.AQUA))
@@ -2934,8 +2948,8 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
                     this.setNameColor(this.getRank());
 
-                    String morphName = pPlayer.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
-                            .map(PlayerClanData::getMorphName).orElse(pPlayer.getName().getString());
+                    String morphName = pPlayer.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+                            .map(WCEPlayerData::getMorphName).orElse(pPlayer.getName().getString());
 
                     Component message = Component.empty()
                             .append(Component.literal(morphName).withStyle(ChatFormatting.AQUA))
@@ -2948,6 +2962,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                             .append(this.hasCustomName() ? this.getCustomName().copy() : Component.literal("null"));
                     this.registerClanLog(message);
                     this.updateClanCatData();
+                    this.updateNest();
 
 
                 } else {
@@ -2963,12 +2978,12 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
             if (!this.level().isClientSide) {
                 if (pPlayer instanceof ServerPlayer sPlayer && PlayerShape.getCurrentShape(sPlayer) instanceof WCatEntity) {
-                    String sPlayerMorphName = sPlayer.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
-                            .map(PlayerClanData::getMorphName).orElse(sPlayer.getName().toString());
-                    PlayerClanData.Age playerMorphAge = sPlayer.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
-                            .map(PlayerClanData::getMorphAge).orElse(PlayerClanData.Age.ADULT);
+                    String sPlayerMorphName = sPlayer.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+                            .map(WCEPlayerData::getMorphName).orElse(sPlayer.getName().toString());
+                    WCEPlayerData.Age playerMorphAge = sPlayer.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+                            .map(WCEPlayerData::getMorphAge).orElse(WCEPlayerData.Age.ADULT);
 
-                    if (playerMorphAge != PlayerClanData.Age.ADULT) {
+                    if (playerMorphAge != WCEPlayerData.Age.ADULT) {
                         pPlayer.sendSystemMessage(Component.literal(sPlayerMorphName + " is not old enough for this.")
                                 .withStyle(ChatFormatting.RED));
                         return InteractionResult.FAIL;
@@ -3031,7 +3046,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
                     pPlayer.getItemInHand(InteractionHand.MAIN_HAND).shrink(1);
                     WCGenetics finalMateGenetics = mateGenetics;
-                    sPlayer.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {
+                    sPlayer.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {
                         cap.setMateUUID(this.getUUID());
                         cap.setMateName(this.hasCustomName() ? this.getCustomName() : Component.literal("Undefined"));
                         cap.setMateGenetics(finalMateGenetics);
@@ -3095,8 +3110,8 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
                 this.setNameColor(this.getRank());
 
-                String morphName = pPlayer.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
-                        .map(PlayerClanData::getMorphName).orElse(pPlayer.getName().getString());
+                String morphName = pPlayer.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+                        .map(WCEPlayerData::getMorphName).orElse(pPlayer.getName().getString());
 
                 Component message = Component.empty()
                         .append(Component.literal(morphName).withStyle(ChatFormatting.AQUA))
@@ -3110,7 +3125,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                 this.registerClanLog(message);
                 this.updateClanCatData();
                 this.updateMatesName();
-
+                this.updateNest();
 
             }
 
@@ -3158,8 +3173,8 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
                 this.setNameColor(this.getRank());
 
-                String morphName = pPlayer.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
-                        .map(PlayerClanData::getMorphName).orElse(pPlayer.getName().getString());
+                String morphName = pPlayer.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+                        .map(WCEPlayerData::getMorphName).orElse(pPlayer.getName().getString());
 
                 Component message = Component.empty()
                         .append(Component.literal(morphName).withStyle(ChatFormatting.AQUA))
@@ -3173,6 +3188,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                 this.registerClanLog(message);
                 this.updateClanCatData();
                 this.updateMatesName();
+                this.updateNest();
                 this.rewardMoonmoon();
 
             }
@@ -3189,7 +3205,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                     if (this.getPersonality() == Personality.NONE || this.getPersonality() == null) {
                         this.assignRandomPersonality(this.random);
                     }
-                    pPlayer.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {
+                    pPlayer.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {
                         String clanName = cap.getClanName();
                         if (this.getClan().equals(Component.literal("None"))
                                 || !this.getClan().equals(Component.literal(cap.getClanName()))) {
@@ -3300,8 +3316,8 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                             }
                         }
 
-                        String morphName = pPlayer.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
-                                .map(PlayerClanData::getMorphName).orElse(pPlayer.getName().getString());
+                        String morphName = pPlayer.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+                                .map(WCEPlayerData::getMorphName).orElse(pPlayer.getName().getString());
 
 
                         Component message = Component.empty()
@@ -3749,8 +3765,8 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
         if (target instanceof Player player) {
             if (player instanceof ServerPlayer sPlayer) {
-                UUID clanID = sPlayer.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
-                        .map(PlayerClanData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID);
+                UUID clanID = sPlayer.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+                        .map(WCEPlayerData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID);
 
                 if (this.getClanUUID().equals(clanID)) {
                     return false;
@@ -3792,8 +3808,8 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
     public boolean isAlliedTo(Entity other) {
         if (other instanceof Player player) {
             if (player instanceof ServerPlayer sPlayer) {
-                UUID clanID = sPlayer.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
-                        .map(PlayerClanData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID);
+                UUID clanID = sPlayer.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+                        .map(WCEPlayerData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID);
 
                 if (this.getClanUUID().equals(clanID)) {
                     return true;
@@ -4206,82 +4222,88 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
         if (animIndex != -1) {
 
-            if (!animPlayed) {
+            state.getController().setTransitionLength(0);
+
+            if (!playerAnimPlayed) {
                 if (animIndex == -2) {
                     state.getController().setAnimation(RawAnimation.begin()
                             .then("animation.wcat.silly", Animation.LoopType.PLAY_ONCE));
-                    animPlayed = true;
+                    playerAnimPlayed = true;
                 } else if (animIndex == 1) {
                     state.getController().setAnimation(RawAnimation.begin()
                             .then("animation.wcat.groom", Animation.LoopType.PLAY_ONCE));
-                    animPlayed = true;
+                    playerAnimPlayed = true;
                 } else if (animIndex == 2) {
                     state.getController().setAnimation(RawAnimation.begin()
                             .then("animation.wcat.stretch", Animation.LoopType.PLAY_ONCE));
-                    animPlayed = true;
+                    playerAnimPlayed = true;
                 } else if (animIndex == 3) {
                     state.getController().setAnimation(RawAnimation.begin()
                             .then("animation.wcat.scratch", Animation.LoopType.PLAY_ONCE));
-                    animPlayed = true;
+                    playerAnimPlayed = true;
                 } else if (animIndex == 4) {
                     state.getController().setAnimation(RawAnimation.begin()
                             .then("animation.wcat.attack", Animation.LoopType.PLAY_ONCE));
-                    animPlayed = true;
+                    playerAnimPlayed = true;
                 } else if (animIndex == 5) {
                     state.getController().setAnimation(RawAnimation.begin()
                             .then("animation.wcat.standstand", Animation.LoopType.PLAY_ONCE)
                             .then("animation.wcat.standidle", Animation.LoopType.LOOP));
-                    animPlayed = true;
+                    playerAnimPlayed = true;
                 } else if (animIndex == 6) {
                     state.getController().setAnimation(RawAnimation.begin()
                             .then("animation.wcat.sitlay", Animation.LoopType.PLAY_ONCE)
                             .then("animation.wcat.layidle", Animation.LoopType.LOOP));
-                    animPlayed = true;
+                    playerAnimPlayed = true;
                 } else if (animIndex == 7) {
                     state.getController().setAnimation(RawAnimation.begin()
                             .then("animation.wcat.start_sit", Animation.LoopType.PLAY_ONCE)
                             .then("animation.wcat.sit_idle", Animation.LoopType.LOOP));
-                    animPlayed = true;
+                    playerAnimPlayed = true;
                 } else if (animIndex == 8) {
                     state.getController().setAnimation(RawAnimation.begin()
                             .then("animation.wcat.start_loaf", Animation.LoopType.PLAY_ONCE)
                             .then("animation.wcat.loaf_idle", Animation.LoopType.LOOP));
-                    animPlayed = true;
+                    playerAnimPlayed = true;
                 } else if (animIndex == 9) {
                     state.getController().setAnimation(RawAnimation.begin()
                             .then("animation.wcat.laysleep", Animation.LoopType.PLAY_ONCE)
                             .then("animation.wcat.sleep_idle", Animation.LoopType.LOOP));
-                    animPlayed = true;
+                    playerAnimPlayed = true;
                 } else if (animIndex == 10) {
                     state.getController().setAnimation(RawAnimation.begin()
                             .then("animation.wcat.fall_death", Animation.LoopType.PLAY_ONCE)
                             .then("animation.wcat.death_idle", Animation.LoopType.LOOP));
-                    animPlayed = true;
+                    playerAnimPlayed = true;
                 } else if (animIndex == 11) {
                     state.getController().setAnimation(RawAnimation.begin()
                             .then("animation.wcat.roll", Animation.LoopType.PLAY_ONCE));
-                    animPlayed = true;
+                    playerAnimPlayed = true;
                 } else if (animIndex == 12) {
                     state.getController().setAnimation(RawAnimation.begin()
                             .then("animation.wcat.scared", Animation.LoopType.PLAY_ONCE)
                             .then("animation.wcat.scared_idle", Animation.LoopType.LOOP));
-                    animPlayed = true;
+                    playerAnimPlayed = true;
                 }
 
             }
 
-            if ((animPlayed && state.getController().hasAnimationFinished()) || state.isMoving()) {
+            if (playerAnimPlayed && (state.getController().hasAnimationFinished()|| state.isMoving()) ) {
+                state.getController().setTransitionLength(3);
+
                 state.getController().setAnimation(RawAnimation.begin()
-                        .then("animation.wcat.idle", Animation.LoopType.LOOP));
-                animPlayed = false;
+                        .then("animation.wcat.empty", Animation.LoopType.PLAY_ONCE));
+                playerAnimPlayed = false;
                 this.setAnimIndex(animIndex);
 
                 return PlayState.CONTINUE;
             }
-        } else if ((animPlayed && state.getController().hasAnimationFinished()) || state.isMoving()) {
+        } else if (playerAnimPlayed && (state.getController().hasAnimationFinished() || state.isMoving())) {
+            state.getController().setTransitionLength(3);
+
             state.getController().setAnimation(RawAnimation.begin()
-                    .then("animation.wcat.idle", Animation.LoopType.LOOP));
-            animPlayed = false;
+                    .then("animation.wcat.empty", Animation.LoopType.PLAY_ONCE));
+            playerAnimPlayed = false;
         }
 
 
@@ -4329,6 +4351,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         float animSpeed = (float) (speed * 6.0f);
         animSpeed = Mth.clamp(animSpeed * animSpeed, 0.2f, 1.5f);
 
+        tAnimationState.getController().setTransitionLength(3);
 
 
         if (this.isResting() || this.entityData.get(SITTING_INDEX) == 3) {
@@ -4422,16 +4445,17 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         }
 
         if ((tAnimationState.isMoving()) && !this.isCrouching()) {
+            tAnimationState.getController().setTransitionLength(0);
 
             if ((speed > 0.2039) && !this.isInWater()) {
                 tAnimationState.getController().setAnimation(RawAnimation.begin().
-                        then("animation.wcat.sprint", Animation.LoopType.LOOP));
+                        then("animation.wcat.sprint" + this.entityData.get(IDLE_POSE), Animation.LoopType.LOOP));
 
                 tAnimationState.getController().setAnimationSpeed(0.185 * Math.exp(9.91 * speed));
 
             } else {
                 tAnimationState.getController().setAnimation(RawAnimation.begin().
-                        then("animation.wcat.walk", Animation.LoopType.LOOP));
+                        then("animation.wcat.walk" + this.entityData.get(IDLE_POSE), Animation.LoopType.LOOP));
                 tAnimationState.getController().setAnimationSpeed(animSpeed);
 
             }
@@ -4478,8 +4502,9 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
         }
         if (animPlayed && tAnimationState.getController().hasAnimationFinished()) {
+
             tAnimationState.getController().setAnimation(RawAnimation.begin()
-                    .then("animation.wcat.idle", Animation.LoopType.LOOP));
+                    .then("animation.wcat.idle" + this.entityData.get(IDLE_POSE), Animation.LoopType.LOOP));
             tAnimationState.getController().setAnimationSpeed(1f);
             animPlayed = false;
 
@@ -4487,6 +4512,8 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         }
 
         if (this.isCrouching()) {
+            tAnimationState.getController().setTransitionLength(0);
+
             if ((tAnimationState.isMoving()) && this.isCrouching()) {
                 tAnimationState.getController().setAnimation(RawAnimation.begin().
                         then("animation.wcat.crouchingwalk", Animation.LoopType.LOOP));
@@ -4500,8 +4527,9 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
             animPlayed = false;
         } else if (!animPlayed) {
+
             tAnimationState.getController().setAnimation(RawAnimation.begin().
-                    then("animation.wcat.idle", Animation.LoopType.LOOP));
+                    then("animation.wcat.idle" + this.entityData.get(IDLE_POSE), Animation.LoopType.LOOP));
             tAnimationState.getController().setAnimationSpeed(1f);
         }
 
@@ -4526,6 +4554,15 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         }
 
         return PlayState.CONTINUE;
+    }
+
+
+    public void setIdlePose(int i) {
+        this.entityData.set(IDLE_POSE, Math.min(i, WCGenetics.Values.MAX_IDLE_POSES -1));
+    }
+
+    public int getIdlePose() {
+        return this.entityData.get(IDLE_POSE);
     }
 
 
@@ -4846,25 +4883,25 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
             String newName = prefix.getString() + SUFIXES[i] + genderV;
 
+            Component message = Component.empty()
+                    .append(prefix)
+                    .append(Component.literal("paw has become a warrior. "))
+                    .append(prefix)
+                    .append(Component.literal("paw will now be known as "))
+                    .append(Component.literal(newName).withStyle(ChatFormatting.GOLD))
+                    .append(Component.literal("!")
+                    );
+
             Entity owner = this.getOwner();
             if (owner instanceof Player) {
-
-                Component message = Component.empty()
-                        .append(prefix)
-                        .append(Component.literal("paw has become a warrior. "))
-                        .append(prefix)
-                        .append(Component.literal("paw will now be known as "))
-                        .append(Component.literal(newName).withStyle(ChatFormatting.GOLD))
-                        .append(Component.literal("!")
-                        );
-
-                this.updateClanCatData();
-
                 owner.sendSystemMessage(message);
-
-                this.registerClanLog(message);
-
             }
+
+            this.updateClanCatData();
+            this.registerClanLog(message);
+
+
+            this.updateNest();
 
             this.setCustomName(Component.literal(newName));
             this.setCustomNameVisible(true);
@@ -4925,6 +4962,8 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
         this.entityData.define(CLAN_UUID, Optional.empty());
         this.entityData.define(SIZE, 0.0f);
+        this.entityData.define(SCARS, 0);
+        this.entityData.define(IDLE_POSE, 0);
 
 
         // GENETICS
@@ -5060,6 +5099,42 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         return genetics;
     }
 
+    public WCGenetics.GeneticalVariants getGenVariants() {
+        WCGenetics.GeneticalVariants variants = new WCGenetics.GeneticalVariants(
+                this.entityData.get(EYE_COLOR_LEFT),
+                this.entityData.get(EYE_COLOR_RIGHT),
+                this.entityData.get(RUFOUSING_VARIANT),
+                this.entityData.get(BLUE_RUFOUSING_VARIANT),
+                this.entityData.get(ORANGE_BASE_VARIANT),
+                this.entityData.get(WHITE_RATIO_VARIANT),
+                this.entityData.get(TABBY_STRIPES_VARIANT),
+                this.entityData.get(ALBINO_VARIANT),
+                this.entityData.get(EYE_COLOR_VARIANT_LEFT),
+                this.entityData.get(EYE_COLOR_VARIANT_RIGHT),
+                this.entityData.get(NOISE),
+                this.entityData.get(SIZE),
+                this.entityData.get(SILVER_VARIANT),
+                this.entityData.get(SCARS)
+        );
+        return variants;
+    }
+
+    public WCGenetics.GeneticalChimeraVariants getChimeraGenVariants() {
+        WCGenetics.GeneticalChimeraVariants variants = new WCGenetics.GeneticalChimeraVariants(
+                this.entityData.get(CHIMERA_VARIANT),
+                this.entityData.get(RUFOUSING_VARIANT_CHIMERA),
+                this.entityData.get(BLUE_RUFOUSING_VARIANT_CHIMERA),
+                this.entityData.get(ORANGE_BASE_VARIANT_CHIMERA),
+                this.entityData.get(WHITE_RATIO_VARIANT_CHIMERA),
+                this.entityData.get(TABBY_STRIPES_VARIANT_CHIMERA),
+                this.entityData.get(ALBINO_VARIANT_CHIMERA),
+                this.entityData.get(NOISE),
+                this.entityData.get(CHIMERA_GENE),
+                this.entityData.get(SILVER_VARIANT_CHIMERA)
+        );
+        return variants;
+    }
+
 
     public WCGenetics getChimeraGenetics() {
         WCGenetics genetics = new WCGenetics();
@@ -5123,7 +5198,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         this.entityData.set(HEAD_FUR, WCGenetics.FurGene.generateAlelo(random) + "-" + WCGenetics.FurGene.generateAlelo(random));
         this.entityData.set(CHEEK_FUR, WCGenetics.FurGene.generateAlelo(random) + "-" + WCGenetics.FurGene.generateAlelo(random));
         this.entityData.set(BACK_FUR, WCGenetics.FurGene.generateAlelo(random) + "-" + WCGenetics.FurGene.generateAlelo(random));
-        this.entityData.set(BOBTAIL, WCGenetics.FurGene.generateAlelo(random) + "-" + WCGenetics.FurGene.generateAlelo(random));
+        this.entityData.set(BOBTAIL, WCGenetics.Bobtail.init(random));
         this.entityData.set(TAIL_FUR, WCGenetics.FurGene.generateAlelo(random) + "-" + WCGenetics.FurGene.generateAlelo(random));
 
         this.setOnGeneticalSkin(true);
@@ -5279,6 +5354,9 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         geneticsTag.putInt("EyeColorVariantRight", this.entityData.get(EYE_COLOR_VARIANT_RIGHT));
         geneticsTag.putInt("Noise", this.entityData.get(NOISE));
         geneticsTag.putFloat("Size", this.entityData.get(SIZE));
+        geneticsTag.putFloat("Scars", this.entityData.get(SCARS));
+
+        geneticsTag.putInt("IdlePose", this.entityData.get(IDLE_POSE));
 
 
         geneticsTag.putString("BaseChimera", this.entityData.get(BASE_CHIMERA));
@@ -5382,6 +5460,9 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
             this.entityData.set(EYE_COLOR_VARIANT_RIGHT, geneticsTag.getInt("EyeColorVariantRight"));
             this.entityData.set(SIZE, geneticsTag.getFloat("Size"));
             this.entityData.set(SILVER_VARIANT, geneticsTag.getInt("SilverVariant"));
+            this.entityData.set(SCARS, geneticsTag.getInt("Scars"));
+
+            this.entityData.set(IDLE_POSE, geneticsTag.getInt("IdlePose"));
 
 
 
@@ -5487,27 +5568,53 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
             basePath = folderPath + "empty";
         }
 
+//        String orangeBasePath = folderPath + "orange_base/";
+//        if (WCGenetics.OrangeBase.isOrange(this.entityData.get(ORANGE_BASE), this.entityData.get(GENDER))) {
+//
+//            if (WCGenetics.TabbyStripeTypes.isMackerel(this.entityData.get(TABBY_STRIPES))) {
+//                orangeBasePath += "orange_" + "mackerel_" + this.entityData.get(TABBY_STRIPES_VARIANT);// ORANGE_BASE -> 0-4
+//            } else {
+//                orangeBasePath += "orange_" + "classic_" + this.entityData.get(TABBY_STRIPES_VARIANT);// ORANGE_BASE -> 0-4
+//            }
+//
+//        } else if (WCGenetics.OrangeBase.isTortoiseshell(this.entityData.get(ORANGE_BASE))) {
+//
+//            if (WCGenetics.TabbyStripeTypes.isMackerel(this.entityData.get(TABBY_STRIPES))) {
+//                orangeBasePath += "tortie_" + this.entityData.get(ORANGE_BASE_VARIANT) + "_mackerel_" + this.entityData.get(TABBY_STRIPES_VARIANT);// ORANGE_BASE -> 0-4
+//            } else {
+//                orangeBasePath += "tortie_" + this.entityData.get(ORANGE_BASE_VARIANT) + "_classic_" + this.entityData.get(TABBY_STRIPES_VARIANT);// ORANGE_BASE -> 0-4
+//            }
+//
+//        } else {
+//            orangeBasePath = folderPath + "empty";
+//        }
+
         String orangeBasePath = folderPath + "orange_base/";
+        String stripesForOrangePath = folderPath + "agouti_marks/orange/";
         if (WCGenetics.OrangeBase.isOrange(this.entityData.get(ORANGE_BASE), this.entityData.get(GENDER))) {
 
+            orangeBasePath += "orange";
+
             if (WCGenetics.TabbyStripeTypes.isMackerel(this.entityData.get(TABBY_STRIPES))) {
-                orangeBasePath += "orange_" + "mackerel_" + this.entityData.get(TABBY_STRIPES_VARIANT);// ORANGE_BASE -> 0-4
+                stripesForOrangePath += "mackerel_orange_" + this.entityData.get(TABBY_STRIPES_VARIANT);// ORANGE_BASE -> 0-4
             } else {
-                orangeBasePath += "orange_" + "classic_" + this.entityData.get(TABBY_STRIPES_VARIANT);// ORANGE_BASE -> 0-4
+                stripesForOrangePath += "classic_orange_" + this.entityData.get(TABBY_STRIPES_VARIANT);// ORANGE_BASE -> 0-4
             }
 
         } else if (WCGenetics.OrangeBase.isTortoiseshell(this.entityData.get(ORANGE_BASE))) {
 
+            orangeBasePath += "tortie_" + this.entityData.get(ORANGE_BASE_VARIANT);// ORANGE_BASE -> 0-4
+
             if (WCGenetics.TabbyStripeTypes.isMackerel(this.entityData.get(TABBY_STRIPES))) {
-                orangeBasePath += "tortie_" + this.entityData.get(ORANGE_BASE_VARIANT) + "_mackerel_" + this.entityData.get(TABBY_STRIPES_VARIANT);// ORANGE_BASE -> 0-4
+                stripesForOrangePath += "mackerel_orange_" + this.entityData.get(TABBY_STRIPES_VARIANT);// ORANGE_BASE -> 0-4
             } else {
-                orangeBasePath += "tortie_" + this.entityData.get(ORANGE_BASE_VARIANT) + "_classic_" + this.entityData.get(TABBY_STRIPES_VARIANT);// ORANGE_BASE -> 0-4
+                stripesForOrangePath += "classic_orange_" + this.entityData.get(TABBY_STRIPES_VARIANT);// ORANGE_BASE -> 0-4
             }
 
         } else {
             orangeBasePath = folderPath + "empty";
+            stripesForOrangePath = folderPath + "empty";
         }
-
 
         if (WCGenetics.Dilute.isDilute(this.entityData.get(DILUTE))) {
             if (WCGenetics.Base.isBlack(this.entityData.get(BASE))) {
@@ -5519,22 +5626,26 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
             }
 
             if (WCGenetics.OrangeBase.isOrange(this.entityData.get(ORANGE_BASE), this.entityData.get(GENDER))) {
+                orangeBasePath = folderPath + "orange_base/orange_to_cream";
+
                 if (WCGenetics.TabbyStripeTypes.isMackerel(this.entityData.get(TABBY_STRIPES))) {
-                    orangeBasePath = folderPath + "orange_base/orange_to_cream_" + "mackerel_" + this.entityData.get(TABBY_STRIPES_VARIANT);// ORANGE_BASE -> 0-4
+                    stripesForOrangePath = folderPath + "agouti_marks/orange/mackerel_otc_" + this.entityData.get(TABBY_STRIPES_VARIANT);
                 } else {
-                    orangeBasePath = folderPath + "orange_base/orange_to_cream_" + "classic_" + this.entityData.get(TABBY_STRIPES_VARIANT);// ORANGE_BASE -> 0-4
+                    stripesForOrangePath = folderPath + "agouti_marks/orange/classic_otc_" + this.entityData.get(TABBY_STRIPES_VARIANT);
                 }
 
             } else if (WCGenetics.OrangeBase.isTortoiseshell(this.entityData.get(ORANGE_BASE))) {
+                orangeBasePath = folderPath + "orange_base/tortie_to_cream_" + this.entityData.get(ORANGE_BASE_VARIANT);
 
                 if (WCGenetics.TabbyStripeTypes.isMackerel(this.entityData.get(TABBY_STRIPES))) {
-                    orangeBasePath = folderPath + "orange_base/tortie_to_cream_" + this.entityData.get(ORANGE_BASE_VARIANT) + "_mackerel_" + this.entityData.get(TABBY_STRIPES_VARIANT);// ORANGE_BASE -> 0-4
+                    stripesForOrangePath = folderPath + "agouti_marks/orange/mackerel_otc_" + this.entityData.get(TABBY_STRIPES_VARIANT);
                 } else {
-                    orangeBasePath = folderPath + "orange_base/tortie_to_cream_" + this.entityData.get(ORANGE_BASE_VARIANT) + "_classic_" + this.entityData.get(TABBY_STRIPES_VARIANT);// ORANGE_BASE -> 0-4
+                    stripesForOrangePath = folderPath + "agouti_marks/orange/classic_otc_" + this.entityData.get(TABBY_STRIPES_VARIANT);
                 }
 
             } else {
                 orangeBasePath = folderPath + "empty";
+                stripesForOrangePath = folderPath + "empty";
             }
 
         }
@@ -5608,6 +5719,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
             case GREEN -> eyeColorLeft += "green_" + this.entityData.get(EYE_COLOR_VARIANT_LEFT);// EYES -> 0.4
             case YELLOW -> eyeColorLeft += "yellow_" + this.entityData.get(EYE_COLOR_VARIANT_LEFT);// EYES -> 0.4
             case RED -> eyeColorLeft += "red_" + this.entityData.get(EYE_COLOR_VARIANT_LEFT);// EYES -> 0.4
+            case BLIND -> eyeColorLeft += "blind";
         }
 
         String eyeColorRight = folderPath + "eyes_color/right/";
@@ -5616,7 +5728,10 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
             case GREEN -> eyeColorRight += "green_" + this.entityData.get(EYE_COLOR_VARIANT_RIGHT);// EYES -> 0.4
             case YELLOW -> eyeColorRight += "yellow_" + this.entityData.get(EYE_COLOR_VARIANT_RIGHT);// EYES -> 0.4
             case RED -> eyeColorRight += "red_" + this.entityData.get(EYE_COLOR_VARIANT_RIGHT);// EYES -> 0.4
+            case BLIND -> eyeColorRight += "blind";
         }
+
+        String scarsPath = folderPath + "scars/scars_" + this.entityData.get(SCARS);
 
         String noisePath = folderPath + "details/noise_" + this.entityData.get(NOISE);
         if (WCGenetics.Base.isBlack(this.entityData.get(BASE)) && WCGenetics.Dilute.isDilute(this.entityData.get(DILUTE))){
@@ -5690,15 +5805,15 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
         String extraChimeraKey = "";
         if (WCGenetics.Chimerism.isChimera(this.entityData.get(CHIMERA_GENE))) {
-            extraChimeraKey = WCGenetics.encodeGene(this.entityData.get(BASE_CHIMERA)) + this.entityData.get(CHIMERA_VARIANT) +
-                    WCGenetics.encodeGene(this.entityData.get(ORANGE_BASE_CHIMERA)) + this.entityData.get(ORANGE_BASE_VARIANT_CHIMERA) +
-                    WCGenetics.encodeGene(this.entityData.get(AGOUTI_CHIMERA)) +
-                    WCGenetics.encodeGene(this.entityData.get(TABBY_STRIPES_CHIMERA)) + this.entityData.get(TABBY_STRIPES_VARIANT_CHIMERA) +
-                    WCGenetics.encodeGene(this.entityData.get(SILVER_CHIMERA)) + this.entityData.get(SILVER_VARIANT_CHIMERA) +
-                    WCGenetics.encodeGene(this.entityData.get(WHITE_RATIO_CHIMERA)) + this.entityData.get(WHITE_RATIO_VARIANT_CHIMERA) +
-                    WCGenetics.encodeGene(this.entityData.get(DILUTE_CHIMERA)) +
-                    WCGenetics.encodeGene(this.entityData.get(ALBINO_CHIMERA)) + this.entityData.get(ALBINO_VARIANT_CHIMERA) +
-                    this.entityData.get(BLUE_RUFOUSING_VARIANT_CHIMERA) + "ruf" + this.entityData.get(RUFOUSING_VARIANT_CHIMERA) +
+            extraChimeraKey = WCGenetics.encodeGene(this.entityData.get(BASE_CHIMERA)) + this.entityData.get(CHIMERA_VARIANT) + "_" +
+                    WCGenetics.encodeGene(this.entityData.get(ORANGE_BASE_CHIMERA)) + this.entityData.get(ORANGE_BASE_VARIANT_CHIMERA) + "_" +
+                    WCGenetics.encodeGene(this.entityData.get(AGOUTI_CHIMERA)) + "_" +
+                    WCGenetics.encodeGene(this.entityData.get(TABBY_STRIPES_CHIMERA)) + this.entityData.get(TABBY_STRIPES_VARIANT_CHIMERA) + "_" +
+                    WCGenetics.encodeGene(this.entityData.get(SILVER_CHIMERA)) + this.entityData.get(SILVER_VARIANT_CHIMERA) + "_" +
+                    WCGenetics.encodeGene(this.entityData.get(WHITE_RATIO_CHIMERA)) + this.entityData.get(WHITE_RATIO_VARIANT_CHIMERA) + "_" +
+                    WCGenetics.encodeGene(this.entityData.get(DILUTE_CHIMERA)) + "_" +
+                    WCGenetics.encodeGene(this.entityData.get(ALBINO_CHIMERA)) + this.entityData.get(ALBINO_VARIANT_CHIMERA) + "_" +
+                    this.entityData.get(BLUE_RUFOUSING_VARIANT_CHIMERA) + "ruf" + this.entityData.get(RUFOUSING_VARIANT_CHIMERA) + "_" +
                     "noise_" + this.entityData.get(NOISE_CHIMERA);
         }
 
@@ -5717,45 +5832,50 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         this.textureLayersPaths[0] = basePath + ".png";
         this.textureLayersPaths[1] = agoutiMarks + ".png";
         this.textureLayersPaths[2] = orangeBasePath + ".png";
-        this.textureLayersPaths[3] = rufousing + ".png";
-        this.textureLayersPaths[4] = bluerufousing + ".png";
-        this.textureLayersPaths[5] = silver + ".png";
-        this.textureLayersPaths[6] = silver2 + ".png";
-        this.textureLayersPaths[7] = whiteMarks + ".png";
-        this.textureLayersPaths[8] = albinoPath + ".png";
-        this.textureLayersPaths[9] = noisePath + ".png";
+        this.textureLayersPaths[3] = stripesForOrangePath + ".png";
+        this.textureLayersPaths[4] = rufousing + ".png";
+        this.textureLayersPaths[5] = bluerufousing + ".png";
+        this.textureLayersPaths[6] = silver + ".png";
+        this.textureLayersPaths[7] = silver2 + ".png";
+        this.textureLayersPaths[8] = whiteMarks + ".png";
+        this.textureLayersPaths[9] = albinoPath + ".png";
+        this.textureLayersPaths[10] = noisePath + ".png";
 
-        this.textureLayersPaths[10] = chimeraArray[0];
-        this.textureLayersPaths[11] = chimeraArray[1];
-        this.textureLayersPaths[12] = chimeraArray[2];
-        this.textureLayersPaths[13] = chimeraArray[3];
-        this.textureLayersPaths[14] = chimeraArray[4];
-        this.textureLayersPaths[15] = chimeraArray[5];
-        this.textureLayersPaths[16] = chimeraArray[6];
+        this.textureLayersPaths[11] = chimeraArray[0];
+        this.textureLayersPaths[12] = chimeraArray[1];
+        this.textureLayersPaths[13] = chimeraArray[2];
+        this.textureLayersPaths[14] = chimeraArray[3];
+        this.textureLayersPaths[15] = chimeraArray[4];
+        this.textureLayersPaths[16] = chimeraArray[5];
+        this.textureLayersPaths[17] = chimeraArray[6];
+        this.textureLayersPaths[18] = chimeraArray[7];
         //
-        this.textureLayersPaths[17] = chimeraArray[7];
-        this.textureLayersPaths[18] = chimeraArray[8];
-        this.textureLayersPaths[19] = chimeraArray[9];
+        this.textureLayersPaths[19] = chimeraArray[7];
+        this.textureLayersPaths[20] = chimeraArray[8];
+        this.textureLayersPaths[21] = chimeraArray[9];
 
-        this.textureLayersPaths[20] = skinDetails + ".png";
-        this.textureLayersPaths[21] = eyeColorLeft + ".png";
-        this.textureLayersPaths[22] = eyeColorRight + ".png";
-        this.textureLayersPaths[23] = armorOverlay + ".png";
+        this.textureLayersPaths[22] = skinDetails + ".png";
+        this.textureLayersPaths[23] = eyeColorLeft + ".png";
+        this.textureLayersPaths[24] = eyeColorRight + ".png";
+        this.textureLayersPaths[25] = scarsPath + ".png";
+        this.textureLayersPaths[26] = armorOverlay + ".png";
 
         this.textureKey =
-                "wcat/" + WCGenetics.encodeGene(this.entityData.get(BASE)) +
-                        WCGenetics.encodeGene(this.entityData.get(ORANGE_BASE)) + this.entityData.get(ORANGE_BASE_VARIANT) +
-                        WCGenetics.encodeGene(this.entityData.get(AGOUTI)) +
-                        WCGenetics.encodeGene(this.entityData.get(TABBY_STRIPES)) + this.entityData.get(TABBY_STRIPES_VARIANT) +
-                        WCGenetics.encodeGene(this.entityData.get(WHITE_RATIO)) + this.entityData.get(WHITE_RATIO_VARIANT) +
-                        WCGenetics.encodeGene(this.entityData.get(SILVER)) + this.entityData.get(SILVER_VARIANT) +
-                        WCGenetics.encodeGene(this.entityData.get(DILUTE)) +
-                        WCGenetics.encodeGene(this.entityData.get(ALBINO)) + this.entityData.get(ALBINO_VARIANT) +
-                        WCGenetics.encodeGene(this.entityData.get(EYES_ANOMALY)) + "eyel" +
-                        this.entityData.get(EYE_COLOR_LEFT)  + this.entityData.get(EYE_COLOR_VARIANT_LEFT) + "eyer" +
-                        this.entityData.get(EYE_COLOR_RIGHT) + this.entityData.get(EYE_COLOR_VARIANT_RIGHT) + "bruf" +
-                        this.entityData.get(BLUE_RUFOUSING_VARIANT) + "ruf" + this.entityData.get(RUFOUSING_VARIANT) +
-                        "noise_" + this.entityData.get(NOISE) + extraChimeraKey;
+                "wcat/" + WCGenetics.encodeGene(this.entityData.get(BASE)) + "_" +
+                        WCGenetics.encodeGene(this.entityData.get(ORANGE_BASE)) + this.entityData.get(ORANGE_BASE_VARIANT) + "_" +
+                        WCGenetics.encodeGene(this.entityData.get(AGOUTI)) + "_" +
+                        WCGenetics.encodeGene(this.entityData.get(TABBY_STRIPES)) + this.entityData.get(TABBY_STRIPES_VARIANT) + "_" +
+                        WCGenetics.encodeGene(this.entityData.get(WHITE_RATIO)) + this.entityData.get(WHITE_RATIO_VARIANT) + "_" +
+                        WCGenetics.encodeGene(this.entityData.get(SILVER)) + this.entityData.get(SILVER_VARIANT) + "_" +
+                        WCGenetics.encodeGene(this.entityData.get(DILUTE)) + "_" +
+                        WCGenetics.encodeGene(this.entityData.get(ALBINO)) + this.entityData.get(ALBINO_VARIANT) + "_" +
+                        WCGenetics.encodeGene(this.entityData.get(EYES_ANOMALY)) + "_" +
+                        "eyel" + this.entityData.get(EYE_COLOR_LEFT)  + this.entityData.get(EYE_COLOR_VARIANT_LEFT) + "_" +
+                        "eyer" + this.entityData.get(EYE_COLOR_RIGHT) + this.entityData.get(EYE_COLOR_VARIANT_RIGHT) + "_" +
+                        "bruf" + this.entityData.get(BLUE_RUFOUSING_VARIANT) + "ruf" + this.entityData.get(RUFOUSING_VARIANT) + "_" +
+                        "noise_" + this.entityData.get(NOISE) + "_" +
+                        "scars_" + this.entityData.get(SCARS) + "_" +
+                        extraChimeraKey;
     }
 
 
@@ -5763,7 +5883,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
     private String[] defineTextureLayersChimera() {
         String folderPath = "warriorcats_events:textures/entity/wcat/genetics/genetics_chimera/";
 
-        String[] chimeraArray = new String[10];
+        String[] chimeraArray = new String[11];
 
         chimeraArray[0] = folderPath + "empty.png";
         chimeraArray[1] = folderPath + "empty.png";
@@ -5775,6 +5895,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         chimeraArray[7] = folderPath + "empty.png";
         chimeraArray[8] = folderPath + "empty.png";
         chimeraArray[9] = folderPath + "empty.png";
+        chimeraArray[10] = folderPath + "empty.png";
 
         if (!this.isOnGeneticalSkin()) return chimeraArray;
         if (!WCGenetics.Chimerism.isChimera(this.entityData.get(CHIMERA_GENE))) return chimeraArray;
@@ -5791,24 +5912,30 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         }
 
         String orangeBasePath = folderPath + "orange_base/";
+        String stripesForOrangePath = folderPath + "agouti_marks/orange/";
         if (WCGenetics.OrangeBase.isOrange(this.entityData.get(ORANGE_BASE_CHIMERA), this.entityData.get(GENDER))) {
 
+            orangeBasePath += "orange";
+
             if (WCGenetics.TabbyStripeTypes.isMackerel(this.entityData.get(TABBY_STRIPES_CHIMERA))) {
-                orangeBasePath += "orange_" + "mackerel_" + this.entityData.get(TABBY_STRIPES_VARIANT_CHIMERA);// ORANGE_BASE -> 0-4
+                stripesForOrangePath += "mackerel_orange_" + this.entityData.get(TABBY_STRIPES_VARIANT_CHIMERA);// ORANGE_BASE -> 0-4
             } else {
-                orangeBasePath += "orange_" + "classic_" + this.entityData.get(TABBY_STRIPES_VARIANT_CHIMERA);// ORANGE_BASE -> 0-4
+                stripesForOrangePath += "classic_orange_" + this.entityData.get(TABBY_STRIPES_VARIANT_CHIMERA);// ORANGE_BASE -> 0-4
             }
 
         } else if (WCGenetics.OrangeBase.isTortoiseshell(this.entityData.get(ORANGE_BASE_CHIMERA))) {
 
+            orangeBasePath += "tortie_" + this.entityData.get(ORANGE_BASE_VARIANT_CHIMERA);// ORANGE_BASE -> 0-4
+
             if (WCGenetics.TabbyStripeTypes.isMackerel(this.entityData.get(TABBY_STRIPES_CHIMERA))) {
-                orangeBasePath += "tortie_" + this.entityData.get(ORANGE_BASE_VARIANT_CHIMERA) + "_mackerel_" + this.entityData.get(TABBY_STRIPES_VARIANT_CHIMERA);// ORANGE_BASE -> 0-4
+                stripesForOrangePath += "mackerel_orange_" + this.entityData.get(TABBY_STRIPES_VARIANT_CHIMERA);// ORANGE_BASE -> 0-4
             } else {
-                orangeBasePath += "tortie_" + this.entityData.get(ORANGE_BASE_VARIANT_CHIMERA) + "_classic_" + this.entityData.get(TABBY_STRIPES_VARIANT_CHIMERA);// ORANGE_BASE -> 0-4
+                stripesForOrangePath += "classic_orange_" + this.entityData.get(TABBY_STRIPES_VARIANT_CHIMERA);// ORANGE_BASE -> 0-4
             }
 
         } else {
             orangeBasePath = folderPath + "empty";
+            stripesForOrangePath = folderPath + "empty";
         }
 
 
@@ -5822,23 +5949,26 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
             }
 
             if (WCGenetics.OrangeBase.isOrange(this.entityData.get(ORANGE_BASE_CHIMERA), this.entityData.get(GENDER))) {
+                orangeBasePath = folderPath + "orange_base/orange_to_cream";
 
                 if (WCGenetics.TabbyStripeTypes.isMackerel(this.entityData.get(TABBY_STRIPES_CHIMERA))) {
-                    orangeBasePath = folderPath + "orange_base/orange_to_cream_" + "mackerel_" + this.entityData.get(TABBY_STRIPES_VARIANT_CHIMERA);// ORANGE_BASE -> 0-4
+                    stripesForOrangePath = folderPath + "agouti_marks/orange/mackerel_otc_" + this.entityData.get(TABBY_STRIPES_VARIANT_CHIMERA);
                 } else {
-                    orangeBasePath = folderPath + "orange_base/orange_to_cream_" + "classic_" + this.entityData.get(TABBY_STRIPES_VARIANT_CHIMERA);// ORANGE_BASE -> 0-4
+                    stripesForOrangePath = folderPath + "agouti_marks/orange/classic_otc_" + this.entityData.get(TABBY_STRIPES_VARIANT_CHIMERA);
                 }
 
             } else if (WCGenetics.OrangeBase.isTortoiseshell(this.entityData.get(ORANGE_BASE_CHIMERA))) {
+                orangeBasePath = folderPath + "orange_base/tortie_to_cream_" + this.entityData.get(ORANGE_BASE_VARIANT_CHIMERA);
 
                 if (WCGenetics.TabbyStripeTypes.isMackerel(this.entityData.get(TABBY_STRIPES_CHIMERA))) {
-                    orangeBasePath = folderPath + "orange_base/tortie_to_cream_" + this.entityData.get(ORANGE_BASE_VARIANT_CHIMERA) + "_mackerel_" + this.entityData.get(TABBY_STRIPES_VARIANT_CHIMERA);// ORANGE_BASE -> 0-4
+                    stripesForOrangePath = folderPath + "agouti_marks/orange/mackerel_otc_" + this.entityData.get(TABBY_STRIPES_VARIANT_CHIMERA);
                 } else {
-                    orangeBasePath = folderPath + "orange_base/tortie_to_cream_" + this.entityData.get(ORANGE_BASE_VARIANT_CHIMERA) + "_classic_" + this.entityData.get(TABBY_STRIPES_VARIANT_CHIMERA);// ORANGE_BASE -> 0-4
+                    stripesForOrangePath = folderPath + "agouti_marks/orange/classic_otc_" + this.entityData.get(TABBY_STRIPES_VARIANT_CHIMERA);
                 }
 
             } else {
                 orangeBasePath = folderPath + "empty";
+                stripesForOrangePath = folderPath + "empty";
             }
 
         }
@@ -5908,7 +6038,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
 
         String noisePath = folderPath + "details/noise_" + this.entityData.get(NOISE_CHIMERA);
-        if (WCGenetics.Base.isBlack(this.entityData.get(BASE)) && WCGenetics.Dilute.isDilute(this.entityData.get(DILUTE_CHIMERA))){
+        if (WCGenetics.Base.isBlack(this.entityData.get(BASE_CHIMERA)) && WCGenetics.Dilute.isDilute(this.entityData.get(DILUTE_CHIMERA))){
             noisePath = folderPath + "details/noise_black_" + this.entityData.get(NOISE_CHIMERA);
         }
 
@@ -5983,13 +6113,14 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         chimeraArray[0] = basePath + ".png";
         chimeraArray[1] = agoutiMarks + ".png";
         chimeraArray[2] = orangeBasePath + ".png";
-        chimeraArray[3] = rufousing + ".png";
-        chimeraArray[4] = bluerufousing + ".png";
-        chimeraArray[5] = silver + ".png";
-        chimeraArray[6] = silver2 + ".png";
-        chimeraArray[7] = whiteMarks + ".png";
-        chimeraArray[8] = albinoPath + ".png";
-        chimeraArray[9] = noisePath + ".png";
+        chimeraArray[3] = stripesForOrangePath + ".png";
+        chimeraArray[4] = rufousing + ".png";
+        chimeraArray[5] = bluerufousing + ".png";
+        chimeraArray[6] = silver + ".png";
+        chimeraArray[7] = silver2 + ".png";
+        chimeraArray[8] = whiteMarks + ".png";
+        chimeraArray[9] = albinoPath + ".png";
+        chimeraArray[10] = noisePath + ".png";
 
 
         return chimeraArray;
@@ -6112,7 +6243,8 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
     public void setGeneticalVariants(String eyesVariantLeft, String eyesVariantRight, int rufVar, int blueRufVar,
                                      int orangeVar, int whiteVar, int tabbyVar,
-                                     int albinoVar, int leftEyeVar, int rightEyeVar, int noise, float size, int silverVar) {
+                                     int albinoVar, int leftEyeVar, int rightEyeVar, int noise,
+                                     float size, int silverVar, int scars) {
 
         this.entityData.set(EYE_COLOR_LEFT, eyesVariantLeft);
         this.entityData.set(EYE_COLOR_RIGHT, eyesVariantRight);
@@ -6127,6 +6259,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         this.entityData.set(NOISE, Math.min(noise, WCGenetics.Values.MAX_NOISE_VARIANTS-1));
         this.entityData.set(SILVER_VARIANT, Math.min(silverVar, WCGenetics.Values.MAX_SILVER_VARIANTS-1));
         this.entityData.set(SIZE, size);
+        this.entityData.set(SCARS, Math.min(scars, WCGenetics.Values.MAX_SCAR_VARIANTS-1));
 
     }
 
@@ -6145,6 +6278,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         this.entityData.set(NOISE, Math.min(variants.noise, WCGenetics.Values.MAX_NOISE_VARIANTS-1));
         this.entityData.set(SILVER_VARIANT, Math.min(variants.silverVar, WCGenetics.Values.MAX_SILVER_VARIANTS-1));
         this.entityData.set(SIZE, variants.size);
+        this.entityData.set(SCARS, Math.min(variants.scars, WCGenetics.Values.MAX_SCAR_VARIANTS-1));
 
     }
 
@@ -6436,11 +6570,6 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         super.tick();
 
 
-        /**
-         * If the cat is not apprentice, and the age is bigger than half of the total time until fully grown, and this cat is tamed and it was born as a kit:
-         * Then set apprenticeAge to true. This enables the dynamic visual size.
-         * then change its name and apply the new attributes.
-         */
         if (!this.level().isClientSide()) {
 
             this.patrolTick();
@@ -6479,8 +6608,8 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
             if (this.mode == CatMode.SIT && this.lookAtLeaderFlag && this.entityData.get(SITTING_INDEX) != 3) {
                 LivingEntity owner = this.getOwner();
                 if (owner != null) {
-                    if (this.distanceToSqr(owner) <= 100) {
-                        this.getLookControl().setLookAt(this.getOwner(), (float) (this.getMaxHeadYRot() + 20), (float) this.getMaxHeadXRot());
+                    if (this.distanceToSqr(owner) <= 100 && !owner.isSpectator()) {
+                        this.getLookControl().setLookAt(owner, (float) (this.getMaxHeadYRot() + 20), (float) this.getMaxHeadXRot());
                         this.isLookingAtLeader = true;
                     } else {
                         this.isLookingAtLeader = false;
@@ -6496,7 +6625,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
             }
 
             if (this.level().isThundering()) {
-                if (this.random.nextFloat() <= 0.000013) {
+                if (this.random.nextFloat() <= 0.000009) {
                     if (this.level().canSeeSky(this.blockPosition())) {
                         this.setHealth(this.getMaxHealth() / 10);
                         LightningBolt lightning = EntityType.LIGHTNING_BOLT.create(this.level());
@@ -6530,8 +6659,8 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                 if (fatherUUID != null && !fatherUUID.equals(emptyUUID)) {
                     Entity father = serverLevel.getEntity(fatherUUID);
                     if (father instanceof Player player) {
-                        String morphName = player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
-                                .map(PlayerClanData::getMorphName)
+                        String morphName = player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+                                .map(WCEPlayerData::getMorphName)
                                 .orElse(player.getName().getString());
 
                         if (!morphName.equals(this.getFather().getString())) {
@@ -6544,8 +6673,8 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                 if (motherUUID != null && !motherUUID.equals(emptyUUID)) {
                     Entity mother = serverLevel.getEntity(motherUUID);
                     if (mother instanceof Player player) {
-                        String morphName = player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
-                                .map(PlayerClanData::getMorphName)
+                        String morphName = player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+                                .map(WCEPlayerData::getMorphName)
                                 .orElse(player.getName().getString());
 
                         if (!morphName.equals(this.getMother().getString())) {
@@ -6619,33 +6748,25 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                 this.setCustomNameVisible(true);
                 this.setAppScale(true);
 
+                Component message = Component.empty()
+                        .append(prefix)
+                        .append(Component.literal("kit has become an apprentice. "))
+                        .append(prefix)
+                        .append(Component.literal("kit will now be known as "))
+                        .append(Component.literal(newName).withStyle(ChatFormatting.GOLD))
+                        .append(Component.literal("!")
+                        );
+
                 Entity owner = this.getOwner();
                 if (owner instanceof Player) {
-
-                    Component message = Component.empty()
-                            .append(prefix)
-                            .append(Component.literal("kit has become an apprentice. "))
-                            .append(prefix)
-                            .append(Component.literal("kit will now be known as "))
-                            .append(Component.literal(newName).withStyle(ChatFormatting.GOLD))
-                            .append(Component.literal("!")
-                            );
-
-                    if (this.level() instanceof ServerLevel sLevel) {
-                        ClanData data = ClanData.get(sLevel);
-                        ClanData.Clan clan = data.getClan(this.getClanUUID());
-
-                        if (clan != null) {
-                            data.addClanCat(clan, this);
-                        }
-                    }
-
                     owner.sendSystemMessage(message);
-
-                    this.registerClanLog(message);
-
                 }
 
+                this.updateClanCatData();
+                this.registerClanLog(message);
+
+
+                this.updateNest();
 
                 this.setRank(APPRENTICE);
                 this.level().broadcastEntityEvent(this, (byte) 6);
@@ -6864,8 +6985,8 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
             if (enemy == this.getOwner()) return;
 
             if (enemy instanceof ServerPlayer player) {
-                UUID clanUUID = player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
-                        .map(PlayerClanData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID);
+                UUID clanUUID = player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+                        .map(WCEPlayerData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID);
                 if (!clanUUID.equals(ClanData.EMPTY_UUID)) {
                     if (clanUUID.equals(this.getClanUUID())) return;
                 }
@@ -6987,6 +7108,26 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
             if (clan != null) {
                 data.addClanCat(clan, this);
+            }
+        }
+    }
+
+    public void updateNest() {
+        if (this.hasHomePosition()) {
+            BlockState state = this.level().getBlockState(this.getHomePosition());
+            if (state.getBlock() instanceof MossBedBlock) {
+                BlockEntity blockEntity = this.level().getBlockEntity(this.getHomePosition());
+
+                if (blockEntity instanceof MossBedBlockEntity mossBed) {
+                    if (mossBed.isOwnedBy(this.getUUID())) {
+                        if (this.hasCustomName()) {
+                            if (!mossBed.getCatName().equals(this.getCustomName().getString())) {
+                                mossBed.setCatName(this.getCustomName().getString());
+                                this.level().sendBlockUpdated(this.getHomePosition(), state, state, 3);
+                            }
+                        }
+                    }
+                }
             }
         }
     }
@@ -7619,6 +7760,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                             for (int z = -radius; z <= radius; z++) {
 
                                 BlockPos pos = origin.offset(x, 0, z);
+                                if (!cat.level().isLoaded(pos)) continue;
                                 BlockState state = cat.level().getBlockState(pos);
 
                                 if (state.getBlock() instanceof LavenderPetalsBlock) {
@@ -7654,6 +7796,8 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                     double y = wcat.getY();
 
                     BlockPos groundPos = BlockPos.containing(x, y - 1, z);
+
+                    if (!cat.level().isLoaded(groundPos)) continue;
 
                     if (cat.level().getBlockState(groundPos).isSolid()) {
                         return new Vec3(x, y, z);
@@ -8838,6 +8982,8 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
             @Override
             public boolean canUse() {
+                if (!cat.isTame()) return false;
+
                 if (cat.returnHomeFlag) return false;
 
                 if (checkCooldown > 0) {
@@ -8947,6 +9093,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                     for (int y = -2; y <= 2; y++) {
                         for (int z = -radius; z <= radius; z++) {
                             BlockPos pos = origin.offset(x, y, z);
+                            if (!level.isLoaded(pos)) continue;
                             if (level.getBlockState(pos).getBlock() == ModBlocks.FRESHKILL_PILE.get()) {
                                 BlockEntity blockEntity = level.getBlockEntity(pos);
                                 if (blockEntity instanceof FreshkillPileBlockEntity freshkillPileBlockEntity) {
@@ -9361,6 +9508,142 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
             }
         }
 
+        public static class WCatAttackMossBall extends Goal {
+
+            private final WCatEntity cat;
+            private final double range;
+            private float increment = 0;
+            private int cooldown = 0;
+
+
+            private MossBallEntity mossBall;
+
+            public WCatAttackMossBall(WCatEntity cat) {
+                this.cat = cat;
+                this.range = 15;
+                this.setFlags(EnumSet.of(Flag.MOVE));
+            }
+
+            @Override
+            public boolean canUse() {
+                if (cooldown > 0) {
+                    cooldown--;
+                    return false;
+                }
+
+                if (cat.getRank() != KIT) {
+                    return false;
+                }
+
+                if (cat.mode != CatMode.WANDER) {
+                    return false;
+                }
+
+                if (cat.isResting() || cat.isChilling()) {
+                    return false;
+                }
+
+                if (!(cat.getMood() == Mood.HAPPY || cat.getMood() == Mood.CALM)) {
+                    return false;
+                }
+
+                if (cat.isPassenger()) return false;
+
+                cooldown = 20;
+                this.mossBall = findValidMossBall();
+
+                return this.mossBall != null;
+            }
+
+            @Override
+            public boolean canContinueToUse() {
+                if (cat.getRank() != KIT) return false;
+
+                if (cat.mode != CatMode.WANDER) return false;
+
+                if (cat.isResting() || cat.isChilling()) return false;
+
+                if (!(cat.getMood() == Mood.HAPPY || cat.getMood() == Mood.CALM)) {
+                    return false;
+                }
+
+                if (cat.isPassenger()) return false;
+
+                return this.mossBall != null && this.mossBall.isAlive() && cat.distanceTo(this.mossBall) < 20;
+            }
+
+            @Override
+            public void tick() {
+                if (mossBall == null) return;
+
+                if (cat.distanceTo(mossBall) < 0.55 + increment) {
+
+                    mossBall.kickBall(cat);
+
+                    increment = 0;
+                    cat.setAttacking(true);
+
+                } else {
+                    if (cat.tickCount % 2 == 0 && cat.distanceTo(this.mossBall) < 2){
+                        Vec3 dir = this.mossBall.position()
+                                .subtract(cat.position())
+                                .normalize()
+                                .scale(0.1);
+                        cat.setDeltaMovement(cat.getDeltaMovement().add(dir));
+                        cat.getLookControl().setLookAt(this.mossBall);
+                    }
+
+                    if (cat.isAttacking() && cat.tickCount % 20 == 0) cat.setAttacking(false);
+
+                    cat.getNavigation().moveTo(this.mossBall, 1.2f);
+                    increment += 0.03f;
+
+                }
+
+
+
+                super.tick();
+            }
+
+            @Override
+            public void stop() {
+                cat.setAttacking(false);
+                this.mossBall = null;
+            }
+
+            @Override
+            public void start() {
+                increment = 0;
+                super.start();
+            }
+
+            private MossBallEntity findValidMossBall() {
+                List<MossBallEntity> balls = cat.level().getEntitiesOfClass(
+                        MossBallEntity.class,
+                        cat.getBoundingBox().inflate(range),
+                        ball -> ball.isAlive()
+                                && ball.getLife() >= 10
+                                && ball.getWater() == 0
+                );
+
+                MossBallEntity best = null;
+                double bestDist = Double.MAX_VALUE;
+
+                for (MossBallEntity ball : balls) {
+
+                    double dist = cat.distanceToSqr(ball);
+
+                    if (cat.getNavigation().createPath(ball, 0) == null) continue;
+
+                    if (dist < bestDist) {
+                        bestDist = dist;
+                        best = ball;
+                    }
+                }
+
+                return best;
+            }
+        }
     }
 
     private void patrolTick() {

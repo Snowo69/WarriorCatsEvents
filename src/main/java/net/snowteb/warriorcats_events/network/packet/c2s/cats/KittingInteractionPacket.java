@@ -13,8 +13,8 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.network.NetworkEvent;
-import net.snowteb.warriorcats_events.clan.PlayerClanData;
-import net.snowteb.warriorcats_events.clan.PlayerClanDataProvider;
+import net.snowteb.warriorcats_events.clan.WCEPlayerData;
+import net.snowteb.warriorcats_events.clan.WCEPlayerDataProvider;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.item.ModItems;
 import net.snowteb.warriorcats_events.zconfig.WCEServerConfig;
@@ -49,11 +49,11 @@ public class KittingInteractionPacket {
             ServerLevel level = player.serverLevel();
             Entity entity = level.getEntity(msg.entityId);
 
-            int sPlayerGender = player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
-                    .map(PlayerClanData::getGenderData).orElse(-1);
+            int sPlayerGender = player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+                    .map(WCEPlayerData::getGenderData).orElse(-1);
 
-            String morphName = player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
-                    .map(PlayerClanData::getMorphName).orElse("your character");
+            String morphName = player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+                    .map(WCEPlayerData::getMorphName).orElse("your character");
 
             if (!(entity instanceof WCatEntity cat)) return;
 

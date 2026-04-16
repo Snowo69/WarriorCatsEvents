@@ -9,10 +9,9 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.network.NetworkEvent;
-import net.snowteb.warriorcats_events.clan.PlayerClanData;
-import net.snowteb.warriorcats_events.clan.PlayerClanDataProvider;
+import net.snowteb.warriorcats_events.clan.WCEPlayerData;
+import net.snowteb.warriorcats_events.clan.WCEPlayerDataProvider;
 import net.snowteb.warriorcats_events.entity.custom.EagleEntity;
 import net.snowteb.warriorcats_events.sound.ModSounds;
 
@@ -64,8 +63,8 @@ public class CallEaglesPacket {
             }
 
             float pitch = 0.9f;
-            PlayerClanData.Age morphAge = player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
-                    .map(PlayerClanData::getMorphAge).orElse(PlayerClanData.Age.ADULT);
+            WCEPlayerData.Age morphAge = player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+                    .map(WCEPlayerData::getMorphAge).orElse(WCEPlayerData.Age.ADULT);
             switch (morphAge) {
                 case KIT -> pitch = 1.3f;
                 case APPRENTICE -> pitch = 1.1f;

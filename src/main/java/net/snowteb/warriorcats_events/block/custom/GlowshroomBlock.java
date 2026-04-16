@@ -53,15 +53,18 @@ public class GlowshroomBlock extends BushBlock implements BonemealableBlock {
         return state.is(Blocks.GRASS_BLOCK)
                 || state.is(BlockTags.DIRT)
                 || state.is(Blocks.STONE)
-                || state.is(Blocks.MYCELIUM);
+                || state.is(Blocks.MYCELIUM)
+                || state.is(BlockTags.BASE_STONE_OVERWORLD)
+                || state.is(BlockTags.DEAD_BUSH_MAY_PLACE_ON)
+                || state.is(BlockTags.LOGS)
+                || state.is(BlockTags.MINEABLE_WITH_SHOVEL);
     }
 
     @Override
     public boolean isValidBonemealTarget(LevelReader pLevel, BlockPos pPos, BlockState pState, boolean pIsClient) {
-        boolean isDirt = pLevel.getBlockState(pPos.below()).is(BlockTags.DIRT);
-        boolean isGrass = pLevel.getBlockState(pPos.below()).is(Blocks.GRASS_BLOCK);
+        BlockState state = pLevel.getBlockState(pPos.below());
 
-        return isDirt || isGrass;
+        return mayPlaceOn(state, pLevel, pPos);
     }
 
     @Override

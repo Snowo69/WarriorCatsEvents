@@ -30,7 +30,8 @@ public class ModBlockTagGenerator extends BlockTagsProvider {
         this.tag(BlockTags.SMALL_FLOWERS).add(ModBlocks.LAVENDER_PETALS.get());
 
 
-        this.tag(BlockTags.BEDS).add(ModBlocks.MOSS_BED.get(), ModBlocks.HAY_BED.get(), ModBlocks.KELP_BED.get());
+        this.tag(BlockTags.BEDS).add(ModBlocks.MOSS_BED.get(), ModBlocks.HAY_BED.get(),
+                ModBlocks.KELP_BED.get(), ModBlocks.STONE_BED.get(), ModBlocks.LAVENDER_BED.get());
 
         this.tag(CompatibilityTags.SERENE_SEASONS_SPRING_CROPS_BLOCK).add(ModBlocks.DOCK.get(), ModBlocks.SORRELPLANT.get(), ModBlocks.BURNETPLANT.get(), ModBlocks.DAISYPLANT.get());
         this.tag(CompatibilityTags.SERENE_SEASONS_SUMMER_CROPS_BLOCK).add(ModBlocks.CHAMOMILEPLANT.get(), ModBlocks.CATMINTPLANT.get(), ModBlocks.YARROWPLANT.get());

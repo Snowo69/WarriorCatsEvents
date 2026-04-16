@@ -5,6 +5,7 @@
     "#warriorcats_events:prey",
     "#minecraft:small_flowers",
     "#minecraft:tall_flowers",
-    "#minecraft:flowers"
+    "#minecraft:flowers",
+    "minecraft:moss_block"
   ]
 }

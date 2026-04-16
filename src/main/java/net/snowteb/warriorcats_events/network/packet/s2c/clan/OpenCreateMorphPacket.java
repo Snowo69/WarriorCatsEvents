@@ -7,23 +7,24 @@ import net.snowteb.warriorcats_events.client.ClientPacketHandles;
 import java.util.function.Supplier;
 
 public class OpenCreateMorphPacket {
-
-    public OpenCreateMorphPacket() {
+    private final boolean isSummoning;
+    public OpenCreateMorphPacket(boolean isSummoning) {
+        this.isSummoning = isSummoning;
     }
 
     public OpenCreateMorphPacket(FriendlyByteBuf buf) {
+        this.isSummoning = buf.readBoolean();
     }
 
     public void toBytes(FriendlyByteBuf buf) {
+        buf.writeBoolean(isSummoning);
     }
 
-    public void handle(Supplier<NetworkEvent.Context> supplier) {
-        NetworkEvent.Context ctx = supplier.get();
-
-        ctx.enqueueWork(() -> {
-            ClientPacketHandles.openCreateMorphScreen();
+    public static void handle(OpenCreateMorphPacket msg, Supplier<NetworkEvent.Context> ctx) {
+        ctx.get().enqueueWork(() -> {
+            ClientPacketHandles.openCreateMorphScreen(msg.isSummoning);
         });
 
-        ctx.setPacketHandled(true);
+        ctx.get().setPacketHandled(true);
     }
 }

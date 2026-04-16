@@ -1,6 +1,5 @@
 package net.snowteb.warriorcats_events.block.custom;
 
-import com.mojang.math.Axis;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -38,7 +37,7 @@ import net.snowteb.warriorcats_events.item.ModItems;
 import net.snowteb.warriorcats_events.particles.WCEParticles;
 import net.snowteb.warriorcats_events.recipes.HerbsRecipe;
 import net.snowteb.warriorcats_events.recipes.WCERecipes;
-import net.snowteb.warriorcats_events.screen.StoneCraftingTableMenu;
+import net.snowteb.warriorcats_events.screen.menus.StoneCraftingTableMenu;
 import net.snowteb.warriorcats_events.util.ModTags;
 import org.jetbrains.annotations.Nullable;
 import tocraft.walkers.api.PlayerShape;

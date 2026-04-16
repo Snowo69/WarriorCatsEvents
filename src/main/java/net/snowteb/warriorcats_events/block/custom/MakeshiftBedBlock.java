@@ -7,11 +7,9 @@ import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
-import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
@@ -31,9 +29,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BedPart;
-import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
-import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -41,15 +37,6 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.snowteb.warriorcats_events.block.ModBlocks;
 import net.snowteb.warriorcats_events.block.entity.MakeshiftBedBlockEntity;
-import net.snowteb.warriorcats_events.block.entity.MossBedBlockEntity;
-import net.snowteb.warriorcats_events.clan.ClanData;
-import net.snowteb.warriorcats_events.clan.PlayerClanData;
-import net.snowteb.warriorcats_events.clan.PlayerClanDataProvider;
-import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
-import net.snowteb.warriorcats_events.item.ModItems;
-import net.snowteb.warriorcats_events.particles.WCEParticles;
-import net.snowteb.warriorcats_events.sound.ModSounds;
-import tocraft.walkers.api.PlayerShape;
 
 import javax.annotation.Nullable;
 
@@ -109,6 +96,10 @@ public class MakeshiftBedBlock extends BedBlock {
         if (value == 3) {
             BlockState headState = state.setValue(PART, BedPart.HEAD);
             return super.use(headState, level, pos, player, hand, hit);
+        } else {
+            player.displayClientMessage(
+                    Component.literal("This doesn't seem comfy enough...").withStyle(ChatFormatting.GRAY).withStyle(ChatFormatting.ITALIC),
+                    true);
         }
         return InteractionResult.PASS;
     }

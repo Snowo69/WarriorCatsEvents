@@ -7,7 +7,7 @@ import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.snowteb.warriorcats_events.clan.ClanData;
-import net.snowteb.warriorcats_events.clan.PlayerClanDataProvider;
+import net.snowteb.warriorcats_events.clan.WCEPlayerDataProvider;
 import net.snowteb.warriorcats_events.network.ModPackets;
 import net.snowteb.warriorcats_events.network.packet.s2c.clan.S2CSyncClanDataPacket;
 
@@ -30,7 +30,7 @@ public class ResetClanDataCommand {
 
         ClanData data = ClanData.get(player.serverLevel().getServer().overworld());
 
-        player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {
+        player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {
             cap.reset();
             ModPackets.sendToPlayer(new S2CSyncClanDataPacket(cap), player);
             data.playerMorphNames.put(player.getUUID(), cap.getMorphName());

@@ -90,7 +90,7 @@ public class ParticleFootprint extends TextureSheetParticle {
     public void render(VertexConsumer pBuffer, Camera pRenderInfo, float pPartialTicks) {
 
         if (Minecraft.getInstance().player != null) {
-            if (!Minecraft.getInstance().player.hasEffect(ModEffects.SHARP_SCENT.get())) {
+            if (!Minecraft.getInstance().player.hasEffect(ModEffects.SHARP_EYE.get())) {
                 return;
             }
         }

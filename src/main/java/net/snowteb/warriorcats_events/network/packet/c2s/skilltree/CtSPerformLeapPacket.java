@@ -11,8 +11,8 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.network.NetworkEvent;
-import net.snowteb.warriorcats_events.clan.PlayerClanData;
-import net.snowteb.warriorcats_events.clan.PlayerClanDataProvider;
+import net.snowteb.warriorcats_events.clan.WCEPlayerData;
+import net.snowteb.warriorcats_events.clan.WCEPlayerDataProvider;
 import net.snowteb.warriorcats_events.skills.ISkillData;
 import net.snowteb.warriorcats_events.skills.PlayerSkillProvider;
 import net.snowteb.warriorcats_events.sound.ModSounds;
@@ -51,8 +51,8 @@ public class CtSPerformLeapPacket {
 
             int jumpSkillLeapPower = player.getCapability(PlayerSkillProvider.SKILL_DATA)
                     .map(ISkillData::getJumpLevel).orElse(0);
-            PlayerClanData.Age morphAge = player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
-                    .map(PlayerClanData::getMorphAge).orElse(PlayerClanData.Age.ADULT);
+            WCEPlayerData.Age morphAge = player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+                    .map(WCEPlayerData::getMorphAge).orElse(WCEPlayerData.Age.ADULT);
 
             float finalMultiplier = switch (morphAge) {
                 case KIT -> 0.33f;

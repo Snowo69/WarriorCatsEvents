@@ -36,13 +36,15 @@ public class CtSToggleStealthPacket {
             ServerPlayer player = ctx.get().getSender();
             if (player == null) return;
 
-            if (!WCEServerConfig.SERVER.SKILL_TREE_SERVER.get()) {
-                player.sendSystemMessage(Component.literal("Skill tree is disabled for this world.").withStyle(ChatFormatting.RED));
-            }
+
 
             player.getCapability(PlayerStealthProvider.STEALTH_MODE).ifPresent(cap -> {
 
                 if (!cap.isUnlocked() || !cap.isOn()) {
+                    return;
+                }
+                if (!WCEServerConfig.SERVER.SKILL_TREE_SERVER.get()) {
+                    player.sendSystemMessage(Component.literal("Skill tree is disabled for this world.").withStyle(ChatFormatting.RED));
                     return;
                 }
                 cap.setStealthOn(state);

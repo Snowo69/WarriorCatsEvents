@@ -6,7 +6,7 @@
       "item": "minecraft:wheat"
     },
     "C": {
-      "item": "minecraft:feather"
+      "tag": "warriorcats_events:feathers"
     },
     "D": {
       "item": "minecraft:hay_block"

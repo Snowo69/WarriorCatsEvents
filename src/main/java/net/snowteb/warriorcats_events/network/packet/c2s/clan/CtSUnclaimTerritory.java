@@ -1,28 +1,16 @@
 package net.snowteb.warriorcats_events.network.packet.c2s.clan;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.Direction;
-import net.minecraft.core.Holder;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.tags.BiomeTags;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.biome.Biomes;
-import net.minecraft.world.level.block.HorizontalDirectionalBlock;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.network.NetworkEvent;
-import net.snowteb.warriorcats_events.block.ModBlocks;
-import net.snowteb.warriorcats_events.block.custom.TreeStumpBlock;
-import net.snowteb.warriorcats_events.block.entity.TreeStumpBlockEntity;
 import net.snowteb.warriorcats_events.clan.ClanData;
-import net.snowteb.warriorcats_events.clan.PlayerClanData;
-import net.snowteb.warriorcats_events.clan.PlayerClanDataProvider;
-import net.snowteb.warriorcats_events.zconfig.WCEServerConfig;
+import net.snowteb.warriorcats_events.clan.WCEPlayerData;
+import net.snowteb.warriorcats_events.clan.WCEPlayerDataProvider;
 
 import java.util.UUID;
 import java.util.function.Supplier;
@@ -53,11 +41,11 @@ public class CtSUnclaimTerritory {
 
             ServerLevel overworldLevel = player.getServer().overworld();
 
-            UUID uuid = player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
-                    .map(PlayerClanData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID);
+            UUID uuid = player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+                    .map(WCEPlayerData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID);
 
-            String morphName = player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
-                    .map(PlayerClanData::getMorphName).orElse(player.getGameProfile().getName());
+            String morphName = player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+                    .map(WCEPlayerData::getMorphName).orElse(player.getGameProfile().getName());
 
             if (player.level().dimension() != Level.OVERWORLD) {
                 player.sendSystemMessage(Component.literal("Territory not available in other dimensions.").withStyle(ChatFormatting.RED));

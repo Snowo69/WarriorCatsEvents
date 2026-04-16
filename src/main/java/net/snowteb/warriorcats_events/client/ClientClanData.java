@@ -1,15 +1,15 @@
 package net.snowteb.warriorcats_events.client;
 
-import net.snowteb.warriorcats_events.clan.PlayerClanData;
+import net.snowteb.warriorcats_events.clan.WCEPlayerData;
 
 public class ClientClanData {
-    private static PlayerClanData data;
+    private static WCEPlayerData data;
 
-    public static void set(PlayerClanData newData) {
+    public static void set(WCEPlayerData newData) {
         data = newData;
     }
 
-    public static PlayerClanData get() {
+    public static WCEPlayerData get() {
         return data;
     }
 }

@@ -34,8 +34,8 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.snowteb.warriorcats_events.block.entity.TreeStumpBlockEntity;
 import net.snowteb.warriorcats_events.clan.ClanData;
-import net.snowteb.warriorcats_events.clan.PlayerClanData;
-import net.snowteb.warriorcats_events.clan.PlayerClanDataProvider;
+import net.snowteb.warriorcats_events.clan.WCEPlayerData;
+import net.snowteb.warriorcats_events.clan.WCEPlayerDataProvider;
 import net.snowteb.warriorcats_events.particles.WCEParticles;
 import net.snowteb.warriorcats_events.zconfig.WCEServerConfig;
 import org.jetbrains.annotations.Nullable;
@@ -164,8 +164,8 @@ public class TreeStumpBlock extends BaseEntityBlock implements SimpleWaterlogged
                             List<Player> list = pLevel.getEntitiesOfClass(Player.class, box, player -> {
                                 if (!player.isShiftKeyDown()) return false;
 
-                                UUID playerClanUUID = player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
-                                        .map(PlayerClanData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID);
+                                UUID playerClanUUID = player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+                                        .map(WCEPlayerData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID);
                                 if (playerClanUUID.equals(treeStumpBlockEntity.getOwnerClanUUID())) {
                                     if (data.canCommandWarriors(clan, player.getUUID())) {
                                         return true;
@@ -197,8 +197,8 @@ public class TreeStumpBlock extends BaseEntityBlock implements SimpleWaterlogged
 
                                         if (pPos.getCenter().distanceTo(player.position()) < distance) {
                                             closestPlayer = player.getName().getString();
-                                            closestMorphName = player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
-                                                    .map(PlayerClanData::getMorphName).orElse(closestPlayer);
+                                            closestMorphName = player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+                                                    .map(WCEPlayerData::getMorphName).orElse(closestPlayer);
                                             distance = pPos.getCenter().distanceTo(player.position());
                                         }
                                     }

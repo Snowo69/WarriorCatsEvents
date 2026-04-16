@@ -1,7 +1,6 @@
 package net.snowteb.warriorcats_events.event;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -38,12 +37,13 @@ import net.minecraftforge.server.ServerLifecycleHooks;
 import net.minecraftforge.server.command.ConfigCommand;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.clan.ClanData;
-import net.snowteb.warriorcats_events.clan.PlayerClanData;
-import net.snowteb.warriorcats_events.clan.PlayerClanDataProvider;
+import net.snowteb.warriorcats_events.clan.WCEPlayerData;
+import net.snowteb.warriorcats_events.clan.WCEPlayerDataProvider;
 import net.snowteb.warriorcats_events.commands.*;
 import net.snowteb.warriorcats_events.entity.custom.EagleEntity;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.item.ModItems;
+import net.snowteb.warriorcats_events.managers.*;
 import net.snowteb.warriorcats_events.network.ModPackets;
 import net.snowteb.warriorcats_events.network.packet.s2c.clan.OpenClanSetupScreenPacket;
 import net.snowteb.warriorcats_events.network.packet.s2c.clan.S2CSyncClanDataPacket;
@@ -56,10 +56,7 @@ import net.snowteb.warriorcats_events.stealth.PlayerStealth;
 import net.snowteb.warriorcats_events.stealth.PlayerStealthProvider;
 import net.snowteb.warriorcats_events.thirst.PlayerThirst;
 import net.snowteb.warriorcats_events.thirst.PlayerThirstProvider;
-import net.snowteb.warriorcats_events.util.CarryPlayerRequestManager;
-import net.snowteb.warriorcats_events.util.ClanInviteManager;
-import net.snowteb.warriorcats_events.util.ModAttributes;
-import net.snowteb.warriorcats_events.util.ServerPlayerMorphsCache;
+import net.snowteb.warriorcats_events.util.*;
 import net.snowteb.warriorcats_events.zconfig.WCEServerConfig;
 import tocraft.walkers.api.PlayerShape;
 
@@ -117,6 +114,8 @@ public class ModEvents2 {
             for (ServerPlayer player : server.getPlayerList().getPlayers()) {
                 ClanInviteManager.tick(player);
                 CarryPlayerRequestManager.tick(player);
+                PlayerMateRequestManager.tick(player);
+                PlayerKittingRequestManager.tick(player);
             }
         }
 
@@ -227,7 +226,7 @@ public class ModEvents2 {
 
     @SubscribeEvent
     public static void onCommandsRegister(RegisterCommandsEvent event) {
-        OpenClanDataScreenCommand.register(event.getDispatcher());
+        InfoSetupCommand.register(event.getDispatcher());
         GetClanDataCommand.register(event.getDispatcher());
         ResetClanDataCommand.register(event.getDispatcher());
         ClanListCommand.register(event.getDispatcher());
@@ -246,6 +245,11 @@ public class ModEvents2 {
         OpDeleteClanCommand.register(event.getDispatcher());
         CarryRequestAcceptCommand.register(event.getDispatcher());
         CarryRequestDenyCommand.register(event.getDispatcher());
+        ToggleChatMorphName.register(event.getDispatcher());
+        MateRequestCommands.register(event.getDispatcher());
+        KitRequestCommands.register(event.getDispatcher());
+        OpenSummonCatCommand.register(event.getDispatcher());
+        SetPoseCommand.register(event.getDispatcher());
 
 
         ConfigCommand.register(event.getDispatcher());
@@ -268,8 +272,8 @@ public class ModEvents2 {
 
             }
 
-            if (!event.getObject().getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA).isPresent()) {
-                PlayerClanDataProvider provider = new PlayerClanDataProvider();
+            if (!event.getObject().getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA).isPresent()) {
+                WCEPlayerDataProvider provider = new WCEPlayerDataProvider();
                 provider.getOrCreateClanData();
                 event.addCapability(new ResourceLocation(WarriorCatsEvents.MODID, "clan_data"), provider);
             }
@@ -316,8 +320,8 @@ public class ModEvents2 {
 
         if (event.isWasDeath()) {
             event.getOriginal().reviveCaps();
-            event.getEntity().getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA).ifPresent(newStore -> {
-                event.getOriginal().getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA).ifPresent(oldStore -> {
+            event.getEntity().getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA).ifPresent(newStore -> {
+                event.getOriginal().getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA).ifPresent(oldStore -> {
                     newStore.copyFrom(oldStore);
 
                     if (event.getEntity() instanceof ServerPlayer player) {
@@ -502,7 +506,7 @@ public class ModEvents2 {
 
 
 
-            event.player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA).ifPresent(PlayerClanData::tick);
+            event.player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA).ifPresent(WCEPlayerData::tick);
 
             event.player.getCapability(PlayerThirstProvider.PLAYER_THIRST).ifPresent(thirst -> {
 
@@ -597,8 +601,8 @@ public class ModEvents2 {
                                     e.distanceToSqr(event.player)))
                             .orElse(null);
 
-                    PlayerClanData.Age morphAge = event.player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
-                            .map(PlayerClanData::getMorphAge).orElse(PlayerClanData.Age.ADULT);
+                    WCEPlayerData.Age morphAge = event.player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+                            .map(WCEPlayerData::getMorphAge).orElse(WCEPlayerData.Age.ADULT);
 
                     float finalMultiplier = switch (morphAge) {
                         case KIT -> 0.33f;
@@ -611,10 +615,10 @@ public class ModEvents2 {
                         boolean isAClanmate = false;
 
                         if (target instanceof Player playerTarget) {
-                            UUID targetClan = playerTarget.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
-                                    .map(PlayerClanData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID);
-                            UUID thisClan = playerTarget.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
-                                    .map(PlayerClanData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID);
+                            UUID targetClan = playerTarget.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+                                    .map(WCEPlayerData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID);
+                            UUID thisClan = playerTarget.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+                                    .map(WCEPlayerData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID);
 
                             if (targetClan.equals(thisClan)) {
                                 isAClanmate = true;
@@ -709,7 +713,7 @@ public class ModEvents2 {
                     cap.sync(player);
                 });
 
-                player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {
+                player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {
 
                     UUID clanUUID = cap.getCurrentClanUUID();
 
@@ -775,13 +779,13 @@ public class ModEvents2 {
         if (player instanceof ServerPlayer sPlayer) {
             ClanData clanData = ClanData.get(sPlayer.serverLevel().getServer().overworld());
 
-            UUID clanUUID = sPlayer.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
-                    .map(PlayerClanData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID);
+            UUID clanUUID = sPlayer.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+                    .map(WCEPlayerData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID);
             ClanData.Clan clan =   clanData.getClan(clanUUID);
 
             if (clan != null) {
                 if (!clan.members.containsKey(sPlayer.getUUID())) {
-                    sPlayer.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {
+                    sPlayer.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {
                         cap.setCurrentClanUUID(ClanData.EMPTY_UUID);
                         cap.setClanName("None");
                         sPlayer.sendSystemMessage(Component.literal("You have been removed from your clan.").withStyle(ChatFormatting.YELLOW));
@@ -789,13 +793,13 @@ public class ModEvents2 {
                 }
 
             } else {
-                sPlayer.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {
+                sPlayer.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {
                     cap.setCurrentClanUUID(ClanData.EMPTY_UUID);
                     cap.setClanName("None");
                 });
             }
 
-            player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {
+            player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {
                 ModPackets.sendToPlayer(new S2CSyncClanDataPacket(cap), sPlayer);
 
                 clanData.playerMorphNames.put(player.getUUID(), cap.getMorphName());
@@ -817,7 +821,7 @@ public class ModEvents2 {
         }
 
         if (player instanceof ServerPlayer sPlayer) {
-            player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {
+            player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {
                     ModPackets.sendToPlayer(new S2CSyncClanDataPacket(cap), sPlayer);
                     ModPackets.sendToPlayer(new OpenClanSetupScreenPacket(), sPlayer);
             });

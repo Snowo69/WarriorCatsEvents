@@ -28,6 +28,9 @@ public class ModBiomeModifiers {
     public static final ResourceKey<BiomeModifier> ADD_LAVENDER = registerKey("add_lavender");
 
 
+    public static final ResourceKey<BiomeModifier> ADD_PEBBLES = registerKey("add_pebbles");
+
+
 
     public static void bootstrap(BootstapContext<BiomeModifier> context) {
         var placedFeatures = context.lookup(Registries.PLACED_FEATURE);
@@ -83,6 +86,11 @@ public class ModBiomeModifiers {
                 HolderSet.direct(placedFeatures.getOrThrow(ModPlacedFeatures.LAVENDER_PLACED_KEY)),
                 GenerationStep.Decoration.VEGETAL_DECORATION));
 
+
+        context.register(ADD_PEBBLES, new ForgeBiomeModifiers.AddFeaturesBiomeModifier(
+                biomes.getOrThrow(BiomeTags.IS_OVERWORLD),
+                HolderSet.direct(placedFeatures.getOrThrow(ModPlacedFeatures.PEBBLES_PLACED_KEY)),
+                GenerationStep.Decoration.VEGETAL_DECORATION));
 
     }
 

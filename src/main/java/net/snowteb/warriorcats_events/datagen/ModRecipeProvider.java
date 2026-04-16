@@ -190,7 +190,7 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .pattern("BDB")
                 .pattern("CBC")
                 .define('B', ItemTags.LEAVES)
-                .define('C', Items.FEATHER)
+                .define('C', ModTags.Items.FEATHERS)
                 .define('D', Items.MOSS_BLOCK)
                 .unlockedBy("has_item", has(Items.MOSS_BLOCK))
                 .save(pWriter);
@@ -200,7 +200,7 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .pattern("BDB")
                 .pattern("CBC")
                 .define('B', Items.WHEAT)
-                .define('C', Items.FEATHER)
+                .define('C', ModTags.Items.FEATHERS)
                 .define('D', Blocks.HAY_BLOCK)
                 .unlockedBy("has_item", has(Items.HAY_BLOCK))
                 .save(pWriter);
@@ -214,6 +214,27 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .define('D', Blocks.GRASS)
                 .unlockedBy("has_item", has(Items.KELP))
                 .save(pWriter);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.STONE_BED.get(), 2)
+                .pattern("   ")
+                .pattern("BDB")
+                .pattern("DBD")
+                .define('B', Items.STONE)
+                .define('D', ModTags.Items.FEATHERS)
+                .unlockedBy("has_item", has(Items.STONE))
+                .save(pWriter);
+
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.LAVENDER_BED.get(), 2)
+                .pattern("   ")
+                .pattern("BCB")
+                .pattern("DBD")
+                .define('B', ModBlocks.LAVENDER.get())
+                .define('D', ModBlocks.LAVENDER_PETALS.get())
+                .define('C', Items.MOSS_BLOCK)
+                .unlockedBy("has_item", has(ModBlocks.LAVENDER.get()))
+                .save(pWriter);
+
 
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.FRESHKILL_PILE.get(), 1)
                 .pattern("BAB")
@@ -616,7 +637,18 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .unlockedBy("has_item", has(Items.SWEET_BERRIES))
                 .save(pWriter);
 
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Items.FEATHER, 2)
+                .requires(ModTags.Items.WCE_FEATHERS)
+                .requires(ModTags.Items.WCE_FEATHERS)
+                .requires(ModTags.Items.WCE_FEATHERS)
+                .unlockedBy("has_item", has(ModTags.Items.FEATHERS))
+                .save(pWriter, new ResourceLocation(WarriorCatsEvents.MODID, "feather_from_wce_feather"));
 
+//
+//        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.MOSS_BALL.get(), 2)
+//                .requires(Items.MOSS_BLOCK)
+//                .unlockedBy("has_item", has(Items.MOSS_BLOCK))
+//                .save(pWriter);
 
     }
 

@@ -8,8 +8,8 @@ import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.snowteb.warriorcats_events.clan.ClanData;
-import net.snowteb.warriorcats_events.clan.PlayerClanData;
-import net.snowteb.warriorcats_events.clan.PlayerClanDataProvider;
+import net.snowteb.warriorcats_events.clan.WCEPlayerData;
+import net.snowteb.warriorcats_events.clan.WCEPlayerDataProvider;
 import net.snowteb.warriorcats_events.network.ModPackets;
 import net.snowteb.warriorcats_events.network.packet.s2c.clan.S2COpenRegisterClanScreenPacket;
 
@@ -32,18 +32,18 @@ public class RegisterClanCommand {
     private static int openScreen(CommandSourceStack source) throws CommandSyntaxException {
         ServerPlayer player = source.getPlayerOrException();
 
-        String clanName = player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
-                .map(PlayerClanData::getClanName).orElse("clan");
-        String morphName = player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
-                .map(PlayerClanData::getMorphName).orElse(player.getName().getString());
-        UUID currentClanId = player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
-                .map(PlayerClanData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID);
+        String clanName = player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+                .map(WCEPlayerData::getClanName).orElse("clan");
+        String morphName = player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+                .map(WCEPlayerData::getMorphName).orElse(player.getName().getString());
+        UUID currentClanId = player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+                .map(WCEPlayerData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID);
 
         if (!currentClanId.equals(ClanData.EMPTY_UUID)) {
             ClanData data = ClanData.get(player.serverLevel().getServer().overworld());
             if (data.getClan(currentClanId) ==  null) {
                 player.sendSystemMessage(Component.literal("You are in a clan that doesn't exist. Resetting your clan info...").withStyle(ChatFormatting.GRAY));
-                player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {
+                player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {
                     cap.setCurrentClanUUID(ClanData.EMPTY_UUID);
                 });
             } else {

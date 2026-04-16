@@ -7,12 +7,12 @@ import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.Style;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.stats.Stats;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.effect.MobEffects;
@@ -27,7 +27,6 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.AbstractSkeleton;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
@@ -35,7 +34,6 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
@@ -46,13 +44,14 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
+import net.snowteb.warriorcats_events.block.ModBlocks;
 import net.snowteb.warriorcats_events.block.custom.MakeshiftBedBlock;
 import net.snowteb.warriorcats_events.block.custom.MossBedBlock;
+import net.snowteb.warriorcats_events.block.custom.PreyBonesBlock;
 import net.snowteb.warriorcats_events.block.custom.StoneCraftingTable;
-import net.snowteb.warriorcats_events.block.entity.StoneCraftingTableBlockEntity;
 import net.snowteb.warriorcats_events.clan.ClanData;
-import net.snowteb.warriorcats_events.clan.PlayerClanData;
-import net.snowteb.warriorcats_events.clan.PlayerClanDataProvider;
+import net.snowteb.warriorcats_events.clan.WCEPlayerData;
+import net.snowteb.warriorcats_events.clan.WCEPlayerDataProvider;
 import net.snowteb.warriorcats_events.client.LeapClientState;
 import net.snowteb.warriorcats_events.effect.ModEffects;
 import net.snowteb.warriorcats_events.entity.custom.EagleEntity;
@@ -65,7 +64,7 @@ import net.snowteb.warriorcats_events.network.packet.s2c.others.ThirstDataSyncSt
 import net.snowteb.warriorcats_events.particles.WCEParticles;
 import net.snowteb.warriorcats_events.skills.PlayerSkillProvider;
 import net.snowteb.warriorcats_events.thirst.PlayerThirstProvider;
-import net.snowteb.warriorcats_events.zconfig.WCEPreyItemsConfig;
+import net.snowteb.warriorcats_events.util.ModTags;
 import net.snowteb.warriorcats_events.zconfig.WCEServerConfig;
 import tocraft.walkers.api.PlayerShape;
 
@@ -74,63 +73,6 @@ import java.util.UUID;
 
 @Mod.EventBusSubscriber(modid = WarriorCatsEvents.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ModEventsForge {
-
-//    @SubscribeEvent
-//    public static void onChat(ServerChatEvent event) {
-//
-//        ServerPlayer player = event.getPlayer();
-//
-//        Component message = (event.getMessage());
-//
-//        Component base = player.getDisplayName();
-//
-//        Component clanText = Component.empty()
-//                .append("[")
-//                .append(Component.literal(player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
-//                                .map(PlayerClanData::getClanName).orElse(""))
-//                        .append("] "));
-//
-//        Component morphName = Component.empty()
-//                .append("<")
-//                .append(Component.literal(player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
-//                        .map(PlayerClanData::getMorphName).orElse("")))
-//                .append("> ");
-//
-//        Component finalName = Component.empty();
-//
-//        if (!clanText.getString().isEmpty()) {
-//            UUID clanUUID = player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
-//                    .map(PlayerClanData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID);
-//            ClanData data = ClanData.get(player.getServer().overworld());
-//            ClanData.Clan clan = data.getClan(clanUUID);
-//            if (clan != null) {
-//                finalName = finalName.copy().append(clanText.copy().withStyle(Style.EMPTY.withColor(clan.color)));
-//            }
-//        }
-//
-//        if (!morphName.getString().isEmpty()) {
-//            finalName = finalName.copy().append(morphName.copy().withStyle(ChatFormatting.WHITE));
-//        }
-//
-//        if (!morphName.getString().isEmpty()) {
-//            finalName = finalName.copy()
-//                    .append(Component.literal("<").withStyle(ChatFormatting.DARK_GRAY))
-//                    .append(base.copy().withStyle(ChatFormatting.DARK_GRAY))
-//                    .append(Component.literal("> ").withStyle(ChatFormatting.DARK_GRAY));
-//        } else {
-//            finalName = finalName.copy()
-//                    .append(Component.literal("<").withStyle(ChatFormatting.WHITE))
-//                    .append(base.copy().withStyle(ChatFormatting.WHITE))
-//                    .append(Component.literal("> ").withStyle(ChatFormatting.WHITE));
-//        }
-//
-//        Component finalText = finalName.copy().append(message.copy());
-//
-//        event.setCanceled(true);
-//
-//        player.server.getPlayerList().broadcastSystemMessage(finalText, false);
-//
-//    }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
@@ -143,38 +85,87 @@ public class ModEventsForge {
         BlockPos pos = event.getPos();
         BlockState blockState = level.getBlockState(pos);
 
-        if (!(blockState.getBlock() instanceof StoneCraftingTable table)) return;
-        if (!(PlayerShape.getCurrentShape(player) instanceof Animal)) return;
-        if (!player.isShiftKeyDown()) return;
+        if ((blockState.getBlock() instanceof StoneCraftingTable table)) {
+            if ((PlayerShape.getCurrentShape(player) instanceof Animal)) {
+                if (player.isShiftKeyDown()) {
+                    if (!level.isClientSide()) {
+                        if (table.handleHerbsRecipeCraftingBlockState(blockState, level, pos, player, hand)) {
+                            if (level instanceof ServerLevel sLevel) {
+                                Vec3 position = pos.getCenter();
 
-        if (level.isClientSide()) {
-            LeapClientState.setCanceled();
-            return;
-        }
+                                Direction facing = blockState.getValue(StoneCraftingTable.FACING);
 
-        if (table.handleHerbsRecipeCraftingBlockState(blockState, level, pos, player, hand)) {
-            if (level instanceof ServerLevel sLevel) {
-                Vec3 position = pos.getCenter();
+                                position = switch (facing) {
+                                    case NORTH -> position.add(0,0,0.1);
+                                    case SOUTH -> position.add(0,0,-0.1);
+                                    case WEST -> position.add(0.1,0,0);
+                                    case EAST -> position.add(-0.1,0,0);
+                                    default -> position;
+                                };
 
-                Direction facing = blockState.getValue(StoneCraftingTable.FACING);
+                                sLevel.sendParticles(
+                                        WCEParticles.HERBS_FALL.get(),
+                                        position.x, position.y - 0.1, position.z,
+                                        10, 0.1, 0.0, 0.1, 0.005);
+                            }
 
-                position = switch (facing) {
-                    case NORTH -> position.add(0,0,0.1);
-                    case SOUTH -> position.add(0,0,-0.1);
-                    case WEST -> position.add(0.1,0,0);
-                    case EAST -> position.add(-0.1,0,0);
-                    default -> position;
-                };
-
-                sLevel.sendParticles(
-                        WCEParticles.HERBS_FALL.get(),
-                        position.x, position.y - 0.1, position.z,
-                        10, 0.1, 0.0, 0.1, 0.005);
+                            event.setCanceled(true);
+                            event.setCancellationResult(InteractionResult.SUCCESS);
+                        }
+                    } else {
+                        LeapClientState.setCanceled();
+                    }
+                }
             }
-
-            event.setCanceled(true);
-            event.setCancellationResult(InteractionResult.SUCCESS);
         }
+
+        if (!level.isClientSide()) {
+            if (player.getItemInHand(hand).is(Items.BONE)) {
+                if (blockState.isSolid()) {
+                    BlockPos above = pos.above();
+                    BlockState onTop = level.getBlockState(above);
+                    if (onTop.isAir() || onTop.is(BlockTags.SMALL_FLOWERS) || onTop.is(Blocks.GRASS)) {
+                        BlockState newBlockstate = ModBlocks.PREY_BONES.get().defaultBlockState()
+                                .setValue(PreyBonesBlock.FACING, player.getDirection().getOpposite());
+
+                        level.setBlockAndUpdate(above, newBlockstate);
+
+                        if (!player.getAbilities().instabuild) player.getItemInHand(hand).shrink(1);
+
+                        level.playSound(null, pos, SoundEvents.BONE_BLOCK_PLACE, SoundSource.BLOCKS,
+                                0.8F, 1.4F);
+
+                        event.setCanceled(true);
+                        event.setCancellationResult(InteractionResult.SUCCESS);
+                    }
+                } else if (blockState.is(ModBlocks.PREY_BONES.get())) {
+                    PreyBonesBlock.Bones bones = blockState.getValue(PreyBonesBlock.BONES);
+
+                    if (PreyBonesBlock.canPlaceBones(bones)){
+                        BlockState newBlockstate = ModBlocks.PREY_BONES.get().defaultBlockState()
+                                .setValue(PreyBonesBlock.FACING, blockState.getValue(PreyBonesBlock.FACING));
+
+                        if (bones == PreyBonesBlock.Bones.STAGE_1) {
+                            newBlockstate = newBlockstate.setValue(PreyBonesBlock.BONES, PreyBonesBlock.Bones.STAGE_2);
+                        } else if (bones == PreyBonesBlock.Bones.STAGE_2) {
+                            newBlockstate = newBlockstate.setValue(PreyBonesBlock.BONES, PreyBonesBlock.Bones.STAGE_3);
+                        }
+
+                        level.setBlockAndUpdate(pos, newBlockstate);
+                        if (!player.getAbilities().instabuild) player.getItemInHand(hand).shrink(1);
+
+
+                        level.playSound(null, pos, SoundEvents.BONE_BLOCK_PLACE, SoundSource.BLOCKS,
+                                0.8F, 1.4F);
+
+                        event.setCanceled(true);
+                        event.setCancellationResult(InteractionResult.SUCCESS);
+                    }
+
+                }
+            }
+        }
+
 
     }
 
@@ -193,8 +184,8 @@ public class ModEventsForge {
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
         if (!player.level().isDay()) return;
 
-        int sleepingCooldown = player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
-                .map(PlayerClanData::getSleepingCooldown)
+        int sleepingCooldown = player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+                .map(WCEPlayerData::getSleepingCooldown)
                 .orElse(0);
 
         if (sleepingCooldown > 0) {
@@ -222,7 +213,7 @@ public class ModEventsForge {
 
             for (ServerPlayer player : sLevel.players()) {
                 if (player.isSleeping()) {
-                    player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
+                    player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
                             .ifPresent(cap -> cap.setSleepingCooldown(12000));
                 }
             }
@@ -330,13 +321,12 @@ public class ModEventsForge {
                 }
             }
 
-            for (Item item : WCEPreyItemsConfig.PREY_ITEMS) {
-                if (stack.getItem() == item) {
-                    int randomThirst = 1 + player.getRandom().nextInt(1);
-                    thirst.addThirst(randomThirst);
-                    player.getFoodData().eat(4, 0.84f);
-                }
+            if (stack.is(ModTags.Items.ADDITIONAL_PREY)) {
+                int randomThirst = 1 + player.getRandom().nextInt(1);
+                thirst.addThirst(randomThirst);
+                player.getFoodData().eat(4, 0.84f);
             }
+
 
 
 
@@ -516,8 +506,8 @@ public class ModEventsForge {
             if (wCat.isTame()) {
                 LivingEntity owner = wCat.getOwner();
                 if (owner instanceof ServerPlayer serverPlayer) {
-                    UUID clanUUID = serverPlayer.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
-                            .map(PlayerClanData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID);
+                    UUID clanUUID = serverPlayer.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+                            .map(WCEPlayerData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID);
 
                     if (!Objects.equals(clanUUID, wCat.getClanUUID())) {
                         wCat.setClanUUID(clanUUID);
@@ -539,6 +529,34 @@ public class ModEventsForge {
             }
         }
 
+        if (event.getEntity() instanceof ServerPlayer player) {
+            ServerLevel level = player.serverLevel();
+            UUID mateUUID = player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+                    .map(WCEPlayerData::getMateUUID).orElse(ClanData.EMPTY_UUID);
+            Entity ent = level.getEntity(mateUUID);
+            if (ent != null) {
+                if (ent instanceof ServerPlayer playerMate) {
+                    String myMorphName = player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+                            .map(WCEPlayerData::getMorphName).orElse("Unnamed");
+
+                    String mateMorphName = playerMate.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+                            .map(WCEPlayerData::getMorphName).orElse("Unnamed");
+
+                    playerMate.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {
+                        if (!cap.getMateName().getString().equals(myMorphName)) {
+                            cap.setMateName(Component.literal(myMorphName));
+                        }
+                    });
+
+                    player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {
+                        if (!cap.getMateName().getString().equals(mateMorphName)) {
+                            cap.setMateName(Component.literal(mateMorphName));
+                        }
+                    });
+                }
+            }
+        }
+
     }
 
     /**
@@ -557,8 +575,8 @@ public class ModEventsForge {
 
         if (target instanceof ServerPlayer serverPlayer) {
 
-            UUID targetUUID = serverPlayer.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA).map(PlayerClanData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID);
-            UUID thisUUID = player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA).map(PlayerClanData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID);
+            UUID targetUUID = serverPlayer.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA).map(WCEPlayerData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID);
+            UUID thisUUID = player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA).map(WCEPlayerData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID);
 
             if (!targetUUID.equals(thisUUID) || (targetUUID.equals(ClanData.EMPTY_UUID) || thisUUID.equals(ClanData.EMPTY_UUID))) {
                 return;
@@ -599,8 +617,8 @@ public class ModEventsForge {
 
             if (player instanceof ServerPlayer serverPlayer) {
                 if (!wcat.getClanUUID().equals(ClanData.EMPTY_UUID)) {
-                    UUID clanUUID = serverPlayer.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
-                            .map(PlayerClanData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID);
+                    UUID clanUUID = serverPlayer.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+                            .map(WCEPlayerData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID);
 
                     ClanData data = ClanData.get(serverPlayer.serverLevel().getServer().overworld());
                     ClanData.Clan clan = data.getClan(clanUUID);

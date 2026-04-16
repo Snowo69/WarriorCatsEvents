@@ -12,6 +12,12 @@
   "block.warriorcats_events.kelp_bed": "Kelp Nest",
   "block.warriorcats_events.kelp_bed.tooltip": "A nest made of kelp and seagrass. Still smells like fish.",
 
+  "block.warriorcats_events.stone_bed": "Stone Nest",
+  "block.warriorcats_events.stone_bed.tooltip": "A not so comfortable yet functional nest. A little hard, but the feathers make it slightly better.",
+
+  "block.warriorcats_events.lavender_bed": "Lavender Nest",
+  "block.warriorcats_events.lavender_bed.tooltip": "A very comfortable nest with a strong relaxing scent.",
+
   "item.warriorcats_events.dock_leaves": "Dock Leaves",
   "item.warriorcats_events.dock_leaves.tooltip": "Good for making poultices and wraping herbs",
 
@@ -92,6 +98,7 @@
   "effect.warriorcats_events.deathberries": "Deathberries",
   "effect.warriorcats_events.eagle_escapist": "Eagle Escapist",
   "effect.warriorcats_events.sharp_scent": "Sharp Nose",
+  "effect.warriorcats_events.sharp_sight": "Sharp Sight",
 
   "entity.warriorcats_events.warrior_cat": "Wild Cat",
   "entity.warriorcats_events.mouse": "Mouse",
@@ -202,6 +209,20 @@
   "curios.identifier.head": "Head",
 
   "block.warriorcats_events.makeshift_bed": "Makeshift Nest",
-  "item.warriorcats_events.makeshift_bed": "Makeshift Nest"
+  "item.warriorcats_events.makeshift_bed": "Makeshift Nest",
 
-  }
+
+  "block.warriorcats_events.prey_bones": "Prey Bones",
+  "item.warriorcats_events.squirrel_skull": "Squirrel Skull",
+  "item.warriorcats_events.badger_skull": "Badger Skull",
+  "item.warriorcats_events.golden_eagle_skull": "Golden Eagle Skull",
+  "prey_skull_item.tooltip": "This could make a pretty decoration placed on some bones!",
+
+  "block.warriorcats_events.pebbles": "Pebbles",
+
+  "item.warriorcats_events.moss_ball": "Moss Ball",
+  "entity.warriorcats_events.moss_ball": "Moss Ball"
+
+
+
+}

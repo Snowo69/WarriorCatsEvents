@@ -5,7 +5,6 @@ import com.google.common.collect.Multimap;
 import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.ClickEvent;
@@ -44,16 +43,15 @@ import net.minecraftforge.common.ToolAction;
 import net.minecraftforge.common.ToolActions;
 import net.snowteb.warriorcats_events.block.ModBlocks;
 import net.snowteb.warriorcats_events.block.custom.MakeshiftBedBlock;
-import net.snowteb.warriorcats_events.block.custom.StoneCraftingTable;
-import net.snowteb.warriorcats_events.clan.PlayerClanData;
-import net.snowteb.warriorcats_events.clan.PlayerClanDataProvider;
+import net.snowteb.warriorcats_events.clan.WCEPlayerData;
+import net.snowteb.warriorcats_events.clan.WCEPlayerDataProvider;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.item.ModItems;
 import net.snowteb.warriorcats_events.network.ModPackets;
 import net.snowteb.warriorcats_events.network.packet.s2c.others.StCFishingScreenPacket;
 import net.snowteb.warriorcats_events.particles.WCEParticles;
 import net.snowteb.warriorcats_events.sound.ModSounds;
-import net.snowteb.warriorcats_events.util.CarryPlayerRequestManager;
+import net.snowteb.warriorcats_events.managers.CarryPlayerRequestManager;
 import org.jetbrains.annotations.Nullable;
 import tocraft.walkers.api.PlayerShape;
 
@@ -547,20 +545,20 @@ public class ClawsTooltip extends ShearsItem {
         if (playerIn.isShiftKeyDown() && entity instanceof Player targetPlayer) {
             if ((playerIn.level() instanceof ServerLevel)) {
 
-                PlayerClanData.Age targetAge = targetPlayer.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
-                        .map(PlayerClanData::getMorphAge).orElse(PlayerClanData.Age.ADULT);
+                WCEPlayerData.Age targetAge = targetPlayer.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+                        .map(WCEPlayerData::getMorphAge).orElse(WCEPlayerData.Age.ADULT);
 
-                PlayerClanData.Age playerAge = playerIn.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
-                        .map(PlayerClanData::getMorphAge).orElse(PlayerClanData.Age.ADULT);
+                WCEPlayerData.Age playerAge = playerIn.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+                        .map(WCEPlayerData::getMorphAge).orElse(WCEPlayerData.Age.ADULT);
 
-                if (playerAge == PlayerClanData.Age.ADULT && (targetAge == PlayerClanData.Age.KIT || targetAge == PlayerClanData.Age.APPRENTICE)) {
+                if (playerAge == WCEPlayerData.Age.ADULT && (targetAge == WCEPlayerData.Age.KIT || targetAge == WCEPlayerData.Age.APPRENTICE)) {
 
                     if (PlayerShape.getCurrentShape(targetPlayer) instanceof WCatEntity && PlayerShape.getCurrentShape(playerIn) instanceof WCatEntity) {
-                        String morphName = playerIn.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
-                                .map(PlayerClanData::getMorphName).orElse(playerIn.getName().getString());
+                        String morphName = playerIn.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+                                .map(WCEPlayerData::getMorphName).orElse(playerIn.getName().getString());
 
-                        String morphNameTarget = targetPlayer.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
-                                .map(PlayerClanData::getMorphName).orElse(playerIn.getName().getString());
+                        String morphNameTarget = targetPlayer.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+                                .map(WCEPlayerData::getMorphName).orElse(playerIn.getName().getString());
 
                         CarryPlayerRequestManager.request((ServerPlayer) targetPlayer, (ServerPlayer) playerIn);
 

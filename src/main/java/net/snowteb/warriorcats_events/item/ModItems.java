@@ -16,6 +16,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.block.ModBlocks;
+import net.snowteb.warriorcats_events.block.custom.PreyBonesBlock;
 import net.snowteb.warriorcats_events.entity.ModEntities;
 import net.snowteb.warriorcats_events.item.custom.*;
 //import net.snowteb.warriorcats_events.item.custom.LeaderCallItem;
@@ -59,10 +60,39 @@ public class ModItems {
                         }
                     });
 
+    public static final RegistryObject<Item> STONE_BED_ITEM =
+            ITEMS.register("stone_bed",
+                    () -> new BlockItem(ModBlocks.STONE_BED.get(), new Item.Properties()) {
+                        @Override
+                        public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
+                            tooltip.add(Component.translatable("block.warriorcats_events.stone_bed.tooltip").withStyle(ChatFormatting.GRAY));
+                        }
+                    });
+
+    public static final RegistryObject<Item> LAVENDER_BED_ITEM =
+            ITEMS.register("lavender_bed",
+                    () -> new BlockItem(ModBlocks.LAVENDER_BED.get(), new Item.Properties()) {
+                        @Override
+                        public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
+                            tooltip.add(Component.translatable("block.warriorcats_events.lavender_bed.tooltip").withStyle(ChatFormatting.GRAY));
+                        }
+                    });
+
     public static final RegistryObject<Item> MAKESHIFT_BED_ITEM =
             ITEMS.register("makeshift_bed",
                     () -> new BlockItem(ModBlocks.MAKESHIFT_BED.get(), new Item.Properties()));
 
+    public static final RegistryObject<Item> PREY_BONES_ITEM =
+            ITEMS.register("prey_bones",
+                    () -> new BlockItem(ModBlocks.PREY_BONES.get(), new Item.Properties()));
+
+    public static final RegistryObject<Item> PEBBLES_ITEM =
+            ITEMS.register("pebbles",
+                    () -> new BlockItem(ModBlocks.PEBBLES.get(), new Item.Properties()));
+
+    public static final RegistryObject<Item> MOSS_BALL =
+            ITEMS.register("moss_ball",
+                    () -> new MossBallItem(new Item.Properties()));
 
 
     public static final RegistryObject<Item> STONE_CRAFTING_TABLE =
@@ -153,11 +183,20 @@ public static final RegistryObject<Item> FLOWER_CROWN = ITEMS.register("flower_c
     public static final RegistryObject<Item> KIT_ITEM = ITEMS.register("kit",
             () -> new KitItem(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> MYSTIC_FLOWERS_BOUQUET = ITEMS.register("rare_flowers_bouquet",
-            () -> new ItemWithToolTip(new Item.Properties().stacksTo(1),
+            () -> new FlowersBouquetItem(new Item.Properties().stacksTo(1),
                     "item.warriorcats_events.rare_flowers_bouquet.tooltip"));
     public static final RegistryObject<Item> STRANGE_SHINY_STONE = ITEMS.register("strange_shiny_stone",
             () -> new ItemWithToolTip(new Item.Properties().stacksTo(16),
                     "item.warriorcats_events.strange_shiny_stone.tooltip"));
+
+
+    public static final RegistryObject<Item> SQUIRREL_SKULL = ITEMS.register("squirrel_skull",
+            () -> new PreySkullItem(new Item.Properties().stacksTo(1), PreyBonesBlock.Bones.STAGE_SQUIRREL));
+    public static final RegistryObject<Item> GOLDEN_EAGLE_SKULL = ITEMS.register("golden_eagle_skull",
+            () -> new PreySkullItem(new Item.Properties().stacksTo(1), PreyBonesBlock.Bones.STAGE_EAGLE));
+    public static final RegistryObject<Item> BADGER_SKULL = ITEMS.register("badger_skull",
+            () -> new PreySkullItem(new Item.Properties().stacksTo(1), PreyBonesBlock.Bones.STAGE_BADGER));
+
 
 
     public static final RegistryObject<Item> ANIMAL_TOOTH = ITEMS.register("animal_tooth",
@@ -213,7 +252,7 @@ public static final RegistryObject<Item> FLOWER_CROWN = ITEMS.register("flower_c
             () -> new Item(new Item.Properties().food(ModFoodHerbs.SHREDDED_MEAT)));
 
     public static final RegistryObject<Item> WHISKERS = ITEMS.register("whiskers",
-            () -> new ItemWithToolTip(new Item.Properties().stacksTo(1).durability(400),
+            () -> new WhiskersItem(new Item.Properties().stacksTo(1).durability(400),
                     "item.warriorcats_events.whiskers.tooltip"));
 
     public static final RegistryObject<Item> CLAWS = ITEMS.register("claws",

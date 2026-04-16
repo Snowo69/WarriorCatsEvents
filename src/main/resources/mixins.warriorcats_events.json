@@ -7,17 +7,25 @@
   "client": [
     "ChatScreenMixin",
     "ClientChatPacketMixin",
+    "EntityTeamColorMixin",
     "GameRendererHitMixin",
-    "ScreenClickedComponentMixin"
+    "MinecraftMixin",
+    "ScreenClickedComponentMixin",
+    "SplashMixin",
+    "TitleScreenMixin"
   ],
   "injectors": {
     "defaultRequire": 1
   },
   "mixins": [
+    "CatAvoidMixin",
+    "ChatTypeMorphNameMixin",
+    "EntityCreateHoverEventAccessor",
     "LivingEntityMixin",
     "ParrotDeathLootMobMixin",
     "PlayerEntityMixin",
     "ServerGamePacketListenerMixin",
-    "ServerLevelMixin"
+    "ServerLevelMixin",
+    "ServerPlayerSleepInBedMixin"
   ]
 }

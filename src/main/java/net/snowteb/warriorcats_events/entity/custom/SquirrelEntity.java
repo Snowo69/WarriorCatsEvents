@@ -16,6 +16,7 @@ import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.snowteb.warriorcats_events.entity.ModEntities;
+import net.snowteb.warriorcats_events.item.ModItems;
 import net.snowteb.warriorcats_events.sound.ModSounds;
 import net.snowteb.warriorcats_events.util.MoveToLogsGoal;
 import org.jetbrains.annotations.Nullable;
@@ -48,7 +49,7 @@ public class SquirrelEntity extends Animal implements GeoEntity {
         this.goalSelector.addGoal(1, new PanicGoal(this, 1.3D));
         this.goalSelector.addGoal(2, new AvoidEntityGoal<>(this, LivingEntity.class,
                 6.0F, 1.2D, 1.5D,
-                e -> e instanceof Player || e instanceof WCatEntity && shouldScareFrom((WCatEntity)e)));
+                e -> e instanceof Player || (e instanceof WCatEntity && shouldScareFrom((WCatEntity)e))));
         this.goalSelector.addGoal(4, new MoveToLogsGoal(this, 1.0D, 15));
         this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 0.6D));
         this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 8.0F));
@@ -91,6 +92,13 @@ public class SquirrelEntity extends Animal implements GeoEntity {
 
     @Override
     protected void dropCustomDeathLoot(DamageSource damageSource, int lootingMultiplier, boolean recentlyHit) {
+
+        if (this.level() instanceof ServerLevel) {
+            if (this.random.nextFloat() < 0.015f) {
+                this.spawnAtLocation(ModItems.SQUIRREL_SKULL.get());
+            }
+        }
+
         super.dropCustomDeathLoot(damageSource, lootingMultiplier, recentlyHit);
     }
 

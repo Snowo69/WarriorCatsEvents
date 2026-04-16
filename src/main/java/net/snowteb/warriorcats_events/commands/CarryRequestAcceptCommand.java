@@ -6,18 +6,11 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.Style;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
-import net.snowteb.warriorcats_events.clan.ClanData;
-import net.snowteb.warriorcats_events.clan.PlayerClanData;
-import net.snowteb.warriorcats_events.clan.PlayerClanDataProvider;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
-import net.snowteb.warriorcats_events.util.CarryPlayerRequestManager;
-import net.snowteb.warriorcats_events.util.ClanInviteManager;
+import net.snowteb.warriorcats_events.managers.CarryPlayerRequestManager;
 import tocraft.walkers.api.PlayerShape;
-
-import java.util.UUID;
 
 public class CarryRequestAcceptCommand {
 

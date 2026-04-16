@@ -1,6 +1,5 @@
 package net.snowteb.warriorcats_events.datagen;
 
-import io.netty.util.concurrent.CompleteFuture;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
@@ -9,6 +8,7 @@ import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
+import net.snowteb.warriorcats_events.datagen.loot.ModLootTableProvider;
 
 import java.util.concurrent.CompletableFuture;
 

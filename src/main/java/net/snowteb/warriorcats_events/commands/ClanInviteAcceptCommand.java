@@ -5,16 +5,14 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.server.level.ServerPlayer;
 import net.snowteb.warriorcats_events.clan.ClanData;
-import net.snowteb.warriorcats_events.clan.PlayerClanData;
-import net.snowteb.warriorcats_events.clan.PlayerClanDataProvider;
-import net.snowteb.warriorcats_events.util.ClanInviteManager;
+import net.snowteb.warriorcats_events.clan.WCEPlayerData;
+import net.snowteb.warriorcats_events.clan.WCEPlayerDataProvider;
+import net.snowteb.warriorcats_events.managers.ClanInviteManager;
 
-import java.util.List;
 import java.util.UUID;
 
 public class ClanInviteAcceptCommand {
@@ -45,8 +43,8 @@ public class ClanInviteAcceptCommand {
             return 0;
         }
 
-        UUID currentClanUUID = player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
-                .map(PlayerClanData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID);
+        UUID currentClanUUID = player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+                .map(WCEPlayerData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID);
 
         ClanData data = ClanData.get(player.serverLevel().getServer().overworld());
         ClanData.Clan clan = data.getClan(currentClanUUID);
@@ -79,8 +77,8 @@ public class ClanInviteAcceptCommand {
         ClanData.Clan targetClan = data.getClan(clanUUID);
         if (targetClan != null) {
 
-            String invitedPlayerMorphName = player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
-                    .map(PlayerClanData::getMorphName)
+            String invitedPlayerMorphName = player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+                    .map(WCEPlayerData::getMorphName)
                     .orElse(player.getName().getString());
 
             for (UUID memberUUID : targetClan.members.keySet()) {

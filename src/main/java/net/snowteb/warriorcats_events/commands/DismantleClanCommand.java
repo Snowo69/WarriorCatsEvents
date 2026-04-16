@@ -9,8 +9,8 @@ import net.minecraft.network.chat.Style;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.snowteb.warriorcats_events.clan.ClanData;
-import net.snowteb.warriorcats_events.clan.PlayerClanData;
-import net.snowteb.warriorcats_events.clan.PlayerClanDataProvider;
+import net.snowteb.warriorcats_events.clan.WCEPlayerData;
+import net.snowteb.warriorcats_events.clan.WCEPlayerDataProvider;
 
 import java.util.UUID;
 
@@ -31,8 +31,8 @@ public class DismantleClanCommand {
         ServerLevel level = player.serverLevel().getServer().overworld();
         ClanData data = ClanData.get(level);
 
-        UUID clanUUID = player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
-                .map(PlayerClanData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID);
+        UUID clanUUID = player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+                .map(WCEPlayerData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID);
 
         if (clanUUID.equals(ClanData.EMPTY_UUID)) {
             player.sendSystemMessage(

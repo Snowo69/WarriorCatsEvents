@@ -190,8 +190,8 @@ public class ClanData extends SavedData {
     public static boolean isInEnemyTerritory(ServerPlayer player, ChunkPos pos) {
         ClanData data = ClanData.get(player.serverLevel());
 
-        UUID playerClanUUID = player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
-                .map(PlayerClanData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID);
+        UUID playerClanUUID = player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+                .map(WCEPlayerData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID);
 
         for (ClanData.Clan clan : data.clans.values()) {
             if (clan.claimedTerritory.containsKey(pos)) {
@@ -657,7 +657,7 @@ public class ClanData extends SavedData {
         clan.memberPerms.put(playerUUID, ClanPermissions.GUEST);
 
 
-        player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {
+        player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {
             cap.setClanName(clan.name);
             cap.setCurrentClanUUID(clan.clanUUID);
 
@@ -707,7 +707,7 @@ public class ClanData extends SavedData {
         clan.members.remove(playerUUID);
         clan.memberPerms.remove(playerUUID);
 
-        player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {
+        player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {
             cap.setClanName("None");
             cap.setCurrentClanUUID(EMPTY_UUID);
 
@@ -766,8 +766,8 @@ public class ClanData extends SavedData {
         UUID playerUUID = player.getUUID();
         if (!clan.members.containsKey(playerUUID)) return false;
 
-        String morphName = player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
-                .map(PlayerClanData::getMorphName).orElse(player.getName().getString());
+        String morphName = player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+                .map(WCEPlayerData::getMorphName).orElse(player.getName().getString());
 
         Component playerRankChangeLog = Component.empty()
                 .append(Component.literal(morphName).withStyle(ChatFormatting.AQUA))
@@ -810,7 +810,7 @@ public class ClanData extends SavedData {
         clans.remove(clanUUID);
 
         for (ServerPlayer player : level.getServer().getPlayerList().getPlayers()) {
-            player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA).ifPresent(
+            player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA).ifPresent(
                     cap -> {
                         if (clanUUID.equals(cap.getCurrentClanUUID())) {
                             cap.setCurrentClanUUID(EMPTY_UUID);
@@ -1159,8 +1159,8 @@ public class ClanData extends SavedData {
                 UUID uuid = iterator.next();
                 ServerPlayer player = serverLevel.getServer().getPlayerList().getPlayer(uuid);
                 if (player != null) {
-                    UUID playerClanUUID = player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
-                            .map(PlayerClanData::getCurrentClanUUID)
+                    UUID playerClanUUID = player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+                            .map(WCEPlayerData::getCurrentClanUUID)
                             .orElse(ClanData.EMPTY_UUID);
 
                     if (!playerClanUUID.equals(clan.clanUUID)) {

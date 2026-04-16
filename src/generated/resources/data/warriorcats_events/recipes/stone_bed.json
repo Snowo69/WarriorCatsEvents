@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "B": {
+      "item": "minecraft:stone"
+    },
+    "D": {
+      "tag": "warriorcats_events:feathers"
+    }
+  },
+  "pattern": [
+    "   ",
+    "BDB",
+    "DBD"
+  ],
+  "result": {
+    "count": 2,
+    "item": "warriorcats_events:stone_bed"
+  },
+  "show_notification": true
+}

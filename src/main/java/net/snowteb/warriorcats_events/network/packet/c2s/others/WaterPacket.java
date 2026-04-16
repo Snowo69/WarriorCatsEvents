@@ -10,16 +10,17 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.FluidTags;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.block.AbstractCauldronBlock;
 import net.minecraft.world.level.block.LayeredCauldronBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.HitResult;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.*;
 import net.minecraftforge.network.NetworkEvent;
+import net.snowteb.warriorcats_events.entity.custom.MossBallEntity;
 import net.snowteb.warriorcats_events.network.ModPackets;
 import net.snowteb.warriorcats_events.network.packet.s2c.others.ThirstDataSyncStCPacket;
 import net.snowteb.warriorcats_events.thirst.PlayerThirst;
@@ -56,7 +57,6 @@ public class WaterPacket {
                 player.getCapability(PlayerThirstProvider.PLAYER_THIRST).ifPresent(thirst -> {
                     thirst.addThirst(1);
                     ModPackets.sendToPlayer(new ThirstDataSyncStCPacket(thirst.getThirst()), player);
-//                    player.displayClientMessage(Component.literal("Thirst level: " + 5*thirst.getThirst() + "%").withStyle(ChatFormatting.GRAY), true);
                     level.sendParticles(ParticleTypes.SPLASH, player.getX(),player.getY() + 0.4, player.getZ(), 10, 0.3, 0.2, 0.3, 0.01);
                 });
 
@@ -65,6 +65,10 @@ public class WaterPacket {
             } else if (isLookingAtCauldron(player, level)) {
 
                 drinkFromCauldron(player, level);
+
+            } else if (isLookingAtMossBall(player, level)) {
+
+                drinkFromMossBall(player, level);
 
             } else {
 
@@ -156,8 +160,6 @@ public class WaterPacket {
 
                 if (!level.isClientSide) {
 
-
-
                     float thirstLevel = player.getCapability(PlayerThirstProvider.PLAYER_THIRST)
                                     .map(PlayerThirst::getThirst).orElse(0);
 
@@ -167,7 +169,6 @@ public class WaterPacket {
                     player.getCapability(PlayerThirstProvider.PLAYER_THIRST).ifPresent(thirst -> {
                         thirst.addThirst(1);
                         ModPackets.sendToPlayer(new ThirstDataSyncStCPacket(thirst.getThirst()), player);
-                        player.displayClientMessage(Component.literal("Thirst level: " + 5*thirst.getThirst() + "%").withStyle(ChatFormatting.GRAY), true);
                         level.sendParticles(ParticleTypes.SPLASH, player.getX(),player.getY() + 0.4, player.getZ(), 10, 0.3, 0.2, 0.3, 0.01);
                     });
 
@@ -181,6 +182,70 @@ public class WaterPacket {
                 }
 
 
+        }
+    }
+
+
+    private boolean isLookingAtMossBall(ServerPlayer player, ServerLevel level) {
+        double reach = 2.0D;
+
+        if (!(PlayerShape.getCurrentShape(player) instanceof Animal)) return false;
+
+        Vec3 eyePos = player.getEyePosition();
+        Vec3 lookVec = player.getLookAngle();
+        Vec3 endPos = eyePos.add(lookVec.scale(reach));
+
+        AABB box = player.getBoundingBox().expandTowards(lookVec.scale(reach)).inflate(1.0D);
+
+        EntityHitResult hitResult = ProjectileUtil.getEntityHitResult(
+                level, player, eyePos, endPos, box,
+                entity -> entity instanceof MossBallEntity
+        );
+
+        return hitResult != null && hitResult.getEntity() instanceof MossBallEntity;
+    }
+
+    private void drinkFromMossBall(ServerPlayer player, ServerLevel level) {
+        double reach = 2.0D;
+
+        if (!(PlayerShape.getCurrentShape(player) instanceof Animal)) return;
+
+        Vec3 eyePos = player.getEyePosition();
+        Vec3 lookVec = player.getLookAngle();
+        Vec3 endPos = eyePos.add(lookVec.scale(reach));
+
+        AABB box = player.getBoundingBox().expandTowards(lookVec.scale(reach)).inflate(1.0D);
+
+        EntityHitResult hitResult = ProjectileUtil.getEntityHitResult(
+                level, player, eyePos, endPos, box,
+                entity -> entity instanceof MossBallEntity
+        );
+
+        if (hitResult != null && hitResult.getEntity() instanceof MossBallEntity mossBall) {
+            if (!level.isClientSide) {
+
+                float thirstLevel = player.getCapability(PlayerThirstProvider.PLAYER_THIRST)
+                        .map(PlayerThirst::getThirst).orElse(0);
+
+                if (thirstLevel >= 20f) return;
+
+                if (mossBall.getWater() <= 0) {
+                    player.displayClientMessage(Component.literal("This doesn't have water").withStyle(ChatFormatting.GRAY), true);
+                    return;
+                }
+
+                player.getCapability(PlayerThirstProvider.PLAYER_THIRST).ifPresent(thirst -> {
+                    thirst.addThirst(1);
+                    ModPackets.sendToPlayer(new ThirstDataSyncStCPacket(thirst.getThirst()), player);
+                    level.sendParticles(ParticleTypes.SPLASH, player.getX(), player.getY() + 0.4, player.getZ(), 10, 0.3, 0.2, 0.3, 0.01);
+
+
+                    level.playSound(null, player.blockPosition(), SoundEvents.DROWNED_SWIM, SoundSource.PLAYERS, 0.2f, 1.5f);
+
+                    mossBall.setWater(mossBall.getWater() - 1);
+                });
+
+            }
         }
     }
 

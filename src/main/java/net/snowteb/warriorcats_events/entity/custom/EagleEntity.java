@@ -33,6 +33,7 @@ import net.minecraft.world.entity.ai.control.BodyRotationControl;
 import net.minecraft.world.entity.ai.control.LookControl;
 import net.minecraft.world.entity.ai.control.MoveControl;
 import net.minecraft.world.entity.ai.goal.*;
+import net.minecraft.world.entity.ai.goal.target.OwnerHurtTargetGoal;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.animal.Animal;
@@ -697,7 +698,7 @@ public class EagleEntity extends FlyingMob implements GeoEntity, OwnableEntity {
 
     public static AttributeSupplier.Builder setAttributes() {
         return Animal.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 40D)
+                .add(Attributes.MAX_HEALTH, 30D)
                 .add(Attributes.ATTACK_SPEED, 1.0f)
                 .add(Attributes.ATTACK_DAMAGE, 1f)
                 .add(Attributes.MOVEMENT_SPEED, 2.0f)
@@ -782,6 +783,10 @@ public class EagleEntity extends FlyingMob implements GeoEntity, OwnableEntity {
 
         if (this.level() instanceof ServerLevel sLevel) {
             sLevel.addFreshEntity(drop);
+
+            if (this.random.nextFloat() < 0.05f) {
+                this.spawnAtLocation(ModItems.GOLDEN_EAGLE_SKULL.get());
+            }
         }
 
         super.dropCustomDeathLoot(pSource, pLooting, pRecentlyHit);
@@ -976,19 +981,46 @@ public class EagleEntity extends FlyingMob implements GeoEntity, OwnableEntity {
     @Override
     public boolean isAlliedTo(Entity pEntity) {
         if (this.isTame()) {
-            LivingEntity livingentity = this.getOwner();
-            if (pEntity == livingentity) {
+            LivingEntity owner = this.getOwner();
+
+            if (pEntity == owner) {
                 return true;
             }
 
-            if (livingentity != null) {
-                return livingentity.isAlliedTo(pEntity);
+            if (owner != null && owner.isAlliedTo(pEntity)) {
+                return true;
+            }
+
+            if (pEntity instanceof TamableAnimal animal) {
+                UUID ownerUUID = this.getOwnerUUID();
+                UUID otherOwnerUUID = animal.getOwnerUUID();
+
+                if (ownerUUID != null && ownerUUID.equals(otherOwnerUUID)) {
+                    return true;
+                }
             }
         }
 
         return super.isAlliedTo(pEntity);
     }
 
+    @Override
+    public boolean canAttack(LivingEntity pLivingentity, TargetingConditions pCondition) {
+
+        if (this.isAlliedTo(pLivingentity)) {
+            return false;
+        }
+
+        if (this.isTame() && pLivingentity instanceof Player) {
+            return false;
+        }
+
+        if (this.isTame() && pLivingentity instanceof WCatEntity) {
+            return false;
+        }
+
+        return super.canAttack(pLivingentity, pCondition);
+    }
 
     @Override
     public void die(DamageSource pDamageSource) {
@@ -1032,6 +1064,11 @@ public class EagleEntity extends FlyingMob implements GeoEntity, OwnableEntity {
 
     @Override
     public void aiStep() {
+
+        if (this.isInWater()) {
+            this.setDeltaMovement(this.getDeltaMovement().add(0, 0.08, 0));
+        }
+
         super.aiStep();
     }
 
@@ -1310,10 +1347,6 @@ public class EagleEntity extends FlyingMob implements GeoEntity, OwnableEntity {
     @Override
     public void travel(Vec3 travelVector) {
 
-        if (this.isInWater()) {
-            this.setDeltaMovement(this.getDeltaMovement().add(0, 0.08, 0));
-        }
-
         if (this.isVehicle() && this.getControllingPassenger() instanceof Player player) {
 
             float forward = player.zza;
@@ -1456,9 +1489,6 @@ public class EagleEntity extends FlyingMob implements GeoEntity, OwnableEntity {
                     }
                 }
 
-
-
-
                 if (this.isTame() && WCEServerConfig.Server.CAN_EAGLES_BE_TAMED.get()) {
                     if (!this.wasBornAgressive && !this.isLatching() && this.isOwnedBy(pPlayer)) {
                         pPlayer.startRiding(this, true);
@@ -1471,17 +1501,6 @@ public class EagleEntity extends FlyingMob implements GeoEntity, OwnableEntity {
         }
 
         return super.mobInteract(pPlayer, pHand);
-    }
-
-
-    @Override
-    public @Nullable LivingEntity getTarget() {
-        return super.getTarget();
-    }
-
-    @Override
-    protected void positionRider(Entity pPassenger, MoveFunction pCallback) {
-        super.positionRider(pPassenger, pCallback);
     }
 
     @Override

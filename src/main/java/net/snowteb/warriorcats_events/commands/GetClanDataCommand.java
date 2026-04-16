@@ -8,8 +8,7 @@ import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
-import net.snowteb.warriorcats_events.WarriorCatsEvents;
-import net.snowteb.warriorcats_events.clan.PlayerClanDataProvider;
+import net.snowteb.warriorcats_events.clan.WCEPlayerDataProvider;
 
 public class GetClanDataCommand {
 
@@ -28,7 +27,7 @@ public class GetClanDataCommand {
 
     private static int getData(CommandSourceStack source, ServerPlayer targetToShow) throws CommandSyntaxException {
 
-        targetToShow.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {
+        targetToShow.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {
 
             String genderText = switch (cap.getGenderData()) {
                 case 0 -> "Male";

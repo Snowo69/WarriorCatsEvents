@@ -13,6 +13,7 @@ import net.snowteb.warriorcats_events.network.packet.c2s.others.*;
 import net.snowteb.warriorcats_events.network.packet.c2s.skilltree.*;
 import net.snowteb.warriorcats_events.network.packet.s2c.cats.*;
 import net.snowteb.warriorcats_events.network.packet.s2c.clan.*;
+import net.snowteb.warriorcats_events.network.packet.s2c.others.OpenPlayerCatDataScreenPacket;
 import net.snowteb.warriorcats_events.network.packet.s2c.others.StCFinallySaveMorph;
 import net.snowteb.warriorcats_events.network.packet.s2c.others.StCFishingScreenPacket;
 import net.snowteb.warriorcats_events.network.packet.s2c.skilltree.StCStealthSyncPacket;
@@ -422,12 +423,41 @@ public class ModPackets {
                 .consumerMainThread(StCOpenPatrolScreenPacket::handle)
                 .add();
 
+        net.messageBuilder(CompareVersionsPacket.class, 61, NetworkDirection.PLAY_TO_SERVER)
+                .decoder(CompareVersionsPacket::decode)
+                .encoder(CompareVersionsPacket::encode)
+                .consumerMainThread(CompareVersionsPacket::handle)
+                .add();
 
-//        net.messageBuilder(CtSStartSleep.class, 61, NetworkDirection.PLAY_TO_SERVER)
-//                .decoder(CtSStartSleep::decode)
-//                .encoder(CtSStartSleep::encode)
-//                .consumerMainThread(CtSStartSleep::handle)
-//                .add();
+        net.messageBuilder(OpenPlayerCatDataScreenPacket.class, 62, NetworkDirection.PLAY_TO_CLIENT)
+                .decoder(OpenPlayerCatDataScreenPacket::new)
+                .encoder(OpenPlayerCatDataScreenPacket::toBytes)
+                .consumerMainThread(OpenPlayerCatDataScreenPacket::handle)
+                .add();
+
+        net.messageBuilder(PlayerKitPacket.class, 63, NetworkDirection.PLAY_TO_SERVER)
+                .decoder(PlayerKitPacket::decode)
+                .encoder(PlayerKitPacket::encode)
+                .consumerMainThread(PlayerKitPacket::handle)
+                .add();
+
+        net.messageBuilder(SummonCustomCatPacket.class, 64, NetworkDirection.PLAY_TO_SERVER)
+                .decoder(SummonCustomCatPacket::decode)
+                .encoder(SummonCustomCatPacket::encode)
+                .consumerMainThread(SummonCustomCatPacket::handle)
+                .add();
+
+        net.messageBuilder(SetPosePacket.class, 65, NetworkDirection.PLAY_TO_SERVER)
+                .decoder(SetPosePacket::decode)
+                .encoder(SetPosePacket::encode)
+                .consumerMainThread(SetPosePacket::handle)
+                .add();
+
+        net.messageBuilder(OpenPoseMenuPacket.class, 66, NetworkDirection.PLAY_TO_CLIENT)
+                .decoder(OpenPoseMenuPacket::new)
+                .encoder(OpenPoseMenuPacket::toBytes)
+                .consumerMainThread(OpenPoseMenuPacket::handle)
+                .add();
 
 
     }

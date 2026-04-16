@@ -7,8 +7,8 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.NetworkEvent;
 import net.snowteb.warriorcats_events.clan.ClanData;
-import net.snowteb.warriorcats_events.clan.PlayerClanData;
-import net.snowteb.warriorcats_events.clan.PlayerClanDataProvider;
+import net.snowteb.warriorcats_events.clan.WCEPlayerData;
+import net.snowteb.warriorcats_events.clan.WCEPlayerDataProvider;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.network.ModPackets;
 import net.snowteb.warriorcats_events.network.packet.s2c.cats.StCOpenPatrolScreenPacket;
@@ -40,8 +40,8 @@ public class CtSRequestPatrolData {
 
             ServerLevel level = player.serverLevel();
 
-            UUID clanUUID = player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
-                    .map(PlayerClanData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID);
+            UUID clanUUID = player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+                    .map(WCEPlayerData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID);
 
             if (clanUUID.equals(ClanData.EMPTY_UUID)) {
                 player.sendSystemMessage(Component.literal("You are not in a clan.").withStyle(ChatFormatting.RED));

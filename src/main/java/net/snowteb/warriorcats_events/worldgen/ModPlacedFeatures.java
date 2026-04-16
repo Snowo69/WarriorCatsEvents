@@ -31,6 +31,10 @@ public class ModPlacedFeatures {
 
     public static final ResourceKey<PlacedFeature> LAVENDER_PLACED_KEY = registerKey("lavender_placed");
 
+    public static final ResourceKey<PlacedFeature> PEBBLES_PLACED_KEY = registerKey("pebbles_placed");
+
+
+
     public static void bootstrap(BootstapContext<PlacedFeature> context) {
         HolderGetter<ConfiguredFeature<?, ?>> configuredFeatures = context.lookup(Registries.CONFIGURED_FEATURE);
 
@@ -75,7 +79,9 @@ public class ModPlacedFeatures {
                         PlacementUtils.HEIGHTMAP_WORLD_SURFACE, BiomeFilter.biome()));
 
 
-
+        register(context, PEBBLES_PLACED_KEY, configuredFeatures.getOrThrow(ModConfiguredFeatures.PEBBLES_KEY),
+                List.of(RarityFilter.onAverageOnceEvery(60),
+                        PlacementUtils.HEIGHTMAP_WORLD_SURFACE, BiomeFilter.biome()));
 
 //                register(context, STARRYTREE_PLACED_KEY, configuredFeatures.getOrThrow(ModConfiguredFeatures.STARRYTREE_KEY),
 //                VegetationPlacements.treePlacement(PlacementUtils.countExtra(3, 0.1f, 2),

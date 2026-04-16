@@ -8,8 +8,8 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.NetworkEvent;
 import net.snowteb.warriorcats_events.clan.ClanData;
-import net.snowteb.warriorcats_events.clan.PlayerClanData;
-import net.snowteb.warriorcats_events.clan.PlayerClanDataProvider;
+import net.snowteb.warriorcats_events.clan.WCEPlayerData;
+import net.snowteb.warriorcats_events.clan.WCEPlayerDataProvider;
 
 import java.util.Map;
 import java.util.UUID;
@@ -53,8 +53,8 @@ public class CtSManageClanMemberPacket {
             ServerLevel level = player.serverLevel().getServer().overworld();
             ClanData data = ClanData.get(level);
 
-            ClanData.Clan clan = data.getClan(player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
-                    .map(PlayerClanData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID));
+            ClanData.Clan clan = data.getClan(player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+                    .map(WCEPlayerData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID));
 
             ServerPlayer target = level.getServer()
                     .getPlayerList()

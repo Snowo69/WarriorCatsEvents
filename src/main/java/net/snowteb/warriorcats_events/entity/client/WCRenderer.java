@@ -154,7 +154,7 @@ public class WCRenderer extends GeoEntityRenderer<WCatEntity> {
                         if (!WCEClientConfig.CLIENT.OWN_CHAT_BUBBLES.get()) {
                             canShowThisMessage = false;
                         }
-                        if (!WCEClientConfig.CLIENT.OWN_MORPH_NAME.get()) {
+                        if (!WCEClientConfig.CLIENT.OWN_MORPH_NAME.get() || Minecraft.getInstance().options.hideGui) {
                             canShowThisName = false;
                         }
                     }

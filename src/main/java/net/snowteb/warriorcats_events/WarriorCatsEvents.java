@@ -20,12 +20,10 @@ import net.snowteb.warriorcats_events.loot.ModLootModifiers;
 import net.snowteb.warriorcats_events.network.ModPackets;
 import net.snowteb.warriorcats_events.particles.WCEParticles;
 import net.snowteb.warriorcats_events.recipes.WCERecipes;
-import net.snowteb.warriorcats_events.screen.ModMenuTypes;
+import net.snowteb.warriorcats_events.screen.menus.ModMenuTypes;
 import net.snowteb.warriorcats_events.sound.ModSounds;
 import net.snowteb.warriorcats_events.util.ModAttributes;
 import net.snowteb.warriorcats_events.zconfig.WCEClientConfig;
-import net.snowteb.warriorcats_events.zconfig.WCEConfig;
-import net.snowteb.warriorcats_events.zconfig.WCEPreyItemsConfig;
 import net.snowteb.warriorcats_events.zconfig.WCEServerConfig;
 import org.slf4j.Logger;
 import software.bernie.geckolib.GeckoLib;
@@ -39,24 +37,32 @@ import java.util.concurrent.Executors;
 @Mod(WarriorCatsEvents.MODID)
 public class WarriorCatsEvents {
     public static final String MODID = "warriorcats_events";
-    public static final String MOD_VERSION = "1.6.0";
+    public static final String MOD_VERSION = "1.7.0";
     public static final Logger LOGGER = LogUtils.getLogger();
 
     public static final ExecutorService teleportExecutor = Executors.newSingleThreadExecutor();
 
 
-    public static class Devs {
-        private static final Set<UUID> DEVS = Set.of(
+    public static class Collaborators {
+        private static final Set<UUID> CONTRIBUTORS = Set.of(
                 UUID.fromString("76754682-2435-4a2e-b2b5-c3ee99782812"),
+
                 UUID.fromString("380df991-f603-344c-a090-369bad2a924a"),
                 UUID.fromString("bd10cd3b-b641-4db7-839b-691339fcbfaf"),
                 UUID.fromString("02c910cd-3367-4ce8-80d3-04e803bf580a"),
                 UUID.fromString("cead1fe2-b208-4886-a17c-f486ba511d63"),
-                UUID.fromString("c10ad235-4fa9-4d3a-9343-0e59c424b1d3")
+                UUID.fromString("c10ad235-4fa9-4d3a-9343-0e59c424b1d3"),
+
+                UUID.fromString("714870da-15d4-47f1-8a53-05015326a09d"),
+                UUID.fromString("9289ae40-9cae-419b-b4c1-3109eca4b15d")
         );
 
-        public static boolean isDev(UUID uuid) {
-            return DEVS.contains(uuid);
+        public static boolean isContributor(UUID uuid) {
+            return CONTRIBUTORS.contains(uuid);
+        }
+
+        public static boolean isOwner(UUID uuid) {
+            return uuid.equals(UUID.fromString("76754682-2435-4a2e-b2b5-c3ee99782812"));
         }
     }
 
@@ -73,9 +79,9 @@ public class WarriorCatsEvents {
                 ModConfig.Type.CLIENT, WCEClientConfig.SPEC,
                 MODID + "-client.toml");
 
-        ModLoadingContext.get().registerConfig(
-                ModConfig.Type.COMMON, WCEPreyItemsConfig.SPEC,
-                MODID + "-prey_items-common.toml");
+//        ModLoadingContext.get().registerConfig(
+//                ModConfig.Type.COMMON, WCEPreyItemsConfig.SPEC,
+//                MODID + "-prey_items-common.toml");
 
         ModSounds.register(modEventBus);
         ModItems.register(modEventBus);
@@ -176,6 +182,8 @@ public class WarriorCatsEvents {
             event.accept(ModBlocks.MOSS_BED);
             event.accept(ModBlocks.HAY_BED);
             event.accept(ModBlocks.KELP_BED);
+            event.accept(ModBlocks.STONE_BED);
+            event.accept(ModBlocks.LAVENDER_BED);
 
         }
 

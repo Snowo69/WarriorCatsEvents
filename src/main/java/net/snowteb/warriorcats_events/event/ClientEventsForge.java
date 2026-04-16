@@ -32,10 +32,11 @@ import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.client.LeapClientState;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.network.ModPackets;
+import net.snowteb.warriorcats_events.network.packet.c2s.others.CompareVersionsPacket;
 import net.snowteb.warriorcats_events.network.packet.c2s.skilltree.ReqSkillDataPacket;
-import net.snowteb.warriorcats_events.screen.EmoteMenu;
-import net.snowteb.warriorcats_events.screen.SkillScreen;
-import net.snowteb.warriorcats_events.screen.clandata.PlaySoundMenu;
+import net.snowteb.warriorcats_events.screen.menus.EmoteMenu;
+import net.snowteb.warriorcats_events.screen.screens.SkillScreen;
+import net.snowteb.warriorcats_events.screen.menus.PlaySoundMenu;
 import net.snowteb.warriorcats_events.sound.ModSounds;
 import net.snowteb.warriorcats_events.stealth.PlayerStealthProvider;
 import tocraft.walkers.api.PlayerShape;
@@ -47,6 +48,11 @@ import static net.snowteb.warriorcats_events.WCEClient.*;
 public class ClientEventsForge {
 
     private static Button extraButton;
+
+    @SubscribeEvent
+    public static void onClientLogin(ClientPlayerNetworkEvent.LoggingIn event) {
+        ModPackets.sendToServer(new CompareVersionsPacket(WarriorCatsEvents.MOD_VERSION));
+    }
 
     @SubscribeEvent
     public static void onScreenInit(ScreenEvent.Init.Post event) {
@@ -209,29 +215,69 @@ public class ClientEventsForge {
 
             if (!cap.isUnlocked()) return;
 
+//            ResourceLocation screen = new ResourceLocation(WarriorCatsEvents.MODID,
+//                    "textures/hud/stealth_overlay_4.png");
+
             ResourceLocation screen = new ResourceLocation(WarriorCatsEvents.MODID,
-                    "textures/hud/stealth_overlay_4.png");
+                    "textures/hud/stealth/stealthbg.png");
+
+            ResourceLocation topLeft = new ResourceLocation(WarriorCatsEvents.MODID,
+                    "textures/hud/stealth/stealth_tl.png");
+            ResourceLocation topRight = new ResourceLocation(WarriorCatsEvents.MODID,
+                    "textures/hud/stealth/stealth_tr.png");
+            ResourceLocation bottomLeft = new ResourceLocation(WarriorCatsEvents.MODID,
+                    "textures/hud/stealth/stealth_bl.png");
+            ResourceLocation bottomRight = new ResourceLocation(WarriorCatsEvents.MODID,
+                    "textures/hud/stealth/stealth_br.png");
 
             /**
              * If the stealth is on, render an overlay.
              */
             if (cap.isStealthOn()) {
 
-                GuiGraphics gui = event.getGuiGraphics();
-                int w = Minecraft.getInstance().getWindow().getGuiScaledWidth();
-                int h = Minecraft.getInstance().getWindow().getGuiScaledHeight();
+                GuiGraphics pGuiGraphics = event.getGuiGraphics();
+                int width = Minecraft.getInstance().getWindow().getGuiScaledWidth();
+                int height = Minecraft.getInstance().getWindow().getGuiScaledHeight();
+
+                int fragmentSize = 110;
 
                 RenderSystem.enableBlend();
-
-                gui.blit(
+                pGuiGraphics.blit(
                         screen,
                         0, 0,
                         0, 0,
-                        w, h,
-                        w, h
+                        width, height,
+                        width, height
+                );
+                RenderSystem.disableBlend();
+
+                pGuiGraphics.blit(topLeft,
+                        0, 0,
+                        0, 0,
+                        fragmentSize + 20, fragmentSize + 20,
+                        fragmentSize+ 20, fragmentSize+ 20
+                );
+                pGuiGraphics.blit(topRight,
+                        width - fragmentSize - 20, 0,
+                        0, 0,
+                        fragmentSize+ 20, fragmentSize+ 20,
+                        fragmentSize+ 20, fragmentSize+ 20
                 );
 
-                RenderSystem.disableBlend();
+                pGuiGraphics.blit(bottomLeft,
+                        0, height - fragmentSize,
+                        0, 0,
+                        fragmentSize, fragmentSize,
+                        fragmentSize, fragmentSize
+                );
+
+                pGuiGraphics.blit(bottomRight,
+                        width - fragmentSize, height - fragmentSize,
+                        0, 0,
+                        fragmentSize, fragmentSize,
+                        fragmentSize, fragmentSize
+                );
+
             }
         });
     }

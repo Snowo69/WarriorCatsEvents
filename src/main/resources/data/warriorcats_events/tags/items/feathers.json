@@ -1,11 +1,6 @@
 {
   "values": [
-    "warriorcats_events:green_parrot_feather",
-    "warriorcats_events:red_parrot_feather",
-    "warriorcats_events:blue_parrot_feather",
-    "warriorcats_events:lightblue_parrot_feather",
-    "warriorcats_events:gray_parrot_feather",
-    "warriorcats_events:pigeon_feather",
+    "#warriorcats_events:wce_feathers",
     "minecraft:feather"
   ]
 }

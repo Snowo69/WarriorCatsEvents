@@ -84,6 +84,15 @@ public class ModItemModelProvider extends ItemModelProvider {
         simpleItem(ModItems.COLLAR_BELL);
 
 
+        simpleItem(ModItems.SQUIRREL_SKULL);
+        simpleItem(ModItems.BADGER_SKULL);
+        simpleItem(ModItems.GOLDEN_EAGLE_SKULL);
+
+        simpleItem(ModItems.PEBBLES_ITEM);
+
+        simpleItem(ModItems.MOSS_BALL);
+
+
         simpleBlockItem(ModBlocks.LEAF_DOOR);
 //        simpleBlockItem(ModBlocks.LEAF_TRAPDOOR);
 

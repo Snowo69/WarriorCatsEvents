@@ -6,8 +6,8 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.network.NetworkEvent;
-import net.snowteb.warriorcats_events.clan.PlayerClanData;
-import net.snowteb.warriorcats_events.clan.PlayerClanDataProvider;
+import net.snowteb.warriorcats_events.clan.WCEPlayerData;
+import net.snowteb.warriorcats_events.clan.WCEPlayerDataProvider;
 import net.snowteb.warriorcats_events.entity.ModEntities;
 import net.snowteb.warriorcats_events.entity.custom.WCGenetics;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
@@ -72,14 +72,14 @@ public class SavePlayerGeneticsPacket {
 
             PlayerShape.updateShapes(player, null);
 
-            player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {
+            player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {
                 cap.setFirstLoginHandled(true);
                 cap.setPlayerGenetics(packet.genetics);
                 cap.setPlayerGeneticalVariants(packet.variants.eyeColorLeft, packet.variants.eyeColorRight,
                         packet.variants.rufousingVariant, packet.variants.blueRufousingVariant,
                         packet.variants.orangeVar, packet.variants.whiteVar, packet.variants.tabbyVar,
                         packet.variants.albinoVar, packet.variants.leftEyeVar, packet.variants.rightEyeVar,
-                        packet.variants.noise, packet.variants.size, packet.variants.silverVar);
+                        packet.variants.noise, packet.variants.size, packet.variants.silverVar, packet.variants.scars);
                 cap.setOnGeneticalSkin(packet.onGeneticalSkin);
                 cap.setVariantData(packet.defaultVariant);
                 cap.setPlayerChimeraGenetics(packet.chimeraGenetics);
@@ -89,25 +89,25 @@ public class SavePlayerGeneticsPacket {
             });
 
             int shapeData = packet.defaultVariant;
-            int shapeAge = 0;
-            boolean isApprentice = false;
-            PlayerClanData.Age age = player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
-                    .map(PlayerClanData::getMorphAge).orElse(PlayerClanData.Age.ADULT);
-
-            if (age == PlayerClanData.Age.KIT) {
-                shapeAge = -1000;
-            } else if (age == PlayerClanData.Age.APPRENTICE) {
-                shapeAge = -500;
-                isApprentice = true;
-
-            } else if (age == PlayerClanData.Age.ADULT){
-                shapeAge = 0;
-            }
+//            int shapeAge = 0;
+//            boolean isApprentice = false;
+//            WCEPlayerData.Age age = player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+//                    .map(WCEPlayerData::getMorphAge).orElse(WCEPlayerData.Age.ADULT);
+//
+//            if (age == WCEPlayerData.Age.KIT) {
+//                shapeAge = -1000;
+//            } else if (age == WCEPlayerData.Age.APPRENTICE) {
+//                shapeAge = -500;
+//                isApprentice = true;
+//
+//            } else if (age == WCEPlayerData.Age.ADULT){
+//                shapeAge = 0;
+//            }
 
             WCatEntity shape = createShape(ModEntities.WCAT.get(), player.level(), shapeData, player);
-
-            shape.setAppScale(isApprentice);
-            shape.setAge(shapeAge);
+//
+//            shape.setAppScale(isApprentice);
+//            shape.setAge(shapeAge);
 
             if (!PlayerShape.updateShapes(player, shape)) {
                 player.sendSystemMessage(Component.literal("Couldn't update your morph"));
@@ -122,16 +122,16 @@ public class SavePlayerGeneticsPacket {
     private static WCatEntity createShape(EntityType<WCatEntity> type, Level level, int data, ServerPlayer player) {
         WCatEntity cat = new WCatEntity(type, level);
 
-        String shapeNameString = player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
-                .map(PlayerClanData::getMorphName)
+        String shapeNameString = player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+                .map(WCEPlayerData::getMorphName)
                 .orElse("undefined");
 
-        PlayerClanData.Age shapeAge = player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
-                .map(PlayerClanData::getMorphAge)
-                .orElse(PlayerClanData.Age.ADULT);
+        WCEPlayerData.Age shapeAge = player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+                .map(WCEPlayerData::getMorphAge)
+                .orElse(WCEPlayerData.Age.ADULT);
 
-        int genderValue = player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
-                .map(PlayerClanData::getGenderData)
+        int genderValue = player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+                .map(WCEPlayerData::getGenderData)
                 .orElse(0);
 
         String genderS;
@@ -147,15 +147,15 @@ public class SavePlayerGeneticsPacket {
         boolean isAppScale = false;
         boolean isBaby = false;
 
-        if (shapeAge == PlayerClanData.Age.KIT) {
+        if (shapeAge == WCEPlayerData.Age.KIT) {
             age = -1000;
             isBaby = true;
             isAppScale = false;
-        } else if (shapeAge == PlayerClanData.Age.APPRENTICE) {
+        } else if (shapeAge == WCEPlayerData.Age.APPRENTICE) {
             age = -500;
             isAppScale = true;
             isBaby = true;
-        } else if (shapeAge == PlayerClanData.Age.ADULT) {
+        } else if (shapeAge == WCEPlayerData.Age.ADULT) {
             age = 0;
             isAppScale = false;
             isBaby = false;
@@ -174,13 +174,14 @@ public class SavePlayerGeneticsPacket {
         cat.setBaby(isBaby);
         cat.setAppScale(isAppScale);
 
-        player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {
+        player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {
             if (cap.isOnGeneticalSkin()) {
                 cat.setGenetics(cap.getPlayerGenetics());
                 WCGenetics.GeneticalVariants variants = cap.getPlayerGeneticalVariants();
                 cat.setGeneticalVariants(variants.eyeColorLeft, variants.eyeColorRight, variants.rufousingVariant
                         ,variants.blueRufousingVariant, variants.orangeVar, variants.whiteVar, variants.tabbyVar
-                        ,variants.albinoVar, variants.leftEyeVar, variants.rightEyeVar, variants.noise, variants.size, variants.silverVar);
+                        ,variants.albinoVar, variants.leftEyeVar, variants.rightEyeVar, variants.noise,
+                        variants.size, variants.silverVar, variants.scars);
                 cat.setChimeraGenetics(cap.getPlayerChimeraGenetics());
 
                 WCGenetics.GeneticalChimeraVariants variantsChimera = cap.getPlayerChimeraVariants();
@@ -190,9 +191,13 @@ public class SavePlayerGeneticsPacket {
 
                 cat.setOnGeneticalSkin(true);
                 cat.setGender(1);
+
             } else {
                 cat.setNonGeneticalValues(cap.getPlayerGenetics(), cap.getPlayerGeneticalVariants().size);
             }
+
+            cat.setIdlePose(cap.getIdlePose());
+
         });
 
         cat.setPlayerBoundUuid(player.getUUID());

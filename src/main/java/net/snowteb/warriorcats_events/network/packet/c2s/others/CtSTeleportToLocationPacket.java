@@ -128,7 +128,7 @@ public class CtSTeleportToLocationPacket {
                 player.getInventory().add(new ItemStack(ModItems.WHISKERS.get()));
                 player.getInventory().add(new ItemStack(Items.COD));
                 player.sendSystemMessage(Component.literal("You have received your own [Claws] and [A Warrior's Guide]!").withStyle(ChatFormatting.YELLOW));
-                player.sendSystemMessage(Component.literal("Get support and stay tuned for mod updates: ").append(
+                player.sendSystemMessage(Component.literal("Get support and stay tuned for future updates: ").append(
                         Component.literal("[Discord]")
                                 .withStyle(style -> style
                                         .withColor(0x579dff)
@@ -136,6 +136,23 @@ public class CtSTeleportToLocationPacket {
                                         .withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://discord.gg/SkYvZr9DBb"))
                                 )
                 ));
+
+                player.sendSystemMessage(Component.literal("If you ever feel lost, you can always check the ").append(
+                        Component.literal("[Wiki]")
+                                .withStyle(style -> style
+                                        .withColor(0xfc8e4a)
+                                        .withUnderlined(true)
+                                        .withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://github.com/Snowo69/WarriorCatsEvents/wiki"))
+                                )
+                )
+                                .append(Component.literal("!").withStyle(ChatFormatting.WHITE))
+                );
+
+                player.sendSystemMessage(Component.literal(""));
+                player.sendSystemMessage(Component.literal("Your journey begins now...")
+                        .withStyle(ChatFormatting.GRAY).withStyle(ChatFormatting.ITALIC));
+
+
                 persistent.putBoolean("warriorcats_events.starting_items", true);
             }
 

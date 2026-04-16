@@ -1,18 +1,10 @@
 package net.snowteb.warriorcats_events.network.packet.c2s.clan;
 
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.TickTask;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraftforge.event.level.NoteBlockEvent;
 import net.minecraftforge.network.NetworkEvent;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
-import net.snowteb.warriorcats_events.entity.client.WCRenderer;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import tocraft.walkers.api.PlayerShape;
 
@@ -43,7 +35,7 @@ public class EmoteMorphPacket {
             ServerPlayer player = ctx.get().getSender();
             if (player == null) return;
 
-            if (packet.animIndex == -2 && !WarriorCatsEvents.Devs.isDev(player.getUUID())) return;
+            if (packet.animIndex == -2 && !WarriorCatsEvents.Collaborators.isContributor(player.getUUID())) return;
 
             LivingEntity shape = PlayerShape.getCurrentShape(player);
             if (shape instanceof WCatEntity catShape) {

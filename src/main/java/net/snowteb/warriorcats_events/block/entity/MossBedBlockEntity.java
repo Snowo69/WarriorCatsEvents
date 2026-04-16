@@ -67,6 +67,10 @@ public class MossBedBlockEntity extends BlockEntity {
         return this.catUUID;
     }
 
+    public boolean isOwnedBy(UUID uuid) {
+        return this.catUUID.equals(uuid);
+    }
+
     public String getCatName() {
         return catName;
     }

@@ -20,6 +20,7 @@ import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.snowteb.warriorcats_events.entity.ModEntities;
+import net.snowteb.warriorcats_events.item.ModItems;
 import net.snowteb.warriorcats_events.sound.ModSounds;
 import net.snowteb.warriorcats_events.util.MoveToGrassGoal;
 import org.jetbrains.annotations.Nullable;
@@ -139,6 +140,13 @@ public class BadgerEntity extends Animal implements GeoEntity {
 
     @Override
     protected void dropCustomDeathLoot(DamageSource damageSource, int lootingMultiplier, boolean recentlyHit) {
+
+        if (this.level() instanceof ServerLevel) {
+            if (this.random.nextFloat() < 0.025f) {
+                this.spawnAtLocation(ModItems.BADGER_SKULL.get());
+            }
+        }
+
         super.dropCustomDeathLoot(damageSource, lootingMultiplier, recentlyHit);
     }
 

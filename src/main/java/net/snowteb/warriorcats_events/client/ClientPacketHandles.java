@@ -1,17 +1,15 @@
 package net.snowteb.warriorcats_events.client;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.snowteb.warriorcats_events.clan.WCEPlayerData;
 import net.snowteb.warriorcats_events.entity.custom.EagleEntity;
 import net.snowteb.warriorcats_events.entity.custom.WCGenetics;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
-import net.snowteb.warriorcats_events.screen.AncientStickScreen;
-import net.snowteb.warriorcats_events.screen.PatrolScreen;
-import net.snowteb.warriorcats_events.screen.SaveChatMorphScreen;
-import net.snowteb.warriorcats_events.screen.clandata.*;
+import net.snowteb.warriorcats_events.screen.menus.SetPoseMenu;
+import net.snowteb.warriorcats_events.screen.screens.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -89,12 +87,12 @@ public class ClientPacketHandles {
 
     }
 
-    public static void openCreateMorphScreen() {
+    public static void openCreateMorphScreen(boolean isSummoning) {
         Minecraft.getInstance().execute(() -> {
             Minecraft mc = Minecraft.getInstance();
             if (mc.level == null) return;
 
-            mc.setScreen(new CreateMorphGeneticsScreen());
+            mc.setScreen(new CreateMorphGeneticsScreen(isSummoning));
         });
 
     }
@@ -124,6 +122,23 @@ public class ClientPacketHandles {
             mc.setScreen(new PatrolScreen(cats, clanUUID,  deputyID));
         });
 
+    }
+
+
+    public static void openPlayerCatScreen(WCEPlayerData.PackedData data, UUID targetUUID, int myKitCooldown) {
+
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.level == null) return;
+
+        mc.setScreen(new PlayerCatDataScreen(data, targetUUID, myKitCooldown));
+
+    }
+
+    public static void openPoseMenu() {
+        Minecraft.getInstance().execute(() -> {
+            Minecraft mc = Minecraft.getInstance();
+            mc.setScreen(new SetPoseMenu());
+        });
     }
 }
 

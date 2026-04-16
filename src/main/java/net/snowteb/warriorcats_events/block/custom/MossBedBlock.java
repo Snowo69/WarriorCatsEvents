@@ -6,7 +6,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -19,7 +18,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
@@ -33,25 +31,21 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BedPart;
 import net.minecraft.world.level.chunk.LevelChunk;
-import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.common.ToolAction;
 import net.snowteb.warriorcats_events.block.ModBlocks;
 import net.snowteb.warriorcats_events.block.entity.MossBedBlockEntity;
 import net.snowteb.warriorcats_events.clan.ClanData;
-import net.snowteb.warriorcats_events.clan.PlayerClanData;
-import net.snowteb.warriorcats_events.clan.PlayerClanDataProvider;
+import net.snowteb.warriorcats_events.clan.WCEPlayerData;
+import net.snowteb.warriorcats_events.clan.WCEPlayerDataProvider;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.item.ModItems;
 import net.snowteb.warriorcats_events.particles.WCEParticles;
 import net.snowteb.warriorcats_events.sound.ModSounds;
 import tocraft.walkers.api.PlayerShape;
-
-import java.util.List;
 
 public class MossBedBlock extends BedBlock {
     protected static final VoxelShape BASE = Block.box(2.0D, 0.0D, 2.0D, 14.0D, 1.0D, 14.0D);
@@ -225,8 +219,8 @@ public class MossBedBlock extends BedBlock {
 
                     mbEntity.assignNest(player.getUUID());
 
-                    String morphName = player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
-                                    .map(PlayerClanData::getMorphName).orElse(player.getName().getString());
+                    String morphName = player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+                                    .map(WCEPlayerData::getMorphName).orElse(player.getName().getString());
 
                     mbEntity.setCatName(morphName + " (" + player.getName().getString() +")");
 
@@ -349,8 +343,8 @@ public class MossBedBlock extends BedBlock {
         WCatEntity.CatMode mode = WCatEntity.CatMode.FOLLOW;
 
         float pitch = 0.9f;
-        PlayerClanData.Age morphAge = player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
-                .map(PlayerClanData::getMorphAge).orElse(PlayerClanData.Age.ADULT);
+        WCEPlayerData.Age morphAge = player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+                .map(WCEPlayerData::getMorphAge).orElse(WCEPlayerData.Age.ADULT);
         switch (morphAge) {
             case KIT -> pitch = 1.3f;
             case APPRENTICE -> pitch = 1.1f;

@@ -16,11 +16,11 @@ import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.network.NetworkEvent;
+import net.snowteb.warriorcats_events.clan.WCEPlayerData;
 import net.snowteb.warriorcats_events.entity.custom.WCGenetics;
 import net.snowteb.warriorcats_events.util.GeneticsForVariant;
 import net.snowteb.warriorcats_events.clan.ClanData;
-import net.snowteb.warriorcats_events.clan.PlayerClanData;
-import net.snowteb.warriorcats_events.clan.PlayerClanDataProvider;
+import net.snowteb.warriorcats_events.clan.WCEPlayerDataProvider;
 import net.snowteb.warriorcats_events.entity.ModEntities;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.item.ModItems;
@@ -59,32 +59,32 @@ public class CtSCreateAndSpawnKitPacket {
             int variant = this.kitVariant;
 
             if (player instanceof ServerPlayer sPlayer) {
-                BlockPos clickedPos = sPlayer.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
-                        .map(PlayerClanData::getTempClickedPosData).orElse(sPlayer.blockPosition());
+                BlockPos clickedPos = sPlayer.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+                        .map(WCEPlayerData::getTempClickedPosData).orElse(sPlayer.blockPosition());
 
-                String clan = sPlayer.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
-                        .map(PlayerClanData::getClanName).orElse("undefined");
+                String clan = sPlayer.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+                        .map(WCEPlayerData::getClanName).orElse("undefined");
 
 
-                ServerLevel server = ((ServerLevel) sPlayer.level());
+                ServerLevel level = ((ServerLevel) sPlayer.level());
 
-                WCatEntity kit = ModEntities.WCAT.get().create(server);
+                WCatEntity kit = ModEntities.WCAT.get().create(level);
 
 
                 if (kit != null) {
 
-                    WCGenetics playerGens = player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
-                                    .map(PlayerClanData::getPlayerGenetics).orElse(new WCGenetics());
+                    WCGenetics playerGens = player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+                                    .map(WCEPlayerData::getPlayerGenetics).orElse(new WCGenetics());
 
-                    WCGenetics mateGens = player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
-                                    .map(PlayerClanData::getMateGenetics).orElse(new WCGenetics());
+                    WCGenetics mateGens = player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+                                    .map(WCEPlayerData::getMateGenetics).orElse(new WCGenetics());
 
-                    boolean onGenSkin = player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
-                            .map(PlayerClanData::isOnGeneticalSkin).orElse(false);
+                    boolean onGenSkin = player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+                            .map(WCEPlayerData::isOnGeneticalSkin).orElse(false);
 
                     if (!onGenSkin) {
-                        int variantData = player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
-                                .map(PlayerClanData::getVariantData).orElse(0);
+                        int variantData = player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+                                .map(WCEPlayerData::getVariantData).orElse(0);
                         playerGens = GeneticsForVariant.get(variantData);
                     }
 
@@ -92,7 +92,7 @@ public class CtSCreateAndSpawnKitPacket {
                     Vec3 pos = clickedPos.getCenter();
                     kit.setPos(pos.x, pos.y, pos.z);
 
-                    kit.finalizeSpawn(server, server.getCurrentDifficultyAt(clickedPos),
+                    kit.finalizeSpawn(level, level.getCurrentDifficultyAt(clickedPos),
                             MobSpawnType.MOB_SUMMONED, null, null);
 
                     int minutes = WCEServerConfig.SERVER.KIT_GROWTH_MINUTES.get();
@@ -102,7 +102,7 @@ public class CtSCreateAndSpawnKitPacket {
                     kit.setOnGeneticalSkin(true);
                     kit.inheritGeneticsFromParents(playerGens, mateGens);
 
-                    server.addFreshEntity(kit);
+                    level.addFreshEntity(kit);
 
                     kit.setTame(true);
                     kit.tame(player);
@@ -146,24 +146,24 @@ public class CtSCreateAndSpawnKitPacket {
 
                     kit.setHomePosition(clickedPos);
                     kit.setClan(Component.literal(clan));
-                    kit.setClanUUID(sPlayer.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
-                            .map(PlayerClanData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID));
+                    kit.setClanUUID(sPlayer.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+                            .map(WCEPlayerData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID));
 
-                    UUID otherParentUUID = sPlayer.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
-                            .map(PlayerClanData::getMateUUID).orElse(null);
+                    UUID otherParentUUID = sPlayer.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+                            .map(WCEPlayerData::getMateUUID).orElse(null);
 
-                    int morphGender = sPlayer.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
-                            .map(PlayerClanData::getGenderData)
+                    int morphGender = sPlayer.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+                            .map(WCEPlayerData::getGenderData)
                             .orElse(0);
 
-                    String morphName = sPlayer.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
-                            .map(PlayerClanData::getMorphName)
+                    String morphName = sPlayer.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+                            .map(WCEPlayerData::getMorphName)
                             .orElse("Unknown");
 
                     Entity otherParent = null;
 
                     if (otherParentUUID != null) {
-                        otherParent = server.getEntity(otherParentUUID);
+                        otherParent = level.getEntity(otherParentUUID);
                     }
 
                     if (otherParent instanceof WCatEntity) {
@@ -190,7 +190,7 @@ public class CtSCreateAndSpawnKitPacket {
                     kit.setFriendshipLevel(sPlayer.getUUID(), 50);
 
                     if (player.getItemInHand(InteractionHand.MAIN_HAND).is(ModItems.KIT_ITEM.get()) && !player.getAbilities().instabuild) player.getItemInHand(InteractionHand.MAIN_HAND).shrink(1);
-                    server.sendParticles(ParticleTypes.HAPPY_VILLAGER, clickedPos.getX(), clickedPos.getY() + 0.5, clickedPos.getZ(), 15,0.3f,0.3f, 0.3f,0.2f);
+                    level.sendParticles(ParticleTypes.HAPPY_VILLAGER, clickedPos.getX(), clickedPos.getY() + 0.5, clickedPos.getZ(), 15,0.3f,0.3f, 0.3f,0.2f);
 
                     Component messageLog = Component.literal(finalName).withStyle(ChatFormatting.GREEN)
                             .append(Component.literal(" has been born! ").withStyle(ChatFormatting.WHITE))

@@ -9,8 +9,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.server.level.ServerPlayer;
 import net.snowteb.warriorcats_events.clan.ClanData;
-import net.snowteb.warriorcats_events.clan.PlayerClanData;
-import net.snowteb.warriorcats_events.clan.PlayerClanDataProvider;
+import net.snowteb.warriorcats_events.clan.WCEPlayerData;
+import net.snowteb.warriorcats_events.clan.WCEPlayerDataProvider;
 
 import java.util.UUID;
 
@@ -30,11 +30,11 @@ public class LeaveClanCommand {
         ServerPlayer sPlayer = source.getPlayerOrException();
 
 
-        String morphName = sPlayer.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
-                .map(PlayerClanData::getMorphName).orElse(sPlayer.getName().getString());
+        String morphName = sPlayer.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+                .map(WCEPlayerData::getMorphName).orElse(sPlayer.getName().getString());
 
-        UUID targetClanId = sPlayer.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
-                .map(PlayerClanData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID);
+        UUID targetClanId = sPlayer.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+                .map(WCEPlayerData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID);
 
         ClanData data = ClanData.get(sPlayer.serverLevel().getServer().overworld());
         ClanData.Clan targetClan = data.getClan(targetClanId);
@@ -45,7 +45,7 @@ public class LeaveClanCommand {
         } else {
             if (targetClan == null) {
                 sPlayer.sendSystemMessage(Component.literal("The target is in a clan that doesn't exist. Resetting their clan data...").withStyle(ChatFormatting.GRAY));
-                sPlayer.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {
+                sPlayer.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {
                     cap.setCurrentClanUUID(ClanData.EMPTY_UUID);
                 });
                 return 0;

@@ -1,6 +1,5 @@
 package net.snowteb.warriorcats_events.network.packet.c2s.others;
 
-import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.network.FriendlyByteBuf;
@@ -10,8 +9,8 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraftforge.network.NetworkEvent;
-import net.snowteb.warriorcats_events.clan.PlayerClanData;
-import net.snowteb.warriorcats_events.clan.PlayerClanDataProvider;
+import net.snowteb.warriorcats_events.clan.WCEPlayerData;
+import net.snowteb.warriorcats_events.clan.WCEPlayerDataProvider;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.sound.ModSounds;
 import tocraft.walkers.api.PlayerShape;
@@ -54,8 +53,8 @@ public class CtSPlayCatSoundPacket {
                 default -> sound = null;
             }
 
-            PlayerClanData.Age morphAge = player.getCapability(PlayerClanDataProvider.PLAYER_CLAN_DATA)
-                    .map(PlayerClanData::getMorphAge).orElse(PlayerClanData.Age.ADULT);
+            WCEPlayerData.Age morphAge = player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+                    .map(WCEPlayerData::getMorphAge).orElse(WCEPlayerData.Age.ADULT);
 
             float pitch = switch (morphAge) {
                 case APPRENTICE ->  1.2F;

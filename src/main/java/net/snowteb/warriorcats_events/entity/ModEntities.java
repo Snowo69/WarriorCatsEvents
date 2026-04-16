@@ -1,8 +1,10 @@
 package net.snowteb.warriorcats_events.entity;
 
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -50,6 +52,14 @@ public class ModEntities {
                     () -> EntityType.Builder.of(EagleEntity::new, MobCategory.CREATURE)
                             .sized(1f,1f)
                             .build(new ResourceLocation(WarriorCatsEvents.MODID, "golden_eagle").toString()));
+
+
+    public static final RegistryObject<EntityType<MossBallEntity>> MOSS_BALL =
+            ENTITY_TYPES.register("moss_ball",
+                    () -> EntityType.Builder.<MossBallEntity>of(MossBallEntity::new, MobCategory.MISC)
+                            .sized(0.35f, 0.35f)
+                            .build(new ResourceLocation(WarriorCatsEvents.MODID, "moss_ball").toString()));
+
 
 
     public static void register(IEventBus eventBus) {
