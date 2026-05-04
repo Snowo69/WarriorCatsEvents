@@ -13,6 +13,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.items.ItemStackHandler;
+import net.minecraftforge.items.wrapper.RecipeWrapper;
+import net.snowteb.warriorcats_events.recipes.WCERecipes;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -140,5 +142,41 @@ public class StoneCraftingTableBlockEntity extends BlockEntity {
             }
         }
         return false;
+    }
+
+    private ItemStack recipeResult = ItemStack.EMPTY;
+    private long lastCheck = 0;
+
+    public ItemStack recipeResult() {
+        if (level == null) return ItemStack.EMPTY;
+
+        ItemStackHandler handler = new ItemStackHandler(5);
+
+        List<ItemStack> items = getRenderStacks();
+
+        for (int i = 0; i < items.size(); i++) {
+            handler.setStackInSlot(i, items.get(i));
+        }
+
+        RecipeWrapper wrapper = new RecipeWrapper(handler);
+
+        return level.getRecipeManager()
+                .getAllRecipesFor(WCERecipes.HERBS.get())
+                .stream()
+                .filter(recipe -> recipe.matches(wrapper, level))
+                .findFirst()
+                .map(recipe -> recipe.assemble(wrapper, level.registryAccess()))
+                .orElse(ItemStack.EMPTY);
+    }
+
+    public ItemStack getCurrentResult() {
+        if (level == null) return ItemStack.EMPTY;
+
+        if (level.getGameTime() - lastCheck > 3) {
+            recipeResult = recipeResult();
+            lastCheck = level.getGameTime();
+        }
+
+        return recipeResult;
     }
 }

@@ -370,6 +370,20 @@ public static final RegistryObject<Item> FLOWER_CROWN = ITEMS.register("flower_c
     public static final RegistryObject<Item> HEAD_SWEETBERRY = ITEMS.register("head_sweetberry",
             () -> new PlantHeadArmorItem());
 
+    public static final RegistryObject<Item> CAT_HAT = ITEMS.register("cat_hat",
+            () -> new FlowerCrownItem());
+
+    public static final RegistryObject<Item> CAT_PINK_BOW = ITEMS.register("head_pink_bow",
+            () -> new FlowerCrownItem());
+    public static final RegistryObject<Item> CAT_RED_BOW = ITEMS.register("head_red_bow",
+            () -> new FlowerCrownItem());
+    public static final RegistryObject<Item> CAT_BLACK_BOW = ITEMS.register("black_bow",
+            () -> new FlowerArmorItem());
+
+    public static final RegistryObject<Item> SKULL_MASK = ITEMS.register("skull_mask",
+            () -> new BoneHelmetItem());
+
+
     public static void register(IEventBus modEventBus) {
         ITEMS.register(modEventBus);
     }

@@ -17,13 +17,15 @@ public class SyncSkillDataPacket {
     private final int dmgLevel;
     private final int jumpLevel;
     private final int armorLevel;
+    private final boolean climbUnlocked;
 
-    public SyncSkillDataPacket(int speedLevel, int hpLevel, int dmgLevel, int jumpLevel, int armorLevel) {
+    public SyncSkillDataPacket(int speedLevel, int hpLevel, int dmgLevel, int jumpLevel, int armorLevel, boolean climbUnlocked) {
         this.speedLevel = speedLevel;
         this.hpLevel = hpLevel;
         this.dmgLevel = dmgLevel;
         this.jumpLevel = jumpLevel;
         this.armorLevel = armorLevel;
+        this.climbUnlocked = climbUnlocked;
     }
 
     public SyncSkillDataPacket(FriendlyByteBuf buf) {
@@ -32,6 +34,7 @@ public class SyncSkillDataPacket {
         this.dmgLevel = buf.readInt();
         this.jumpLevel = buf.readInt();
         this.armorLevel = buf.readInt();
+        this.climbUnlocked = buf.readBoolean();
     }
 
     public void toBytes(FriendlyByteBuf buf) {
@@ -40,6 +43,7 @@ public class SyncSkillDataPacket {
         buf.writeInt(dmgLevel);
         buf.writeInt(jumpLevel);
         buf.writeInt(armorLevel);
+        buf.writeBoolean(climbUnlocked);
     }
 
     public boolean handle(Supplier<NetworkEvent.Context> supplier) {
@@ -55,6 +59,7 @@ public class SyncSkillDataPacket {
                 data.setDMGLevel(dmgLevel);
                 data.setJumpLevel(jumpLevel);
                 data.setArmorLevel(armorLevel);
+                data.setClimbUnlocked(climbUnlocked);
             });
 
 

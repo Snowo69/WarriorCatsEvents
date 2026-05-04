@@ -49,7 +49,7 @@ public class CtSMoreDMGPacket {
                     .map(ISkillData::getDMGLevel)
                     .orElse(player.getPersistentData().getInt("skill_dmg_level"));
 
-            int cost = PlayerSkill.getDefaultDMGcost() * (currentLevel + 1);
+            int cost = PlayerSkill.getDefaultDMGCost() * (currentLevel + 1);
             int remaining = cost - player.totalExperience;
 
 

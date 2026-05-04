@@ -37,6 +37,8 @@ public class ModTags {
         public static final TagKey<Item> WCE_FEATHERS = tag("wce_feathers");
         public static final TagKey<Item> HERB_CRAFTING = tag("herb_crafting");
         public static final TagKey<Item> ADDITIONAL_PREY = tag("additional_prey");
+        public static final TagKey<Item> SKULLS = tag("skulls");
+        public static final TagKey<Item> FILL_BOWL = tag("fill_bowl");
 
         private static TagKey<Item> tag(String name) {
                return ItemTags.create(new ResourceLocation(WarriorCatsEvents.MODID, name));

@@ -1,166 +1,168 @@
-[16abr.2026 11:23:55.216] [main/INFO] [cpw.mods.modlauncher.Launcher/MODLAUNCHER]: ModLauncher running: args [--launchTarget, forgedatauserdev, --assetIndex, 5, --assetsDir, C:\Users\juane\.gradle\caches\forge_gradle\assets, --gameDir, ., --fml.forgeVersion, 47.4.0, --fml.mcVersion, 1.20.1, --fml.forgeGroup, net.minecraftforge, --fml.mcpVersion, 20230612.114412, --mod, warriorcats_events, --all, --output, C:\Users\juane\OneDrive\Escritorio\Mods\frg MDK\Warrior_Cats_Events\src\generated\resources, --existing, C:\Users\juane\OneDrive\Escritorio\Mods\frg MDK\Warrior_Cats_Events\src\main\resources, --mixin.config, mixins.warriorcats_events.json]
-[16abr.2026 11:23:55.230] [main/INFO] [cpw.mods.modlauncher.Launcher/MODLAUNCHER]: ModLauncher 10.0.9+10.0.9+main.dcd20f30 starting: java version 17.0.12 by Oracle Corporation; OS Windows 11 arch amd64 version 10.0
-[16abr.2026 11:23:55.343] [main/INFO] [net.minecraftforge.fml.loading.ImmediateWindowHandler/]: ImmediateWindowProvider not loading because launch target is forgedatauserdev
-[16abr.2026 11:23:55.400] [main/INFO] [mixin/]: SpongePowered MIXIN Subsystem Version=0.8.5 Source=union:/C:/Users/juane/.gradle/caches/modules-2/files-2.1/org.spongepowered/mixin/0.8.5/9d1c0c3a304ae6697ecd477218fa61b850bf57fc/mixin-0.8.5.jar%23129!/ Service=ModLauncher Env=CLIENT
-[16abr.2026 11:23:55.721] [main/WARN] [net.minecraftforge.fml.loading.moddiscovery.ModFileParser/LOADING]: Mod file C:\Users\juane\.gradle\caches\modules-2\files-2.1\net.minecraftforge\javafmllanguage\1.20.1-47.4.0\f0c0b352173d0a378cbdcec9cfc4ba65899a721\javafmllanguage-1.20.1-47.4.0.jar is missing mods.toml file
-[16abr.2026 11:23:55.725] [main/WARN] [net.minecraftforge.fml.loading.moddiscovery.ModFileParser/LOADING]: Mod file C:\Users\juane\.gradle\caches\modules-2\files-2.1\net.minecraftforge\lowcodelanguage\1.20.1-47.4.0\e862740d8c84d08dbfedea412bef88fe42e727c5\lowcodelanguage-1.20.1-47.4.0.jar is missing mods.toml file
-[16abr.2026 11:23:55.728] [main/WARN] [net.minecraftforge.fml.loading.moddiscovery.ModFileParser/LOADING]: Mod file C:\Users\juane\.gradle\caches\modules-2\files-2.1\net.minecraftforge\mclanguage\1.20.1-47.4.0\5719b3a297a33f877ed5dde4cb4bd75c859096af\mclanguage-1.20.1-47.4.0.jar is missing mods.toml file
-[16abr.2026 11:23:55.731] [main/WARN] [net.minecraftforge.fml.loading.moddiscovery.ModFileParser/LOADING]: Mod file C:\Users\juane\.gradle\caches\modules-2\files-2.1\net.minecraftforge\fmlcore\1.20.1-47.4.0\235975dafa4309945b59c56b53f31dc5b65a6051\fmlcore-1.20.1-47.4.0.jar is missing mods.toml file
-[16abr.2026 11:23:55.986] [main/INFO] [net.minecraftforge.fml.loading.moddiscovery.JarInJarDependencyLocator/]: Found 3 dependencies adding them to mods collection
-[16abr.2026 11:23:58.421] [main/WARN] [mixin/]: Compatibility level JAVA_17 specified by mixins.warriorcats_events.json is higher than the maximum level supported by this version of mixin (JAVA_13).
-[16abr.2026 11:23:58.421] [main/INFO] [mixin/]: Compatibility level set to JAVA_17
-[16abr.2026 11:23:58.435] [main/INFO] [cpw.mods.modlauncher.LaunchServiceHandler/MODLAUNCHER]: Launching target 'forgedatauserdev' with arguments [--gameDir, ., --assetsDir, C:\Users\juane\.gradle\caches\forge_gradle\assets, --assetIndex, 5, --mod, warriorcats_events, --all, --output, C:\Users\juane\OneDrive\Escritorio\Mods\frg MDK\Warrior_Cats_Events\src\generated\resources, --existing, C:\Users\juane\OneDrive\Escritorio\Mods\frg MDK\Warrior_Cats_Events\src\main\resources]
-[16abr.2026 11:23:58.584] [main/INFO] [mixin/]: Attempting to load Fernflower decompiler (Threaded mode)
-[16abr.2026 11:23:58.586] [main/INFO] [mixin/]: Fernflower could not be loaded, exported classes will not be decompiled. NoClassDefFoundError: org/jetbrains/java/decompiler/main/extern/IResultSaver
-[16abr.2026 11:23:58.673] [main/INFO] [mixin/]: Preparing mixins for MixinEnvironment[DEFAULT]
-[16abr.2026 11:23:58.674] [main/INFO] [mixin/]: Selecting config mixins.warriorcats_events.json
-[16abr.2026 11:23:58.677] [main/WARN] [mixin/]: Reference map 'mixins.warriorcats_events.refmap.json' for mixins.warriorcats_events.json could not be read. If this is a development environment you can ignore this message
-[16abr.2026 11:23:58.678] [main/INFO] [mixin/]: Selecting config curios.mixins.json
-[16abr.2026 11:23:58.862] [main/INFO] [mixin/]: Remapping refMap curios.refmap.json using C:\Users\juane\OneDrive\Escritorio\Mods\frg MDK\Warrior_Cats_Events\build\createSrgToMcp\output.srg
-[16abr.2026 11:23:58.862] [main/INFO] [mixin/]: Selecting config patchouli_xplat.mixins.json
-[16abr.2026 11:23:58.863] [main/INFO] [mixin/]: Remapping refMap patchouli.refmap.json using C:\Users\juane\OneDrive\Escritorio\Mods\frg MDK\Warrior_Cats_Events\build\createSrgToMcp\output.srg
-[16abr.2026 11:23:58.863] [main/INFO] [mixin/]: Selecting config craftedcore.mixins.json
-[16abr.2026 11:23:58.866] [main/INFO] [mixin/]: Remapping refMap craftedcore-1.20.1_common-refmap.json using C:\Users\juane\OneDrive\Escritorio\Mods\frg MDK\Warrior_Cats_Events\build\createSrgToMcp\output.srg
-[16abr.2026 11:23:58.866] [main/INFO] [mixin/]: Selecting config walkers.mixins.json
-[16abr.2026 11:23:58.868] [main/INFO] [mixin/]: Remapping refMap walkers-1.20.1_common-refmap.json using C:\Users\juane\OneDrive\Escritorio\Mods\frg MDK\Warrior_Cats_Events\build\createSrgToMcp\output.srg
-[16abr.2026 11:23:58.869] [main/INFO] [mixin/]: Selecting config geckolib.mixins.json
-[16abr.2026 11:23:58.870] [main/INFO] [mixin/]: Remapping refMap geckolib.refmap.json using C:\Users\juane\OneDrive\Escritorio\Mods\frg MDK\Warrior_Cats_Events\build\createSrgToMcp\output.srg
-[16abr.2026 11:23:58.870] [main/INFO] [mixin/]: Selecting config mixinextras.init.mixins.json
-[16abr.2026 11:23:58.957] [main/INFO] [mixin/]: Preparing mixins.warriorcats_events.json (17)
-[16abr.2026 11:23:59.104] [main/INFO] [mixin/]: Preparing curios.mixins.json (13)
-[16abr.2026 11:23:59.117] [main/INFO] [mixin/]: Preparing patchouli_xplat.mixins.json (10)
-[16abr.2026 11:23:59.139] [main/INFO] [mixin/]: Preparing craftedcore.mixins.json (10)
-[16abr.2026 11:23:59.168] [main/INFO] [mixin/]: Preparing walkers.mixins.json (77)
-[16abr.2026 11:23:59.455] [main/WARN] [mixin/]: Error loading class: net/bettercombat/client/compat/FirstPersonAnimationCompatibility (java.lang.ClassNotFoundException: net.bettercombat.client.compat.FirstPersonAnimationCompatibility)
-[16abr.2026 11:23:59.456] [main/WARN] [mixin/]: Error loading class: net/spell_engine/client/compatibility/FirstPersonModelCompatibility (java.lang.ClassNotFoundException: net.spell_engine.client.compatibility.FirstPersonModelCompatibility)
-[16abr.2026 11:23:59.456] [main/INFO] [mixin/]: Preparing geckolib.mixins.json (1)
-[16abr.2026 11:23:59.458] [main/INFO] [mixin/]: Preparing mixinextras.init.mixins.json (0)
-[16abr.2026 11:23:59.498] [main/INFO] [mixin/]: Prepared 126 mixins in 0,823 sec (6,5ms avg) (0ms load, 0ms transform, 0ms plugin)
-[16abr.2026 11:23:59.688] [main/INFO] [net.minecraftforge.data.loading.DatagenModLoader/]: Initializing Data Gatherer for mods [warriorcats_events]
-[16abr.2026 11:23:59.803] [main/INFO] [MixinExtras|Service/]: Initializing MixinExtras via com.llamalad7.mixinextras.service.MixinExtrasServiceImpl(version=0.5.2).
-[16abr.2026 11:23:59.826] [main/INFO] [mixin/]: Mixing EntityCreateHoverEventAccessor from mixins.warriorcats_events.json into net.minecraft.world.entity.Entity
-[16abr.2026 11:23:59.848] [main/INFO] [mixin/]: Mixing EntityTeamColorMixin from mixins.warriorcats_events.json into net.minecraft.world.entity.Entity
-[16abr.2026 11:23:59.949] [main/INFO] [mixin/]: Mixing AccessorEntity from curios.mixins.json into net.minecraft.world.entity.Entity
-[16abr.2026 11:23:59.959] [main/INFO] [mixin/]: Mixing EntityMixin from walkers.mixins.json into net.minecraft.world.entity.Entity
-[16abr.2026 11:23:59.976] [main/INFO] [mixin/]: Mixing accessor.EntityAccessor from walkers.mixins.json into net.minecraft.world.entity.Entity
-[16abr.2026 11:24:00.133] [main/INFO] [mixin/]: Mixing LivingEntityMixin from mixins.warriorcats_events.json into net.minecraft.world.entity.LivingEntity
-[16abr.2026 11:24:00.160] [main/INFO] [mixin/]: Mixing MixinLivingEntity from curios.mixins.json into net.minecraft.world.entity.LivingEntity
-[16abr.2026 11:24:00.163] [main/INFO] [mixin/]: Mixing LivingEntityFoodMixin from walkers.mixins.json into net.minecraft.world.entity.LivingEntity
-[16abr.2026 11:24:00.164] [main/INFO] [mixin/]: Renaming synthetic method lambda$static$0()Ljava/util/List; to md6dc65e$lambda$static$0$0 in walkers.mixins.json:LivingEntityFoodMixin
-[16abr.2026 11:24:00.202] [main/INFO] [mixin/]: Mixing LivingEntityMixin from walkers.mixins.json into net.minecraft.world.entity.LivingEntity
-[16abr.2026 11:24:00.205] [main/INFO] [mixin/]: Renaming synthetic method lambda$shape_allowSpiderClimbing$4(Ltocraft/walkers/traits/ShapeTrait;)Ltocraft/walkers/traits/impl/ClimbBlocksTrait; to md6dc65e$lambda$shape_allowSpiderClimbing$4$1 in walkers.mixins.json:LivingEntityMixin
-[16abr.2026 11:24:00.207] [main/INFO] [mixin/]: Renaming synthetic method lambda$shape_canStandOnFluid$3(Ltocraft/walkers/traits/ShapeTrait;)Ltocraft/walkers/traits/impl/StandOnFluidTrait; to md6dc65e$lambda$shape_canStandOnFluid$3$2 in walkers.mixins.json:LivingEntityMixin
-[16abr.2026 11:24:00.209] [main/INFO] [mixin/]: Renaming synthetic method lambda$returnNightVisionInstance$2(Ltocraft/walkers/traits/ShapeTrait;)Ltocraft/walkers/traits/impl/MobEffectTrait; to md6dc65e$lambda$returnNightVisionInstance$2$3 in walkers.mixins.json:LivingEntityMixin
-[16abr.2026 11:24:00.210] [main/INFO] [mixin/]: Renaming synthetic method lambda$returnHasNightVision$1(Ltocraft/walkers/traits/ShapeTrait;)Ltocraft/walkers/traits/impl/MobEffectTrait; to md6dc65e$lambda$returnHasNightVision$1$4 in walkers.mixins.json:LivingEntityMixin
-[16abr.2026 11:24:00.213] [main/INFO] [mixin/]: Renaming synthetic method lambda$slowFall$0(Ltocraft/walkers/traits/ShapeTrait;)Ltocraft/walkers/traits/impl/FlyingTrait; to md6dc65e$lambda$slowFall$0$5 in walkers.mixins.json:LivingEntityMixin
-[16abr.2026 11:24:00.264] [main/INFO] [mixin/]: Mixing PlayerSwimmingMixin from walkers.mixins.json into net.minecraft.world.entity.LivingEntity
-[16abr.2026 11:24:00.265] [main/INFO] [mixin/]: Mixing accessor.LivingEntityAccessor from walkers.mixins.json into net.minecraft.world.entity.LivingEntity
-[16abr.2026 11:24:00.538] [main/INFO] [mixin/]: Mixing PlayerEntityMixin from mixins.warriorcats_events.json into net.minecraft.world.entity.player.Player
-[16abr.2026 11:24:00.550] [main/INFO] [mixin/]: Mixing PlayerMixin from craftedcore.mixins.json into net.minecraft.world.entity.player.Player
-[16abr.2026 11:24:00.552] [main/INFO] [mixin/]: Renaming synthetic method lambda$writeNbt$0(Lnet/minecraft/nbt/CompoundTag;Ljava/lang/String;Lnet/minecraft/nbt/Tag;)V to md6dc65e$lambda$writeNbt$0$0 in craftedcore.mixins.json:PlayerMixin
-[16abr.2026 11:24:00.561] [main/INFO] [mixin/]: Mixing player.PlayerByteStatusMixin from walkers.mixins.json into net.minecraft.world.entity.player.Player
-[16abr.2026 11:24:00.562] [main/INFO] [mixin/]: Mixing player.PlayerEntityAttackMixin from walkers.mixins.json into net.minecraft.world.entity.player.Player
-[16abr.2026 11:24:00.563] [main/INFO] [mixin/]: Mixing player.PlayerEntityDataMixin from walkers.mixins.json into net.minecraft.world.entity.player.Player
-[16abr.2026 11:24:00.569] [main/INFO] [mixin/]: Renaming synthetic method lambda$walkers$updateShapes$1(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/server/network/ServerPlayerConnection;)V to md6dc65e$lambda$walkers$updateShapes$1$1 in walkers.mixins.json:player.PlayerEntityDataMixin
-[16abr.2026 11:24:00.570] [main/INFO] [mixin/]: Renaming synthetic method lambda$walkers$updateShapes$0(Ltocraft/walkers/traits/ShapeTrait;)Ltocraft/walkers/traits/impl/RiderTrait; to md6dc65e$lambda$walkers$updateShapes$0$2 in walkers.mixins.json:player.PlayerEntityDataMixin
-[16abr.2026 11:24:00.591] [main/INFO] [mixin/]: Mixing player.PlayerEntityMixin from walkers.mixins.json into net.minecraft.world.entity.player.Player
-[16abr.2026 11:24:00.592] [main/INFO] [mixin/]: Renaming synthetic method lambda$handeReinforcementsTrait$3(Ltocraft/walkers/traits/impl/ReinforcementsTrait;Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/entity/Entity;)Z to md6dc65e$lambda$handeReinforcementsTrait$3$3 in walkers.mixins.json:player.PlayerEntityMixin
-[16abr.2026 11:24:00.593] [main/INFO] [mixin/]: Renaming synthetic method lambda$handeReinforcementsTrait$2(Ltocraft/walkers/traits/ShapeTrait;)Ltocraft/walkers/traits/impl/ReinforcementsTrait; to md6dc65e$lambda$handeReinforcementsTrait$2$4 in walkers.mixins.json:player.PlayerEntityMixin
-[16abr.2026 11:24:00.593] [main/INFO] [mixin/]: Renaming synthetic method lambda$tickTemperature$1(Ltocraft/walkers/traits/ShapeTrait;)Ltocraft/walkers/traits/impl/TemperatureTrait; to md6dc65e$lambda$tickTemperature$1$5 in walkers.mixins.json:player.PlayerEntityMixin
-[16abr.2026 11:24:00.595] [main/INFO] [mixin/]: Renaming synthetic method lambda$tickFire$0(Ltocraft/walkers/traits/ShapeTrait;)Ltocraft/walkers/traits/impl/BurnInDaylightTrait; to md6dc65e$lambda$tickFire$0$6 in walkers.mixins.json:player.PlayerEntityMixin
-[16abr.2026 11:24:00.639] [main/INFO] [mixin/]: Mixing player.PlayerEntityTickMixin from walkers.mixins.json into net.minecraft.world.entity.player.Player
-[16abr.2026 11:24:00.640] [main/INFO] [mixin/]: Renaming synthetic method lambda$applyMobEffectTrait$1(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/entity/LivingEntity;)I to md6dc65e$lambda$applyMobEffectTrait$1$7 in walkers.mixins.json:player.PlayerEntityTickMixin
-[16abr.2026 11:24:00.640] [main/INFO] [mixin/]: Renaming synthetic method lambda$applyMobEffectTrait$0(Ltocraft/walkers/traits/ShapeTrait;)Ltocraft/walkers/traits/impl/MobEffectTrait; to md6dc65e$lambda$applyMobEffectTrait$0$8 in walkers.mixins.json:player.PlayerEntityTickMixin
-[16abr.2026 11:24:00.657] [main/INFO] [mixin/]: Mixing player.PlayerSonicBoomMixin from walkers.mixins.json into net.minecraft.world.entity.player.Player
-[16abr.2026 11:24:00.657] [main/INFO] [mixin/]: Renaming synthetic method lambda$tickSonicBoom$0(Lnet/minecraft/world/entity/LivingEntity;)Z to md6dc65e$lambda$tickSonicBoom$0$9 in walkers.mixins.json:player.PlayerSonicBoomMixin
-[16abr.2026 11:24:00.663] [main/INFO] [mixin/]: Mixing player.PlayerSoundMixin from walkers.mixins.json into net.minecraft.world.entity.player.Player
-[16abr.2026 11:24:00.867] [main/INFO] [mixin/]: Mixing ServerLevelMixin from mixins.warriorcats_events.json into net.minecraft.server.level.ServerLevel
-[16abr.2026 11:24:00.868] [main/INFO] [mixin/]: Renaming synthetic method lambda$spawnPreyTick$0(Lnet/minecraft/world/entity/EntityType;Lnet/minecraft/world/entity/LivingEntity;)Z to md6dc65e$lambda$spawnPreyTick$0$0 in mixins.warriorcats_events.json:ServerLevelMixin
-[16abr.2026 11:24:00.978] [main/INFO] [mixin/]: Mixing MobEffectMixin from walkers.mixins.json into net.minecraft.world.effect.MobEffect
-[16abr.2026 11:24:01.288] [main/INFO] [mixin/]: Mixing SweetBerryBushBlockMixin from walkers.mixins.json into net.minecraft.world.level.block.SweetBerryBushBlock
-[16abr.2026 11:24:01.311] [main/INFO] [mixin/]: Mixing MixinPowderSnowBlock from curios.mixins.json into net.minecraft.world.level.block.PowderSnowBlock
-[16abr.2026 11:24:01.311] [main/INFO] [mixin/]: Mixing PowderSnowBlockMixin from walkers.mixins.json into net.minecraft.world.level.block.PowderSnowBlock
-[16abr.2026 11:24:01.738] [main/INFO] [mixin/]: Mixing ParrotDeathLootMobMixin from mixins.warriorcats_events.json into net.minecraft.world.entity.Mob
-[16abr.2026 11:24:01.744] [main/INFO] [mixin/]: Mixing MobEntityDataMixin from walkers.mixins.json into net.minecraft.world.entity.Mob
-[16abr.2026 11:24:01.744] [main/INFO] [mixin/]: Mixing MobHunterPreyMixin from walkers.mixins.json into net.minecraft.world.entity.Mob
-[16abr.2026 11:24:01.744] [main/INFO] [mixin/]: Renaming synthetic method lambda$registerCustomGoals$2(Lnet/minecraft/world/entity/LivingEntity;)Z to md6dc65e$lambda$registerCustomGoals$2$0 in walkers.mixins.json:MobHunterPreyMixin
-[16abr.2026 11:24:01.744] [main/INFO] [mixin/]: Renaming synthetic method lambda$registerCustomGoals$1(Ljava/util/Map$Entry;Lnet/minecraft/world/entity/LivingEntity;)Z to md6dc65e$lambda$registerCustomGoals$1$1 in walkers.mixins.json:MobHunterPreyMixin
-[16abr.2026 11:24:01.745] [main/INFO] [mixin/]: Renaming synthetic method lambda$registerCustomGoals$0(Ljava/util/Map$Entry;Lnet/minecraft/world/entity/LivingEntity;)Z to md6dc65e$lambda$registerCustomGoals$0$2 in walkers.mixins.json:MobHunterPreyMixin
-[16abr.2026 11:24:01.747] [main/INFO] [mixin/]: Mixing accessor.MobEntityAccessor from walkers.mixins.json into net.minecraft.world.entity.Mob
-[16abr.2026 11:24:01.776] [main/INFO] [mixin/]: Mixing accessor.IronGolemEntityAccessor from walkers.mixins.json into net.minecraft.world.entity.animal.IronGolem
-[16abr.2026 11:24:02.251] [main/INFO] [mixin/]: Mixing entity.BowItemMixin from walkers.mixins.json into net.minecraft.world.item.BowItem
-[16abr.2026 11:24:02.283] [main/INFO] [mixin/]: Mixing MixinShearsItem from curios.mixins.json into net.minecraft.world.item.ShearsItem
-[16abr.2026 11:24:02.350] [main/INFO] [mixin/]: Mixing accessor.AllayAccessor from walkers.mixins.json into net.minecraft.world.entity.animal.allay.Allay
-[16abr.2026 11:24:02.367] [main/INFO] [mixin/]: Mixing ServerPlayerMixin from craftedcore.mixins.json into net.minecraft.server.level.ServerPlayer
-[16abr.2026 11:24:02.369] [main/INFO] [mixin/]: Mixing player.ServerPlayerEntityMixin from walkers.mixins.json into net.minecraft.server.level.ServerPlayer
-[16abr.2026 11:24:02.369] [main/INFO] [mixin/]: Mixing ServerPlayerSleepInBedMixin from mixins.warriorcats_events.json into net.minecraft.server.level.ServerPlayer
-[16abr.2026 11:24:02.411] [main/INFO] [mixin/]: Mixing ActiveTargetGoalMixin from walkers.mixins.json into net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal
-[16abr.2026 11:24:02.411] [main/INFO] [mixin/]: Renaming synthetic method lambda$shape_shouldContinue$1(Ltocraft/walkers/traits/ShapeTrait;)Ltocraft/walkers/traits/impl/FearedTrait; to md6dc65e$lambda$shape_shouldContinue$1$0 in walkers.mixins.json:ActiveTargetGoalMixin
-[16abr.2026 11:24:02.411] [main/INFO] [mixin/]: Renaming synthetic method lambda$ignoreShapedPlayers$0(Ltocraft/walkers/traits/ShapeTrait;)Ltocraft/walkers/traits/impl/FearedTrait; to md6dc65e$lambda$ignoreShapedPlayers$0$1 in walkers.mixins.json:ActiveTargetGoalMixin
-[16abr.2026 11:24:02.436] [main/INFO] [mixin/]: Mixing TrackTargetGoalMixin from walkers.mixins.json into net.minecraft.world.entity.ai.goal.target.TargetGoal
-[16abr.2026 11:24:02.446] [main/INFO] [mixin/]: Mixing CatAvoidMixin from mixins.warriorcats_events.json into net.minecraft.world.entity.ai.goal.AvoidEntityGoal
-[16abr.2026 11:24:02.446] [main/WARN] [mixin/]: @Shadow target mixins.warriorcats_events.json:CatAvoidMixin::mob is final but shadow is not decorated with @Final
-[16abr.2026 11:24:02.447] [main/INFO] [mixin/]: Mixing AvoidEntityGoalMixin from walkers.mixins.json into net.minecraft.world.entity.ai.goal.AvoidEntityGoal
-[16abr.2026 11:24:02.981] [main/INFO] [mixin/]: Mixing accessor.AxolotlEntityAccessor from walkers.mixins.json into net.minecraft.world.entity.animal.axolotl.Axolotl
-[16abr.2026 11:24:03.012] [main/INFO] [mixin/]: Mixing LookAtPlayerGoalMixin from walkers.mixins.json into net.minecraft.world.entity.ai.goal.LookAtPlayerGoal
-[16abr.2026 11:24:03.041] [main/INFO] [mixin/]: Mixing accessor.AbstractHorseAccessor from walkers.mixins.json into net.minecraft.world.entity.animal.horse.AbstractHorse
-[16abr.2026 11:24:03.103] [main/INFO] [mixin/]: Mixing accessor.CreeperEntityAccessor from walkers.mixins.json into net.minecraft.world.entity.monster.Creeper
-[16abr.2026 11:24:03.115] [main/INFO] [mixin/]: Mixing accessor.DolphinAccessor from walkers.mixins.json into net.minecraft.world.entity.animal.Dolphin
-[16abr.2026 11:24:03.115] [main/INFO] [mixin/]: Renaming @Accessor method getSWIM_WITH_PLAYER_TARGETING()Lnet/minecraft/world/entity/ai/targeting/TargetingConditions; to getSWIM_WITH_PLAYER_TARGETING_$md$6dc65e$0 in walkers.mixins.json:accessor.DolphinAccessor
-[16abr.2026 11:24:03.200] [main/INFO] [mixin/]: Mixing EnderManMixin from walkers.mixins.json into net.minecraft.world.entity.monster.EnderMan
-[16abr.2026 11:24:03.200] [main/INFO] [mixin/]: Renaming synthetic method lambda$addCustomGoals$0(Lnet/minecraft/world/entity/LivingEntity;)Z to md6dc65e$lambda$addCustomGoals$0$0 in walkers.mixins.json:EnderManMixin
-[16abr.2026 11:24:03.240] [main/INFO] [mixin/]: Mixing FoxEntityMixin from walkers.mixins.json into net.minecraft.world.entity.animal.Fox
-[16abr.2026 11:24:03.242] [main/INFO] [mixin/]: Renaming synthetic method lambda$static$0(Lnet/minecraft/world/entity/Entity;)Z to md6dc65e$lambda$static$0$0 in walkers.mixins.json:FoxEntityMixin
-[16abr.2026 11:24:03.242] [main/INFO] [mixin/]: Mixing accessor.FoxEntityAccessor from walkers.mixins.json into net.minecraft.world.entity.animal.Fox
-[16abr.2026 11:24:03.245] [main/WARN] [mixin/]: Write access to @Mutable @Final field AVOID_PLAYERS:Ljava/util/function/Predicate; in walkers.mixins.json:FoxEntityMixin::<clinit>
-[16abr.2026 11:24:03.279] [main/INFO] [mixin/]: Mixing accessor.SquidEntityAccessor from walkers.mixins.json into net.minecraft.world.entity.animal.Squid
-[16abr.2026 11:24:03.327] [main/INFO] [mixin/]: Mixing SlimeMixin from walkers.mixins.json into net.minecraft.world.entity.monster.Slime
-[16abr.2026 11:24:03.327] [main/INFO] [mixin/]: Mixing accessor.SlimeEntityAccessor from walkers.mixins.json into net.minecraft.world.entity.monster.Slime
-[16abr.2026 11:24:03.360] [main/INFO] [mixin/]: Mixing accessor.ParrotEntityAccessor from walkers.mixins.json into net.minecraft.world.entity.animal.Parrot
-[16abr.2026 11:24:03.396] [main/INFO] [mixin/]: Mixing accessor.PufferfishAccessor from walkers.mixins.json into net.minecraft.world.entity.animal.Pufferfish
-[16abr.2026 11:24:03.415] [main/INFO] [mixin/]: Mixing RavagerEntityMixin from walkers.mixins.json into net.minecraft.world.entity.monster.Ravager
-[16abr.2026 11:24:03.416] [main/INFO] [mixin/]: Mixing accessor.RavagerEntityAccessor from walkers.mixins.json into net.minecraft.world.entity.monster.Ravager
-[16abr.2026 11:24:03.430] [main/INFO] [mixin/]: Mixing accessor.SheepAccessor from walkers.mixins.json into net.minecraft.world.entity.animal.Sheep
-[16abr.2026 11:24:03.442] [main/INFO] [mixin/]: Mixing accessor.ShulkerAccessor from walkers.mixins.json into net.minecraft.world.entity.monster.Shulker
-[16abr.2026 11:24:03.528] [main/INFO] [mixin/]: Mixing VillagerHostilesSensorMixin from walkers.mixins.json into net.minecraft.world.entity.ai.sensing.VillagerHostilesSensor
-[16abr.2026 11:24:03.552] [main/INFO] [mixin/]: Mixing PiglinSensorMixin from walkers.mixins.json into net.minecraft.world.entity.ai.sensing.PiglinSpecificSensor
-[16abr.2026 11:24:03.552] [main/INFO] [mixin/]: Renaming synthetic method lambda$runFromZombifiedShapes$0(Lnet/minecraft/world/entity/LivingEntity;)Z to md6dc65e$lambda$runFromZombifiedShapes$0$0 in walkers.mixins.json:PiglinSensorMixin
-[16abr.2026 11:24:03.569] [main/INFO] [mixin/]: Mixing AxolotlAttackablesSensorMixin from walkers.mixins.json into net.minecraft.world.entity.ai.sensing.AxolotlAttackablesSensor
-[16abr.2026 11:24:03.642] [main/INFO] [mixin/]: Mixing VillagerEntityMixin from walkers.mixins.json into net.minecraft.world.entity.npc.Villager
-[16abr.2026 11:24:03.661] [main/INFO] [mixin/]: Mixing WitchMixin from walkers.mixins.json into net.minecraft.world.entity.monster.Witch
-[16abr.2026 11:24:03.691] [main/INFO] [mixin/]: Mixing WolfEntityMixin from walkers.mixins.json into net.minecraft.world.entity.animal.Wolf
-[16abr.2026 11:24:03.753] [main/INFO] [mixin/]: Mixing MobEffectInstanceMixin from walkers.mixins.json into net.minecraft.world.effect.MobEffectInstance
-[16abr.2026 11:24:03.804] [main/INFO] [mixin/]: Mixing ServerGamePacketListenerMixin from mixins.warriorcats_events.json into net.minecraft.server.network.ServerGamePacketListenerImpl
-[16abr.2026 11:24:03.931] [main/INFO] [mixin/]: Mixing MixinInventory from curios.mixins.json into net.minecraft.world.entity.player.Inventory
-[16abr.2026 11:24:04.051] [main/INFO] [mixin/]: Mixing MixinApplyBonusCount from curios.mixins.json into net.minecraft.world.level.storage.loot.functions.ApplyBonusCount
-[16abr.2026 11:24:04.418] [main/INFO] [mixin/]: Mixing accessor.BiomeAccessor from walkers.mixins.json into net.minecraft.world.level.biome.Biome
-[16abr.2026 11:24:04.813] [modloading-worker-0/INFO] [mixin/]: Mixing MinecraftMixin from mixins.warriorcats_events.json into net.minecraft.client.Minecraft
-[16abr.2026 11:24:04.814] [modloading-worker-0/INFO] [mixin/]: Mixing client.MinecraftMixin from craftedcore.mixins.json into net.minecraft.client.Minecraft
-[16abr.2026 11:24:04.844] [modloading-worker-0/INFO] [net.minecraftforge.common.ForgeMod/FORGEMOD]: Forge mod loading, version 47.4.0, for MC 1.20.1 with MCP 20230612.114412
-[16abr.2026 11:24:04.845] [modloading-worker-0/INFO] [mixin/]: Mixing MultiPlayerGameModeMixin from craftedcore.mixins.json into net.minecraft.client.multiplayer.MultiPlayerGameMode
-[16abr.2026 11:24:04.845] [modloading-worker-0/INFO] [net.minecraftforge.common.MinecraftForge/FORGE]: MinecraftForge v47.4.0 Initialized
-[16abr.2026 11:24:04.859] [modloading-worker-0/INFO] [mixin/]: Mixing MinecraftServerMixin from craftedcore.mixins.json into net.minecraft.server.MinecraftServer
-[16abr.2026 11:24:04.901] [modloading-worker-0/INFO] [mixin/]: Mixing ScreenClickedComponentMixin from mixins.warriorcats_events.json into net.minecraft.client.gui.screens.Screen
-[16abr.2026 11:24:04.907] [modloading-worker-0/INFO] [mixin/]: Mixing client.AccessorScreen from patchouli_xplat.mixins.json into net.minecraft.client.gui.screens.Screen
-[16abr.2026 11:24:04.934] [modloading-worker-0/INFO] [mixin/]: Mixing client.accessor.EntityShadowAccessor from walkers.mixins.json into net.minecraft.client.renderer.entity.EntityRenderer
-[16abr.2026 11:24:04.949] [modloading-worker-0/INFO] [mixin/]: Mixing client.accessor.LivingEntityRendererAccessor from walkers.mixins.json into net.minecraft.client.renderer.entity.LivingEntityRenderer
-[16abr.2026 11:24:04.963] [modloading-worker-0/INFO] [mixin/]: Mixing client.RenderLayerMixin from walkers.mixins.json into net.minecraft.client.renderer.entity.layers.RenderLayer
-[16abr.2026 11:24:04.984] [modloading-worker-0/INFO] [mixin/]: Mixing ChatScreenMixin from mixins.warriorcats_events.json into net.minecraft.client.gui.screens.ChatScreen
-[16abr.2026 11:24:05.002] [modloading-worker-0/INFO] [mixin/]: Mixing TitleScreenMixin from mixins.warriorcats_events.json into net.minecraft.client.gui.screens.TitleScreen
-[16abr.2026 11:24:05.003] [modloading-worker-0/WARN] [mixin/]: @Shadow target mixins.warriorcats_events.json:TitleScreenMixin::fading is final but shadow is not decorated with @Final
-[16abr.2026 11:24:05.056] [modloading-worker-0/INFO] [mixin/]: Mixing client.MixinInventoryScreen from patchouli_xplat.mixins.json into net.minecraft.client.gui.screens.inventory.InventoryScreen
-[16abr.2026 11:24:05.084] [modloading-worker-0/WARN] [software.bernie.geckolib.GeckoLib/]: Minecraft.getInstance() was null, could not register reload listeners
-[16abr.2026 11:24:05.101] [modloading-worker-0/INFO] [mixin/]: Mixing client.AccessorKeyMapping from patchouli_xplat.mixins.json into net.minecraft.client.KeyMapping
-[16abr.2026 11:24:05.102] [modloading-worker-0/INFO] [mixin/]: Renaming @Accessor method getAllKeyMappings()Ljava/util/Map; to getAllKeyMappings_$md$6dc65e$0 in patchouli_xplat.mixins.json:client.AccessorKeyMapping
-[16abr.2026 11:24:05.137] [modloading-worker-0/INFO] [mixin/]: Mixing client.accessor.LlamaEntityModelAccessor from walkers.mixins.json into net.minecraft.client.model.LlamaModel
-[16abr.2026 11:24:05.155] [modloading-worker-0/INFO] [mixin/]: Mixing client.accessor.QuadrupedEntityModelAccessor from walkers.mixins.json into net.minecraft.client.model.QuadrupedModel
-[16abr.2026 11:24:05.170] [modloading-worker-0/INFO] [mixin/]: Mixing client.accessor.BlazeEntityModelAccessor from walkers.mixins.json into net.minecraft.client.model.BlazeModel
-[16abr.2026 11:24:05.183] [modloading-worker-0/INFO] [mixin/]: Mixing client.accessor.OcelotEntityModelAccessor from walkers.mixins.json into net.minecraft.client.model.OcelotModel
-[16abr.2026 11:24:05.193] [modloading-worker-0/INFO] [mixin/]: Mixing client.accessor.SpiderEntityModelAccessor from walkers.mixins.json into net.minecraft.client.model.SpiderModel
-[16abr.2026 11:24:05.205] [modloading-worker-0/INFO] [mixin/]: Mixing client.accessor.RavagerEntityModelAccessor from walkers.mixins.json into net.minecraft.client.model.RavagerModel
-[16abr.2026 11:24:05.217] [modloading-worker-0/INFO] [mixin/]: Mixing client.accessor.SquidEntityModelAccessor from walkers.mixins.json into net.minecraft.client.model.SquidModel
-[16abr.2026 11:24:05.295] [modloading-worker-0/INFO] [mixin/]: Mixing client.PlayerEntityRendererMixin from walkers.mixins.json into net.minecraft.client.renderer.entity.player.PlayerRenderer
-[16abr.2026 11:24:05.346] [ForkJoinPool.commonPool-worker-1/ERROR] [tocraft.craftedcore.CraftedCore/]: Couldn't get patreons from https://raw.githubusercontent.com/ToCraft/craftedcore/main/common/src/main/resources/patreons.txt
+[03may.2026 23:57:58.603] [main/INFO] [cpw.mods.modlauncher.Launcher/MODLAUNCHER]: ModLauncher running: args [--launchTarget, forgedatauserdev, --assetIndex, 5, --assetsDir, C:\Users\juane\.gradle\caches\forge_gradle\assets, --gameDir, ., --fml.forgeVersion, 47.4.0, --fml.mcVersion, 1.20.1, --fml.forgeGroup, net.minecraftforge, --fml.mcpVersion, 20230612.114412, --mod, warriorcats_events, --all, --output, C:\Users\juane\OneDrive\Escritorio\Mods\frg MDK\Warrior_Cats_Events\src\generated\resources, --existing, C:\Users\juane\OneDrive\Escritorio\Mods\frg MDK\Warrior_Cats_Events\src\main\resources, --mixin.config, mixins.warriorcats_events.json]
+[03may.2026 23:57:58.614] [main/INFO] [cpw.mods.modlauncher.Launcher/MODLAUNCHER]: ModLauncher 10.0.9+10.0.9+main.dcd20f30 starting: java version 17.0.12 by Oracle Corporation; OS Windows 11 arch amd64 version 10.0
+[03may.2026 23:57:58.716] [main/INFO] [net.minecraftforge.fml.loading.ImmediateWindowHandler/]: ImmediateWindowProvider not loading because launch target is forgedatauserdev
+[03may.2026 23:57:58.764] [main/INFO] [mixin/]: SpongePowered MIXIN Subsystem Version=0.8.5 Source=union:/C:/Users/juane/.gradle/caches/modules-2/files-2.1/org.spongepowered/mixin/0.8.5/9d1c0c3a304ae6697ecd477218fa61b850bf57fc/mixin-0.8.5.jar%23129!/ Service=ModLauncher Env=CLIENT
+[03may.2026 23:57:59.029] [main/WARN] [net.minecraftforge.fml.loading.moddiscovery.ModFileParser/LOADING]: Mod file C:\Users\juane\.gradle\caches\modules-2\files-2.1\net.minecraftforge\javafmllanguage\1.20.1-47.4.0\f0c0b352173d0a378cbdcec9cfc4ba65899a721\javafmllanguage-1.20.1-47.4.0.jar is missing mods.toml file
+[03may.2026 23:57:59.033] [main/WARN] [net.minecraftforge.fml.loading.moddiscovery.ModFileParser/LOADING]: Mod file C:\Users\juane\.gradle\caches\modules-2\files-2.1\net.minecraftforge\lowcodelanguage\1.20.1-47.4.0\e862740d8c84d08dbfedea412bef88fe42e727c5\lowcodelanguage-1.20.1-47.4.0.jar is missing mods.toml file
+[03may.2026 23:57:59.036] [main/WARN] [net.minecraftforge.fml.loading.moddiscovery.ModFileParser/LOADING]: Mod file C:\Users\juane\.gradle\caches\modules-2\files-2.1\net.minecraftforge\mclanguage\1.20.1-47.4.0\5719b3a297a33f877ed5dde4cb4bd75c859096af\mclanguage-1.20.1-47.4.0.jar is missing mods.toml file
+[03may.2026 23:57:59.039] [main/WARN] [net.minecraftforge.fml.loading.moddiscovery.ModFileParser/LOADING]: Mod file C:\Users\juane\.gradle\caches\modules-2\files-2.1\net.minecraftforge\fmlcore\1.20.1-47.4.0\235975dafa4309945b59c56b53f31dc5b65a6051\fmlcore-1.20.1-47.4.0.jar is missing mods.toml file
+[03may.2026 23:57:59.254] [main/INFO] [net.minecraftforge.fml.loading.moddiscovery.JarInJarDependencyLocator/]: Found 3 dependencies adding them to mods collection
+[03may.2026 23:58:01.405] [main/WARN] [mixin/]: Compatibility level JAVA_17 specified by mixins.warriorcats_events.json is higher than the maximum level supported by this version of mixin (JAVA_13).
+[03may.2026 23:58:01.406] [main/INFO] [mixin/]: Compatibility level set to JAVA_17
+[03may.2026 23:58:01.424] [main/INFO] [cpw.mods.modlauncher.LaunchServiceHandler/MODLAUNCHER]: Launching target 'forgedatauserdev' with arguments [--gameDir, ., --assetsDir, C:\Users\juane\.gradle\caches\forge_gradle\assets, --assetIndex, 5, --mod, warriorcats_events, --all, --output, C:\Users\juane\OneDrive\Escritorio\Mods\frg MDK\Warrior_Cats_Events\src\generated\resources, --existing, C:\Users\juane\OneDrive\Escritorio\Mods\frg MDK\Warrior_Cats_Events\src\main\resources]
+[03may.2026 23:58:01.512] [main/INFO] [mixin/]: Attempting to load Fernflower decompiler (Threaded mode)
+[03may.2026 23:58:01.513] [main/INFO] [mixin/]: Fernflower could not be loaded, exported classes will not be decompiled. NoClassDefFoundError: org/jetbrains/java/decompiler/main/extern/IResultSaver
+[03may.2026 23:58:01.591] [main/INFO] [mixin/]: Preparing mixins for MixinEnvironment[DEFAULT]
+[03may.2026 23:58:01.591] [main/INFO] [mixin/]: Selecting config mixins.warriorcats_events.json
+[03may.2026 23:58:01.593] [main/WARN] [mixin/]: Reference map 'mixins.warriorcats_events.refmap.json' for mixins.warriorcats_events.json could not be read. If this is a development environment you can ignore this message
+[03may.2026 23:58:01.594] [main/INFO] [mixin/]: Selecting config curios.mixins.json
+[03may.2026 23:58:01.784] [main/INFO] [mixin/]: Remapping refMap curios.refmap.json using C:\Users\juane\OneDrive\Escritorio\Mods\frg MDK\Warrior_Cats_Events\build\createSrgToMcp\output.srg
+[03may.2026 23:58:01.784] [main/INFO] [mixin/]: Selecting config patchouli_xplat.mixins.json
+[03may.2026 23:58:01.785] [main/INFO] [mixin/]: Remapping refMap patchouli.refmap.json using C:\Users\juane\OneDrive\Escritorio\Mods\frg MDK\Warrior_Cats_Events\build\createSrgToMcp\output.srg
+[03may.2026 23:58:01.785] [main/INFO] [mixin/]: Selecting config craftedcore.mixins.json
+[03may.2026 23:58:01.786] [main/INFO] [mixin/]: Remapping refMap craftedcore-1.20.1_common-refmap.json using C:\Users\juane\OneDrive\Escritorio\Mods\frg MDK\Warrior_Cats_Events\build\createSrgToMcp\output.srg
+[03may.2026 23:58:01.786] [main/INFO] [mixin/]: Selecting config walkers.mixins.json
+[03may.2026 23:58:01.788] [main/INFO] [mixin/]: Remapping refMap walkers-1.20.1_common-refmap.json using C:\Users\juane\OneDrive\Escritorio\Mods\frg MDK\Warrior_Cats_Events\build\createSrgToMcp\output.srg
+[03may.2026 23:58:01.788] [main/INFO] [mixin/]: Selecting config geckolib.mixins.json
+[03may.2026 23:58:01.790] [main/INFO] [mixin/]: Remapping refMap geckolib.refmap.json using C:\Users\juane\OneDrive\Escritorio\Mods\frg MDK\Warrior_Cats_Events\build\createSrgToMcp\output.srg
+[03may.2026 23:58:01.790] [main/INFO] [mixin/]: Selecting config mixinextras.init.mixins.json
+[03may.2026 23:58:01.878] [main/INFO] [mixin/]: Preparing mixins.warriorcats_events.json (18)
+[03may.2026 23:58:02.037] [main/INFO] [mixin/]: Preparing curios.mixins.json (13)
+[03may.2026 23:58:02.049] [main/INFO] [mixin/]: Preparing patchouli_xplat.mixins.json (10)
+[03may.2026 23:58:02.073] [main/INFO] [mixin/]: Preparing craftedcore.mixins.json (10)
+[03may.2026 23:58:02.091] [main/INFO] [mixin/]: Preparing walkers.mixins.json (77)
+[03may.2026 23:58:02.362] [main/WARN] [mixin/]: Error loading class: net/bettercombat/client/compat/FirstPersonAnimationCompatibility (java.lang.ClassNotFoundException: net.bettercombat.client.compat.FirstPersonAnimationCompatibility)
+[03may.2026 23:58:02.364] [main/WARN] [mixin/]: Error loading class: net/spell_engine/client/compatibility/FirstPersonModelCompatibility (java.lang.ClassNotFoundException: net.spell_engine.client.compatibility.FirstPersonModelCompatibility)
+[03may.2026 23:58:02.364] [main/INFO] [mixin/]: Preparing geckolib.mixins.json (1)
+[03may.2026 23:58:02.365] [main/INFO] [mixin/]: Preparing mixinextras.init.mixins.json (0)
+[03may.2026 23:58:02.403] [main/INFO] [mixin/]: Prepared 127 mixins in 0,811 sec (6,4ms avg) (0ms load, 0ms transform, 0ms plugin)
+[03may.2026 23:58:02.571] [main/INFO] [net.minecraftforge.data.loading.DatagenModLoader/]: Initializing Data Gatherer for mods [warriorcats_events]
+[03may.2026 23:58:02.685] [main/INFO] [MixinExtras|Service/]: Initializing MixinExtras via com.llamalad7.mixinextras.service.MixinExtrasServiceImpl(version=0.5.2).
+[03may.2026 23:58:02.702] [main/INFO] [mixin/]: Mixing EntityCreateHoverEventAccessor from mixins.warriorcats_events.json into net.minecraft.world.entity.Entity
+[03may.2026 23:58:02.718] [main/INFO] [mixin/]: Mixing EntityTeamColorMixin from mixins.warriorcats_events.json into net.minecraft.world.entity.Entity
+[03may.2026 23:58:02.793] [main/INFO] [mixin/]: Mixing AccessorEntity from curios.mixins.json into net.minecraft.world.entity.Entity
+[03may.2026 23:58:02.801] [main/INFO] [mixin/]: Mixing EntityMixin from walkers.mixins.json into net.minecraft.world.entity.Entity
+[03may.2026 23:58:02.820] [main/INFO] [mixin/]: Mixing accessor.EntityAccessor from walkers.mixins.json into net.minecraft.world.entity.Entity
+[03may.2026 23:58:03.009] [main/INFO] [mixin/]: Mixing LivingEntityMixin from mixins.warriorcats_events.json into net.minecraft.world.entity.LivingEntity
+[03may.2026 23:58:03.087] [main/INFO] [mixin/]: Mixing MixinLivingEntity from curios.mixins.json into net.minecraft.world.entity.LivingEntity
+[03may.2026 23:58:03.089] [main/INFO] [mixin/]: Mixing LivingEntityFoodMixin from walkers.mixins.json into net.minecraft.world.entity.LivingEntity
+[03may.2026 23:58:03.090] [main/INFO] [mixin/]: Renaming synthetic method lambda$static$0()Ljava/util/List; to md934153$lambda$static$0$0 in walkers.mixins.json:LivingEntityFoodMixin
+[03may.2026 23:58:03.112] [main/INFO] [mixin/]: Mixing LivingEntityMixin from walkers.mixins.json into net.minecraft.world.entity.LivingEntity
+[03may.2026 23:58:03.115] [main/INFO] [mixin/]: Renaming synthetic method lambda$shape_allowSpiderClimbing$4(Ltocraft/walkers/traits/ShapeTrait;)Ltocraft/walkers/traits/impl/ClimbBlocksTrait; to md934153$lambda$shape_allowSpiderClimbing$4$1 in walkers.mixins.json:LivingEntityMixin
+[03may.2026 23:58:03.116] [main/INFO] [mixin/]: Renaming synthetic method lambda$shape_canStandOnFluid$3(Ltocraft/walkers/traits/ShapeTrait;)Ltocraft/walkers/traits/impl/StandOnFluidTrait; to md934153$lambda$shape_canStandOnFluid$3$2 in walkers.mixins.json:LivingEntityMixin
+[03may.2026 23:58:03.117] [main/INFO] [mixin/]: Renaming synthetic method lambda$returnNightVisionInstance$2(Ltocraft/walkers/traits/ShapeTrait;)Ltocraft/walkers/traits/impl/MobEffectTrait; to md934153$lambda$returnNightVisionInstance$2$3 in walkers.mixins.json:LivingEntityMixin
+[03may.2026 23:58:03.117] [main/INFO] [mixin/]: Renaming synthetic method lambda$returnHasNightVision$1(Ltocraft/walkers/traits/ShapeTrait;)Ltocraft/walkers/traits/impl/MobEffectTrait; to md934153$lambda$returnHasNightVision$1$4 in walkers.mixins.json:LivingEntityMixin
+[03may.2026 23:58:03.118] [main/INFO] [mixin/]: Renaming synthetic method lambda$slowFall$0(Ltocraft/walkers/traits/ShapeTrait;)Ltocraft/walkers/traits/impl/FlyingTrait; to md934153$lambda$slowFall$0$5 in walkers.mixins.json:LivingEntityMixin
+[03may.2026 23:58:03.151] [main/INFO] [mixin/]: Mixing PlayerSwimmingMixin from walkers.mixins.json into net.minecraft.world.entity.LivingEntity
+[03may.2026 23:58:03.152] [main/INFO] [mixin/]: Mixing accessor.LivingEntityAccessor from walkers.mixins.json into net.minecraft.world.entity.LivingEntity
+[03may.2026 23:58:03.433] [main/INFO] [mixin/]: Mixing ServerLevelMixin from mixins.warriorcats_events.json into net.minecraft.server.level.ServerLevel
+[03may.2026 23:58:03.434] [main/INFO] [mixin/]: Renaming synthetic method lambda$spawnPreyTick$0(Lnet/minecraft/world/entity/EntityType;Lnet/minecraft/world/entity/LivingEntity;)Z to md934153$lambda$spawnPreyTick$0$0 in mixins.warriorcats_events.json:ServerLevelMixin
+[03may.2026 23:58:03.516] [main/INFO] [mixin/]: Mixing PlayerEntityMixin from mixins.warriorcats_events.json into net.minecraft.world.entity.player.Player
+[03may.2026 23:58:03.519] [main/INFO] [mixin/]: Mixing PlayerMixin from craftedcore.mixins.json into net.minecraft.world.entity.player.Player
+[03may.2026 23:58:03.520] [main/INFO] [mixin/]: Renaming synthetic method lambda$writeNbt$0(Lnet/minecraft/nbt/CompoundTag;Ljava/lang/String;Lnet/minecraft/nbt/Tag;)V to md934153$lambda$writeNbt$0$0 in craftedcore.mixins.json:PlayerMixin
+[03may.2026 23:58:03.522] [main/INFO] [mixin/]: Mixing player.PlayerByteStatusMixin from walkers.mixins.json into net.minecraft.world.entity.player.Player
+[03may.2026 23:58:03.523] [main/INFO] [mixin/]: Mixing player.PlayerEntityAttackMixin from walkers.mixins.json into net.minecraft.world.entity.player.Player
+[03may.2026 23:58:03.523] [main/INFO] [mixin/]: Mixing player.PlayerEntityDataMixin from walkers.mixins.json into net.minecraft.world.entity.player.Player
+[03may.2026 23:58:03.525] [main/INFO] [mixin/]: Renaming synthetic method lambda$walkers$updateShapes$1(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/server/network/ServerPlayerConnection;)V to md934153$lambda$walkers$updateShapes$1$1 in walkers.mixins.json:player.PlayerEntityDataMixin
+[03may.2026 23:58:03.525] [main/INFO] [mixin/]: Renaming synthetic method lambda$walkers$updateShapes$0(Ltocraft/walkers/traits/ShapeTrait;)Ltocraft/walkers/traits/impl/RiderTrait; to md934153$lambda$walkers$updateShapes$0$2 in walkers.mixins.json:player.PlayerEntityDataMixin
+[03may.2026 23:58:03.535] [main/INFO] [mixin/]: Mixing player.PlayerEntityMixin from walkers.mixins.json into net.minecraft.world.entity.player.Player
+[03may.2026 23:58:03.536] [main/INFO] [mixin/]: Renaming synthetic method lambda$handeReinforcementsTrait$3(Ltocraft/walkers/traits/impl/ReinforcementsTrait;Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/entity/Entity;)Z to md934153$lambda$handeReinforcementsTrait$3$3 in walkers.mixins.json:player.PlayerEntityMixin
+[03may.2026 23:58:03.537] [main/INFO] [mixin/]: Renaming synthetic method lambda$handeReinforcementsTrait$2(Ltocraft/walkers/traits/ShapeTrait;)Ltocraft/walkers/traits/impl/ReinforcementsTrait; to md934153$lambda$handeReinforcementsTrait$2$4 in walkers.mixins.json:player.PlayerEntityMixin
+[03may.2026 23:58:03.537] [main/INFO] [mixin/]: Renaming synthetic method lambda$tickTemperature$1(Ltocraft/walkers/traits/ShapeTrait;)Ltocraft/walkers/traits/impl/TemperatureTrait; to md934153$lambda$tickTemperature$1$5 in walkers.mixins.json:player.PlayerEntityMixin
+[03may.2026 23:58:03.537] [main/INFO] [mixin/]: Renaming synthetic method lambda$tickFire$0(Ltocraft/walkers/traits/ShapeTrait;)Ltocraft/walkers/traits/impl/BurnInDaylightTrait; to md934153$lambda$tickFire$0$6 in walkers.mixins.json:player.PlayerEntityMixin
+[03may.2026 23:58:03.553] [main/INFO] [mixin/]: Mixing player.PlayerEntityTickMixin from walkers.mixins.json into net.minecraft.world.entity.player.Player
+[03may.2026 23:58:03.554] [main/INFO] [mixin/]: Renaming synthetic method lambda$applyMobEffectTrait$1(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/entity/LivingEntity;)I to md934153$lambda$applyMobEffectTrait$1$7 in walkers.mixins.json:player.PlayerEntityTickMixin
+[03may.2026 23:58:03.554] [main/INFO] [mixin/]: Renaming synthetic method lambda$applyMobEffectTrait$0(Ltocraft/walkers/traits/ShapeTrait;)Ltocraft/walkers/traits/impl/MobEffectTrait; to md934153$lambda$applyMobEffectTrait$0$8 in walkers.mixins.json:player.PlayerEntityTickMixin
+[03may.2026 23:58:03.572] [main/INFO] [mixin/]: Mixing player.PlayerSonicBoomMixin from walkers.mixins.json into net.minecraft.world.entity.player.Player
+[03may.2026 23:58:03.573] [main/INFO] [mixin/]: Renaming synthetic method lambda$tickSonicBoom$0(Lnet/minecraft/world/entity/LivingEntity;)Z to md934153$lambda$tickSonicBoom$0$9 in walkers.mixins.json:player.PlayerSonicBoomMixin
+[03may.2026 23:58:03.577] [main/INFO] [mixin/]: Mixing player.PlayerSoundMixin from walkers.mixins.json into net.minecraft.world.entity.player.Player
+[03may.2026 23:58:03.827] [main/INFO] [mixin/]: Mixing MobEffectMixin from walkers.mixins.json into net.minecraft.world.effect.MobEffect
+[03may.2026 23:58:04.157] [main/INFO] [mixin/]: Mixing SweetBerryBushBlockMixin from walkers.mixins.json into net.minecraft.world.level.block.SweetBerryBushBlock
+[03may.2026 23:58:04.181] [main/INFO] [mixin/]: Mixing MixinPowderSnowBlock from curios.mixins.json into net.minecraft.world.level.block.PowderSnowBlock
+[03may.2026 23:58:04.181] [main/INFO] [mixin/]: Mixing PowderSnowBlockMixin from walkers.mixins.json into net.minecraft.world.level.block.PowderSnowBlock
+[03may.2026 23:58:04.601] [main/INFO] [mixin/]: Mixing ParrotDeathLootMobMixin from mixins.warriorcats_events.json into net.minecraft.world.entity.Mob
+[03may.2026 23:58:04.606] [main/INFO] [mixin/]: Mixing MobEntityDataMixin from walkers.mixins.json into net.minecraft.world.entity.Mob
+[03may.2026 23:58:04.606] [main/INFO] [mixin/]: Mixing MobHunterPreyMixin from walkers.mixins.json into net.minecraft.world.entity.Mob
+[03may.2026 23:58:04.607] [main/INFO] [mixin/]: Renaming synthetic method lambda$registerCustomGoals$2(Lnet/minecraft/world/entity/LivingEntity;)Z to md934153$lambda$registerCustomGoals$2$0 in walkers.mixins.json:MobHunterPreyMixin
+[03may.2026 23:58:04.607] [main/INFO] [mixin/]: Renaming synthetic method lambda$registerCustomGoals$1(Ljava/util/Map$Entry;Lnet/minecraft/world/entity/LivingEntity;)Z to md934153$lambda$registerCustomGoals$1$1 in walkers.mixins.json:MobHunterPreyMixin
+[03may.2026 23:58:04.607] [main/INFO] [mixin/]: Renaming synthetic method lambda$registerCustomGoals$0(Ljava/util/Map$Entry;Lnet/minecraft/world/entity/LivingEntity;)Z to md934153$lambda$registerCustomGoals$0$2 in walkers.mixins.json:MobHunterPreyMixin
+[03may.2026 23:58:04.608] [main/INFO] [mixin/]: Mixing accessor.MobEntityAccessor from walkers.mixins.json into net.minecraft.world.entity.Mob
+[03may.2026 23:58:04.635] [main/INFO] [mixin/]: Mixing accessor.IronGolemEntityAccessor from walkers.mixins.json into net.minecraft.world.entity.animal.IronGolem
+[03may.2026 23:58:05.054] [main/INFO] [mixin/]: Mixing entity.BowItemMixin from walkers.mixins.json into net.minecraft.world.item.BowItem
+[03may.2026 23:58:05.085] [main/INFO] [mixin/]: Mixing MixinShearsItem from curios.mixins.json into net.minecraft.world.item.ShearsItem
+[03may.2026 23:58:05.137] [main/INFO] [mixin/]: Mixing accessor.AllayAccessor from walkers.mixins.json into net.minecraft.world.entity.animal.allay.Allay
+[03may.2026 23:58:05.157] [main/INFO] [mixin/]: Mixing ServerPlayerMixin from craftedcore.mixins.json into net.minecraft.server.level.ServerPlayer
+[03may.2026 23:58:05.158] [main/INFO] [mixin/]: Mixing player.ServerPlayerEntityMixin from walkers.mixins.json into net.minecraft.server.level.ServerPlayer
+[03may.2026 23:58:05.159] [main/INFO] [mixin/]: Mixing ServerPlayerSleepInBedMixin from mixins.warriorcats_events.json into net.minecraft.server.level.ServerPlayer
+[03may.2026 23:58:05.200] [main/INFO] [mixin/]: Mixing ActiveTargetGoalMixin from walkers.mixins.json into net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal
+[03may.2026 23:58:05.200] [main/INFO] [mixin/]: Renaming synthetic method lambda$shape_shouldContinue$1(Ltocraft/walkers/traits/ShapeTrait;)Ltocraft/walkers/traits/impl/FearedTrait; to md934153$lambda$shape_shouldContinue$1$0 in walkers.mixins.json:ActiveTargetGoalMixin
+[03may.2026 23:58:05.200] [main/INFO] [mixin/]: Renaming synthetic method lambda$ignoreShapedPlayers$0(Ltocraft/walkers/traits/ShapeTrait;)Ltocraft/walkers/traits/impl/FearedTrait; to md934153$lambda$ignoreShapedPlayers$0$1 in walkers.mixins.json:ActiveTargetGoalMixin
+[03may.2026 23:58:05.219] [main/INFO] [mixin/]: Mixing TrackTargetGoalMixin from walkers.mixins.json into net.minecraft.world.entity.ai.goal.target.TargetGoal
+[03may.2026 23:58:05.226] [main/INFO] [mixin/]: Mixing CatAvoidMixin from mixins.warriorcats_events.json into net.minecraft.world.entity.ai.goal.AvoidEntityGoal
+[03may.2026 23:58:05.227] [main/WARN] [mixin/]: @Shadow target mixins.warriorcats_events.json:CatAvoidMixin::mob is final but shadow is not decorated with @Final
+[03may.2026 23:58:05.227] [main/INFO] [mixin/]: Mixing AvoidEntityGoalMixin from walkers.mixins.json into net.minecraft.world.entity.ai.goal.AvoidEntityGoal
+[03may.2026 23:58:05.666] [main/INFO] [mixin/]: Mixing accessor.AxolotlEntityAccessor from walkers.mixins.json into net.minecraft.world.entity.animal.axolotl.Axolotl
+[03may.2026 23:58:05.690] [main/INFO] [mixin/]: Mixing LookAtPlayerGoalMixin from walkers.mixins.json into net.minecraft.world.entity.ai.goal.LookAtPlayerGoal
+[03may.2026 23:58:05.704] [main/INFO] [mixin/]: Mixing accessor.AbstractHorseAccessor from walkers.mixins.json into net.minecraft.world.entity.animal.horse.AbstractHorse
+[03may.2026 23:58:05.757] [main/INFO] [mixin/]: Mixing accessor.CreeperEntityAccessor from walkers.mixins.json into net.minecraft.world.entity.monster.Creeper
+[03may.2026 23:58:05.767] [main/INFO] [mixin/]: Mixing accessor.DolphinAccessor from walkers.mixins.json into net.minecraft.world.entity.animal.Dolphin
+[03may.2026 23:58:05.768] [main/INFO] [mixin/]: Renaming @Accessor method getSWIM_WITH_PLAYER_TARGETING()Lnet/minecraft/world/entity/ai/targeting/TargetingConditions; to getSWIM_WITH_PLAYER_TARGETING_$md$934153$0 in walkers.mixins.json:accessor.DolphinAccessor
+[03may.2026 23:58:05.831] [main/INFO] [mixin/]: Mixing EnderManMixin from walkers.mixins.json into net.minecraft.world.entity.monster.EnderMan
+[03may.2026 23:58:05.831] [main/INFO] [mixin/]: Renaming synthetic method lambda$addCustomGoals$0(Lnet/minecraft/world/entity/LivingEntity;)Z to md934153$lambda$addCustomGoals$0$0 in walkers.mixins.json:EnderManMixin
+[03may.2026 23:58:05.872] [main/INFO] [mixin/]: Mixing FoxEntityMixin from walkers.mixins.json into net.minecraft.world.entity.animal.Fox
+[03may.2026 23:58:05.872] [main/INFO] [mixin/]: Renaming synthetic method lambda$static$0(Lnet/minecraft/world/entity/Entity;)Z to md934153$lambda$static$0$0 in walkers.mixins.json:FoxEntityMixin
+[03may.2026 23:58:05.873] [main/INFO] [mixin/]: Mixing accessor.FoxEntityAccessor from walkers.mixins.json into net.minecraft.world.entity.animal.Fox
+[03may.2026 23:58:05.877] [main/WARN] [mixin/]: Write access to @Mutable @Final field AVOID_PLAYERS:Ljava/util/function/Predicate; in walkers.mixins.json:FoxEntityMixin::<clinit>
+[03may.2026 23:58:05.902] [main/INFO] [mixin/]: Mixing accessor.SquidEntityAccessor from walkers.mixins.json into net.minecraft.world.entity.animal.Squid
+[03may.2026 23:58:05.946] [main/INFO] [mixin/]: Mixing SlimeMixin from walkers.mixins.json into net.minecraft.world.entity.monster.Slime
+[03may.2026 23:58:05.947] [main/INFO] [mixin/]: Mixing accessor.SlimeEntityAccessor from walkers.mixins.json into net.minecraft.world.entity.monster.Slime
+[03may.2026 23:58:05.983] [main/INFO] [mixin/]: Mixing accessor.ParrotEntityAccessor from walkers.mixins.json into net.minecraft.world.entity.animal.Parrot
+[03may.2026 23:58:06.018] [main/INFO] [mixin/]: Mixing accessor.PufferfishAccessor from walkers.mixins.json into net.minecraft.world.entity.animal.Pufferfish
+[03may.2026 23:58:06.037] [main/INFO] [mixin/]: Mixing RavagerEntityMixin from walkers.mixins.json into net.minecraft.world.entity.monster.Ravager
+[03may.2026 23:58:06.038] [main/INFO] [mixin/]: Mixing accessor.RavagerEntityAccessor from walkers.mixins.json into net.minecraft.world.entity.monster.Ravager
+[03may.2026 23:58:06.052] [main/INFO] [mixin/]: Mixing accessor.SheepAccessor from walkers.mixins.json into net.minecraft.world.entity.animal.Sheep
+[03may.2026 23:58:06.064] [main/INFO] [mixin/]: Mixing accessor.ShulkerAccessor from walkers.mixins.json into net.minecraft.world.entity.monster.Shulker
+[03may.2026 23:58:06.152] [main/INFO] [mixin/]: Mixing VillagerHostilesSensorMixin from walkers.mixins.json into net.minecraft.world.entity.ai.sensing.VillagerHostilesSensor
+[03may.2026 23:58:06.173] [main/INFO] [mixin/]: Mixing PiglinSensorMixin from walkers.mixins.json into net.minecraft.world.entity.ai.sensing.PiglinSpecificSensor
+[03may.2026 23:58:06.173] [main/INFO] [mixin/]: Renaming synthetic method lambda$runFromZombifiedShapes$0(Lnet/minecraft/world/entity/LivingEntity;)Z to md934153$lambda$runFromZombifiedShapes$0$0 in walkers.mixins.json:PiglinSensorMixin
+[03may.2026 23:58:06.188] [main/INFO] [mixin/]: Mixing AxolotlAttackablesSensorMixin from walkers.mixins.json into net.minecraft.world.entity.ai.sensing.AxolotlAttackablesSensor
+[03may.2026 23:58:06.273] [main/INFO] [mixin/]: Mixing VillagerEntityMixin from walkers.mixins.json into net.minecraft.world.entity.npc.Villager
+[03may.2026 23:58:06.292] [main/INFO] [mixin/]: Mixing WitchMixin from walkers.mixins.json into net.minecraft.world.entity.monster.Witch
+[03may.2026 23:58:06.318] [main/INFO] [mixin/]: Mixing WolfEntityMixin from walkers.mixins.json into net.minecraft.world.entity.animal.Wolf
+[03may.2026 23:58:06.357] [main/INFO] [mixin/]: Mixing MobEffectInstanceMixin from walkers.mixins.json into net.minecraft.world.effect.MobEffectInstance
+[03may.2026 23:58:06.399] [main/INFO] [mixin/]: Mixing ServerGamePacketListenerMixin from mixins.warriorcats_events.json into net.minecraft.server.network.ServerGamePacketListenerImpl
+[03may.2026 23:58:06.529] [main/INFO] [mixin/]: Mixing MixinInventory from curios.mixins.json into net.minecraft.world.entity.player.Inventory
+[03may.2026 23:58:06.640] [main/INFO] [mixin/]: Mixing MixinApplyBonusCount from curios.mixins.json into net.minecraft.world.level.storage.loot.functions.ApplyBonusCount
+[03may.2026 23:58:07.067] [main/INFO] [mixin/]: Mixing accessor.BiomeAccessor from walkers.mixins.json into net.minecraft.world.level.biome.Biome
+[03may.2026 23:58:07.455] [modloading-worker-0/INFO] [mixin/]: Mixing MinecraftMixin from mixins.warriorcats_events.json into net.minecraft.client.Minecraft
+[03may.2026 23:58:07.456] [modloading-worker-0/INFO] [mixin/]: Mixing client.MinecraftMixin from craftedcore.mixins.json into net.minecraft.client.Minecraft
+[03may.2026 23:58:07.497] [modloading-worker-0/INFO] [mixin/]: Mixing MultiPlayerGameModeMixin from craftedcore.mixins.json into net.minecraft.client.multiplayer.MultiPlayerGameMode
+[03may.2026 23:58:07.515] [modloading-worker-0/INFO] [net.minecraftforge.common.ForgeMod/FORGEMOD]: Forge mod loading, version 47.4.0, for MC 1.20.1 with MCP 20230612.114412
+[03may.2026 23:58:07.516] [modloading-worker-0/INFO] [net.minecraftforge.common.MinecraftForge/FORGE]: MinecraftForge v47.4.0 Initialized
+[03may.2026 23:58:07.519] [modloading-worker-0/INFO] [mixin/]: Mixing MinecraftServerMixin from craftedcore.mixins.json into net.minecraft.server.MinecraftServer
+[03may.2026 23:58:07.565] [modloading-worker-0/INFO] [mixin/]: Mixing client.AccessorKeyMapping from patchouli_xplat.mixins.json into net.minecraft.client.KeyMapping
+[03may.2026 23:58:07.565] [modloading-worker-0/INFO] [mixin/]: Renaming @Accessor method getAllKeyMappings()Ljava/util/Map; to getAllKeyMappings_$md$934153$0 in patchouli_xplat.mixins.json:client.AccessorKeyMapping
+[03may.2026 23:58:07.575] [modloading-worker-0/INFO] [mixin/]: Mixing ScreenClickedComponentMixin from mixins.warriorcats_events.json into net.minecraft.client.gui.screens.Screen
+[03may.2026 23:58:07.579] [modloading-worker-0/INFO] [mixin/]: Mixing client.AccessorScreen from patchouli_xplat.mixins.json into net.minecraft.client.gui.screens.Screen
+[03may.2026 23:58:07.625] [modloading-worker-0/INFO] [mixin/]: Mixing client.accessor.EntityShadowAccessor from walkers.mixins.json into net.minecraft.client.renderer.entity.EntityRenderer
+[03may.2026 23:58:07.642] [modloading-worker-0/INFO] [mixin/]: Mixing client.accessor.LivingEntityRendererAccessor from walkers.mixins.json into net.minecraft.client.renderer.entity.LivingEntityRenderer
+[03may.2026 23:58:07.662] [modloading-worker-0/INFO] [mixin/]: Mixing client.RenderLayerMixin from walkers.mixins.json into net.minecraft.client.renderer.entity.layers.RenderLayer
+[03may.2026 23:58:07.695] [modloading-worker-0/INFO] [mixin/]: Mixing ChatScreenMixin from mixins.warriorcats_events.json into net.minecraft.client.gui.screens.ChatScreen
+[03may.2026 23:58:07.716] [modloading-worker-0/INFO] [mixin/]: Mixing TitleScreenMixin from mixins.warriorcats_events.json into net.minecraft.client.gui.screens.TitleScreen
+[03may.2026 23:58:07.717] [modloading-worker-0/WARN] [mixin/]: @Shadow target mixins.warriorcats_events.json:TitleScreenMixin::fading is final but shadow is not decorated with @Final
+[03may.2026 23:58:07.774] [modloading-worker-0/INFO] [mixin/]: Mixing client.MixinInventoryScreen from patchouli_xplat.mixins.json into net.minecraft.client.gui.screens.inventory.InventoryScreen
+[03may.2026 23:58:07.805] [modloading-worker-0/WARN] [software.bernie.geckolib.GeckoLib/]: Minecraft.getInstance() was null, could not register reload listeners
+[03may.2026 23:58:07.855] [modloading-worker-0/INFO] [mixin/]: Mixing client.accessor.LlamaEntityModelAccessor from walkers.mixins.json into net.minecraft.client.model.LlamaModel
+[03may.2026 23:58:07.871] [modloading-worker-0/INFO] [mixin/]: Mixing client.accessor.QuadrupedEntityModelAccessor from walkers.mixins.json into net.minecraft.client.model.QuadrupedModel
+[03may.2026 23:58:07.883] [modloading-worker-0/INFO] [mixin/]: Mixing client.accessor.BlazeEntityModelAccessor from walkers.mixins.json into net.minecraft.client.model.BlazeModel
+[03may.2026 23:58:07.896] [modloading-worker-0/INFO] [mixin/]: Mixing client.accessor.OcelotEntityModelAccessor from walkers.mixins.json into net.minecraft.client.model.OcelotModel
+[03may.2026 23:58:07.906] [modloading-worker-0/INFO] [mixin/]: Mixing client.accessor.SpiderEntityModelAccessor from walkers.mixins.json into net.minecraft.client.model.SpiderModel
+[03may.2026 23:58:07.921] [modloading-worker-0/INFO] [mixin/]: Mixing client.accessor.RavagerEntityModelAccessor from walkers.mixins.json into net.minecraft.client.model.RavagerModel
+[03may.2026 23:58:07.931] [modloading-worker-0/INFO] [mixin/]: Mixing client.accessor.SquidEntityModelAccessor from walkers.mixins.json into net.minecraft.client.model.SquidModel
+[03may.2026 23:58:07.989] [modloading-worker-0/INFO] [mezz.jei.library.load.PluginCaller/]: Sending ConfigManager...
+[03may.2026 23:58:07.994] [modloading-worker-0/INFO] [mezz.jei.library.load.PluginCaller/]: Sending ConfigManager took 3.117 ms
+[03may.2026 23:58:08.080] [modloading-worker-0/INFO] [mixin/]: Mixing client.PlayerEntityRendererMixin from walkers.mixins.json into net.minecraft.client.renderer.entity.player.PlayerRenderer
+[03may.2026 23:58:08.100] [ForkJoinPool.commonPool-worker-1/ERROR] [tocraft.craftedcore.CraftedCore/]: Couldn't get patreons from https://raw.githubusercontent.com/ToCraft/craftedcore/main/common/src/main/resources/patreons.txt
 java.io.FileNotFoundException: https://raw.githubusercontent.com/ToCraft/craftedcore/main/common/src/main/resources/patreons.txt
 	at sun.net.www.protocol.http.HttpURLConnection.getInputStream0(HttpURLConnection.java:2014) ~[?:?]
 	at sun.net.www.protocol.http.HttpURLConnection.getInputStream(HttpURLConnection.java:1610) ~[?:?]
@@ -176,25 +178,25 @@ java.io.FileNotFoundException: https://raw.githubusercontent.com/ToCraft/crafted
 	at java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655) ~[?:?]
 	at java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622) ~[?:?]
 	at java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165) ~[?:?]
-[16abr.2026 11:24:05.359] [modloading-worker-0/INFO] [mixin/]: Mixing client.MixinLevelRenderer from patchouli_xplat.mixins.json into net.minecraft.client.renderer.LevelRenderer
-[16abr.2026 11:24:05.445] [main/INFO] [mixin/]: Mixing ChatTypeMorphNameMixin from mixins.warriorcats_events.json into net.minecraft.network.chat.ChatType
-[16abr.2026 11:24:05.446] [main/INFO] [mixin/]: Renaming synthetic method lambda$redirectChatMessage$0(Lnet/minecraft/network/chat/Component;Lnet/minecraft/network/chat/Style;)Lnet/minecraft/network/chat/Style; to md6dc65e$lambda$redirectChatMessage$0$0 in mixins.warriorcats_events.json:ChatTypeMorphNameMixin
-[16abr.2026 11:24:05.809] [main/WARN] [net.minecraft.server.packs.VanillaPackResourcesBuilder/]: Assets URL 'union:/C:/Users/juane/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.20.1-47.4.0_mapped_parchment_2023.09.03-1.20.1/forge-1.20.1-47.4.0_mapped_parchment_2023.09.03-1.20.1-recomp.jar%23191!/assets/.mcassetsroot' uses unexpected schema
-[16abr.2026 11:24:05.809] [main/WARN] [net.minecraft.server.packs.VanillaPackResourcesBuilder/]: Assets URL 'union:/C:/Users/juane/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.20.1-47.4.0_mapped_parchment_2023.09.03-1.20.1/forge-1.20.1-47.4.0_mapped_parchment_2023.09.03-1.20.1-recomp.jar%23191!/data/.mcassetsroot' uses unexpected schema
-[16abr.2026 11:24:05.961] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Recipes
-[16abr.2026 11:24:05.970] [main/INFO] [mixin/]: Mixing MixinNbtPredicate from curios.mixins.json into net.minecraft.advancements.critereon.NbtPredicate
-[16abr.2026 11:24:06.022] [main/INFO] [net.minecraft.data.DataGenerator/]: Recipes finished after 61 ms
-[16abr.2026 11:24:06.022] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Loot Tables
-[16abr.2026 11:24:06.081] [main/INFO] [net.minecraft.data.DataGenerator/]: Loot Tables finished after 57 ms
-[16abr.2026 11:24:06.081] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Block States: warriorcats_events
-[16abr.2026 11:24:06.216] [main/INFO] [net.minecraft.data.DataGenerator/]: Block States: warriorcats_events finished after 134 ms
-[16abr.2026 11:24:06.216] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Item Models: warriorcats_events
-[16abr.2026 11:24:06.250] [main/INFO] [net.minecraft.data.DataGenerator/]: Item Models: warriorcats_events finished after 34 ms
-[16abr.2026 11:24:06.250] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Tags for minecraft:block mod id warriorcats_events
-[16abr.2026 11:24:06.263] [main/INFO] [net.minecraft.data.DataGenerator/]: Tags for minecraft:block mod id warriorcats_events finished after 12 ms
-[16abr.2026 11:24:06.263] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Tags for minecraft:item mod id warriorcats_events
-[16abr.2026 11:24:06.265] [main/INFO] [net.minecraft.data.DataGenerator/]: Tags for minecraft:item mod id warriorcats_events finished after 2 ms
-[16abr.2026 11:24:06.265] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Registries
-[16abr.2026 11:24:06.283] [main/INFO] [net.minecraft.data.DataGenerator/]: Registries finished after 17 ms
-[16abr.2026 11:24:06.283] [main/INFO] [net.minecraft.data.DataGenerator/]: All providers took: 322 ms
-[16abr.2026 11:24:06.302] [main/INFO] [net.minecraft.data.HashCache/]: Caching: total files: 357, old count: 357, new count: 358, removed stale: 0, written: 0
+[03may.2026 23:58:08.178] [modloading-worker-0/INFO] [mixin/]: Mixing client.MixinLevelRenderer from patchouli_xplat.mixins.json into net.minecraft.client.renderer.LevelRenderer
+[03may.2026 23:58:08.267] [main/INFO] [mixin/]: Mixing ChatTypeMorphNameMixin from mixins.warriorcats_events.json into net.minecraft.network.chat.ChatType
+[03may.2026 23:58:08.267] [main/INFO] [mixin/]: Renaming synthetic method lambda$redirectChatMessage$0(Lnet/minecraft/network/chat/Component;Lnet/minecraft/network/chat/Style;)Lnet/minecraft/network/chat/Style; to md934153$lambda$redirectChatMessage$0$0 in mixins.warriorcats_events.json:ChatTypeMorphNameMixin
+[03may.2026 23:58:08.649] [main/WARN] [net.minecraft.server.packs.VanillaPackResourcesBuilder/]: Assets URL 'union:/C:/Users/juane/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.20.1-47.4.0_mapped_parchment_2023.09.03-1.20.1/forge-1.20.1-47.4.0_mapped_parchment_2023.09.03-1.20.1-recomp.jar%23191!/assets/.mcassetsroot' uses unexpected schema
+[03may.2026 23:58:08.649] [main/WARN] [net.minecraft.server.packs.VanillaPackResourcesBuilder/]: Assets URL 'union:/C:/Users/juane/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.20.1-47.4.0_mapped_parchment_2023.09.03-1.20.1/forge-1.20.1-47.4.0_mapped_parchment_2023.09.03-1.20.1-recomp.jar%23191!/data/.mcassetsroot' uses unexpected schema
+[03may.2026 23:58:08.815] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Recipes
+[03may.2026 23:58:08.845] [main/INFO] [mixin/]: Mixing MixinNbtPredicate from curios.mixins.json into net.minecraft.advancements.critereon.NbtPredicate
+[03may.2026 23:58:08.928] [main/INFO] [net.minecraft.data.DataGenerator/]: Recipes finished after 112 ms
+[03may.2026 23:58:08.929] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Loot Tables
+[03may.2026 23:58:08.980] [main/INFO] [net.minecraft.data.DataGenerator/]: Loot Tables finished after 51 ms
+[03may.2026 23:58:08.980] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Block States: warriorcats_events
+[03may.2026 23:58:09.094] [main/INFO] [net.minecraft.data.DataGenerator/]: Block States: warriorcats_events finished after 113 ms
+[03may.2026 23:58:09.094] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Item Models: warriorcats_events
+[03may.2026 23:58:09.122] [main/INFO] [net.minecraft.data.DataGenerator/]: Item Models: warriorcats_events finished after 28 ms
+[03may.2026 23:58:09.122] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Tags for minecraft:block mod id warriorcats_events
+[03may.2026 23:58:09.138] [main/INFO] [net.minecraft.data.DataGenerator/]: Tags for minecraft:block mod id warriorcats_events finished after 14 ms
+[03may.2026 23:58:09.138] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Tags for minecraft:item mod id warriorcats_events
+[03may.2026 23:58:09.139] [main/INFO] [net.minecraft.data.DataGenerator/]: Tags for minecraft:item mod id warriorcats_events finished after 1 ms
+[03may.2026 23:58:09.140] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Registries
+[03may.2026 23:58:09.157] [main/INFO] [net.minecraft.data.DataGenerator/]: Registries finished after 18 ms
+[03may.2026 23:58:09.157] [main/INFO] [net.minecraft.data.DataGenerator/]: All providers took: 344 ms
+[03may.2026 23:58:09.183] [main/INFO] [net.minecraft.data.HashCache/]: Caching: total files: 386, old count: 386, new count: 387, removed stale: 0, written: 0

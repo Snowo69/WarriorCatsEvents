@@ -14,8 +14,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.TamableAnimal;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -157,6 +156,10 @@ public class ModEvents2 {
         if (event.phase != TickEvent.Phase.END) return;
         if (event.level.isClientSide) return;
 
+        if (event.level instanceof ServerLevel serverLevel) {
+            SequenceManager.tick(serverLevel);
+        }
+
         boolean isNightTime = event.level.isNight();
 
         if (isNightTime) {
@@ -250,6 +253,9 @@ public class ModEvents2 {
         KitRequestCommands.register(event.getDispatcher());
         OpenSummonCatCommand.register(event.getDispatcher());
         SetPoseCommand.register(event.getDispatcher());
+        InfoProfileCommand.register(event.getDispatcher());
+        ResyncShapesCommand.register(event.getDispatcher());
+        WCEGameruleCommand.register(event.getDispatcher());
 
 
         ConfigCommand.register(event.getDispatcher());
@@ -343,85 +349,88 @@ public class ModEvents2 {
                     newStore.copyFrom(oldStore);
 
                     if (event.getEntity() instanceof ServerPlayer player) {
-                        var speedAttr = player.getAttribute(Attributes.MOVEMENT_SPEED);
-                        if (speedAttr != null) {
-                            speedAttr.removeModifier(PlayerSkill.SPEED_SKILL_UUID);
-                            double bonus = (0.025* WCEServerConfig.SERVER.SKILL_SPEED_MULTIPLIER.get()) * newStore.getSpeedLevel();
-                            if (bonus > 0) {
-                                speedAttr.addPermanentModifier(
-                                        new AttributeModifier(
-                                                PlayerSkill.SPEED_SKILL_UUID,
-                                                "skill_speed_bonus",
-                                                bonus,
-                                                AttributeModifier.Operation.MULTIPLY_TOTAL
-                                        )
-                                );
-                            }
-                        }
-                        var hpAttr = player.getAttribute(Attributes.MAX_HEALTH);
-                        if (hpAttr != null) {
-                            hpAttr.removeModifier(PlayerSkill.HP_SKILL_UUID);
-                            double bonus = (0.1*WCEServerConfig.SERVER.SKILL_HP_MULTIPLIER.get()) * newStore.getHPLevel();
-                            if (bonus > 0) {
-                                hpAttr.addPermanentModifier(
-                                        new AttributeModifier(
-                                                PlayerSkill.HP_SKILL_UUID,
-                                                "skill_hp_bonus",
-                                                bonus,
-                                                AttributeModifier.Operation.MULTIPLY_TOTAL
-                                        )
-                                );
-                            }
-                        }
-                        var dmgAttr = player.getAttribute(Attributes.ATTACK_DAMAGE);
-                        if (dmgAttr != null) {
-                            dmgAttr.removeModifier(PlayerSkill.DMG_SKILL_UUID);
-                            double bonus = (0.12*WCEServerConfig.SERVER.SKILL_DMG_MULTIPLIER.get()) * newStore.getDMGLevel();
-                            if (bonus > 0) {
-                                dmgAttr.addPermanentModifier(
-                                        new AttributeModifier(
-                                                PlayerSkill.DMG_SKILL_UUID,
-                                                "skill_dmg_bonus",
-                                                bonus,
-                                                AttributeModifier.Operation.ADDITION
-                                        )
-                                );
-                            }
-                        }
-                        var jumpAttr = player.getAttribute(ModAttributes.PLAYER_JUMP.get());
-                        if (jumpAttr != null) {
-                            jumpAttr.removeModifier(PlayerSkill.JUMP_SKILL_UUID);
-                            double bonus = (0.093*WCEServerConfig.SERVER.SKILL_JUMP_MULTIPLIER.get()) * newStore.getJumpLevel();
-                            if (bonus > 0) {
-                                jumpAttr.addPermanentModifier(
-                                        new AttributeModifier(
-                                                PlayerSkill.JUMP_SKILL_UUID,
-                                                "skill_jump_bonus",
-                                                bonus,
-                                                AttributeModifier.Operation.ADDITION
-                                        )
-                                );
-                            }
-                        }
-                        var armorAttr = player.getAttribute(Attributes.ARMOR);
-                        if (armorAttr != null) {
-                            armorAttr.removeModifier(PlayerSkill.ARMOR_SKILL_UUID);
-                            double bonus = (3.5*WCEServerConfig.SERVER.SKILL_ARMOR_MULTIPLIER.get()) * newStore.getArmorLevel();
-                            if (bonus > 0) {
-                                armorAttr.addPermanentModifier(
-                                        new AttributeModifier(
-                                                PlayerSkill.ARMOR_SKILL_UUID,
-                                                "skill_armor_bonus",
-                                                bonus,
-                                                AttributeModifier.Operation.ADDITION
-                                        )
-                                );
-                            }
-                        }
+//                        var speedAttr = player.getAttribute(Attributes.MOVEMENT_SPEED);
+//                        if (speedAttr != null) {
+//                            speedAttr.removeModifier(PlayerSkill.SPEED_SKILL_UUID);
+//                            double bonus = (0.025* WCEServerConfig.SERVER.SKILL_SPEED_MULTIPLIER.get()) * newStore.getSpeedLevel();
+//                            if (bonus > 0) {
+//                                speedAttr.addPermanentModifier(
+//                                        new AttributeModifier(
+//                                                PlayerSkill.SPEED_SKILL_UUID,
+//                                                "skill_speed_bonus",
+//                                                bonus,
+//                                                AttributeModifier.Operation.MULTIPLY_TOTAL
+//                                        )
+//                                );
+//                            }
+//                        }
+//                        var hpAttr = player.getAttribute(Attributes.MAX_HEALTH);
+//                        if (hpAttr != null) {
+//                            hpAttr.removeModifier(PlayerSkill.HP_SKILL_UUID);
+//                            double bonus = (0.1*WCEServerConfig.SERVER.SKILL_HP_MULTIPLIER.get()) * newStore.getHPLevel();
+//                            if (bonus > 0) {
+//                                hpAttr.addPermanentModifier(
+//                                        new AttributeModifier(
+//                                                PlayerSkill.HP_SKILL_UUID,
+//                                                "skill_hp_bonus",
+//                                                bonus,
+//                                                AttributeModifier.Operation.MULTIPLY_TOTAL
+//                                        )
+//                                );
+//                            }
+//                        }
+//                        var dmgAttr = player.getAttribute(Attributes.ATTACK_DAMAGE);
+//                        if (dmgAttr != null) {
+//                            dmgAttr.removeModifier(PlayerSkill.DMG_SKILL_UUID);
+//                            double bonus = (0.12*WCEServerConfig.SERVER.SKILL_DMG_MULTIPLIER.get()) * newStore.getDMGLevel();
+//                            if (bonus > 0) {
+//                                dmgAttr.addPermanentModifier(
+//                                        new AttributeModifier(
+//                                                PlayerSkill.DMG_SKILL_UUID,
+//                                                "skill_dmg_bonus",
+//                                                bonus,
+//                                                AttributeModifier.Operation.ADDITION
+//                                        )
+//                                );
+//                            }
+//                        }
+//                        var jumpAttr = player.getAttribute(ModAttributes.PLAYER_JUMP.get());
+//                        if (jumpAttr != null) {
+//                            jumpAttr.removeModifier(PlayerSkill.JUMP_SKILL_UUID);
+//                            double bonus = (0.093*WCEServerConfig.SERVER.SKILL_JUMP_MULTIPLIER.get()) * newStore.getJumpLevel();
+//                            if (bonus > 0) {
+//                                jumpAttr.addPermanentModifier(
+//                                        new AttributeModifier(
+//                                                PlayerSkill.JUMP_SKILL_UUID,
+//                                                "skill_jump_bonus",
+//                                                bonus,
+//                                                AttributeModifier.Operation.ADDITION
+//                                        )
+//                                );
+//                            }
+//                        }
+//                        var armorAttr = player.getAttribute(Attributes.ARMOR);
+//                        if (armorAttr != null) {
+//                            armorAttr.removeModifier(PlayerSkill.ARMOR_SKILL_UUID);
+//                            double bonus = (3.5*WCEServerConfig.SERVER.SKILL_ARMOR_MULTIPLIER.get()) * newStore.getArmorLevel();
+//                            if (bonus > 0) {
+//                                armorAttr.addPermanentModifier(
+//                                        new AttributeModifier(
+//                                                PlayerSkill.ARMOR_SKILL_UUID,
+//                                                "skill_armor_bonus",
+//                                                bonus,
+//                                                AttributeModifier.Operation.ADDITION
+//                                        )
+//                                );
+//                            }
+//                        }
+
+                        PlayerSkill.reviveAttributes(player, newStore);
 
                         ModPackets.sendToPlayer(
                                 new SyncSkillDataPacket(newStore.getSpeedLevel(), newStore.getHPLevel(),
-                                        newStore.getDMGLevel(), newStore.getJumpLevel(), newStore.getArmorLevel()),
+                                        newStore.getDMGLevel(), newStore.getJumpLevel(), newStore.getArmorLevel()
+                                , newStore.isClimbUnlocked()),
                                 player
                         );
                     }
@@ -509,36 +518,37 @@ public class ModEvents2 {
             event.player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA).ifPresent(WCEPlayerData::tick);
 
             event.player.getCapability(PlayerThirstProvider.PLAYER_THIRST).ifPresent(thirst -> {
-
-                /**
-                 * Every tick, a 0.000357 chance of decreasing thirst.
-                 * Which means, on average every 2-3 minutes
-                 * Then sync it.
-                 */
-                if (thirst.getThirst() > 0 && event.player.getRandom().nextFloat() < 0.000359 && !(event.player.isCreative() || event.player.isSpectator())) {
-                    int oldThirst = thirst.getThirst();
-                    thirst.subThirst(1);
-                    if (oldThirst != thirst.getThirst()) {
-                        ModPackets.sendToPlayer(new ThirstDataSyncStCPacket(thirst.getThirst()), ((ServerPlayer) event.player));
+                if (WCEServerConfig.SERVER.THIRST.get() && PlayerShape.getCurrentShape(player) instanceof Animal) {
+                    /**
+                    * Every tick, a 0.000357 chance of decreasing thirst.
+                    * Which means, on average every 2-3 minutes
+                    * Then sync it.
+                    */
+                    if (thirst.getThirst() > 0 && event.player.getRandom().nextFloat() < 0.000359 && !(event.player.isCreative() || event.player.isSpectator())) {
+                        int oldThirst = thirst.getThirst();
+                        thirst.subThirst(1);
+                        if (oldThirst != thirst.getThirst()) {
+                            ModPackets.sendToPlayer(new ThirstDataSyncStCPacket(thirst.getThirst()), ((ServerPlayer) event.player));
+                        }
                     }
-                }
 
-                /**
-                 * If the thirst reaches zero, then hurt the player every 80 ticks, and set saturation to zero.
-                 */
-                if (thirst.getThirst() <= 0) {
-                    thirst.tick();
+                    /**
+                     * If the thirst reaches zero, then hurt the player every 80 ticks, and set saturation to zero.
+                     */
+                    if (thirst.getThirst() <= 0) {
+                        thirst.tick();
 
-                    if (thirst.getThirstDamageTimer() >= 60) {
-                        event.player.getFoodData().setSaturation(0);
-                        event.player.hurt(event.player.damageSources().starve(), 3.0f);
-                        event.player.displayClientMessage(Component.literal("You are dehydrated!" ).withStyle(ChatFormatting.RED), true);
+                        if (thirst.getThirstDamageTimer() >= 60) {
+                            event.player.getFoodData().setSaturation(0);
+                            event.player.hurt(event.player.damageSources().starve(), 3.0f);
+                            event.player.displayClientMessage(Component.literal("You are dehydrated!").withStyle(ChatFormatting.RED), true);
 
+                            thirst.resetThirstDamageTimer();
+                        }
+
+                    } else {
                         thirst.resetThirstDamageTimer();
                     }
-
-                } else {
-                    thirst.resetThirstDamageTimer();
                 }
             });
 
@@ -577,6 +587,7 @@ public class ModEvents2 {
 
             event.player.getCapability(PlayerSkillProvider.SKILL_DATA).ifPresent(cap -> {
                 if (!cap.isLeaping()) return;
+                if (player instanceof ClimbDataAccessor data && data.wce$isClimbing()) cap.setLeaping(false);
 
                 if (event.player.tickCount % 2 == 0) {
                     ((ServerLevel) event.player.level()).sendParticles(ParticleTypes.INSTANT_EFFECT,
@@ -695,6 +706,14 @@ public class ModEvents2 {
         if(!event.getLevel().isClientSide()) {
             if(event.getEntity() instanceof ServerPlayer player) {
 
+                {
+                    boolean skillTree = WCEServerConfig.SERVER.SKILL_TREE_SERVER.get();
+                    player.getCapability(PlayerSkillProvider.SKILL_DATA).ifPresent(skillData -> {
+                        if (!skillTree) PlayerSkill.removeAttributes(player);
+                        else PlayerSkill.reviveAttributes(player, skillData);
+                    });
+                }
+
                 if (player.level() instanceof ServerLevel serverLevel) {
                     ClanData data = ClanData.get(serverLevel.getServer().overworld());
                     data.syncTerritoriesToAClient(player);
@@ -702,7 +721,7 @@ public class ModEvents2 {
 
                 player.getCapability(PlayerSkillProvider.SKILL_DATA).ifPresent(cap -> {
                    ModPackets.sendToPlayer(new SyncSkillDataPacket(cap.getSpeedLevel(), cap.getHPLevel(),
-                           cap.getDMGLevel(), cap.getJumpLevel(), cap.getArmorLevel()), player);
+                           cap.getDMGLevel(), cap.getJumpLevel(), cap.getArmorLevel(), cap.isClimbUnlocked()), player);
                 });
 
                 player.getCapability(PlayerThirstProvider.PLAYER_THIRST).ifPresent(thirst -> {
@@ -776,6 +795,7 @@ public class ModEvents2 {
         CompoundTag persistent;
 
 
+
         if (player instanceof ServerPlayer sPlayer) {
             ClanData clanData = ClanData.get(sPlayer.serverLevel().getServer().overworld());
 
@@ -825,11 +845,8 @@ public class ModEvents2 {
                     ModPackets.sendToPlayer(new S2CSyncClanDataPacket(cap), sPlayer);
                     ModPackets.sendToPlayer(new OpenClanSetupScreenPacket(), sPlayer);
             });
-
-
         }
 
     }
-
 
 }

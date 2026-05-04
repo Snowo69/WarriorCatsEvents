@@ -155,7 +155,8 @@ public class SpecificClanScreen extends Screen {
 
 
         for (ClanInfo.ClientClanCat cat : clan.clanCats) {
-            NPCmembersList.addOption(cat.name, cat.uuid, cat.variant, true);
+            NPCmembersList.addOption(cat.name, cat.uuid, cat.variant, true, cat.onGeneticalSkin,
+                    cat.genetics, cat.chimeraGenetics, cat.variants, cat.chimeraVariants);
         }
 
         clanLogsList = new LogScrollList(
@@ -175,7 +176,7 @@ public class SpecificClanScreen extends Screen {
                 centerX - 20, centerY + 88, 40, 15, Component.literal("Back"),
                 btn -> {
                     WCEClient.playLocalSound(ModSounds.MENU_OPEN.get(), SoundSource.NEUTRAL, 0.8f,1.3f);
-                    Minecraft.getInstance().setScreen(new ClanListScreen());
+                    Minecraft.getInstance().setScreen(new ClanListScreen(false));
                 },
                 new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
                 80, 20, 0.8f,  clan.color
@@ -273,6 +274,13 @@ public class SpecificClanScreen extends Screen {
                 entityToRender.setPlayerBoundUuid(UUID.nameUUIDFromBytes(ModEntities.WCAT.get().toString().getBytes()));
                 entityToRender.setShowMorphName(false);
                 entityToRender.setVariant(cat.variant);
+
+                entityToRender.setOnGeneticalSkin(cat.onGeneticalSkin);
+                entityToRender.setGenetics(cat.genetics);
+                entityToRender.setChimeraGenetics(cat.chimeraGenetics);
+                entityToRender.setGeneticalVariants(cat.variants);
+                entityToRender.setGeneticalVariantsChimera(cat.chimeraVariants);
+
                 entityToRender.setOnGround(true);
                 entityToRender.setYRot(0);
                 entityToRender.yHeadRot = 0;
@@ -557,7 +565,8 @@ public class SpecificClanScreen extends Screen {
 
         for (ClanInfo.ClientClanCat cat : clan.clanCats) {
             if (cat.name.toLowerCase().contains(lower)) {
-                NPCmembersList.addOption(cat.name, cat.uuid, cat.variant, true);
+                NPCmembersList.addOption(cat.name, cat.uuid, cat.variant, true, cat.onGeneticalSkin,
+                        cat.genetics, cat.chimeraGenetics, cat.variants, cat.chimeraVariants);
             }
         }
     }

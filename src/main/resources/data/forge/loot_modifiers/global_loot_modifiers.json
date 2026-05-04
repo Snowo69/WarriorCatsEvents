@@ -13,6 +13,8 @@
     "warriorcats_events:dock_from_dock",
     "warriorcats_events:sorrel_from_sorrel",
     "warriorcats_events:yarrow_from_yarrow",
-    "warriorcats_events:generations_disc"
+    "warriorcats_events:generations_disc",
+
+    "warriorcats_events:accessories_from_villages"
   ]
 }

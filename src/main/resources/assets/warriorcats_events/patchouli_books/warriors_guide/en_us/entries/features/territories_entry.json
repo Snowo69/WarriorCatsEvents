@@ -10,7 +10,7 @@
     },
     {
       "type": "patchouli:text",
-      "text": "$(8)Territories with a percentage above 35% will be able to spawn prey and a low chance of spawning enemy animals.$(br2) You can send patrols to certain territory when you interact with a deputy. It is recommended that you make sure the territory doesn't have too many caves, cliffs, and deep rivers where cats could get stuck or die. $(br2)Cats can only be sent on patrol if they have a valid home set.$(br)",
+      "text": "$(8)Territories with a percentage above 35% will be able to spawn prey and a low chance of spawning enemy animals.$(br2) You can send patrols to certain territory when you interact with a deputy. It is recommended that you make sure the territory doesn't have too many caves, cliffs, and deep rivers where cats could get stuck or die. $(br2)Cats can only be sent on patrol if they have a valid home/nest set.$(br)",
       "title": "Patrols"
     }
   ]

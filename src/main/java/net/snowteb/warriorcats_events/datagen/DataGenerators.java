@@ -8,6 +8,7 @@ import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
+import net.snowteb.warriorcats_events.datagen.loot.GlobalLootModifiers;
 import net.snowteb.warriorcats_events.datagen.loot.ModLootTableProvider;
 
 import java.util.concurrent.CompletableFuture;
@@ -35,6 +36,8 @@ public class DataGenerators {
                 blockTagGenerator.contentsGetter(), existingFileHelper));
 
         generator.addProvider(event.includeServer(), new ModWorldgenProvider(packOutput, lookupProvider));
+
+//        generator.addProvider(event.includeServer(), new GlobalLootModifiers(packOutput));
 
     }
 

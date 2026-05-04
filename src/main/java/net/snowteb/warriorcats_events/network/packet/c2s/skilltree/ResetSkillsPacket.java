@@ -41,17 +41,23 @@ public class ResetSkillsPacket {
                     .map(ISkillData::getArmorLevel)
                     .orElse(player.getPersistentData().getInt("skill_armor_level"));
 
+            int climbLevel = (player.getCapability(PlayerSkillProvider.SKILL_DATA)
+                    .map(ISkillData::isClimbUnlocked)
+                    .orElse(false)) ? 1 : 0;
+
             player.giveExperiencePoints((int) ((PlayerSkill.getDefaultSpeedCost()* speedLevel)/ 0.32));
-            player.giveExperiencePoints((int) ((PlayerSkill.getDefaultHPcost()* hpLevel)/ 0.32));
-            player.giveExperiencePoints((int) ((PlayerSkill.getDefaultDMGcost()* dmgLevel)/ 0.32));
-            player.giveExperiencePoints((int) ((PlayerSkill.getDefaultJumpcost()* jumpLevel)/ 0.32));
-            player.giveExperiencePoints((int) ((PlayerSkill.getDefaultArmorcost()* armorLevel)/ 0.32));
+            player.giveExperiencePoints((int) ((PlayerSkill.getDefaultHPCost()* hpLevel)/ 0.32));
+            player.giveExperiencePoints((int) ((PlayerSkill.getDefaultDMGCost()* dmgLevel)/ 0.32));
+            player.giveExperiencePoints((int) ((PlayerSkill.getDefaultJumpCost()* jumpLevel)/ 0.32));
+            player.giveExperiencePoints((int) ((PlayerSkill.getDefaultArmorCost()* armorLevel)/ 0.32));
+            player.giveExperiencePoints((int) ((PlayerSkill.getDefaultClimbCost()* climbLevel)/ 0.32));
 
             player.getCapability(PlayerSkillProvider.SKILL_DATA).ifPresent(data -> data.setSpeedLevel(0));
             player.getCapability(PlayerSkillProvider.SKILL_DATA).ifPresent(data -> data.setHPLevel(0));
             player.getCapability(PlayerSkillProvider.SKILL_DATA).ifPresent(data -> data.setDMGLevel(0));
             player.getCapability(PlayerSkillProvider.SKILL_DATA).ifPresent(data -> data.setJumpLevel(0));
             player.getCapability(PlayerSkillProvider.SKILL_DATA).ifPresent(data -> data.setArmorLevel(0));
+            player.getCapability(PlayerSkillProvider.SKILL_DATA).ifPresent(data -> data.setClimbUnlocked(false));
 
             player.getPersistentData().putInt("skill_speed_level", 0);
             player.getPersistentData().putInt("skill_hp_level", 0);

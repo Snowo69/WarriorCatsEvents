@@ -32,8 +32,6 @@ public class RegisterClanCommand {
     private static int openScreen(CommandSourceStack source) throws CommandSyntaxException {
         ServerPlayer player = source.getPlayerOrException();
 
-        String clanName = player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
-                .map(WCEPlayerData::getClanName).orElse("clan");
         String morphName = player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
                 .map(WCEPlayerData::getMorphName).orElse(player.getName().getString());
         UUID currentClanId = player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
@@ -52,7 +50,7 @@ public class RegisterClanCommand {
             return 0;
         }
 
-        ModPackets.sendToPlayer(new S2COpenRegisterClanScreenPacket(clanName, morphName), player);
+        ModPackets.sendToPlayer(new S2COpenRegisterClanScreenPacket(morphName), player);
 
         source.sendSuccess(
                 () -> Component.literal("Opening Clan Register menu..."),

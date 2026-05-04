@@ -8,30 +8,25 @@ import java.util.function.Supplier;
 
 public class S2COpenRegisterClanScreenPacket {
 
-    private final String clanName;
     private final String morphName;
 
-    public S2COpenRegisterClanScreenPacket(String clanName, String morphName) {
-        this.clanName = clanName;
+    public S2COpenRegisterClanScreenPacket(String morphName) {
         this.morphName = morphName;
     }
 
     public static void encode(S2COpenRegisterClanScreenPacket msg, FriendlyByteBuf buf) {
-        buf.writeUtf(msg.clanName);
         buf.writeUtf(msg.morphName);
     }
 
     public static S2COpenRegisterClanScreenPacket decode(FriendlyByteBuf buf) {
-        return new S2COpenRegisterClanScreenPacket(
-                buf.readUtf(), buf.readUtf()
-        );
+        return new S2COpenRegisterClanScreenPacket(buf.readUtf());
     }
 
     public static void handle(S2COpenRegisterClanScreenPacket msg,
                               Supplier<NetworkEvent.Context> ctx) {
 
         ctx.get().enqueueWork(() -> {
-            ClientPacketHandles.openClanCreateScreen(msg.clanName, msg.morphName);
+            ClientPacketHandles.openClanCreateScreen(msg.morphName);
         });
 
         ctx.get().setPacketHandled(true);

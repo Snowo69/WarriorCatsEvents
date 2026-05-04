@@ -3,11 +3,15 @@ package net.snowteb.warriorcats_events;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.snowteb.warriorcats_events.managers.ClimbDataAccessor;
+import net.snowteb.warriorcats_events.sound.ModSounds;
 import org.lwjgl.glfw.GLFW;
 
 public class WCEClient {
@@ -18,6 +22,7 @@ public class WCEClient {
 
     public static final ResourceLocation WCE_TITLE = new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/wce_title_hd.png");
 
+    public static final ResourceLocation WCE_LOGO = new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/wce_logo.png");
 
     public static class EmoteIndexData {
 
@@ -82,10 +87,24 @@ public class WCEClient {
     }
 
     @OnlyIn(Dist.CLIENT)
+    public static void nextMenuSound() {
+        playLocalSound(ModSounds.MENU_ACCEPT.get(), SoundSource.MASTER, 0.2f, 1f);
+    }
+
+    @OnlyIn(Dist.CLIENT)
     public static void playLocalSound(SoundEvent sound, SoundSource soundSource, float volume, float pitch) {
         Minecraft mc = Minecraft.getInstance();
         if (mc.level != null) {
             mc.level.playLocalSound(mc.player.getX(), mc.player.getY(), mc.player.getZ(),
+                    sound, soundSource, volume,pitch, false);
+        }
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public static void playLocalSound(SoundEvent sound, SoundSource soundSource, float volume, float pitch, Vec3 pos) {
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.level != null) {
+            mc.level.playLocalSound(pos.x, pos.y, pos.z,
                     sound, soundSource, volume,pitch, false);
         }
     }
@@ -118,4 +137,57 @@ public class WCEClient {
         }
 
     }
+
+    public static int climbCooldown = 0;
+    public static int displayCannotClimb = 0;
+    public static boolean cannotClimbBlink = false;
+    public static int cannotClimbBlinkCount = 3;
+    public static final int CLIM_COOLDOWN = 60;
+
+    public static int exhaustionLevel = 0;
+    public static int MAX_EXHAUSTION_LEVEL = 100;
+
+    public static void setExhaustionLevel(int exhaustionLevel) {
+        WCEClient.exhaustionLevel = exhaustionLevel;
+    }
+
+    public static void climbClientTick() {
+
+        if (climbCooldown > 0) climbCooldown--;
+
+        if (displayCannotClimb > 0) {
+            displayCannotClimb--;
+        } else {
+            cannotClimbBlink = false;
+            cannotClimbBlinkCount = 3;
+        }
+
+        if (displayCannotClimb > 0) {
+            if (displayCannotClimb % 3 == 0) {
+                cannotClimbBlink = !cannotClimbBlink;
+
+                if (cannotClimbBlinkCount > 0) cannotClimbBlinkCount--;
+            }
+
+        } else {
+            cannotClimbBlink = false;
+            cannotClimbBlinkCount = 6;
+        }
+
+        LocalPlayer localPlayer = Minecraft.getInstance().player;
+        if (localPlayer instanceof ClimbDataAccessor data) {
+            if (data.wce$isClimbing() && localPlayer.input.jumping) {
+                launchFromLookAngle(data, localPlayer);
+            }
+        }
+    }
+
+    private static void launchFromLookAngle(ClimbDataAccessor data, LocalPlayer localPlayer) {
+        data.wce$stopClimb();
+        Vec3 angle = Minecraft.getInstance().cameraEntity.getLookAngle().reverse();
+        float strenght = 0.6f;
+        localPlayer.setDeltaMovement(angle.scale(strenght));
+        climbCooldown = 15;
+    }
+
 }

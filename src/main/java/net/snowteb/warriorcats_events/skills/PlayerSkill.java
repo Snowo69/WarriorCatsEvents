@@ -1,6 +1,9 @@
 package net.snowteb.warriorcats_events.skills;
 
-import net.snowteb.warriorcats_events.zconfig.WCEConfig;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.snowteb.warriorcats_events.util.ModAttributes;
 import net.snowteb.warriorcats_events.zconfig.WCEServerConfig;
 
 import java.util.UUID;
@@ -20,20 +23,23 @@ public class PlayerSkill implements ISkillData {
 public static int getDefaultSpeedCost() {
     return (int) (30 * WCEServerConfig.SERVER.SKILL_COST_MULTIPLIER.get());
 }
-public static int getDefaultHPcost() {
+public static int getDefaultHPCost() {
     return (int) (160 * WCEServerConfig.SERVER.SKILL_COST_MULTIPLIER.get());
 }
-public static int getDefaultDMGcost() {
+public static int getDefaultDMGCost() {
     return (int) (40 * WCEServerConfig.SERVER.SKILL_COST_MULTIPLIER.get());
 }
-public static int getDefaultJumpcost() {
+public static int getDefaultJumpCost() {
     return (int) (300 * WCEServerConfig.SERVER.SKILL_COST_MULTIPLIER.get());
 }
-public static int getDefaultArmorcost() {
+public static int getDefaultArmorCost() {
     return (int) (300 * WCEServerConfig.SERVER.SKILL_COST_MULTIPLIER.get());
 }
-public static int getDefaultStealthcost() {
+public static int getDefaultStealthCost() {
     return (int) (2921 * WCEServerConfig.SERVER.SKILL_COST_MULTIPLIER.get());
+}
+public static int getDefaultClimbCost() {
+    return (int) (1800 * WCEServerConfig.SERVER.SKILL_COST_MULTIPLIER.get());
 }
 
 
@@ -48,6 +54,8 @@ public static int getDefaultStealthcost() {
     private int DMGLevel = 0;
     private int jumpLevel = 0;
     private int armorLevel = 0;
+
+    private boolean climbUnlocked = false;
 
     private boolean isLeaping = false;
     private int leapPower = 0;
@@ -127,6 +135,15 @@ public static int getDefaultStealthcost() {
         this.armorLevel = level;
     }
 
+    @Override
+    public boolean isClimbUnlocked() {
+        return climbUnlocked;
+    }
+    @Override
+    public void setClimbUnlocked(boolean climbUnlocked) {
+        this.climbUnlocked = climbUnlocked;
+    }
+
 
     @Override
     public void copyFrom(ISkillData other) {
@@ -135,8 +152,110 @@ public static int getDefaultStealthcost() {
         this.DMGLevel = other.getDMGLevel();
         this.jumpLevel = other.getJumpLevel();
         this.armorLevel = other.getArmorLevel();
+        this.climbUnlocked = other.isClimbUnlocked();
     }
 
+
+    public static void reviveAttributes(ServerPlayer player, ISkillData newStore) {
+        var speedAttr = player.getAttribute(Attributes.MOVEMENT_SPEED);
+        if (speedAttr != null) {
+            speedAttr.removeModifier(PlayerSkill.SPEED_SKILL_UUID);
+            double bonus = (0.025* WCEServerConfig.SERVER.SKILL_SPEED_MULTIPLIER.get()) * newStore.getSpeedLevel();
+            if (bonus > 0) {
+                speedAttr.addPermanentModifier(
+                        new AttributeModifier(
+                                PlayerSkill.SPEED_SKILL_UUID,
+                                "skill_speed_bonus",
+                                bonus,
+                                AttributeModifier.Operation.MULTIPLY_TOTAL
+                        )
+                );
+            }
+        }
+        var hpAttr = player.getAttribute(Attributes.MAX_HEALTH);
+        if (hpAttr != null) {
+            hpAttr.removeModifier(PlayerSkill.HP_SKILL_UUID);
+            double bonus = (0.1*WCEServerConfig.SERVER.SKILL_HP_MULTIPLIER.get()) * newStore.getHPLevel();
+            if (bonus > 0) {
+                hpAttr.addPermanentModifier(
+                        new AttributeModifier(
+                                PlayerSkill.HP_SKILL_UUID,
+                                "skill_hp_bonus",
+                                bonus,
+                                AttributeModifier.Operation.MULTIPLY_TOTAL
+                        )
+                );
+            }
+        }
+        var dmgAttr = player.getAttribute(Attributes.ATTACK_DAMAGE);
+        if (dmgAttr != null) {
+            dmgAttr.removeModifier(PlayerSkill.DMG_SKILL_UUID);
+            double bonus = (0.12*WCEServerConfig.SERVER.SKILL_DMG_MULTIPLIER.get()) * newStore.getDMGLevel();
+            if (bonus > 0) {
+                dmgAttr.addPermanentModifier(
+                        new AttributeModifier(
+                                PlayerSkill.DMG_SKILL_UUID,
+                                "skill_dmg_bonus",
+                                bonus,
+                                AttributeModifier.Operation.ADDITION
+                        )
+                );
+            }
+        }
+        var jumpAttr = player.getAttribute(ModAttributes.PLAYER_JUMP.get());
+        if (jumpAttr != null) {
+            jumpAttr.removeModifier(PlayerSkill.JUMP_SKILL_UUID);
+            double bonus = (0.093*WCEServerConfig.SERVER.SKILL_JUMP_MULTIPLIER.get()) * newStore.getJumpLevel();
+            if (bonus > 0) {
+                jumpAttr.addPermanentModifier(
+                        new AttributeModifier(
+                                PlayerSkill.JUMP_SKILL_UUID,
+                                "skill_jump_bonus",
+                                bonus,
+                                AttributeModifier.Operation.ADDITION
+                        )
+                );
+            }
+        }
+        var armorAttr = player.getAttribute(Attributes.ARMOR);
+        if (armorAttr != null) {
+            armorAttr.removeModifier(PlayerSkill.ARMOR_SKILL_UUID);
+            double bonus = (3.5*WCEServerConfig.SERVER.SKILL_ARMOR_MULTIPLIER.get()) * newStore.getArmorLevel();
+            if (bonus > 0) {
+                armorAttr.addPermanentModifier(
+                        new AttributeModifier(
+                                PlayerSkill.ARMOR_SKILL_UUID,
+                                "skill_armor_bonus",
+                                bonus,
+                                AttributeModifier.Operation.ADDITION
+                        )
+                );
+            }
+        }
+    }
+
+    public static void removeAttributes(ServerPlayer player) {
+        var speedAttr = player.getAttribute(Attributes.MOVEMENT_SPEED);
+        if (speedAttr != null) {
+            speedAttr.removeModifier(PlayerSkill.SPEED_SKILL_UUID);
+        }
+        var hpAttr = player.getAttribute(Attributes.MAX_HEALTH);
+        if (hpAttr != null) {
+            hpAttr.removeModifier(PlayerSkill.HP_SKILL_UUID);
+        }
+        var dmgAttr = player.getAttribute(Attributes.ATTACK_DAMAGE);
+        if (dmgAttr != null) {
+            dmgAttr.removeModifier(PlayerSkill.DMG_SKILL_UUID);
+        }
+        var jumpAttr = player.getAttribute(ModAttributes.PLAYER_JUMP.get());
+        if (jumpAttr != null) {
+            jumpAttr.removeModifier(PlayerSkill.JUMP_SKILL_UUID);
+        }
+        var armorAttr = player.getAttribute(Attributes.ARMOR);
+        if (armorAttr != null) {
+            armorAttr.removeModifier(PlayerSkill.ARMOR_SKILL_UUID);
+        }
+    }
 
 }
 

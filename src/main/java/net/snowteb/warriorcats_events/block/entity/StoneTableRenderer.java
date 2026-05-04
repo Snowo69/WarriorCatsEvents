@@ -16,7 +16,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.state.BlockState;
-import net.snowteb.warriorcats_events.block.custom.FreshkillPileBlock;
 import net.snowteb.warriorcats_events.block.custom.StoneCraftingTable;
 
 import java.util.List;
@@ -89,6 +88,40 @@ public class StoneTableRenderer implements BlockEntityRenderer<StoneCraftingTabl
         pPoseStack.popPose();
 
 
+
+        ItemStack recipeResult = pBlockEntity.getCurrentResult();
+        if (!recipeResult.isEmpty()) {
+
+            pPoseStack.pushPose();
+
+            pPoseStack.translate(0.5D, 0.0D, 0.5D);
+            switch (facing) {
+                case NORTH -> pPoseStack.mulPose(Axis.YP.rotationDegrees(0));
+                case SOUTH -> pPoseStack.mulPose(Axis.YP.rotationDegrees(180));
+                case WEST -> pPoseStack.mulPose(Axis.YP.rotationDegrees(90));
+                case EAST -> pPoseStack.mulPose(Axis.YP.rotationDegrees(-90));
+            }
+
+            float time = (pBlockEntity.getLevel().getGameTime() + pPartialTick);
+
+            float floating = (float) Math.sin(time * 0.1f) * 0.02f;
+
+            pPoseStack.translate(0.0D, 0.78D + floating, 0.1D);
+            pPoseStack.scale(0.35F, 0.35F, 0.35F);
+
+            pPoseStack.mulPose(Axis.YP.rotationDegrees(90f));
+
+            pPoseStack.mulPose(Axis.YP.rotationDegrees(time));
+
+            int light = getLightLevel(pBlockEntity.getLevel(), pBlockEntity.getBlockPos());
+
+            itemRenderer.renderStatic(recipeResult, ItemDisplayContext.FIXED, light,
+                    OverlayTexture.NO_OVERLAY, pPoseStack,
+                    pBuffer,
+                    pBlockEntity.getLevel(), 1);
+
+            pPoseStack.popPose();
+        }
     }
 
     private int getLightLevel(Level world, BlockPos pos) {

@@ -25,6 +25,7 @@ import net.snowteb.warriorcats_events.network.packet.c2s.clan.SavePlayerGenetics
 import net.snowteb.warriorcats_events.network.packet.c2s.others.CtSShareMorphToChat;
 import net.snowteb.warriorcats_events.screen.widgets.GradientSwitchButton;
 import net.snowteb.warriorcats_events.screen.widgets.*;
+import net.snowteb.warriorcats_events.zconfig.WCEServerConfig;
 import tocraft.walkers.api.PlayerShape;
 
 import java.nio.file.Path;
@@ -506,6 +507,7 @@ public class CreateMorphGeneticsScreen extends Screen {
                     storedNoise = variants.noise;
                     size = variants.size;
                     scars  = variants.scars;
+                    silverVar = variants.silverVar;
 
                     variantsChimera = new WCGenetics.GeneticalChimeraVariants(cat.getChimeraGenVariants());
                     chimeraGene = cat.getGenetics().chimeraGene;
@@ -800,6 +802,8 @@ public class CreateMorphGeneticsScreen extends Screen {
                 btn -> {
                     closing = true;
                     animationTime = 0f;
+                    WCEClient.nextMenuSound();
+
                 }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
                 60, 20, 0.8f, 0xFFFFFFFF
         );
@@ -1834,6 +1838,8 @@ public class CreateMorphGeneticsScreen extends Screen {
         );
         pGuiGraphics.disableScissor();
 
+
+
         pGuiGraphics.blit(WCEClient.WCE_TITLE,
                 centerX - 200 - this.width,
                 centerY - 62, 0, 0,
@@ -2385,7 +2391,8 @@ public class CreateMorphGeneticsScreen extends Screen {
 
         this.minecraft.setScreen(null);
         if (!ClientClanData.get().isFirstLoginHandled()){
-            this.minecraft.setScreen(new SpawnLocationScreen());
+            if (WCEServerConfig.SERVER.TELEPORT_WHEN_JOIN.get()) this.minecraft.setScreen(new SpawnLocationScreen());
+            else this.minecraft.setScreen(null);
         }
     }
 
@@ -2457,6 +2464,8 @@ public class CreateMorphGeneticsScreen extends Screen {
                 eyeColorVariantRight = variantsCopy.rightEyeVar;
                 noise = variantsCopy.noise;
                 size = variantsCopy.size;
+                silverVar = variantsCopy.silverVar;
+                scars = variantsCopy.scars;
 
             } else {
                 displayError("Morph data not present.", true);

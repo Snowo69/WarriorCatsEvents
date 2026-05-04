@@ -5,17 +5,20 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.BiomeColors;
-import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.client.resources.sounds.SoundInstance;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.FoliageColor;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.ConfigScreenHandler;
 import net.minecraftforge.client.event.*;
@@ -39,6 +42,7 @@ import net.snowteb.warriorcats_events.entity.client.*;
 import net.snowteb.warriorcats_events.entity.custom.EagleEntity;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.item.ModItems;
+import net.snowteb.warriorcats_events.managers.ClimbDataAccessor;
 import net.snowteb.warriorcats_events.network.ModPackets;
 import net.snowteb.warriorcats_events.network.packet.c2s.clan.EmoteMorphPacket;
 import net.snowteb.warriorcats_events.network.packet.c2s.others.*;
@@ -50,11 +54,15 @@ import net.snowteb.warriorcats_events.screen.screens.CatDataScreen;
 import net.snowteb.warriorcats_events.screen.screens.ClanSetupScreen;
 import net.snowteb.warriorcats_events.screen.menus.ModMenuTypes;
 import net.snowteb.warriorcats_events.screen.screens.*;
+import net.snowteb.warriorcats_events.skills.ISkillData;
+import net.snowteb.warriorcats_events.skills.PlayerSkillProvider;
 import net.snowteb.warriorcats_events.skills.StealthClientState;
 import net.snowteb.warriorcats_events.sound.ModSounds;
 import net.snowteb.warriorcats_events.stealth.PlayerStealthProvider;
 import net.snowteb.warriorcats_events.util.ModKeybinds;
+import net.snowteb.warriorcats_events.zconfig.WCEServerConfig;
 import org.lwjgl.glfw.GLFW;
+import tocraft.walkers.api.PlayerShape;
 
 import java.util.Arrays;
 
@@ -75,7 +83,7 @@ public class ClientEvents {
 
             if ((event.getKey() == GLFW.GLFW_KEY_LEFT_SHIFT || event.getKey() == GLFW.GLFW_KEY_RIGHT_SHIFT) && event.getAction() == GLFW.GLFW_PRESS) {
                 if (isBeingLatched) {
-                    setFreeCounter+=16;
+                    setFreeCounter += 16;
                 }
             }
 
@@ -105,7 +113,7 @@ public class ClientEvents {
                     emoteOffset = Mth.clamp(emoteOffset, -1, MAX_EMOTES);
                 }
 
-                WCEClient.playLocalSound(ModSounds.MENU_CLICK.get(), SoundSource.NEUTRAL, 0.1f,1.3f);
+                WCEClient.playLocalSound(ModSounds.MENU_CLICK.get(), SoundSource.NEUTRAL, 0.1f, 1.3f);
 
                 event.setCanceled(true);
             } else if (isRenderingSoundMenu && mc.screen == null) {
@@ -114,7 +122,7 @@ public class ClientEvents {
                 soundOffset = Mth.clamp(soundOffset, 0, MAX_SOUNDS);
 
 
-                WCEClient.playLocalSound(ModSounds.MENU_CLICK.get(), SoundSource.NEUTRAL, 0.1f,1.3f);
+                WCEClient.playLocalSound(ModSounds.MENU_CLICK.get(), SoundSource.NEUTRAL, 0.1f, 1.3f);
 
                 event.setCanceled(true);
             }
@@ -139,6 +147,7 @@ public class ClientEvents {
                 if (!cap.isUnlocked() || !cap.isOn()) return;
 
                 boolean shifting = mc.options.keyShift.isDown();
+                if (player instanceof ClimbDataAccessor data && data.wce$isClimbing()) shifting = false;
                 StealthClientState.tick(shifting);
             });
 
@@ -196,7 +205,7 @@ public class ClientEvents {
 //                hissPressed = false;
 //            }
 
-            if (ModKeybinds.WATERDRINK_KEY.isDown() && waterCooldown == 0) {
+            if (WCEServerConfig.SERVER.THIRST.get() && (ModKeybinds.WATERDRINK_KEY.isDown() && waterCooldown == 0)) {
                 if (!waterPressed) {
                     ModPackets.sendToServer(new WaterPacket());
 //                    ModPackets.sendToServer(new CtSStartSleep());
@@ -224,7 +233,7 @@ public class ClientEvents {
                     }
 
                 } else {
-                    WCEClient.playLocalSound(ModSounds.MENU_OPEN.get(), SoundSource.NEUTRAL, 0.4f,1f);
+                    WCEClient.playLocalSound(ModSounds.MENU_OPEN.get(), SoundSource.NEUTRAL, 0.4f, 1f);
                 }
 
                 if (isRenderingSoundMenu) isRenderingSoundMenu = false;
@@ -241,7 +250,7 @@ public class ClientEvents {
                         ModPackets.sendToServer(new CtSPlayCatSoundPacket(selected));
                     }
                 } else {
-                    WCEClient.playLocalSound(ModSounds.MENU_OPEN.get(), SoundSource.NEUTRAL, 0.4f,1f);
+                    WCEClient.playLocalSound(ModSounds.MENU_OPEN.get(), SoundSource.NEUTRAL, 0.4f, 1f);
                 }
 
                 if (isRenderingEmoteMenu) isRenderingEmoteMenu = false;
@@ -250,6 +259,37 @@ public class ClientEvents {
                 isRenderingSoundMenu = !isRenderingSoundMenu;
             }
 
+            if (ModKeybinds.CLIMB_KEY.consumeClick()) {
+                if (PlayerShape.getCurrentShape(player) instanceof WCatEntity) {
+                    boolean climbUnlocked = player.getCapability(PlayerSkillProvider.SKILL_DATA)
+                            .map(ISkillData::isClimbUnlocked).orElse(false);
+                    if (climbUnlocked) {
+                        if (WCEServerConfig.SERVER.SKILL_TREE_SERVER.get()) {
+                            if (climbCooldown <= 0) {
+                                if (player instanceof ClimbDataAccessor dataAccessor) {
+                                    if (dataAccessor.wce$isClimbing()) return;
+                                }
+                                if (!hasClimbableSurface(player)) return;
+
+                                ModPackets.sendToServer(new CtSClimbPacket());
+                                climbCooldown = CLIM_COOLDOWN;
+                            } else {
+                                displayCannotClimb = 20;
+                                cannotClimbBlink = true;
+                                cannotClimbBlinkCount = 6;
+                            }
+                        } else {
+                            player.sendSystemMessage(Component.literal("Skill tree is disabled for this world.")
+                                    .withStyle(ChatFormatting.RED));
+                        }
+                    } else {
+                        player.displayClientMessage(Component.literal("Climbing skill has not been unlocked yet!")
+                                .withStyle(ChatFormatting.YELLOW), true);
+                    }
+                }
+            }
+
+            WCEClient.climbClientTick();
 
             if (isRenderingEmoteMenu && (mc.screen != null || mc.player == null)) {
                 isRenderingEmoteMenu = false;
@@ -261,6 +301,43 @@ public class ClientEvents {
                 soundOffset = 0;
             }
 
+        }
+
+        private static boolean hasClimbableSurface(Player player) {
+
+            Level level = player.level();
+            BlockPos pos = player.blockPosition();
+
+            int playerY = pos.getY();
+
+            Direction[] dirs = {
+                    Direction.NORTH,
+                    Direction.SOUTH,
+                    Direction.EAST,
+                    Direction.WEST
+            };
+
+            for (Direction dir : dirs) {
+
+                BlockPos base = pos.relative(dir);
+
+                for (int dy = 0; dy <= 0; dy++) {
+
+                    BlockPos check = base.above(dy);
+
+                    BlockState state = level.getBlockState(check);
+
+                    if (!state.isCollisionShapeFullBlock(level, check)) continue;
+
+                    int y = check.getY();
+
+                    if (y != playerY) continue;
+
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         /**
@@ -319,6 +396,7 @@ public class ClientEvents {
         public static void onKeyRegister(RegisterKeyMappingsEvent event) {
             event.register(ModKeybinds.HISSING_KEY);
             event.register(ModKeybinds.WATERDRINK_KEY);
+            event.register(ModKeybinds.CLIMB_KEY);
             event.register(WCEClient.EMOTES_HUD_MENU_KEY);
 //            event.register(ModKeybinds.SKILLMENU_KEY);
         }
@@ -414,9 +492,20 @@ public class ClientEvents {
                     ItemProperties.register(collar.get(),
                             new ResourceLocation("warriorcats_events", "has_glow"),
                             (stack, level, entity, seed) -> stack.getTag() != null && stack.getTag().getBoolean("HasGlow") ? 1f : 0f);
+
+                    ItemProperties.register(ModItems.MOSS_BALL.get(),
+                            new ResourceLocation("honeylevel"),
+                            (stack, level, entity, seed) -> {
+                                return stack.hasTag() ? stack.getTag().getInt("honeylevel") : 0.0F;
+                            });
+
+                    ItemProperties.register(ModItems.MOSS_BALL.get(),
+                            new ResourceLocation("waterlevel"),
+                            (stack, level, entity, seed) -> {
+                                return stack.hasTag() ? stack.getTag().getInt("WaterLevel") : 0.0F;
+                            });
                 }
             }
-
 
 
             ModPackets.INSTANCE.registerMessage(

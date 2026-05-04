@@ -9,6 +9,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundSource;
 import net.snowteb.warriorcats_events.WCEClient;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.clan.WCEPlayerData;
@@ -18,6 +19,7 @@ import net.snowteb.warriorcats_events.network.ModPackets;
 import net.snowteb.warriorcats_events.network.packet.c2s.clan.SaveClanDataPacket;
 import net.snowteb.warriorcats_events.screen.widgets.SwitchButton;
 import net.snowteb.warriorcats_events.screen.widgets.ToggleButton;
+import net.snowteb.warriorcats_events.sound.ModSounds;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -223,6 +225,14 @@ public class ClanSetupScreen extends Screen {
         );
         pGuiGraphics.disableScissor();
         pGuiGraphics.pose().popPose();
+
+//        pGuiGraphics.blit(
+//                WCEClient.WCE_LOGO,
+//                0, 0,
+//                0, 0,
+//                50, 50,
+//                50, 50
+//        );
 
         pGuiGraphics.pose().popPose();
 
@@ -441,6 +451,7 @@ public class ClanSetupScreen extends Screen {
 
     private void onBeforeSave() {
 //        String clanName = clanNameBox.getValue().trim();
+
         String morphPrefix = morphPrefixBox.getValue().trim();
         String morphSufix = morphSufixBox.getValue().trim();
         boolean isAgeSelected = (ageKit.isSelected() || ageApprentice.isSelected() || ageAdult.isSelected());
@@ -459,6 +470,9 @@ public class ClanSetupScreen extends Screen {
             textCooldown = 100;
             return;
         }
+
+        WCEClient.nextMenuSound();
+
 
         closing = true;
         animationTime = 0f;
@@ -531,6 +545,8 @@ public class ClanSetupScreen extends Screen {
         if (ClientClanData.get().isFirstLoginHandled()) {
             data.setFirstLoginHandled(true);
         }
+
+
 
         this.minecraft.setScreen(null);
         if (!ClientClanData.get().isFirstLoginHandled()) {

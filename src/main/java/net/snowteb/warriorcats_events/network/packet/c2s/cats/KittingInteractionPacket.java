@@ -49,8 +49,8 @@ public class KittingInteractionPacket {
             ServerLevel level = player.serverLevel();
             Entity entity = level.getEntity(msg.entityId);
 
-            int sPlayerGender = player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
-                    .map(WCEPlayerData::getGenderData).orElse(-1);
+//            int sPlayerGender = player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+//                    .map(WCEPlayerData::getGenderData).orElse(-1);
 
             String morphName = player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
                     .map(WCEPlayerData::getMorphName).orElse("your character");
@@ -65,18 +65,18 @@ public class KittingInteractionPacket {
                 return;
             }
 
-            if (sPlayerGender == 0 || sPlayerGender == 1) {
-                if (cat.getGender() == sPlayerGender) {
-                    Component name = cat.hasCustomName() ? cat.getCustomName() : Component.literal("This cat");
-                    player.sendSystemMessage(Component.empty()
-                            .append(name.copy().withStyle(ChatFormatting.AQUA))
-                            .append(Component.literal(" and ").withStyle(ChatFormatting.YELLOW))
-                            .append(Component.literal(morphName).withStyle(ChatFormatting.AQUA))
-                            .append(Component.literal(" can't have kits!").withStyle(ChatFormatting.YELLOW))
-                    );
-                    return;
-                }
-            }
+//            if (sPlayerGender == 0 || sPlayerGender == 1) {
+//                if (cat.getGender() == sPlayerGender) {
+//                    Component name = cat.hasCustomName() ? cat.getCustomName() : Component.literal("This cat");
+//                    player.sendSystemMessage(Component.empty()
+//                            .append(name.copy().withStyle(ChatFormatting.AQUA))
+//                            .append(Component.literal(" and ").withStyle(ChatFormatting.YELLOW))
+//                            .append(Component.literal(morphName).withStyle(ChatFormatting.AQUA))
+//                            .append(Component.literal(" can't have kits!").withStyle(ChatFormatting.YELLOW))
+//                    );
+//                    return;
+//                }
+//            }
 
             if (kittingCooldown > 0) {
                 Component name = cat.hasCustomName() ? cat.getCustomName() : Component.literal("This cat");

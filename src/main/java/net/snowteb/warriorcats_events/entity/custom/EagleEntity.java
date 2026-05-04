@@ -443,7 +443,7 @@ public class EagleEntity extends FlyingMob implements GeoEntity, OwnableEntity {
         if (!this.level().isClientSide()) {
 
             if (this.tickCount % 5 == 0 && !this.wasBornAgressive && !this.isFlying()) {
-                if (WCEServerConfig.Server.CAN_EAGLES_BE_TAMED.get()) {
+                if (WCEServerConfig.SERVER.CAN_EAGLES_BE_TAMED.get()) {
                     List<Player> playersClose = this.level().getEntitiesOfClass(Player.class, this.getBoundingBox().inflate(5F), player -> {
                         return !this.isOwnedBy(player) && !this.isTame() && (!this.canFinallyTame.getOrDefault(player.getUUID(), false));
                     });
@@ -1066,7 +1066,7 @@ public class EagleEntity extends FlyingMob implements GeoEntity, OwnableEntity {
     public void aiStep() {
 
         if (this.isInWater()) {
-            this.setDeltaMovement(this.getDeltaMovement().add(0, 0.08, 0));
+            this.setDeltaMovement(this.getDeltaMovement().add(0, 0.125, 0));
         }
 
         super.aiStep();
@@ -1489,7 +1489,7 @@ public class EagleEntity extends FlyingMob implements GeoEntity, OwnableEntity {
                     }
                 }
 
-                if (this.isTame() && WCEServerConfig.Server.CAN_EAGLES_BE_TAMED.get()) {
+                if (this.isTame() && WCEServerConfig.SERVER.CAN_EAGLES_BE_TAMED.get()) {
                     if (!this.wasBornAgressive && !this.isLatching() && this.isOwnedBy(pPlayer)) {
                         pPlayer.startRiding(this, true);
                         pPlayer.hurtMarked = true;

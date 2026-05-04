@@ -51,9 +51,6 @@ public class CatDataScreen extends Screen {
 
     private String activeMenu = "main";
 
-
-    private static final ResourceLocation BG_TEXTURE =
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/catdata_template.png");
     private static final ResourceLocation CAT_NAME_TOAST =
             new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/cat_toast.png");
 
@@ -251,19 +248,45 @@ public class CatDataScreen extends Screen {
             pGuiGraphics.renderTooltip(Minecraft.getInstance().font, Component.empty().append(preText).append(friendshipLevelText) , pMouseX, pMouseY);
         }
 
-        int yOffset = 15;
-        pGuiGraphics.renderTooltip(Minecraft.getInstance().font, Component.empty().append(preText).append(clanName) , xPositionPanel, 70 + yOffset);
-        pGuiGraphics.renderTooltip(Minecraft.getInstance().font, Component.empty().append(preText).append(genderText), xPositionPanel, 90 + yOffset);
-        pGuiGraphics.renderTooltip(Minecraft.getInstance().font, Component.empty().append(preText).append(parentsText), xPositionPanel, 110 + yOffset);
-        pGuiGraphics.renderTooltip(Minecraft.getInstance().font, Component.empty().append(preText).append(ageText), xPositionPanel, 130 + yOffset);
-        pGuiGraphics.renderTooltip(Minecraft.getInstance().font, Component.empty().append(preText).append(personalityText), xPositionPanel, 150 + yOffset);
-        pGuiGraphics.renderTooltip(Minecraft.getInstance().font, Component.empty().append(preText).append(moodText), xPositionPanel, 170 + yOffset);
-        pGuiGraphics.renderTooltip(Minecraft.getInstance().font, Component.empty().append(preText).append(rankText), xPositionPanel, 190 + yOffset);
-        pGuiGraphics.renderTooltip(Minecraft.getInstance().font, Component.empty().append(preText).append(catMate), xPositionPanel, 210 + yOffset);
-        pGuiGraphics.renderTooltip(Minecraft.getInstance().font, Component.empty().append(preText).append(expectingText), xPositionPanel, 230 + yOffset);
-        if (expectingKits) {
-            pGuiGraphics.renderTooltip(Minecraft.getInstance().font, Component.empty().append(preText).append(KitTime), xPositionPanel, 250 + yOffset);
+//        {
+//            int yOffset = 15;
+//            pGuiGraphics.renderTooltip(Minecraft.getInstance().font, Component.empty().append(preText).append(clanName), xPositionPanel, 70 + yOffset);
+//            pGuiGraphics.renderTooltip(Minecraft.getInstance().font, Component.empty().append(preText).append(genderText), xPositionPanel, 90 + yOffset);
+//            pGuiGraphics.renderTooltip(Minecraft.getInstance().font, Component.empty().append(preText).append(parentsText), xPositionPanel, 110 + yOffset);
+//            pGuiGraphics.renderTooltip(Minecraft.getInstance().font, Component.empty().append(preText).append(ageText), xPositionPanel, 130 + yOffset);
+//            pGuiGraphics.renderTooltip(Minecraft.getInstance().font, Component.empty().append(preText).append(personalityText), xPositionPanel, 150 + yOffset);
+//            pGuiGraphics.renderTooltip(Minecraft.getInstance().font, Component.empty().append(preText).append(moodText), xPositionPanel, 170 + yOffset);
+//            pGuiGraphics.renderTooltip(Minecraft.getInstance().font, Component.empty().append(preText).append(rankText), xPositionPanel, 190 + yOffset);
+//            pGuiGraphics.renderTooltip(Minecraft.getInstance().font, Component.empty().append(preText).append(catMate), xPositionPanel, 210 + yOffset);
+//            pGuiGraphics.renderTooltip(Minecraft.getInstance().font, Component.empty().append(preText).append(expectingText), xPositionPanel, 230 + yOffset);
+//            if (expectingKits) {
+//                pGuiGraphics.renderTooltip(Minecraft.getInstance().font, Component.empty().append(preText).append(KitTime), xPositionPanel, 250 + yOffset);
+//            }
+//        }
+
+        {
+            pGuiGraphics.pose().pushPose();
+            pGuiGraphics.pose().translate(0, 70, 0);
+            float scale = 0.9f;
+            pGuiGraphics.pose().scale(scale, scale, scale);
+            int yOffset = 15;
+            pGuiGraphics.renderTooltip(Minecraft.getInstance().font, Component.empty().append(preText).append(clanName), xPositionPanel, 0 + yOffset);
+            pGuiGraphics.renderTooltip(Minecraft.getInstance().font, Component.empty().append(preText).append(genderText), xPositionPanel, 20 + yOffset);
+            pGuiGraphics.renderTooltip(Minecraft.getInstance().font, Component.empty().append(preText).append(parentsText), xPositionPanel, 40 + yOffset);
+            pGuiGraphics.renderTooltip(Minecraft.getInstance().font, Component.empty().append(preText).append(ageText), xPositionPanel, 60 + yOffset);
+            pGuiGraphics.renderTooltip(Minecraft.getInstance().font, Component.empty().append(preText).append(personalityText), xPositionPanel, 80 + yOffset);
+            pGuiGraphics.renderTooltip(Minecraft.getInstance().font, Component.empty().append(preText).append(moodText), xPositionPanel, 100 + yOffset);
+            pGuiGraphics.renderTooltip(Minecraft.getInstance().font, Component.empty().append(preText).append(rankText), xPositionPanel, 120 + yOffset);
+            pGuiGraphics.renderTooltip(Minecraft.getInstance().font, Component.empty().append(preText).append(catMate), xPositionPanel, 140 + yOffset);
+            pGuiGraphics.renderTooltip(Minecraft.getInstance().font, Component.empty().append(preText).append(expectingText), xPositionPanel, 160 + yOffset);
+            if (expectingKits) {
+                pGuiGraphics.renderTooltip(Minecraft.getInstance().font, Component.empty().append(preText).append(KitTime), xPositionPanel, 180 + yOffset);
+            }
+            pGuiGraphics.pose().popPose();
         }
+
+
+
         pGuiGraphics.pose().popPose();
 
 //        pGuiGraphics.enableScissor(centerX - 135, centerY - 65, centerX - 71, centerY - 1);

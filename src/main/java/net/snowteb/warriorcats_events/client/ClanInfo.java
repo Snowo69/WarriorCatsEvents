@@ -1,6 +1,7 @@
 package net.snowteb.warriorcats_events.client;
 
 import net.minecraft.network.chat.Component;
+import net.snowteb.warriorcats_events.entity.custom.WCGenetics;
 
 import java.util.*;
 
@@ -105,7 +106,17 @@ public class ClanInfo {
         public String parents;
         public int variant;
 
-        public ClientClanCat(UUID uuid, String name, String gender, String rank, String age, int variant, String parents) {
+        public boolean onGeneticalSkin = false;
+        public WCGenetics genetics = new WCGenetics();
+        public WCGenetics chimeraGenetics = new WCGenetics();
+        public WCGenetics.GeneticalVariants variants = new WCGenetics.GeneticalVariants();
+        public WCGenetics.GeneticalChimeraVariants chimeraVariants = new WCGenetics.GeneticalChimeraVariants();
+
+
+        public ClientClanCat(UUID uuid, String name, String gender, String rank,
+                             String age, int variant, String parents, boolean onGeneticalSkin,
+                             WCGenetics genetics, WCGenetics chimeraGenetics,
+                             WCGenetics.GeneticalVariants variants, WCGenetics.GeneticalChimeraVariants chimeraVariants) {
             this.uuid = uuid;
             this.name = name;
             this.gender = gender;
@@ -113,6 +124,12 @@ public class ClanInfo {
             this.parents = parents;
             this.rank = rank;
             this.age = age;
+
+            this.onGeneticalSkin = onGeneticalSkin;
+            this.genetics = genetics;
+            this.chimeraGenetics = chimeraGenetics;
+            this.variants = variants;
+            this.chimeraVariants = chimeraVariants;
         }
     }
 

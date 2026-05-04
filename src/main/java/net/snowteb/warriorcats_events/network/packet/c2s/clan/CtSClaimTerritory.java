@@ -106,7 +106,7 @@ public class CtSClaimTerritory {
 
             if (clan.claimedTerritory.isEmpty()) {
 
-                if (!packet.takeXPfromPlayer(player, 300)) return;
+                if (!packet.takeXPfromPlayer(player, 450)) return;
 
                 Component log = Component.empty()
                                 .append(Component.literal(morphName).withStyle(ChatFormatting.GOLD))
@@ -133,7 +133,7 @@ public class CtSClaimTerritory {
 
             } else {
 
-                if (!packet.takeXPfromPlayer(player, 300)) return;
+                if (!packet.takeXPfromPlayer(player, 850)) return;
 
                 boolean isTerritoryConnected = false;
 

@@ -1,8 +1,12 @@
 package net.snowteb.warriorcats_events.mixin;
 
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.snowteb.warriorcats_events.entity.custom.EagleEntity;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
@@ -83,5 +87,14 @@ public class PlayerEntityMixin {
             }
         }
     }
+//
+//    private static final EntityDataAccessor<Boolean> CLIMBING =
+//            SynchedEntityData.defineId(Player.class, EntityDataSerializers.BOOLEAN);
+//
+//    @Inject(method = "defineSynchedData", at = @At("TAIL"))
+//    public void defineClimbingData(CallbackInfo ci) {
+//        Player self = (Player) (Object) this;
+//        self.getEntityData().define(CLIMBING, false);
+//    }
 
 }

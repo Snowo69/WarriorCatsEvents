@@ -16,6 +16,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.snowteb.warriorcats_events.block.entity.TreeStumpBlockEntity;
+import net.snowteb.warriorcats_events.entity.custom.WCGenetics;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.network.ModPackets;
 import net.snowteb.warriorcats_events.network.packet.s2c.clan.S2CSyncClanDataPacket;
@@ -88,6 +89,12 @@ public class ClanData extends SavedData {
         public String catRank;
         public Component catParents;
 
+        public boolean onGeneticalSkin = false;
+        public WCGenetics genetics = new WCGenetics();
+        public WCGenetics chimeraGenetics = new WCGenetics();
+        public WCGenetics.GeneticalVariants variants = new WCGenetics.GeneticalVariants();
+        public WCGenetics.GeneticalChimeraVariants chimeraVariants = new WCGenetics.GeneticalChimeraVariants();
+
 
         public static ClanCat buildCat(WCatEntity cat) {
             ClanCat clanCat = new ClanCat();
@@ -100,6 +107,13 @@ public class ClanData extends SavedData {
                     Component.literal(String.format("%.2f moons", cat.getAgeInMoons()))
                     : Component.literal("Fully grown");
             clanCat.catRank = cat.getRank().name();
+
+
+            clanCat.onGeneticalSkin = cat.isOnGeneticalSkin();
+            clanCat.genetics = cat.getGenetics();
+            clanCat.chimeraGenetics = cat.getChimeraGenetics();
+            clanCat.variants = cat.getGenVariants();
+            clanCat.chimeraVariants = cat.getChimeraGenVariants();
 
             Component parentsText;
             Component catMother = cat.getMother();
@@ -141,6 +155,71 @@ public class ClanData extends SavedData {
             tag.putString("Rank", this.catRank);
             tag.putString("Parents", Component.Serializer.toJson(this.catParents));
 
+            {
+                CompoundTag geneticsTag = new CompoundTag();
+
+                geneticsTag.putBoolean("Genetical", onGeneticalSkin);
+
+                geneticsTag.putString("ChestFur", genetics.chestFur);
+                geneticsTag.putString("BellyFur", genetics.bellyFur);
+                geneticsTag.putString("LegsFur", genetics.legsFur);
+                geneticsTag.putString("HeadFur", genetics.headFur);
+                geneticsTag.putString("CheekFur", genetics.cheekFur);
+                geneticsTag.putString("BackFur", genetics.backFur);
+                geneticsTag.putString("TailFur", genetics.tailFur);
+                geneticsTag.putString("Bobtail", genetics.bobtail);
+
+                geneticsTag.putString("Base", genetics.base);
+                geneticsTag.putString("OrangeBase", genetics.orangeBase);
+                geneticsTag.putString("WhiteRatio", genetics.whiteRatio);
+                geneticsTag.putString("Albino", genetics.albino);
+                geneticsTag.putString("Dilute", genetics.dilute);
+                geneticsTag.putString("Agouti", genetics.agouti);
+                geneticsTag.putString("TabbyStripes", genetics.tabbyStripes);
+                geneticsTag.putString("EyeColorLeft", variants.eyeColorLeft);
+                geneticsTag.putString("EyeColorRight", variants.eyeColorRight);
+                geneticsTag.putString("EyesAnomaly", genetics.eyesAnomaly);
+                geneticsTag.putString("Silver", genetics.silver);
+
+                geneticsTag.putInt("Rufousing", genetics.rufousing);
+                geneticsTag.putInt("BlueRufousing", genetics.blueRufousing);
+                geneticsTag.putInt("OrangeBaseVariant", variants.orangeVar);
+                geneticsTag.putInt("WhiteRatioVariant", variants.whiteVar);
+                geneticsTag.putInt("AlbinoVariant", variants.albinoVar);
+                geneticsTag.putInt("SilverVariant", variants.silverVar);
+
+                geneticsTag.putInt("TabbyStripesVariant", variants.tabbyVar);
+                geneticsTag.putInt("EyeColorVariantLeft", variants.leftEyeVar);
+                geneticsTag.putInt("EyeColorVariantRight", variants.rightEyeVar);
+                geneticsTag.putInt("Noise", variants.noise);
+                geneticsTag.putFloat("Size", variants.size);
+                geneticsTag.putFloat("Scars", variants.scars);
+
+                geneticsTag.putString("BaseChimera", chimeraGenetics.base);
+                geneticsTag.putString("OrangeBaseChimera", chimeraGenetics.orangeBase);
+                geneticsTag.putString("WhiteRatioChimera", chimeraGenetics.whiteRatio);
+                geneticsTag.putString("AlbinoChimera", chimeraGenetics.albino);
+                geneticsTag.putString("DiluteChimera", chimeraGenetics.dilute);
+                geneticsTag.putString("AgoutiChimera", chimeraGenetics.agouti);
+                geneticsTag.putString("TabbyStripesChimera", chimeraGenetics.tabbyStripes);
+
+                geneticsTag.putInt("RufousingChimera", chimeraGenetics.rufousing);
+                geneticsTag.putInt("BlueRufousingChimera", chimeraGenetics.blueRufousing);
+                geneticsTag.putInt("OrangeBaseVariantChimera", chimeraVariants.orangeVar);
+                geneticsTag.putInt("WhiteRatioVariantChimera", chimeraVariants.whiteVar);
+                geneticsTag.putInt("AlbinoVariantChimera", chimeraVariants.albinoVar);
+
+                geneticsTag.putInt("TabbyStripesVariantChimera", chimeraVariants.tabbyVar);
+                geneticsTag.putInt("NoiseChimera", chimeraVariants.noise);
+
+                geneticsTag.putString("Chimera", chimeraGenetics.chimeraGene);
+                geneticsTag.putInt("ChimeraVariant", chimeraVariants.chimeraVariant);
+                geneticsTag.putInt("SilverVariantChimera", chimeraVariants.silverVar);
+                geneticsTag.putString("SilverChimera", chimeraGenetics.silver);
+
+                tag.put("Genetics", geneticsTag);
+            }
+
             return tag;
         }
 
@@ -154,6 +233,93 @@ public class ClanData extends SavedData {
             cat.catAge = Component.Serializer.fromJson(tag.getString("Age"));
             cat.catRank = tag.getString("Rank");
             cat.catParents = Component.Serializer.fromJson(tag.getString("Parents"));
+
+            {
+                if (tag.contains("Genetics")) {
+                    CompoundTag geneticsTag = tag.getCompound("Genetics");
+
+                    cat.onGeneticalSkin = geneticsTag.getBoolean("Genetical");
+
+                    WCGenetics genetics = new WCGenetics(
+                            geneticsTag.getString("Bobtail"),
+                            geneticsTag.getString("ChestFur"),
+                            geneticsTag.getString("BellyFur"),
+                            geneticsTag.getString("LegsFur"),
+                            geneticsTag.getString("HeadFur"),
+                            geneticsTag.getString("CheekFur"),
+                            geneticsTag.getString("TailFur"),
+                            geneticsTag.getString("BackFur"),
+
+                            geneticsTag.getString("Base"),
+                            geneticsTag.getString("OrangeBase"),
+                            geneticsTag.getString("WhiteRatio"),
+                            geneticsTag.getString("Albino"),
+                            geneticsTag.getString("Dilute"),
+                            geneticsTag.getString("Agouti"),
+                            geneticsTag.getString("TabbyStripes"),
+                            geneticsTag.getString("EyesAnomaly"),
+
+                            geneticsTag.getInt("Rufousing"),
+                            geneticsTag.getInt("BlueRufousing"),
+                            geneticsTag.getInt("Noise"),
+                            geneticsTag.getString("Chimera"),
+                            geneticsTag.getString("Silver")
+                    );
+
+                    WCGenetics geneticsChimera = new WCGenetics(
+                            geneticsTag.getString("Bobtail"),
+                            geneticsTag.getString("ChestFur"),
+                            geneticsTag.getString("BellyFur"),
+                            geneticsTag.getString("LegsFur"),
+                            geneticsTag.getString("HeadFur"),
+                            geneticsTag.getString("CheekFur"),
+                            geneticsTag.getString("TailFur"),
+                            geneticsTag.getString("BackFur"),
+
+                            geneticsTag.getString("BaseChimera"),
+                            geneticsTag.getString("OrangeBaseChimera"),
+                            geneticsTag.getString("WhiteRatioChimera"),
+                            geneticsTag.getString("AlbinoChimera"),
+                            geneticsTag.getString("DiluteChimera"),
+                            geneticsTag.getString("AgoutiChimera"),
+                            geneticsTag.getString("TabbyStripesChimera"),
+                            geneticsTag.getString("EyesAnomalyChimera"),
+
+                            geneticsTag.getInt("RufousingChimera"),
+                            geneticsTag.getInt("BlueRufousingChimera"),
+                            geneticsTag.getInt("NoiseChimera"),
+                            geneticsTag.getString("Chimera"),
+                            geneticsTag.getString("SilverChimera")
+                    );
+
+                    cat.genetics = genetics;
+
+                    cat.chimeraGenetics = geneticsChimera;
+
+                    cat.chimeraVariants.chimeraVariant = geneticsTag.getInt("ChimeraVariant");
+
+                    cat.variants.eyeColorLeft = geneticsTag.getString("EyeColorLeft");
+                    cat.variants.eyeColorRight = geneticsTag.getString("EyeColorRight");
+
+                    cat.variants.orangeVar = geneticsTag.getInt("OrangeBaseVariant");
+                    cat.variants.whiteVar = geneticsTag.getInt("WhiteRatioVariant");
+                    cat.variants.albinoVar = geneticsTag.getInt("AlbinoVariant");
+                    cat.variants.tabbyVar = geneticsTag.getInt("TabbyStripesVariant");
+                    cat.variants.leftEyeVar = geneticsTag.getInt("EyeColorVariantLeft");
+                    cat.variants.rightEyeVar = geneticsTag.getInt("EyeColorVariantRight");
+
+                    cat.variants.size = geneticsTag.getFloat("Size");
+                    cat.variants.silverVar = geneticsTag.getInt("SilverVariant");
+                    cat.variants.scars = geneticsTag.getInt("Scars");
+
+                    cat.chimeraVariants.orangeVar = geneticsTag.getInt("OrangeBaseVariantChimera");
+                    cat.chimeraVariants.whiteVar = geneticsTag.getInt("WhiteRatioVariantChimera");
+                    cat.chimeraVariants.albinoVar = geneticsTag.getInt("AlbinoVariantChimera");
+                    cat.chimeraVariants.tabbyVar = geneticsTag.getInt("TabbyStripesVariantChimera");
+                    cat.chimeraVariants.silverVar = geneticsTag.getInt("SilverVariantChimera");
+
+                }
+            }
 
             return cat;
         }
@@ -281,7 +447,21 @@ public class ClanData extends SavedData {
         TerritoryChunk claimedChunk = new TerritoryChunk(pos, name,
                 (WCEServerConfig.SERVER.MAX_TERRITORY_TIME.get()*60*20)/2,
                 ((WCEServerConfig.SERVER.MAX_TERRITORY_TIME.get()*20*60)/8));
+
         clan.claimedTerritory.put(pos, claimedChunk);
+
+        for (ChunkPos chunk : SQUARE_ADJACENT_CHUNKS) {
+            ChunkPos checking = new ChunkPos(pos.x + chunk.x, pos.z + chunk.z);
+            if (!isChunkClaimedByOtherClan(checking, clanUUID)) {
+                if (!clan.claimedTerritory.containsKey(checking)) {
+                    TerritoryChunk currentClaiming = new TerritoryChunk(checking, "",
+                            (WCEServerConfig.SERVER.MAX_TERRITORY_TIME.get()*60*20)/2,
+                            ((WCEServerConfig.SERVER.MAX_TERRITORY_TIME.get()*20*60)/8));
+
+                    clan.claimedTerritory.put(checking, currentClaiming);
+                }
+            }
+        }
 
         setDirty();
         return true;
@@ -300,11 +480,25 @@ public class ClanData extends SavedData {
 
         clan.claimedTerritory.put(pos, newClaimedChunk);
 
+        for (ChunkPos chunk : SQUARE_ADJACENT_CHUNKS) {
+            ChunkPos checking = new ChunkPos(pos.x + chunk.x, pos.z + chunk.z);
+            if (clan.claimedTerritory.containsKey(checking)) {
+                TerritoryChunk currentChecking = clan.claimedTerritory.get(checking);
+
+                int t = Mth.clamp(currentChecking.time + (getMaxTerritoryTime()/3), 0, getMaxTerritoryTime());
+
+                TerritoryChunk newCurrentClaimedChunk = new TerritoryChunk(checking, currentChecking.name, t, (WCEServerConfig.SERVER.MAX_TERRITORY_TIME.get()*20*60)/8);
+
+                clan.claimedTerritory.put(checking, newCurrentClaimedChunk);
+            }
+        }
+
         syncTerritoriesToClients(level.getServer().overworld());
 
         setDirty();
         return true;
     }
+
 
     public int getMaxTerritoryTime() {
         return WCEServerConfig.SERVER.MAX_TERRITORY_TIME.get()*60*20;
@@ -521,10 +715,56 @@ public class ClanData extends SavedData {
         clan.leader = leader;
         clan.leaderName = leaderName;
 
+        createNormalizedName(clan, name);
+
+        clan.members.put(leader, ClanPlayerRank.LEADER);
+        clan.memberPerms.put(leader, ClanPermissions.OWNER);
+
+        clans.put(clan.clanUUID, clan);
+
+        setDirty();
+        return clan;
+    }
+
+    public boolean renameClan(Clan clan, String newName, ServerLevel sLevel) {
+        if (clan == null) return false;
+
+        clan.name = newName;
+        createNormalizedName(clan, newName);
+
+        sLevel.getAllEntities().forEach(entity -> {
+            if (entity instanceof WCatEntity cat) {
+                if (cat.isTame()) {
+                    if (cat.getClanUUID().equals(clan.clanUUID)) {
+                        if (cat.getRank() != WCatEntity.Rank.NONE) cat.setClan(Component.literal(newName));
+                    }
+                }
+            }
+        });
+
+        List<ServerPlayer> players = sLevel.getServer().getPlayerList().getPlayers();
+        for (ServerPlayer player : players) {
+            if (player != null) {
+                UUID clanUUID = player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+                        .map(WCEPlayerData::getCurrentClanUUID).orElse(EMPTY_UUID);
+
+                if (clanUUID.equals(clan.clanUUID)) {
+                    player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {
+                        cap.setClanName(newName);
+                    });
+                }
+            }
+        }
+
+        setDirty();
+        syncTerritoriesToClients(sLevel);
+        return true;
+    }
+
+    private void createNormalizedName(Clan clan, String name) {
         String baseName = normalizeName(name);
         String currentName = baseName;
         int i = 1;
-
         boolean exists;
         do {
             exists = false;
@@ -537,16 +777,7 @@ public class ClanData extends SavedData {
                 }
             }
         } while (exists);
-
         clan.normalizedName = currentName;
-
-        clan.members.put(leader, ClanPlayerRank.LEADER);
-        clan.memberPerms.put(leader, ClanPermissions.OWNER);
-
-        clans.put(clan.clanUUID, clan);
-
-        setDirty();
-        return clan;
     }
 
     public boolean addClanCat(UUID clanUUID, WCatEntity cat) {

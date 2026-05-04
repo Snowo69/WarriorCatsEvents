@@ -34,6 +34,7 @@ public class PlayerSkillProvider implements ICapabilityProvider, INBTSerializabl
         tag.putInt("dmgLevel", s.getDMGLevel());
         tag.putInt("jumpLevel", s.getJumpLevel());
         tag.putInt("armorLevel", s.getArmorLevel());
+        tag.putBoolean("climbUnlocked", s.isClimbUnlocked());
         return tag;
     }
 
@@ -45,6 +46,7 @@ public class PlayerSkillProvider implements ICapabilityProvider, INBTSerializabl
         s.setDMGLevel(nbt.getInt("dmgLevel"));
         s.setJumpLevel(nbt.getInt("jumpLevel"));
         s.setArmorLevel(nbt.getInt("armorLevel"));
+        s.setClimbUnlocked(nbt.getBoolean("climbUnlocked"));
     }
 
     public PlayerSkill getOrCreateSkills() {

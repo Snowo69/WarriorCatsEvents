@@ -40,6 +40,12 @@
       "item": "warriorcats_events:moss_ball",
       "text": "$(8)- 1 Moss Block$(br)",
       "title": "Moss Balls"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "warriorcats_events:moss_ball",
+      "text": "$(8)- 1 Moss Ball$(br)- 1 Honey Block / Honey Bottle$(br)",
+      "title": "Honey Moss Balls"
     }
   ]
 

@@ -61,9 +61,9 @@ public class CtSRegisterLogPacket {
                 player.displayClientMessage(Component.literal("Log successfully registered").withStyle(ChatFormatting.GREEN), false);
 
 
-                ClanListCommand.getList(player);
+                ClanListCommand.getList(player, true, false);
 
-                ModPackets.sendToPlayer(new OpenSpecificClanScreen(clan.name, clan.clanUUID), player);
+//                ModPackets.sendToPlayer(new OpenSpecificClanScreen(clan.name, clan.clanUUID), player);
 
             } else {
                 player.sendSystemMessage(Component.literal("You are not in a clan.").withStyle(ChatFormatting.GRAY));

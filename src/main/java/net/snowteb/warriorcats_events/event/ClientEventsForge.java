@@ -31,6 +31,7 @@ import net.snowteb.warriorcats_events.WCEClient;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.client.LeapClientState;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
+import net.snowteb.warriorcats_events.managers.ClimbDataAccessor;
 import net.snowteb.warriorcats_events.network.ModPackets;
 import net.snowteb.warriorcats_events.network.packet.c2s.others.CompareVersionsPacket;
 import net.snowteb.warriorcats_events.network.packet.c2s.skilltree.ReqSkillDataPacket;
@@ -39,6 +40,7 @@ import net.snowteb.warriorcats_events.screen.screens.SkillScreen;
 import net.snowteb.warriorcats_events.screen.menus.PlaySoundMenu;
 import net.snowteb.warriorcats_events.sound.ModSounds;
 import net.snowteb.warriorcats_events.stealth.PlayerStealthProvider;
+import net.snowteb.warriorcats_events.zconfig.WCEServerConfig;
 import tocraft.walkers.api.PlayerShape;
 
 import static net.minecraft.client.renderer.LevelRenderer.getLightColor;
@@ -57,6 +59,7 @@ public class ClientEventsForge {
     @SubscribeEvent
     public static void onScreenInit(ScreenEvent.Init.Post event) {
         if (!(event.getScreen() instanceof InventoryScreen screen)) return;
+        if (!WCEServerConfig.SERVER.SKILL_TREE_SERVER.get()) return;
 
         int x = screen.getGuiLeft() + screen.getXSize() - 152;
         int y = screen.getGuiTop() - 18;
@@ -287,6 +290,19 @@ public class ClientEventsForge {
     private static ResourceLocation currentRightMouseTexture =
             new ResourceLocation(WarriorCatsEvents.MODID, "textures/hud/mouse_right_unclicked.png");
 
+//    private static ResourceLocation climbIcon =
+//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/hud/climb_icon.png");
+
+    private static ResourceLocation climbingIcon =
+            new ResourceLocation(WarriorCatsEvents.MODID, "textures/hud/climbing_icon.png");
+
+    private static ResourceLocation exhaustionBarSprite =
+            new ResourceLocation(WarriorCatsEvents.MODID, "textures/hud/exhaustion_level_bar.png");
+
+
+    private static ResourceLocation climbBarSprite =
+            new ResourceLocation(WarriorCatsEvents.MODID, "textures/hud/climb_cooldown_bar.png");
+
     private static int lastToggleTick = 0;
 
 
@@ -296,7 +312,6 @@ public class ClientEventsForge {
         Minecraft mcinstance = Minecraft.getInstance();
         if (player == null) return;
         if (!mcinstance.isWindowActive()) return;
-        if (mcinstance.screen != null) return;
         if (mcinstance.level == null) return;
 
         if (isRenderingEmoteMenu) {
@@ -305,105 +320,161 @@ public class ClientEventsForge {
             new PlaySoundMenu().render(event.getGuiGraphics());
         }
 
-        if (isBeingLatched && setFreeCounter < 199) {
-            mcinstance.player.displayClientMessage(Component.literal(""), true);
-            GuiGraphics guiGraphics = event.getGuiGraphics();
+        climbOverlay(event, mcinstance, player);
+
+        eagleUnlatchOverlay(event, mcinstance);
+
+        footprintOverlay(event, mcinstance);
+
+        sprintLeapOverlay(event, mcinstance);
+
+        leapOverlay(event, mcinstance, player);
+
+    }
+
+    private static void climbOverlay(RenderGuiOverlayEvent.Post event, Minecraft mcinstance, LocalPlayer player) {
+        if (exhaustionLevel > 0 || climbCooldown > 0) {
+            GuiGraphics pGuiGraphics = event.getGuiGraphics();
+
             int width = mcinstance.getWindow().getGuiScaledWidth();
-            int height = mcinstance.getWindow().getGuiScaledHeight();
-            int centerX = width / 2;
-            int centerY = height / 2 + 10;
-
-            ResourceLocation emptyBar = new ResourceLocation(WarriorCatsEvents.MODID,
-                    "textures/hud/escape_bar_empty.png");
-            ResourceLocation fillBar = new ResourceLocation(WarriorCatsEvents.MODID,
-                    "textures/hud/escape_bar_fill.png");
-
-            int toFill = centerX - 100 + setFreeCounter;
-
-            RenderSystem.enableBlend();
-            RenderSystem.defaultBlendFunc();
-            guiGraphics.blit(emptyBar,centerX-105, centerY + 20, 0,0,210, 24, 210, 24);
-            RenderSystem.disableBlend();
-
-
-            guiGraphics.enableScissor(centerX - 100, centerY + 23, toFill, centerY + 43);
-            guiGraphics.blit(fillBar,centerX-100, centerY + 23, 0,0,200, 18,200, 18);
-            guiGraphics.disableScissor();
-
-            guiGraphics.drawCenteredString(Minecraft.getInstance().font,"Press 'Left Shift' to unlatch", centerX, centerY + 28, 0xFFFFFF );
-
-        }
-
-        if (!lookingAtParticle.isEmpty()) {
-            GuiGraphics guiGraphics = event.getGuiGraphics();
-            int width = mcinstance.getWindow().getGuiScaledWidth();
-            int height = mcinstance.getWindow().getGuiScaledHeight();
-            int centerX = width / 2;
-            int centerY = height / 2;
-
-            Component text = Component.literal("The footprint smells like " + lookingAtParticle).withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.GRAY);
-
-            float scale = 1f;
-
-            guiGraphics.pose().pushPose();
-            guiGraphics.pose().translate(centerX, height - 70, 0);
-            guiGraphics.pose().scale(scale, scale, scale);
-            guiGraphics.drawCenteredString(Minecraft.getInstance().font, text, 0, 0, 0);
-            guiGraphics.pose().popPose();
-
-            if (newParticleTime <= 0) lookingAtParticle = "";
-        }
-
-        if (LeapClientState.getSprintingCounter() > 100) {
-            GuiGraphics guiGraphics = event.getGuiGraphics();
-            int width = mcinstance.getWindow().getGuiScaledWidth();
-            int height = mcinstance.getWindow().getGuiScaledHeight();
-
-            ResourceLocation emptyBar = new ResourceLocation(WarriorCatsEvents.MODID,
-                    "textures/hud/sprintbar_empty.png");
-            ResourceLocation fillBar = new ResourceLocation(WarriorCatsEvents.MODID,
-                    "textures/hud/sprintbar_fill.png");
-            ResourceLocation readyBar = new ResourceLocation(WarriorCatsEvents.MODID,
-                    "textures/hud/sprintbar_ready.png");
-
-
-
-            guiGraphics.blit(
-                    emptyBar,
-                    width - 16, height - 106,
-                    0, 0,
-                    14, 103,
-                    14, 103
-            );
 
             int centerX = width / 2;
-            int centerY = height / 2;
-            int sprintPower = (int) (LeapClientState.getSprintingCounter() - 100);
 
-            float sprintPowerPercentage = (float) sprintPower / 200;
+            int textureWidth = 182;
+            int textureHeight = 15;
+            int barHeight = 5;
 
-            guiGraphics.enableScissor(width - 16, (int) (height - (106 * sprintPowerPercentage)), width - 2, height);
-            guiGraphics.blit(
-                    fillBar,
-                    width - 16, height - 106,
-                    0, 0,
-                    14, 103,
-                    14, 103
-            );
-            guiGraphics.disableScissor();
+            int xPosition = centerX - (textureWidth / 2);
+            int yPosition = 3;
 
-            if (sprintPowerPercentage >= 0.9) {
-                guiGraphics.blit(
-                        readyBar,
-                        width - 16, height - 106,
+            if (exhaustionLevel > 0) {
+                pGuiGraphics.blit(exhaustionBarSprite, xPosition, yPosition,
                         0, 0,
-                        14, 103,
-                        14, 103
-                );
+                        textureWidth, barHeight,
+                        textureWidth, textureHeight);
+
+                int currentFillBarOffset = barHeight;
+
+                float coefficient = (float) exhaustionLevel / MAX_EXHAUSTION_LEVEL;
+
+                if (exhaustionLevel > 70) currentFillBarOffset = barHeight * 2;
+
+                pGuiGraphics.enableScissor(xPosition, yPosition, (int) ((xPosition + (textureWidth * coefficient))), yPosition + barHeight);
+                pGuiGraphics.blit(exhaustionBarSprite, xPosition, yPosition,
+                        0, currentFillBarOffset,
+                        textureWidth, barHeight,
+                        textureWidth, textureHeight);
+                pGuiGraphics.disableScissor();
+
+                pGuiGraphics.pose().pushPose();
+                pGuiGraphics.pose().translate(centerX, 9, 0);
+                float scale = 0.6f;
+                pGuiGraphics.pose().scale(scale, scale, scale);
+
+                if (exhaustionLevel > 80 && player instanceof ClimbDataAccessor data && data.wce$isClimbing()) {
+                    int y = 30;
+                    if (climbCooldown > 0) y = 43;
+                    pGuiGraphics.drawCenteredString(mcinstance.font, "Losing grip!",
+                            0, y, 0xFF0000);
+                }
+                pGuiGraphics.pose().popPose();
+            }
+
+            float red = 1f;
+            float green = 1f;
+            float blue = 1f;
+
+            if (exhaustionLevel > 50) {
+                green = 0.8f;
+                blue = 0.0f;
+            }
+
+            if (exhaustionLevel > 70) {
+                red = 0.9f;
+                green = 0.1f;
+                blue = 0.0f;
+            }
+            if (cannotClimbBlink) {
+                red = 1f;
+                green = 0.0f;
+                blue = 0.0f;
+            }
+
+            pGuiGraphics.setColor(red, green, blue, 1f);
+            pGuiGraphics.blit(climbingIcon, centerX - 10,8,
+                    0,0,
+                    20,20,
+                    20,20);
+            pGuiGraphics.setColor(1f,1f,1f,1f);
+
+            if (climbCooldown > 0){
+                float progress = (float) (CLIM_COOLDOWN - climbCooldown) / CLIM_COOLDOWN;
+                int length = (int) (11 * progress);
+
+                RenderSystem.enableBlend();
+                pGuiGraphics.enableScissor(centerX - 6, 8, centerX + (5 - length), 28);
+                pGuiGraphics.setColor(0f, 0f, 0f, 0.5f);
+                pGuiGraphics.blit(climbingIcon, centerX - 10, 8,
+                        0, 0,
+                        20, 20,
+                        20, 20);
+                pGuiGraphics.setColor(1f, 1f, 1f, 1f);
+                pGuiGraphics.disableScissor();
+                RenderSystem.disableBlend();
+
+                pGuiGraphics.blit(climbBarSprite, centerX - 21, 28,
+                        0, 0,
+                        42, 5,
+                        42, 15);
+
+                int length2 = (int) (42*progress);
+
+                int offset = 5;
+                if (cannotClimbBlink) offset = 10;
+
+                pGuiGraphics.enableScissor(centerX - 21, 28, centerX + (21 - length2), 33);
+                pGuiGraphics.blit(climbBarSprite, centerX - 21, 28,
+                        0, offset,
+                        42, 5,
+                        42, 15);
+                pGuiGraphics.disableScissor();
             }
 
         }
+    }
 
+//    private static void climbOverlay(RenderGuiOverlayEvent.Post event, Minecraft mcinstance) {
+//        if (climbCooldown > 0) {
+//            GuiGraphics pGuiGraphics = event.getGuiGraphics();
+//
+//            int width = mcinstance.getWindow().getGuiScaledWidth();
+//            int height = mcinstance.getWindow().getGuiScaledHeight();
+//
+//            int centerX = width / 2;
+//            int centerY = height / 2;
+//
+//            pGuiGraphics.blit(climbIcon,
+//                    centerX - 120, height - 28,
+//                    0, 0,
+//                    25, 25,
+//                    25, 25);
+//
+//            float progress = (float) (CLIM_COOLDOWN - climbCooldown) / CLIM_COOLDOWN;
+//            int length = (int)(25 * progress);
+//
+//            pGuiGraphics.fill(centerX - (95 + length), height - 3,
+//                    centerX - 120, height - 28, 0x88333333);
+//
+//            if (displayCannotClimb > 0) {
+//                if (cannotClimbBlink && cannotClimbBlinkCount > 0) {
+//                    pGuiGraphics.fill(centerX - (95 + length), height - 3,
+//                            centerX - 120, height - 28, 0x88880000);
+//                }
+//            }
+//        }
+//    }
+
+    private static void leapOverlay(RenderGuiOverlayEvent.Post event, Minecraft mcinstance, LocalPlayer player) {
         if (LeapClientState.getLeapPowerCounter() <= 0) return;
         if (!LeapClientState.isLeapActive()) return;
         if (LeapClientState.getSprintingCounter() > 200) return;
@@ -498,9 +569,112 @@ public class ClientEventsForge {
                     9,19
             );
         }
-
     }
 
+    private static void sprintLeapOverlay(RenderGuiOverlayEvent.Post event, Minecraft mcinstance) {
+        if (LeapClientState.getSprintingCounter() > 100) {
+            GuiGraphics guiGraphics = event.getGuiGraphics();
+            int width = mcinstance.getWindow().getGuiScaledWidth();
+            int height = mcinstance.getWindow().getGuiScaledHeight();
+
+            ResourceLocation emptyBar = new ResourceLocation(WarriorCatsEvents.MODID,
+                    "textures/hud/sprintbar_empty.png");
+            ResourceLocation fillBar = new ResourceLocation(WarriorCatsEvents.MODID,
+                    "textures/hud/sprintbar_fill.png");
+            ResourceLocation readyBar = new ResourceLocation(WarriorCatsEvents.MODID,
+                    "textures/hud/sprintbar_ready.png");
+
+
+
+            guiGraphics.blit(
+                    emptyBar,
+                    width - 16, height - 106,
+                    0, 0,
+                    14, 103,
+                    14, 103
+            );
+
+            int centerX = width / 2;
+            int centerY = height / 2;
+            int sprintPower = (int) (LeapClientState.getSprintingCounter() - 100);
+
+            float sprintPowerPercentage = (float) sprintPower / 200;
+
+            guiGraphics.enableScissor(width - 16, (int) (height - (106 * sprintPowerPercentage)), width - 2, height);
+            guiGraphics.blit(
+                    fillBar,
+                    width - 16, height - 106,
+                    0, 0,
+                    14, 103,
+                    14, 103
+            );
+            guiGraphics.disableScissor();
+
+            if (sprintPowerPercentage >= 0.9) {
+                guiGraphics.blit(
+                        readyBar,
+                        width - 16, height - 106,
+                        0, 0,
+                        14, 103,
+                        14, 103
+                );
+            }
+
+        }
+    }
+
+    private static void footprintOverlay(RenderGuiOverlayEvent.Post event, Minecraft mcinstance) {
+        if (!lookingAtParticle.isEmpty()) {
+            GuiGraphics guiGraphics = event.getGuiGraphics();
+            int width = mcinstance.getWindow().getGuiScaledWidth();
+            int height = mcinstance.getWindow().getGuiScaledHeight();
+            int centerX = width / 2;
+            int centerY = height / 2;
+
+            Component text = Component.literal("The footprint smells like " + lookingAtParticle).withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.GRAY);
+
+            float scale = 1f;
+
+            guiGraphics.pose().pushPose();
+            guiGraphics.pose().translate(centerX, height - 70, 0);
+            guiGraphics.pose().scale(scale, scale, scale);
+            guiGraphics.drawCenteredString(Minecraft.getInstance().font, text, 0, 0, 0);
+            guiGraphics.pose().popPose();
+
+            if (newParticleTime <= 0) lookingAtParticle = "";
+        }
+    }
+
+    private static void eagleUnlatchOverlay(RenderGuiOverlayEvent.Post event, Minecraft mcinstance) {
+        if (isBeingLatched && setFreeCounter < 199) {
+            mcinstance.player.displayClientMessage(Component.literal(""), true);
+            GuiGraphics guiGraphics = event.getGuiGraphics();
+            int width = mcinstance.getWindow().getGuiScaledWidth();
+            int height = mcinstance.getWindow().getGuiScaledHeight();
+            int centerX = width / 2;
+            int centerY = height / 2 + 10;
+
+            ResourceLocation emptyBar = new ResourceLocation(WarriorCatsEvents.MODID,
+                    "textures/hud/escape_bar_empty.png");
+            ResourceLocation fillBar = new ResourceLocation(WarriorCatsEvents.MODID,
+                    "textures/hud/escape_bar_fill.png");
+
+            int toFill = centerX - 100 + setFreeCounter;
+
+            RenderSystem.enableBlend();
+            RenderSystem.defaultBlendFunc();
+            guiGraphics.blit(emptyBar,centerX-105, centerY + 20, 0,0,210, 24, 210, 24);
+            RenderSystem.disableBlend();
+
+
+            guiGraphics.enableScissor(centerX - 100, centerY + 23, toFill, centerY + 43);
+            guiGraphics.blit(fillBar,centerX-100, centerY + 23, 0,0,200, 18,200, 18);
+            guiGraphics.disableScissor();
+
+            guiGraphics.drawCenteredString(Minecraft.getInstance().font,"Press 'Left Shift' to unlatch", centerX, centerY + 28, 0xFFFFFF );
+
+        }
+    }
 
 
     @SubscribeEvent

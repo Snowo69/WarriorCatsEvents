@@ -28,6 +28,9 @@ public class ModEffects {
     public static final RegistryObject<MobEffect> SHARP_EYE = MOB_EFFECTS.register("sharp_sight",
             () -> new EmptyEffect(MobEffectCategory.BENEFICIAL, 0x000000));
 
+    public static final RegistryObject<MobEffect> THIRSTY = MOB_EFFECTS.register("thirsty",
+            () -> new ThirstyEffect(MobEffectCategory.HARMFUL, 0xFFFFFF));
+
     public static void register(IEventBus eventBus) {
         MOB_EFFECTS.register(eventBus);
     }

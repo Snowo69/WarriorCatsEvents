@@ -3,6 +3,7 @@ package net.snowteb.warriorcats_events.recipes;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import net.minecraft.core.NonNullList;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -20,7 +21,30 @@ public class HerbsRecipeSerializer implements RecipeSerializer<HerbsRecipe> {
             ingredients.set(i, Ingredient.fromJson(ingredientsArray.get(i)));
         }
 
-        ItemStack result = ShapedRecipe.itemStackFromJson(pSerializedRecipe.getAsJsonObject("result"));
+        JsonObject resultJson = pSerializedRecipe.getAsJsonObject("result");
+        ItemStack result = ShapedRecipe.itemStackFromJson(resultJson);
+
+        if (resultJson.has("with")) {
+            JsonObject with = resultJson.getAsJsonObject("with");
+            CompoundTag tag = result.getOrCreateTag();
+
+            for (var entry : with.entrySet()) {
+                String key = entry.getKey();
+                var value = entry.getValue();
+
+                if (value.isJsonPrimitive()) {
+                    var prim = value.getAsJsonPrimitive();
+
+                    if (prim.isNumber()) {
+                        tag.putInt(key, prim.getAsInt());
+                    } else if (prim.isBoolean()) {
+                        tag.putBoolean(key, prim.getAsBoolean());
+                    } else if (prim.isString()) {
+                        tag.putString(key, prim.getAsString());
+                    }
+                }
+            }
+        }
 
         return new HerbsRecipe(pRecipeId, ingredients, result);
     }

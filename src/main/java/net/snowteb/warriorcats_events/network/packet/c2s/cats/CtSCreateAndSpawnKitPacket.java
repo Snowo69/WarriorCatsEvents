@@ -63,7 +63,7 @@ public class CtSCreateAndSpawnKitPacket {
                         .map(WCEPlayerData::getTempClickedPosData).orElse(sPlayer.blockPosition());
 
                 String clan = sPlayer.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
-                        .map(WCEPlayerData::getClanName).orElse("undefined");
+                        .map(cap -> cap.getClanName(sPlayer.serverLevel())).orElse("undefined");
 
 
                 ServerLevel level = ((ServerLevel) sPlayer.level());

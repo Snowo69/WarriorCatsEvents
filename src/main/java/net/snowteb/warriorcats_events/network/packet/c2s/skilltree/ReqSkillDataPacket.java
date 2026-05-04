@@ -25,7 +25,8 @@ public class ReqSkillDataPacket {
 
             player.getCapability(PlayerSkillProvider.SKILL_DATA).ifPresent(data -> {
                 ModPackets.sendToPlayer(new SyncSkillDataPacket(data.getSpeedLevel(),
-                        data.getHPLevel(), data.getDMGLevel(), data.getJumpLevel(), data.getArmorLevel()), player);
+                        data.getHPLevel(), data.getDMGLevel(), data.getJumpLevel(),
+                        data.getArmorLevel(), data.isClimbUnlocked()), player);
             });
 
         });

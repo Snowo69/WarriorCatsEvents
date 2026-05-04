@@ -78,7 +78,7 @@ public class TerritoryMapScreen extends Screen {
 
         scaleSlider = new FloatSliderButton(centerX + 50, centerY - 110,
                 100, 20,
-                0.6f, 1.4f, 1f, "Scale");
+                0.6f, 1.5f, 1f, "Scale");
 
         backButton = new GradientButton(
                 centerX - 150, centerY + 75,

@@ -54,6 +54,21 @@ public class ModBlockEntities {
                             ModBlocks.TREE_STUMP.get()).build(null));
 
 
+    public static final RegistryObject<BlockEntityType<KittypetBowlBlockEntity>> KITTYPET_BOWL =
+            BLOCK_ENTITIES.register("kittypet_bowl", () ->
+                    BlockEntityType.Builder.of(KittypetBowlBlockEntity::new,
+                            ModBlocks.WHITE_KITTYPET_BOWL.get(),
+                            ModBlocks.ORANGE_KITTYPET_BOWL.get(),
+                            ModBlocks.MAGENTA_KITTYPET_BOWL.get(),
+                            ModBlocks.BLUE_KITTYPET_BOWL.get(),
+                            ModBlocks.YELLOW_KITTYPET_BOWL.get(),
+                            ModBlocks.LIME_KITTYPET_BOWL.get(),
+                            ModBlocks.PINK_KITTYPET_BOWL.get(),
+                            ModBlocks.BLACK_KITTYPET_BOWL.get(),
+                            ModBlocks.RED_KITTYPET_BOWL.get()
+                    ).build(null));
+
+
     public static void register(IEventBus eventBus) {
         BLOCK_ENTITIES.register(eventBus);
     }

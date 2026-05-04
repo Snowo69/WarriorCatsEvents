@@ -1,28 +1,36 @@
 package net.snowteb.warriorcats_events.screen.screens;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundSource;
 import net.snowteb.warriorcats_events.WCEClient;
+import net.snowteb.warriorcats_events.clan.ClanData;
 import net.snowteb.warriorcats_events.client.ClanInfo;
 import net.snowteb.warriorcats_events.client.ClientClanCache;
+import net.snowteb.warriorcats_events.client.ClientClanData;
 import net.snowteb.warriorcats_events.sound.ModSounds;
 import net.snowteb.warriorcats_events.screen.widgets.ClanScrollList;
 import org.lwjgl.glfw.GLFW;
 
+import java.util.UUID;
+
 public class ClanListScreen extends Screen {
 
-    public ClanListScreen() {
+    public ClanListScreen(boolean seeingMyClan) {
         super(Component.literal("Clans"));
+        this.seeingMyClan = seeingMyClan;
     }
 
     private ClanScrollList clanList;
     private float menuX;
     private final float targetX = 0;
+    private final boolean seeingMyClan;
 
     private Button territoryMapButton;
 
@@ -33,6 +41,20 @@ public class ClanListScreen extends Screen {
         int centerY = height / 2;
 
         menuX = -200;
+
+        if (seeingMyClan) {
+            UUID myClanUUID = ClientClanData.get().getCurrentClanUUID();
+            ClanInfo clan = ClientClanCache.getClan(myClanUUID);
+            if (!myClanUUID.equals(ClanData.EMPTY_UUID) && clan != null) {
+                Minecraft.getInstance().setScreen(new SpecificClanScreen(clan.name, clan.uuid));
+                return;
+            } else {
+                LocalPlayer localPlayer = Minecraft.getInstance().player;
+                if (localPlayer != null) Minecraft.getInstance().player
+                        .sendSystemMessage(Component.literal("You are not in a clan.")
+                                .withStyle(ChatFormatting.YELLOW));
+            }
+        }
 
         clanList = new ClanScrollList(
                 minecraft,

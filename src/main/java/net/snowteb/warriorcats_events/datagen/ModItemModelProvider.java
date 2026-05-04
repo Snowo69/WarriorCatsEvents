@@ -55,6 +55,11 @@ public class ModItemModelProvider extends ItemModelProvider {
         simpleItem(ModItems.DRAPED_TAIL_VINES);
         simpleItem(ModItems.HEAD_GLOWBERRY);
         simpleItem(ModItems.HEAD_SWEETBERRY);
+        simpleItem(ModItems.CAT_HAT);
+        simpleItem(ModItems.CAT_PINK_BOW);
+        simpleItem(ModItems.CAT_RED_BOW);
+        simpleItem(ModItems.CAT_BLACK_BOW);
+        simpleItem(ModItems.SKULL_MASK);
 
         simpleItem(ModItems.GREEN_PARROT_FEATHER);
         simpleItem(ModItems.BLUE_PARROT_FEATHER);
@@ -90,7 +95,7 @@ public class ModItemModelProvider extends ItemModelProvider {
 
         simpleItem(ModItems.PEBBLES_ITEM);
 
-        simpleItem(ModItems.MOSS_BALL);
+//        simpleItem(ModItems.MOSS_BALL);
 
 
         simpleBlockItem(ModBlocks.LEAF_DOOR);

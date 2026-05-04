@@ -18,6 +18,8 @@ import net.snowteb.warriorcats_events.clan.WCEPlayerDataProvider;
 import net.snowteb.warriorcats_events.entity.ModEntities;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.network.ModPackets;
+import net.snowteb.warriorcats_events.skills.PlayerSkill;
+import net.snowteb.warriorcats_events.skills.PlayerSkillProvider;
 import tocraft.walkers.api.PlayerShape;
 
 import java.util.UUID;
@@ -59,6 +61,14 @@ public class SaveClanDataPacket {
 
             UUID currentMateUUID = player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
                     .map(WCEPlayerData::getMateUUID).orElse(ClanData.EMPTY_UUID);
+            Component currentMateComponent  = player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+                    .map(WCEPlayerData::getMateName).orElse(Component.literal("None"));
+
+            String currentBio  = player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+                    .map(WCEPlayerData::getCharacterBio).orElse("");
+
+            String currentGender  = player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+                    .map(WCEPlayerData::getGenderText).orElse("");
 
             WCGenetics.GeneticalVariants currentGeneticVariants = player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
                             .map(WCEPlayerData::getPlayerGeneticalVariants).orElse(new WCGenetics.GeneticalVariants());
@@ -79,6 +89,9 @@ public class SaveClanDataPacket {
                 cap.copyFrom(packet.data);
                 cap.setCurrentClanUUID(currentClanUUID);
                 cap.setMateUUID(currentMateUUID);
+                cap.setMateName(currentMateComponent);
+                cap.setCharacterBio(currentBio);
+                cap.setGenderText(currentGender);
 
                 cap.setPlayerGenetics(currentGenetics);
                 cap.setPlayerGeneticalVariants(currentGeneticVariants);
@@ -111,6 +124,9 @@ public class SaveClanDataPacket {
             shape.setAge(shapeAge);
 
             PlayerShape.updateShapes(player, shape);
+            player.getCapability(PlayerSkillProvider.SKILL_DATA).ifPresent(skillProvider -> {
+                PlayerSkill.reviveAttributes(player, skillProvider);
+            });
 
             player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {
                 ModPackets.sendToPlayer(new S2CSyncClanDataPacket(cap), player);

@@ -24,6 +24,10 @@ public class PlayerThirst {
         this.thirst = source.thirst;
     }
 
+    public boolean canDrink() {
+        return thirst < MAX_THIRST;
+    }
+
     public void saveNBT(CompoundTag nbt) {
         nbt.putInt("thirstLevel", this.thirst);
     }

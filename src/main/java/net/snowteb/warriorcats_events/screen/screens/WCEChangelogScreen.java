@@ -183,23 +183,23 @@ public class WCEChangelogScreen extends Screen {
     }
 
     private void defineChangelogLines() {
-        line1 = "- Moss and hay nest recipes now accept other feathers";
-        line2 = "- Reworked the shape ability. Now it displays a client side outline of different colors depending on the entity. A mobs color can be configured with datapacks.";
-        line3 = "- Reworked stealth mode HUD overlay";
-        line4 = "- Morph names will now display beside the player name in chat. You can toggle this using `/wce chatMorphName toggleChatMorphName` and toggle the fancy font using `/wce chatMorphName toggleFancyFont`";
-        line5 = "- Changed whiskers texture";
-        line6 = "- Makeshift nests will no longer reset respawn positions";
-        line7 = "- Added Randomize button in morph create menu";
-        line8 = "- Added many more orange patterns!";
-        line9 = "- Added scars";
-        line10 = "- Added blind eyes";
-        line11 = "- Added player mates! You can now take a player as a mate by Right-clicking them with a Rare Flowers Bouquet. You can also request to bring kits to life through the menu when using Whiskers on a player.";
-        line12 = "- Added `/wce summon`! You can now summon your own custom cats. Available for server ops and creative mode.";
-        line13 = "- Added poses! You can now make your character have one of 3 different poses for now. Such as gracious, dominant, and refined. Use `/wce info morphPose`";
-        line14 = "- Added Pebbles, Squirrel Skull, Badger Skull, Golden Eagle Skull and Prey bones. Place bones to make a bone pile.";
-        line15 = "- Added Stone Nest and Lavender Nest";
-        line16 = "- Added Moss balls! You can now make Moss Balls through the Crafting rock. You can fill them with water by right clicking any water source with them, and drink from them. You can throw them, and kits will love to play with them too!";
-        line17 = "- Other minor adjustements, reworks, and fixes";
+        line1 = "- Added Climbing system! Unlock the climb skill through the skill tree, use the keybind \"C\" by default to start climbing.";
+        line2 = "- Thirst system can now be disabled through world config";
+        line3 = "- Skill tree attributes now only apply when on cat form";
+        line4 = "- Fixed some screens not showing cat npcs correctly ";
+        line5 = "- You can now rename clans through `/wce clan manage`";
+        line6 = "- Fixed scars and silver variant not loading from saved morphs";
+        line7 = "- Reworked territory claiming. The cost is now more expensive, but the claimed territory has been expanded from 1 chunk to 9 chunks.";
+        line8 = "- Added bio for characters and a custom gender field. Use `/wce info profile`";
+        line9 = "- Added honey mossball. Put a moss-ball and a honey bottle or honey block on a crafting rock to get a honey moss-ball. These not only restore food, but will also bounce a lot more!";
+        line10 = "- Removed vanilla (Crafting Table) recipes for: Freshkill & herbs, Traveling Herbs. These are now crafted through the Crafting Rock";
+        line11 = "- Added JEI compatibility. Recipes for certain items now will show their Crafting Rock recipe. ";
+        line12 = "- Drinking water from bottles now also restores thirst";
+        line13 = "- Added kittypet bowls of different colors.";
+        line14 = "- Now its not possible to attack cats too close to moss-balls";
+        line15 = "- Added accesories only obtained from villages chests: Pink bow, red bow, black bow, cat hat. And added Skull Mask";
+        line16 = "- Saved eagles from drowning (now for good)";
+        line17 = "- Other minor adjustements and fixes";
         line18 = "";
     }
 

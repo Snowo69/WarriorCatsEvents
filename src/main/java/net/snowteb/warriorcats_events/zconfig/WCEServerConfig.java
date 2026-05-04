@@ -26,11 +26,12 @@ public class WCEServerConfig {
         public final ForgeConfigSpec.BooleanValue SKILL_TREE_SERVER;
         public final ForgeConfigSpec.BooleanValue VANILLA_MEAT_BONUS;
         public final ForgeConfigSpec.BooleanValue TELEPORT_WHEN_JOIN;
-        public static ForgeConfigSpec.BooleanValue CAN_EAGLES_BE_TAMED;
+        public final ForgeConfigSpec.BooleanValue CAN_EAGLES_BE_TAMED;
+        public final ForgeConfigSpec.BooleanValue THIRST;
 
-        public static ForgeConfigSpec.BooleanValue ENFORCE_TERRITORIES;
-        public static ForgeConfigSpec.BooleanValue PROTECT_PLACE_AND_BREAK_BLOCKS;
-        public static ForgeConfigSpec.BooleanValue PROTECT_CONTAINERS;
+        public final ForgeConfigSpec.BooleanValue ENFORCE_TERRITORIES;
+        public final ForgeConfigSpec.BooleanValue PROTECT_PLACE_AND_BREAK_BLOCKS;
+        public final ForgeConfigSpec.BooleanValue PROTECT_CONTAINERS;
 
         public final ForgeConfigSpec.DoubleValue SKILL_SPEED_MULTIPLIER;
         public final ForgeConfigSpec.DoubleValue SKILL_HP_MULTIPLIER;
@@ -92,6 +93,10 @@ public class WCEServerConfig {
             CAN_EAGLES_BE_TAMED = builder
                     .comment("Whether eagles can be tamed")
                     .define("canEaglesBeTamed", true);
+
+            THIRST = builder
+                    .comment("Whether thirst is enabled")
+                    .define("thirst", true);
 
             builder.push("wce_territories");
 

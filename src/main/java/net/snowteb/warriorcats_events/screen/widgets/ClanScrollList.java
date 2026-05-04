@@ -56,10 +56,7 @@ public class ClanScrollList extends AbstractSelectionList<ClanScrollList.ClanEnt
             if (button == 0) {
                 ClanScrollList.this.setSelected(this);
                 WCEClient.playLocalSound(ModSounds.MENU_OPEN.get(), SoundSource.NEUTRAL, 0.7f,1.0f);
-
-                Minecraft.getInstance().setScreen(
-                        new SpecificClanScreen(clan.name, clan.uuid)
-                );
+                Minecraft.getInstance().setScreen(new SpecificClanScreen(clan.name, clan.uuid));
                 return true;
 
 

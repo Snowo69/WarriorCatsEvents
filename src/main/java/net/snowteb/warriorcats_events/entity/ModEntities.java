@@ -17,8 +17,6 @@ public class ModEntities {
             DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, WarriorCatsEvents.MODID);
 
 
-
-
     public static final RegistryObject<EntityType<MouseEntity>> MOUSE =
             ENTITY_TYPES.register("mouse",
                     () -> EntityType.Builder.of(MouseEntity::new, MobCategory.CREATURE)

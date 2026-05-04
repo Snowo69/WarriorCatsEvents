@@ -37,7 +37,7 @@ import java.util.concurrent.Executors;
 @Mod(WarriorCatsEvents.MODID)
 public class WarriorCatsEvents {
     public static final String MODID = "warriorcats_events";
-    public static final String MOD_VERSION = "1.7.0";
+    public static final String MOD_VERSION = "1.8.0";
     public static final Logger LOGGER = LogUtils.getLogger();
 
     public static final ExecutorService teleportExecutor = Executors.newSingleThreadExecutor();
@@ -54,7 +54,9 @@ public class WarriorCatsEvents {
                 UUID.fromString("c10ad235-4fa9-4d3a-9343-0e59c424b1d3"),
 
                 UUID.fromString("714870da-15d4-47f1-8a53-05015326a09d"),
-                UUID.fromString("9289ae40-9cae-419b-b4c1-3109eca4b15d")
+                UUID.fromString("9289ae40-9cae-419b-b4c1-3109eca4b15d"),
+
+                UUID.fromString("bc526ba0-c886-4241-8df0-85702f2250e5")
         );
 
         public static boolean isContributor(UUID uuid) {

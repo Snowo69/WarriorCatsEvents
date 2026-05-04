@@ -6,6 +6,9 @@
     "#minecraft:small_flowers",
     "#minecraft:tall_flowers",
     "#minecraft:flowers",
-    "minecraft:moss_block"
+    "minecraft:moss_block",
+    "warriorcats_events:moss_ball",
+    "minecraft:honey_bottle",
+    "minecraft:honey_block"
   ]
 }

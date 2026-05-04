@@ -13,12 +13,9 @@ import net.snowteb.warriorcats_events.network.packet.c2s.others.*;
 import net.snowteb.warriorcats_events.network.packet.c2s.skilltree.*;
 import net.snowteb.warriorcats_events.network.packet.s2c.cats.*;
 import net.snowteb.warriorcats_events.network.packet.s2c.clan.*;
-import net.snowteb.warriorcats_events.network.packet.s2c.others.OpenPlayerCatDataScreenPacket;
-import net.snowteb.warriorcats_events.network.packet.s2c.others.StCFinallySaveMorph;
-import net.snowteb.warriorcats_events.network.packet.s2c.others.StCFishingScreenPacket;
+import net.snowteb.warriorcats_events.network.packet.s2c.others.*;
 import net.snowteb.warriorcats_events.network.packet.s2c.skilltree.StCStealthSyncPacket;
 import net.snowteb.warriorcats_events.network.packet.s2c.skilltree.SyncSkillDataPacket;
-import net.snowteb.warriorcats_events.network.packet.s2c.others.ThirstDataSyncStCPacket;
 
 /**
  * All about this or any packets, just ask me personally, i aint explaining all that
@@ -458,6 +455,37 @@ public class ModPackets {
                 .encoder(OpenPoseMenuPacket::toBytes)
                 .consumerMainThread(OpenPoseMenuPacket::handle)
                 .add();
+
+        net.messageBuilder(EditProfilePacket.class, 67, NetworkDirection.PLAY_TO_SERVER)
+                .decoder(EditProfilePacket::decode)
+                .encoder(EditProfilePacket::encode)
+                .consumerMainThread(EditProfilePacket::handle)
+                .add();
+
+        net.messageBuilder(RenameClanPacket.class, 68, NetworkDirection.PLAY_TO_SERVER)
+                .decoder(RenameClanPacket::decode)
+                .encoder(RenameClanPacket::encode)
+                .consumerMainThread(RenameClanPacket::handle)
+                .add();
+
+        net.messageBuilder(CtSClimbPacket.class, 69, NetworkDirection.PLAY_TO_SERVER)
+                .decoder(CtSClimbPacket::new)
+                .encoder(CtSClimbPacket::toBytes)
+                .consumerMainThread(CtSClimbPacket::handle)
+                .add();
+
+        net.messageBuilder(CtSUnlockClimbPacket.class, 70, NetworkDirection.PLAY_TO_SERVER)
+                .decoder(CtSUnlockClimbPacket::decode)
+                .encoder(CtSUnlockClimbPacket::encode)
+                .consumerMainThread(CtSUnlockClimbPacket::handle)
+                .add();
+
+        net.messageBuilder(SyncExhaustionPacket.class, 71, NetworkDirection.PLAY_TO_CLIENT)
+                .decoder(SyncExhaustionPacket::new)
+                .encoder(SyncExhaustionPacket::toBytes)
+                .consumerMainThread(SyncExhaustionPacket::handle)
+                .add();
+
 
 
     }

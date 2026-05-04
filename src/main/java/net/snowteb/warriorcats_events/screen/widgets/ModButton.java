@@ -22,6 +22,8 @@ public class ModButton extends AbstractButton {
     private final PressAction onPress;
     private float textScale = 0.82f;
 
+    private boolean vanBG = false;
+
     public ModButton(int x, int y, int width, int height,
                      Component text,
                      PressAction onPress,
@@ -49,6 +51,21 @@ public class ModButton extends AbstractButton {
         this.textScale = textScale;
     }
 
+    public ModButton(int x, int y, int width, int height,
+                     Component text,
+                     PressAction onPress,
+                     ResourceLocation texture,
+                     int texWidth, int texHeight, float textScale, boolean vanBG) {
+
+        super(x, y, width, height, text);
+        this.onPress = onPress;
+        this.texture = texture;
+        this.texWidth = texWidth;
+        this.texHeight = texHeight;
+        this.textScale = textScale;
+        this.vanBG = vanBG;
+    }
+
     @Override
     public void onPress() {
         this.onPress.onPress(this);
@@ -57,9 +74,12 @@ public class ModButton extends AbstractButton {
     @Override
     protected void renderWidget(GuiGraphics gui, int mouseX, int mouseY, float partialTicks) {
 
+        if (vanBG) {
+            super.renderWidget(gui, mouseX, mouseY, partialTicks);
+            return;
+        }
+
         boolean hovered = this.isHoveredOrFocused();
-
-
 
         gui.blit(texture,
                 this.getX(), this.getY(),

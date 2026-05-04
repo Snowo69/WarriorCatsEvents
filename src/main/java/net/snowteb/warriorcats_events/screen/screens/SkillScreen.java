@@ -35,6 +35,7 @@ public class SkillScreen extends Screen {
     String nextToughnessLevel;
 
     String stealthCost;
+    String climbCost;
     Component stealthSwitchText;
 
     int currentSpeedLevel;
@@ -96,16 +97,15 @@ public class SkillScreen extends Screen {
         );
 
 
-
         if (currentSpeedLevel < PlayerSkill.maxSpeedLevel || currentHPLevel < PlayerSkill.maxHPLevel) {
 
             Component Text1 = Component.literal("");
             Component Text2 = Component.literal("");
-            if(currentSpeedLevel < PlayerSkill.maxSpeedLevel) {
-                Text1= Component.literal("Requiered: Speed Level MAX\n");
+            if (currentSpeedLevel < PlayerSkill.maxSpeedLevel) {
+                Text1 = Component.literal("Requiered: Speed Level MAX\n");
             }
-            if(currentHPLevel < PlayerSkill.maxHPLevel) {
-                Text2= Component.literal("Requiered: HP Level MAX");
+            if (currentHPLevel < PlayerSkill.maxHPLevel) {
+                Text2 = Component.literal("Requiered: HP Level MAX");
             }
 
 
@@ -114,7 +114,7 @@ public class SkillScreen extends Screen {
             guiGraphics.pose().translate(centerX - 40, centerY - 35, 0);
             guiGraphics.pose().scale(scale, scale, 1.0f);
             int x = (int) (this.width / 2 + 30 / scale);
-            int y = (int) (this.height / 2  + 20/ scale);
+            int y = (int) (this.height / 2 + 20 / scale);
 
             Component text = Text1.copy().append(Text2);
 
@@ -139,17 +139,16 @@ public class SkillScreen extends Screen {
         }
 
 
-
         if (currentDMGLevel < PlayerSkill.maxDMGLevel || currentHPLevel < PlayerSkill.maxHPLevel) {
 
 
             Component Text1 = Component.literal("");
             Component Text2 = Component.literal("");
-            if(currentDMGLevel < PlayerSkill.maxDMGLevel) {
-                Text1= Component.literal("Requiered: Claws Level MAX\n");
+            if (currentDMGLevel < PlayerSkill.maxDMGLevel) {
+                Text1 = Component.literal("Requiered: Claws Level MAX\n");
             }
-            if(currentHPLevel < PlayerSkill.maxHPLevel) {
-                Text2= Component.literal("Requiered: HP Level MAX");
+            if (currentHPLevel < PlayerSkill.maxHPLevel) {
+                Text2 = Component.literal("Requiered: HP Level MAX");
             }
 
             float scale = 0.55f;
@@ -183,11 +182,11 @@ public class SkillScreen extends Screen {
 
             Component Text1 = Component.literal("");
             Component Text2 = Component.literal("");
-            if(currentToughnessLevel < PlayerSkill.maxArmorLevel) {
-                Text1= Component.literal("Requiered: Pelt Level MAX\n");
+            if (currentToughnessLevel < PlayerSkill.maxArmorLevel) {
+                Text1 = Component.literal("Requiered: Pelt Level MAX\n");
             }
-            if(currentJumpLevel < PlayerSkill.maxJumpLevel) {
-                Text2= Component.literal("Requiered: Jump Level MAX");
+            if (currentJumpLevel < PlayerSkill.maxJumpLevel) {
+                Text2 = Component.literal("Requiered: Jump Level MAX");
             }
 
 
@@ -195,6 +194,47 @@ public class SkillScreen extends Screen {
             guiGraphics.pose().pushPose();
             guiGraphics.pose().translate(centerX, centerY + 5, 0);
             guiGraphics.pose().scale(scale, scale, 1.0f);
+
+            Component text = Text1.copy().append(Text2);
+
+
+            int maxWidth = 200;
+            List<FormattedCharSequence> lines = this.font.split(text, maxWidth);
+
+            int lineHeight = this.font.lineHeight;
+            int yOffset = 0;
+
+            for (FormattedCharSequence line : lines) {
+                guiGraphics.drawCenteredString(
+                        this.font,
+                        line,
+                        0,
+                        0 + yOffset,
+                        0xff1900
+                );
+                yOffset += lineHeight;
+            }
+            guiGraphics.pose().popPose();
+        }
+
+        if (currentSpeedLevel < PlayerSkill.maxSpeedLevel || currentJumpLevel < PlayerSkill.maxJumpLevel) {
+
+            Component Text1 = Component.literal("");
+            Component Text2 = Component.literal("");
+            if (currentSpeedLevel < PlayerSkill.maxSpeedLevel) {
+                Text1 = Component.literal("Requiered: Speed Level MAX\n");
+            }
+            if (currentJumpLevel < PlayerSkill.maxJumpLevel) {
+                Text2 = Component.literal("Requiered: Jump Level MAX");
+            }
+
+
+            float scale = 0.55f;
+            guiGraphics.pose().pushPose();
+            guiGraphics.pose().translate(centerX - 83, centerY + 5, 0);
+            guiGraphics.pose().scale(scale, scale, 1.0f);
+            int x = (int) (this.width / 2 + 30 / scale);
+            int y = (int) (this.height / 2 + 20 / scale);
 
             Component text = Text1.copy().append(Text2);
 
@@ -274,10 +314,10 @@ public class SkillScreen extends Screen {
             cap.ifPresent(data -> {
 
                         nextSpeedLevelCost = getNextLevelCost(data.getSpeedLevel(), PlayerSkill.maxSpeedLevel, PlayerSkill.getDefaultSpeedCost());
-                        nextHPLevelCost = getNextLevelCost(data.getHPLevel(), PlayerSkill.maxHPLevel, PlayerSkill.getDefaultHPcost());
-                        nextDMGLevelCost = getNextLevelCost(data.getDMGLevel(), PlayerSkill.maxDMGLevel, PlayerSkill.getDefaultDMGcost());
-                        nextJumpLevelCost = getNextLevelCost(data.getJumpLevel(), PlayerSkill.maxJumpLevel, PlayerSkill.getDefaultJumpcost());
-                        nextToughnessLevel = getNextLevelCost(data.getArmorLevel(), PlayerSkill.maxArmorLevel, PlayerSkill.getDefaultArmorcost());
+                        nextHPLevelCost = getNextLevelCost(data.getHPLevel(), PlayerSkill.maxHPLevel, PlayerSkill.getDefaultHPCost());
+                        nextDMGLevelCost = getNextLevelCost(data.getDMGLevel(), PlayerSkill.maxDMGLevel, PlayerSkill.getDefaultDMGCost());
+                        nextJumpLevelCost = getNextLevelCost(data.getJumpLevel(), PlayerSkill.maxJumpLevel, PlayerSkill.getDefaultJumpCost());
+                        nextToughnessLevel = getNextLevelCost(data.getArmorLevel(), PlayerSkill.maxArmorLevel, PlayerSkill.getDefaultArmorCost());
 
                         player.getCapability(PlayerStealthProvider.STEALTH_MODE).ifPresent(stealth -> {
 
@@ -285,7 +325,7 @@ public class SkillScreen extends Screen {
                                 stealthCost = "MAX";
                             } else {
                                 stealthSwitchText = Component.literal("--");
-                                stealthCost = PlayerSkill.getDefaultStealthcost() + "xp";
+                                stealthCost = PlayerSkill.getDefaultStealthCost() + "xp";
                             }
 
                             if (stealth.isOn()) {
@@ -296,6 +336,12 @@ public class SkillScreen extends Screen {
 
 
                         });
+
+                        if (data.isClimbUnlocked()) {
+                            climbCost = "MAX";
+                        } else {
+                            climbCost = PlayerSkill.getDefaultClimbCost() + "xp";
+                        }
 
                     }
             );
@@ -309,8 +355,7 @@ public class SkillScreen extends Screen {
         String result;
         if (level < maxLevel) {
             result = (defaultCost * (level + 1)) + "xp";
-        }
-        else {
+        } else {
             result = "MAX";
         }
         return result;
@@ -336,9 +381,8 @@ public class SkillScreen extends Screen {
                 this.height / 2 - 17,
                 80, 20,
                 Component.literal("Stealth : " + stealthCost),
-                b ->  {
+                b -> {
                     ModPackets.sendToServer(new CtSUnlockStealthPacket());
-
 
                 },
                 new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/modbutton.png"),
@@ -350,7 +394,7 @@ public class SkillScreen extends Screen {
                 this.height / 2 + 33,
                 80, 20,
                 Component.literal("Reset Tree"),
-                b ->  {
+                b -> {
                     ModPackets.sendToServer(new ResetSkillsPacket());
                     ModPackets.sendToServer(new ReqSkillDataPacket());
                 },
@@ -362,8 +406,8 @@ public class SkillScreen extends Screen {
                 this.width / 2 + 45,
                 this.height / 2 - 97,
                 80, 20,
-                Component.literal("+1 Claws | " + nextDMGLevelCost ),
-                b ->  {
+                Component.literal("+1 Claws | " + nextDMGLevelCost),
+                b -> {
                     ModPackets.sendToServer(new CtSMoreDMGPacket());
                     ModPackets.sendToServer(new ReqSkillDataPacket());
 
@@ -376,8 +420,8 @@ public class SkillScreen extends Screen {
                 this.width / 2 - 40,
                 this.height / 2 - 97,
                 80, 20,
-                Component.literal("+1 HP | " + nextHPLevelCost ),
-                b ->  {
+                Component.literal("+1 HP | " + nextHPLevelCost),
+                b -> {
                     ModPackets.sendToServer(new CtSMoreHPPacket());
                     ModPackets.sendToServer(new ReqSkillDataPacket());
 
@@ -390,8 +434,8 @@ public class SkillScreen extends Screen {
                 this.width / 2 - 124,
                 this.height / 2 - 97,
                 80, 20,
-                Component.literal("+1 Speed | " + nextSpeedLevelCost ),
-                b ->  {
+                Component.literal("+1 Speed | " + nextSpeedLevelCost),
+                b -> {
                     ModPackets.sendToServer(new CtSMoreSpeedPacket());
                     ModPackets.sendToServer(new ReqSkillDataPacket());
 
@@ -404,7 +448,7 @@ public class SkillScreen extends Screen {
                 this.height / 2 - 57,
                 80, 20,
                 Component.literal("+1 Jump | " + nextJumpLevelCost),
-                b ->  {
+                b -> {
                     ModPackets.sendToServer(new CtSMoreJumpPacket());
                     ModPackets.sendToServer(new ReqSkillDataPacket());
 
@@ -417,7 +461,7 @@ public class SkillScreen extends Screen {
                 this.height / 2 - 57,
                 80, 20,
                 Component.literal("+1 Pelt | " + nextToughnessLevel),
-                b ->  {
+                b -> {
                     ModPackets.sendToServer(new CtSMoreArmorPacket());
                     ModPackets.sendToServer(new ReqSkillDataPacket());
 
@@ -430,12 +474,24 @@ public class SkillScreen extends Screen {
                 this.height / 2 - 17,
                 20, 20,
                 stealthSwitchText,
-                b ->  {
+                b -> {
                     ModPackets.sendToServer(new CtSSwitchStealthPacket());
 
                 },
                 new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/modbutton.png"),
                 20, 20
+        ));
+
+        this.addRenderableWidget(new ModButton(
+                this.width / 2 - 124,
+                this.height / 2 - 17,
+                80, 20,
+                Component.literal("Climbing | " + climbCost),
+                b -> {
+                    ModPackets.sendToServer(new CtSUnlockClimbPacket());
+                },
+                new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/modbutton.png"),
+                80, 20
         ));
 
 

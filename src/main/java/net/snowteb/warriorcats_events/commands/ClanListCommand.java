@@ -20,19 +20,31 @@ public class ClanListCommand {
                 Commands.literal("wce")
                         .then(Commands.literal("clan")
                                 .then(Commands.literal("list")
-                                        .executes(ctx -> getList(ctx.getSource().getPlayerOrException()))
+                                        .executes(ctx -> getList(ctx.getSource().getPlayerOrException(), false, false))
+                                )
+                        ));
+
+        dispatcher.register(
+                Commands.literal("wce")
+                        .then(Commands.literal("clan")
+                                .executes(ctx -> getList(ctx.getSource().getPlayerOrException(), true, false))
+                        ));
+
+        dispatcher.register(
+                Commands.literal("wce")
+                        .then(Commands.literal("clan")
+                                .then(Commands.literal("map")
+                                        .executes(ctx -> getList(ctx.getSource().getPlayerOrException(), false, true))
                                 )
                         ));
     }
 
-    public static int getList(ServerPlayer player) {
+    public static int getList(ServerPlayer player, boolean seeingMyClan, boolean territoryMap) {
 
         ServerLevel level = player.serverLevel().getServer().overworld();
         ClanData data = ClanData.get(level);
 
         List<ClanInfo> list = new ArrayList<>();
-
-
 
         for (ClanData.Clan clan : data.clans.values()) {
 
@@ -51,7 +63,13 @@ public class ClanListCommand {
                         cat.catRank,
                         cat.catAge.getString(),
                         cat.catVariant,
-                        cat.catParents.getString()
+                        cat.catParents.getString(),
+
+                        cat.onGeneticalSkin,
+                        cat.genetics,
+                        cat.chimeraGenetics,
+                        cat.variants,
+                        cat.chimeraVariants
                 ));
             }
 
@@ -80,7 +98,7 @@ public class ClanListCommand {
         }
 
 
-        ModPackets.sendToPlayer(new S2CClanListPacket(list), player);
+        ModPackets.sendToPlayer(new S2CClanListPacket(list, seeingMyClan, territoryMap), player);
         return 1;
     }
 

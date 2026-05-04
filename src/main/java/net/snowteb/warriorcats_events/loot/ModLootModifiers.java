@@ -19,6 +19,9 @@ public class ModLootModifiers {
     public static final RegistryObject<Codec<? extends IGlobalLootModifier>> ADD_ITEM_RARE =
             LOOT_MODIFIERS_SERIALIZERS.register("add_item_rare", AddItemModifierRare.CODEC);
 
+    public static final RegistryObject<Codec<? extends IGlobalLootModifier>> ADD_ITEM_POOL =
+            LOOT_MODIFIERS_SERIALIZERS.register("add_item_pool", AddItemPoolModifier.CODEC);
+
 
     public static void register(IEventBus bus) {
         LOOT_MODIFIERS_SERIALIZERS.register(bus);

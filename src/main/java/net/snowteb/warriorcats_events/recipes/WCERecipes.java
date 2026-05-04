@@ -8,6 +8,7 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
+import net.snowteb.warriorcats_events.clan.ClanData;
 
 public class WCERecipes {
 
@@ -29,6 +30,9 @@ public class WCERecipes {
 
     public static final RegistryObject<RecipeSerializer<?>> COLLAR_RECIPE_SERIALIZER =
             SERIALIZERS.register("collar_recipe", CollarRecipeSerializer::new);
+
+    public static final RegistryObject<RecipeSerializer<?>> HONEY_MOSSBALL_SERIALIZER =
+            SERIALIZERS.register("honey_mossball_recipe", HoneyMossBallRecipeSerializer::new);
 
 
     public static void register(IEventBus bus) {

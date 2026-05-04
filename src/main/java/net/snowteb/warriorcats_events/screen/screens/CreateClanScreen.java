@@ -25,8 +25,6 @@ public class CreateClanScreen extends Screen {
 
     private int textCooldown = 0;
 
-    private final String suggestedName;
-
     private ToggleButton orangeButton;
     private ToggleButton redButton;
     private ToggleButton cyanButton;
@@ -102,9 +100,8 @@ public class CreateClanScreen extends Screen {
 
 
 
-    public CreateClanScreen(String clanName, String morphName) {
+    public CreateClanScreen(String morphName) {
         super(Component.literal("Create Clan"));
-        this.suggestedName = clanName;
         this.morphName = morphName;
     }
 
@@ -143,9 +140,6 @@ public class CreateClanScreen extends Screen {
                 80, 15,
                 Component.literal("Clan Name")
         );
-        if (!suggestedName.equals("None")) {
-            clanNameBox.setValue(suggestedName);
-        }
         clanNameBox.setMaxLength(20);
         clanNameBox.setHint(Component.literal("'Bengalclan'").withStyle(ChatFormatting.DARK_GRAY).withStyle(ChatFormatting.ITALIC));
 

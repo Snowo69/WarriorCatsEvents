@@ -9,6 +9,8 @@
     "ClientChatPacketMixin",
     "EntityTeamColorMixin",
     "GameRendererHitMixin",
+    "HeldMossBallMixin",
+    "LocalPlayerMixin",
     "MinecraftMixin",
     "ScreenClickedComponentMixin",
     "SplashMixin",

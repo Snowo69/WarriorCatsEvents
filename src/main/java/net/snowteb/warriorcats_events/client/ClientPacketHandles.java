@@ -1,6 +1,7 @@
 package net.snowteb.warriorcats_events.client;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -59,18 +60,25 @@ public class ClientPacketHandles {
 
     }
 
-    public static void openClanCreateScreen(String clanName, String morphName) {
+    public static void openClanCreateScreen(String morphName) {
         Minecraft.getInstance().execute(() -> {
             Minecraft mc = Minecraft.getInstance();
             if (mc.level == null) return;
 
-            mc.setScreen(new CreateClanScreen(clanName, morphName));
+            mc.setScreen(new CreateClanScreen(morphName));
         });
 
     }
 
-    public static void openClanListScreen() {
-        Minecraft.getInstance().execute(() -> Minecraft.getInstance().setScreen(new ClanListScreen()));
+    public static void openClanListScreen(boolean seeingMyClan, boolean territoryMap) {
+        Screen parent = new ClanListScreen(seeingMyClan);
+
+        if (territoryMap) {
+            Minecraft.getInstance().execute(() -> Minecraft.getInstance().setScreen(new TerritoryMapScreen(parent)));
+            return;
+        }
+
+        Minecraft.getInstance().execute(() -> Minecraft.getInstance().setScreen(parent));
     }
 
     public static void openManageClanScreen(ClanInfo info) {
@@ -125,12 +133,12 @@ public class ClientPacketHandles {
     }
 
 
-    public static void openPlayerCatScreen(WCEPlayerData.PackedData data, UUID targetUUID, int myKitCooldown) {
+    public static void openPlayerCatScreen(WCEPlayerData.PackedData data, UUID targetUUID, int myKitCooldown, boolean editingProfile) {
 
         Minecraft mc = Minecraft.getInstance();
         if (mc.level == null) return;
 
-        mc.setScreen(new PlayerCatDataScreen(data, targetUUID, myKitCooldown));
+        mc.setScreen(new PlayerCatDataScreen(data, targetUUID, myKitCooldown, editingProfile));
 
     }
 

@@ -3,7 +3,12 @@ package net.snowteb.warriorcats_events.clan;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.snowteb.warriorcats_events.entity.ModEntities;
 import net.snowteb.warriorcats_events.entity.custom.WCGenetics;
+import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 
 import java.util.UUID;
 
@@ -12,28 +17,32 @@ public class WCEPlayerData {
     public static class PackedData {
         public final String name;
         public final String clanName;
-        public final int gender;
+        public final String gender;
         public final String mateName;
         public final Age age;
         public final int kitCooldown;
+        public final String bio;
 
 
-        public PackedData(String name, String clanName, int gender, String mateName, Age age, int kitCooldown) {
+        public PackedData(String name, String clanName, String gender, String mateName, Age age, int kitCooldown, String bio) {
             this.name = name;
             this.clanName = clanName;
             this.gender = gender;
             this.mateName = mateName;
             this.age = age;
             this.kitCooldown = kitCooldown;
+            this.bio = bio;
         }
     }
 
     private String morphName = "None";
-    private String clanName = "";
+    private String clanName = "No clan";
     private String sufix = "";
     private String prefix = "";
+    private String characterBio = "";
     private int variantData = 0;
     private int genderData;
+    private String genderText = "";
     private boolean firstLoginHandled = false;
     private boolean useSufixes = true;
     private boolean morphNameInChat = true;
@@ -213,8 +222,71 @@ public class WCEPlayerData {
         isOnGeneticalSkin = onGeneticalSkin;
     }
 
-
     // GENETICS
+
+    public WCatEntity createMorph(Player player, ServerLevel level) {
+        WCatEntity cat = new WCatEntity(ModEntities.WCAT.get(), level);
+
+        String shapeNameString = getMorphName();
+
+        WCEPlayerData.Age shapeAge = getMorphAge();
+
+        int genderValue = getGenderData();
+
+        String genderS;
+        if (genderValue == 0) {
+            genderS = " ♂";
+        } else if (genderValue == 1){
+            genderS = " ♀";
+        } else {
+            genderS = "";
+        }
+
+        Component name = Component.literal(shapeNameString + genderS);
+
+        cat.setVariant(getVariantData());
+
+        cat.setCustomName(name);
+        cat.setCustomNameVisible(true);
+        cat.setShowMorphName(true);
+
+        {
+            if (isOnGeneticalSkin()) {
+                cat.setGenetics(getPlayerGenetics());
+                WCGenetics.GeneticalVariants variants = getPlayerGeneticalVariants();
+                cat.setGeneticalVariants(variants.eyeColorLeft, variants.eyeColorRight, variants.rufousingVariant
+                        ,variants.blueRufousingVariant, variants.orangeVar, variants.whiteVar, variants.tabbyVar
+                        ,variants.albinoVar, variants.leftEyeVar, variants.rightEyeVar, variants.noise,
+                        variants.size, variants.silverVar, variants.scars);
+                cat.setOnGeneticalSkin(true);
+                cat.setChimeraGenetics(getPlayerChimeraGenetics());
+                WCGenetics.GeneticalChimeraVariants variantsChimera = getPlayerChimeraVariants();
+                cat.setGeneticalVariantsChimera(variantsChimera.chimeraVariant, variantsChimera.rufousingVariant,
+                        variantsChimera.blueRufousingVariant, variantsChimera.orangeVar, variantsChimera.whiteVar, variantsChimera.tabbyVar
+                        , variantsChimera.albinoVar, variantsChimera.noise, variantsChimera.silverVar);
+                cat.setGender(1);
+            }
+        }
+
+        cat.setPlayerBoundUuid(player.getUUID());
+
+        int catAge = 0;
+        boolean isApprentice = false;
+
+        if (shapeAge == WCEPlayerData.Age.KIT) {
+            catAge = -1000;
+        } else if (shapeAge == WCEPlayerData.Age.APPRENTICE) {
+            catAge = -500;
+            isApprentice = true;
+        } else if (shapeAge == WCEPlayerData.Age.ADULT){
+            catAge = 0;
+        }
+
+        cat.setAppScale(isApprentice);
+        cat.setAge(catAge);
+
+        return cat;
+    }
 
     public UUID getCurrentClanUUID() {
         return currentClanUUID;
@@ -284,6 +356,23 @@ public class WCEPlayerData {
         return clanName;
     }
 
+    public String getClanName(ServerLevel level) {
+        ClanData data = ClanData.get(level.getServer().overworld());
+        ClanData.Clan clan = data.getClan(currentClanUUID);
+        if (clan == null) {
+            return "No clan";
+        }
+
+        return clan.name;
+    }
+
+    public String getClanName(Level level) {
+        if (level instanceof ServerLevel sLevel) {
+            return getClanName(sLevel);
+        }
+        return getClanName();
+    }
+
     public void setClanName(String clanName) {
         this.clanName = clanName;
     }
@@ -312,12 +401,37 @@ public class WCEPlayerData {
         this.variantData = variantData;
     }
 
+    public String getCharacterBio() {
+        return characterBio;
+    }
+
+    public void setCharacterBio(String characterBio) {
+        this.characterBio = characterBio;
+    }
+
     public int getGenderData() {
         return genderData;
     }
 
     public void setGenderData(int genderData) {
         this.genderData = genderData;
+    }
+
+    public String getGenderText() {
+        if (genderData == 0) {
+            return "Tom-cat";
+        } else if (genderData == 1) {
+            return "She-cat";
+        } else {
+            if (!genderText.isEmpty()) {
+                return genderText;
+            }
+        }
+        return "Non-binary";
+    }
+
+    public void setGenderText(String genderText) {
+        this.genderText = genderText;
     }
 
     public Age getMorphAge() {
@@ -362,6 +476,7 @@ public class WCEPlayerData {
         this.clanName = source.clanName;
         this.variantData = source.variantData;
         this.genderData = source.genderData;
+        this.genderText = source.genderText;
         this.morphName = source.morphName;
         this.morphAge = source.morphAge;
         this.firstLoginHandled = source.firstLoginHandled;
@@ -372,6 +487,8 @@ public class WCEPlayerData {
         this.mateName = source.mateName;
         this.tempClickedPosData = source.tempClickedPosData;
         this.currentClanUUID = source.currentClanUUID;
+
+        this.characterBio = source.characterBio;
 
         this.isOnGeneticalSkin = source.isOnGeneticalSkin;
 
@@ -421,6 +538,7 @@ public class WCEPlayerData {
         this.clanName = "None";
         this.variantData = 0;
         this.genderData = 0;
+        this.genderText = "";
         this.morphAge = Age.ADULT;
         this.firstLoginHandled = false;
         this.sufix = "None";
@@ -429,6 +547,7 @@ public class WCEPlayerData {
         this.tempClickedPosData = null;
         this.sleepingCooldown = 0;
         this.mateGenetics = new WCGenetics();
+        this.characterBio = "";
 
         setDefaultGenetics();
     }
@@ -495,7 +614,9 @@ public class WCEPlayerData {
         nbt.putString("clanName", this.clanName);
         nbt.putInt("variantData", this.variantData);
         nbt.putInt("genderData", this.genderData);
+        nbt.putString("genderText", this.genderText);
         nbt.putString("morphAge", this.morphAge.name());
+        nbt.putString("characterBio", this.characterBio);
         nbt.putBoolean("firstLoginHandled", this.firstLoginHandled);
         nbt.putString("sufix", this.sufix);
         nbt.putString("prefix", this.prefix);
@@ -588,6 +709,9 @@ public class WCEPlayerData {
         clanName = nbt.getString("clanName");
         variantData = nbt.getInt("variantData");
         genderData = nbt.getInt("genderData");
+        if (nbt.contains("genderText")) {
+            genderText = nbt.getString("genderText");
+        }
         if (nbt.contains("morphAge")) {
             try {
                 this.morphAge = Age.valueOf(nbt.getString("morphAge"));
@@ -606,6 +730,9 @@ public class WCEPlayerData {
         }
         if (nbt.contains("useFancyFont")) {
             usingFancyFont = nbt.getBoolean("useFancyFont");
+        }
+        if (nbt.contains("characterBio")) {
+            this.characterBio = nbt.getString("characterBio");
         }
 
         if (nbt.contains("mateUUID")) {

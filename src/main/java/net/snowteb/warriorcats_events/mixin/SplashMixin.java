@@ -46,6 +46,9 @@ public class SplashMixin {
         wceSplashes.add("Into the wild");
         wceSplashes.add("Silverstream I'm drowning!");
         wceSplashes.add("Protect your clan with your life.");
+        wceSplashes.add("Don't forget to sharpen those claws!");
+        wceSplashes.add("Wow, who put that cat over there?");
+        wceSplashes.add("Get off there, cat! You are going to fall!");
 
         String name = Minecraft.getInstance().getUser().getName();
 

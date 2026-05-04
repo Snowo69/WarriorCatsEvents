@@ -45,6 +45,12 @@ public class AccessoryModel extends GeoModel<WCatEntity> {
             new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/head_glowberry.png")
     };
 
+    public static final ResourceLocation[] HEAD_BOW_TEXTURES = {
+            new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/pink_bow.png"),
+            new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/red_bow.png"),
+            new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/cat_black_bow.png")
+    };
+
     public AccessoryModel(ResourceLocation model,
                           ResourceLocation texture) {
         this.model = model;

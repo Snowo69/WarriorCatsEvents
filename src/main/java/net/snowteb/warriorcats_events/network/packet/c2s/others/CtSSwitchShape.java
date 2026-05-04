@@ -12,6 +12,8 @@ import net.snowteb.warriorcats_events.clan.WCEPlayerDataProvider;
 import net.snowteb.warriorcats_events.entity.ModEntities;
 import net.snowteb.warriorcats_events.entity.custom.WCGenetics;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
+import net.snowteb.warriorcats_events.skills.PlayerSkill;
+import net.snowteb.warriorcats_events.skills.PlayerSkillProvider;
 import tocraft.walkers.api.PlayerShape;
 
 import java.util.function.Supplier;
@@ -47,8 +49,14 @@ public class CtSSwitchShape {
 
                 if (!(current instanceof WCatEntity)) {
                     PlayerShape.updateShapes(player, cat);
+                    player.getCapability(PlayerSkillProvider.SKILL_DATA).ifPresent(skillProvider -> {
+                        PlayerSkill.reviveAttributes(player, skillProvider);
+                    });
                 } else {
                     PlayerShape.updateShapes(player, null);
+                    player.getCapability(PlayerSkillProvider.SKILL_DATA).ifPresent(skillProvider -> {
+                        PlayerSkill.removeAttributes(player);
+                    });
                 }
 
 

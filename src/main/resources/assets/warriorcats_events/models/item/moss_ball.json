@@ -1,0 +1,24 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "warriorcats_events:item/moss_ball"
+  },
+  "overrides": [
+    { "predicate": { "honeylevel": 1.0 }, "model": "warriorcats_events:item/honey_moss_ball" },
+    { "predicate": { "honeylevel": 2.0 }, "model": "warriorcats_events:item/honey_moss_ball" },
+    { "predicate": { "honeylevel": 3.0 }, "model": "warriorcats_events:item/honey_moss_ball" },
+    { "predicate": { "honeylevel": 4.0 }, "model": "warriorcats_events:item/honey_moss_ball" },
+    { "predicate": { "honeylevel": 5.0 }, "model": "warriorcats_events:item/honey_moss_ball" },
+
+    { "predicate": { "waterlevel": 1.0 }, "model": "warriorcats_events:item/wet_moss_ball_1" },
+    { "predicate": { "waterlevel": 2.0 }, "model": "warriorcats_events:item/wet_moss_ball_1" },
+    { "predicate": { "waterlevel": 3.0 }, "model": "warriorcats_events:item/wet_moss_ball_1" },
+    { "predicate": { "waterlevel": 4.0 }, "model": "warriorcats_events:item/wet_moss_ball_2" },
+    { "predicate": { "waterlevel": 5.0 }, "model": "warriorcats_events:item/wet_moss_ball_2" },
+    { "predicate": { "waterlevel": 6.0 }, "model": "warriorcats_events:item/wet_moss_ball_2" },
+    { "predicate": { "waterlevel": 7.0 }, "model": "warriorcats_events:item/wet_moss_ball_2" },
+    { "predicate": { "waterlevel": 8.0 }, "model": "warriorcats_events:item/wet_moss_ball_3" },
+    { "predicate": { "waterlevel": 9.0 }, "model": "warriorcats_events:item/wet_moss_ball_3" },
+    { "predicate": { "waterlevel": 10.0 }, "model": "warriorcats_events:item/wet_moss_ball_3" }
+  ]
+}

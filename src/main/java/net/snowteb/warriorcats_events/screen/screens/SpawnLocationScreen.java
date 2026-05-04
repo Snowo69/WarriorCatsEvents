@@ -324,6 +324,9 @@ public class SpawnLocationScreen extends Screen {
             }
         }
 
+        WCEClient.nextMenuSound();
+
+
         this.minecraft.setScreen(null);
     }
 

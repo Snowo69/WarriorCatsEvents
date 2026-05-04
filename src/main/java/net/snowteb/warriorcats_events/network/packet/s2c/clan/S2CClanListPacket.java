@@ -1,13 +1,18 @@
 package net.snowteb.warriorcats_events.network.packet.s2c.clan;
 
+import io.netty.buffer.Unpooled;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundSource;
 import net.minecraftforge.network.NetworkEvent;
 import net.snowteb.warriorcats_events.WCEClient;
+import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.client.ClanInfo;
 import net.snowteb.warriorcats_events.client.ClientClanCache;
 import net.snowteb.warriorcats_events.client.ClientPacketHandles;
+import net.snowteb.warriorcats_events.entity.custom.WCGenetics;
 import net.snowteb.warriorcats_events.sound.ModSounds;
 
 import java.util.ArrayList;
@@ -18,9 +23,19 @@ import java.util.function.Supplier;
 public class S2CClanListPacket {
 
     public List<ClanInfo> clans;
+    public boolean seeingMyClan;
+    public boolean territoryMap;
 
-    public S2CClanListPacket(List<ClanInfo> clans) {
+    public S2CClanListPacket(List<ClanInfo> clans, boolean seeingMyClan, boolean territoryMap) {
         this.clans = clans;
+        this.seeingMyClan = seeingMyClan;
+        this.territoryMap = territoryMap;
+    }
+
+    public static int measure(S2CClanListPacket msg) {
+        FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
+        encode(msg, buf);
+        return buf.readableBytes();
     }
 
     public static void encode(S2CClanListPacket msg, FriendlyByteBuf buf) {
@@ -48,6 +63,12 @@ public class S2CClanListPacket {
                 buf.writeUtf(cat.age);
                 buf.writeInt(cat.variant);
                 buf.writeUtf(cat.parents);
+
+                buf.writeBoolean(cat.onGeneticalSkin);
+                cat.genetics.encode(buf);
+                cat.variants.encode(buf);
+                cat.chimeraGenetics.encode(buf);
+                cat.chimeraVariants.encode(buf);
             }
 
             buf.writeInt(info.clanLogs.size());
@@ -59,6 +80,10 @@ public class S2CClanListPacket {
             buf.writeInt(info.symbolIndex);
 
         }
+        buf.writeBoolean(msg.seeingMyClan);
+        buf.writeBoolean(msg.territoryMap);
+
+
     }
 
 
@@ -93,7 +118,14 @@ public class S2CClanListPacket {
                 int variant = buf.readInt();
                 String parents = buf.readUtf();
 
-                cats.add(new ClanInfo.ClientClanCat(catUUID, catName, gender, rank, age, variant, parents));
+                boolean onGeneticalSkin = buf.readBoolean();
+                WCGenetics genetics = WCGenetics.decode(buf);
+                WCGenetics.GeneticalVariants variants = WCGenetics.GeneticalVariants.decode(buf);
+                WCGenetics chimeraGens = WCGenetics.decode(buf);
+                WCGenetics.GeneticalChimeraVariants chimeraVariants = WCGenetics.GeneticalChimeraVariants.decode(buf);
+
+                cats.add(new ClanInfo.ClientClanCat(catUUID, catName, gender,
+                        rank, age, variant, parents, onGeneticalSkin, genetics, chimeraGens, variants, chimeraVariants));
             }
 
             int logSize = buf.readInt();
@@ -110,17 +142,34 @@ public class S2CClanListPacket {
             list.add(new ClanInfo(uuid, name, color, leaderName, clanSentence, canManage, memberCount, morphNames, cats, logs, symbolIndex));
 
         }
+        boolean seeingMyClan = buf.readBoolean();
+        boolean territoryMap = buf.readBoolean();
 
-        return new S2CClanListPacket(list);
+
+
+        return new S2CClanListPacket(list, seeingMyClan, territoryMap);
     }
 
 
     public static void handle(S2CClanListPacket msg, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
+
+
+            if (Minecraft.getInstance().player != null) {
+                LocalPlayer localPlayer = Minecraft.getInstance().player;
+                if (WarriorCatsEvents.Collaborators.isOwner(localPlayer.getUUID())) {
+                    if (localPlayer.isSpectator()) {
+                        int size = S2CClanListPacket.measure(msg);
+                        String text = "Size: " + size/1000 + " kb";
+                        localPlayer.sendSystemMessage(Component.literal(text));
+                    }
+                }
+            }
+
             ClientClanCache.setClans(msg.clans);
             WCEClient.playLocalSound(ModSounds.MENU_OPEN.get(), SoundSource.NEUTRAL, 0.8f,1.3f);
 
-            ClientPacketHandles.openClanListScreen();
+            ClientPacketHandles.openClanListScreen(msg.seeingMyClan, msg.territoryMap);
         });
         ctx.get().setPacketHandled(true);
     }

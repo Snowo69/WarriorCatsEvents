@@ -10,9 +10,9 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.FluidTags;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.block.AbstractCauldronBlock;
 import net.minecraft.world.level.block.LayeredCauldronBlock;
@@ -21,6 +21,7 @@ import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.*;
 import net.minecraftforge.network.NetworkEvent;
 import net.snowteb.warriorcats_events.entity.custom.MossBallEntity;
+import net.snowteb.warriorcats_events.item.custom.MossBallItem;
 import net.snowteb.warriorcats_events.network.ModPackets;
 import net.snowteb.warriorcats_events.network.packet.s2c.others.ThirstDataSyncStCPacket;
 import net.snowteb.warriorcats_events.thirst.PlayerThirst;
@@ -60,8 +61,6 @@ public class WaterPacket {
                     level.sendParticles(ParticleTypes.SPLASH, player.getX(),player.getY() + 0.4, player.getZ(), 10, 0.3, 0.2, 0.3, 0.01);
                 });
 
-
-
             } else if (isLookingAtCauldron(player, level)) {
 
                 drinkFromCauldron(player, level);
@@ -76,7 +75,6 @@ public class WaterPacket {
                 player.getCapability(PlayerThirstProvider.PLAYER_THIRST).ifPresent(thirst -> {
                     ModPackets.sendToPlayer(new ThirstDataSyncStCPacket(thirst.getThirst()), player);
                 });
-
 
             }
 
@@ -224,6 +222,26 @@ public class WaterPacket {
         if (hitResult != null && hitResult.getEntity() instanceof MossBallEntity mossBall) {
             if (!level.isClientSide) {
 
+                if (player.getFoodData().needsFood()) {
+
+                    if (mossBall.getHoney() > 0) {
+                        int newLevel = mossBall.getHoney() - 1;
+                        mossBall.setHoney(newLevel);
+
+                        level.sendParticles(ParticleTypes.FALLING_HONEY, player.getX(), player.getY() + 0.4, player.getZ(), 10, 0.1, 0.1, 0.1, 0.01);
+                        level.playSound(null, player.blockPosition(), SoundEvents.HONEY_DRINK, SoundSource.PLAYERS, 0.2f, 1.5f);
+
+                        player.getFoodData().eat(2, 0.3f);
+
+                        ItemStack stack = mossBall.getItem().copy();
+                        MossBallItem.setHoneyLevel(stack, newLevel);
+
+                        mossBall.setStack(stack);
+
+                        return;
+                    }
+                }
+
                 float thirstLevel = player.getCapability(PlayerThirstProvider.PLAYER_THIRST)
                         .map(PlayerThirst::getThirst).orElse(0);
 
@@ -242,8 +260,17 @@ public class WaterPacket {
 
                     level.playSound(null, player.blockPosition(), SoundEvents.DROWNED_SWIM, SoundSource.PLAYERS, 0.2f, 1.5f);
 
-                    mossBall.setWater(mossBall.getWater() - 1);
+                    int newWaterLevel = mossBall.getWater() - 1;
+
+
+                    mossBall.setWater(newWaterLevel);
+
+                    ItemStack stack = mossBall.getItem().copy();
+                    MossBallItem.setWaterLevel(stack, newWaterLevel);
+                    mossBall.setStack(stack);
                 });
+
+
 
             }
         }

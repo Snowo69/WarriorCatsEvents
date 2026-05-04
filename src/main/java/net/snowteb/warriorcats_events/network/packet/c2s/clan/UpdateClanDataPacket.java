@@ -89,7 +89,7 @@ public class UpdateClanDataPacket {
                         .orElse("<player>");
                 String playerMorphClan = player
                         .getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
-                        .map(cap -> cap.getClanName())
+                        .map(cap -> cap.getClanName(player.serverLevel()))
                         .orElse("<clan>");
                 Boolean usesSufix = player
                         .getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)

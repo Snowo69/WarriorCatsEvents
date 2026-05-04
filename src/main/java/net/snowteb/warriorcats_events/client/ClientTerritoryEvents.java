@@ -9,6 +9,7 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
+import net.snowteb.warriorcats_events.effect.ModEffects;
 import net.snowteb.warriorcats_events.zconfig.WCEClientConfig;
 import net.snowteb.warriorcats_events.zconfig.WCEServerConfig;
 

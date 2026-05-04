@@ -11,7 +11,7 @@ public class WCGenetics {
         public static final int MAX_WHITE_VARIANTS = 21;
         public static final int MAX_ALBINO_VARIANTS = 3;
         public static final int MAX_TABBY_VARIANTS = 5;
-        public static final int MAX_EYE_VARIANTS = 11;
+        public static final int MAX_EYE_VARIANTS = 12;
         public static final int MAX_NOISE_VARIANTS = 6;
         public static final int MAX_RUFOUSING_VARIANTS = 7;
         public static final int MAX_BLUE_RUFOUSING_VARIANTS = 7;

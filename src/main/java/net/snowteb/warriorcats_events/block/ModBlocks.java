@@ -165,6 +165,40 @@ public class ModBlocks {
             () -> new LavenderPetalsBlock(BlockBehaviour.Properties.copy(Blocks.PINK_PETALS)));
 
 
+
+
+    // KITTYPET BOWLS
+
+    public static final RegistryObject<KittyPetBowl> WHITE_KITTYPET_BOWL = registerBlock("white_kittypet_bowl",
+            () -> new KittyPetBowl(BlockBehaviour.Properties.of().strength(0.5f)));
+
+    public static final RegistryObject<KittyPetBowl> ORANGE_KITTYPET_BOWL = registerBlock("orange_kittypet_bowl",
+            () -> new KittyPetBowl(BlockBehaviour.Properties.of().strength(0.5f)));
+
+    public static final RegistryObject<KittyPetBowl> MAGENTA_KITTYPET_BOWL = registerBlock("magenta_kittypet_bowl",
+            () -> new KittyPetBowl(BlockBehaviour.Properties.of().strength(0.5f)));
+
+    public static final RegistryObject<KittyPetBowl> BLUE_KITTYPET_BOWL = registerBlock("blue_kittypet_bowl",
+            () -> new KittyPetBowl(BlockBehaviour.Properties.of().strength(0.5f)));
+
+    public static final RegistryObject<KittyPetBowl> YELLOW_KITTYPET_BOWL = registerBlock("yellow_kittypet_bowl",
+            () -> new KittyPetBowl(BlockBehaviour.Properties.of().strength(0.5f)));
+
+    public static final RegistryObject<KittyPetBowl> LIME_KITTYPET_BOWL = registerBlock("lime_kittypet_bowl",
+            () -> new KittyPetBowl(BlockBehaviour.Properties.of().strength(0.5f)));
+
+    public static final RegistryObject<KittyPetBowl> PINK_KITTYPET_BOWL = registerBlock("pink_kittypet_bowl",
+            () -> new KittyPetBowl(BlockBehaviour.Properties.of().strength(0.5f)));
+
+    public static final RegistryObject<KittyPetBowl> BLACK_KITTYPET_BOWL = registerBlock("black_kittypet_bowl",
+            () -> new KittyPetBowl(BlockBehaviour.Properties.of().strength(0.5f)));
+
+    public static final RegistryObject<KittyPetBowl> RED_KITTYPET_BOWL = registerBlock("red_kittypet_bowl",
+            () -> new KittyPetBowl(BlockBehaviour.Properties.of().strength(0.5f)));
+
+    //
+
+
     private static <T extends Block> RegistryObject<T> registerBlock(String name, Supplier<T> block) {
         RegistryObject<T> toReturn = BLOCKS.register(name, block);
         registerBlockItem(name, toReturn);

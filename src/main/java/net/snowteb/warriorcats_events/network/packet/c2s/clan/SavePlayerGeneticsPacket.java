@@ -75,11 +75,13 @@ public class SavePlayerGeneticsPacket {
             player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {
                 cap.setFirstLoginHandled(true);
                 cap.setPlayerGenetics(packet.genetics);
-                cap.setPlayerGeneticalVariants(packet.variants.eyeColorLeft, packet.variants.eyeColorRight,
-                        packet.variants.rufousingVariant, packet.variants.blueRufousingVariant,
-                        packet.variants.orangeVar, packet.variants.whiteVar, packet.variants.tabbyVar,
-                        packet.variants.albinoVar, packet.variants.leftEyeVar, packet.variants.rightEyeVar,
-                        packet.variants.noise, packet.variants.size, packet.variants.silverVar, packet.variants.scars);
+
+                cap.setPlayerGeneticalVariants(packet.variants);
+//                cap.setPlayerGeneticalVariants(packet.variants.eyeColorLeft, packet.variants.eyeColorRight,
+//                        packet.variants.rufousingVariant, packet.variants.blueRufousingVariant,
+//                        packet.variants.orangeVar, packet.variants.whiteVar, packet.variants.tabbyVar,
+//                        packet.variants.albinoVar, packet.variants.leftEyeVar, packet.variants.rightEyeVar,
+//                        packet.variants.noise, packet.variants.size, packet.variants.silverVar, packet.variants.scars);
                 cap.setOnGeneticalSkin(packet.onGeneticalSkin);
                 cap.setVariantData(packet.defaultVariant);
                 cap.setPlayerChimeraGenetics(packet.chimeraGenetics);

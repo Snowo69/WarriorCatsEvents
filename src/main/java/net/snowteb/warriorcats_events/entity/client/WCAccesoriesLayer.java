@@ -111,6 +111,23 @@ public class WCAccesoriesLayer extends GeoRenderLayer<WCatEntity> {
             new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/head_sweetberry.png")
     );
 
+    private final AccessoryModel catHatModel = new AccessoryModel(
+            new ResourceLocation(WarriorCatsEvents.MODID, "geo/wcat.hat.geo.json"),
+            new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/cat_hat.png")
+    );
+
+
+    private final AccessoryModel catBowModel = new AccessoryModel(
+            new ResourceLocation(WarriorCatsEvents.MODID, "geo/wcat.head_bow.geo.json"),
+            new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/red_bow.png")
+    );
+
+    private final AccessoryModel skullMaskModel = new AccessoryModel(
+            new ResourceLocation(WarriorCatsEvents.MODID, "geo/wcat.skull_mask.geo.json"),
+            new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/skull_mask.png")
+    );
+
+
     private final ElytraModel elytraModel = new ElytraModel();
 
 
@@ -127,6 +144,9 @@ public class WCAccesoriesLayer extends GeoRenderLayer<WCatEntity> {
     private final AccessoryRenderer collarRenderer;
     private final AccessoryRenderer berryRenderer;
     private final AccessoryRenderer elytraRenderer;
+    private final AccessoryRenderer catHatRenderer;
+    private final AccessoryRenderer catBowRenderer;
+    private final AccessoryRenderer skullMaskRenderer;
 
 
     public WCAccesoriesLayer(GeoRenderer<WCatEntity> entityRendererIn, EntityRendererProvider.Context context) {
@@ -146,6 +166,10 @@ public class WCAccesoriesLayer extends GeoRenderLayer<WCatEntity> {
         this.collarRenderer = new AccessoryRenderer(context, collarModel);
 
         this.berryRenderer = new AccessoryRenderer(context, berryModel);
+        this.catHatRenderer = new AccessoryRenderer(context, catHatModel);
+        this.catBowRenderer = new AccessoryRenderer(context, catBowModel);
+        this.skullMaskRenderer = new AccessoryRenderer(context, skullMaskModel);
+
         this.elytraRenderer = new AccessoryRenderer(context, elytraModel);
     }
 
@@ -218,6 +242,18 @@ public class WCAccesoriesLayer extends GeoRenderLayer<WCatEntity> {
                 .getItemBySlot(EquipmentSlot.LEGS)
                 .is(ModItems.DRAPED_TAIL_VINES.get());
 
+        boolean hasHat = animatable
+                .getItemBySlot(EquipmentSlot.HEAD)
+                .is(ModItems.CAT_HAT.get());
+
+        boolean hasChestBow = animatable
+                .getItemBySlot(EquipmentSlot.CHEST)
+                .is(ModItems.CAT_BLACK_BOW.get());
+
+        boolean hasSkullMask = animatable
+                .getItemBySlot(EquipmentSlot.HEAD)
+                .is(ModItems.SKULL_MASK.get());
+
         if (Compatibilities.hasCuriosItem(animatable.getPlayerBoundUuid(), ModItems.FLOWER_CROWN.get())) hasCrown = true;
         if (Compatibilities.hasCuriosItem(animatable.getPlayerBoundUuid(), ModItems.LEAF_MANE.get())) hasMane = true;
         if (Compatibilities.hasCuriosItem(animatable.getPlayerBoundUuid(), ModItems.HEAD_FLOWER.get())) hasFlower = true;
@@ -225,6 +261,9 @@ public class WCAccesoriesLayer extends GeoRenderLayer<WCatEntity> {
         if (Compatibilities.hasCuriosItem(animatable.getPlayerBoundUuid(), ModItems.HEAD_LEAF.get())) hasLeaf = true;
         if (Compatibilities.hasCuriosItem(animatable.getPlayerBoundUuid(), ModItems.TAIL_VINES.get())) hasTailVines = true;
         if (Compatibilities.hasCuriosItem(animatable.getPlayerBoundUuid(), ModItems.DRAPED_TAIL_VINES.get())) hasDrapedTailVines = true;
+        if (Compatibilities.hasCuriosItem(animatable.getPlayerBoundUuid(), ModItems.CAT_HAT.get())) hasHat = true;
+        if (Compatibilities.hasCuriosItem(animatable.getPlayerBoundUuid(), ModItems.CAT_BLACK_BOW.get())) hasChestBow = true;
+        if (Compatibilities.hasCuriosItem(animatable.getPlayerBoundUuid(), ModItems.SKULL_MASK.get())) hasSkullMask = true;
 
         boolean hasBerry = animatable
                 .getItemBySlot(EquipmentSlot.HEAD)
@@ -235,6 +274,17 @@ public class WCAccesoriesLayer extends GeoRenderLayer<WCatEntity> {
         if (Compatibilities.hasCuriosItem(animatable.getPlayerBoundUuid(), ModItems.HEAD_GLOWBERRY.get())
         || Compatibilities.hasCuriosItem(animatable.getPlayerBoundUuid(), ModItems.HEAD_SWEETBERRY.get())) {
             hasBerry = true;
+        }
+
+        boolean hasBow = animatable
+                .getItemBySlot(EquipmentSlot.HEAD)
+                .is(ModItems.CAT_PINK_BOW.get()) || animatable
+                .getItemBySlot(EquipmentSlot.HEAD)
+                .is(ModItems.CAT_RED_BOW.get());
+
+        if (Compatibilities.hasCuriosItem(animatable.getPlayerBoundUuid(), ModItems.CAT_PINK_BOW.get())
+                || Compatibilities.hasCuriosItem(animatable.getPlayerBoundUuid(), ModItems.CAT_RED_BOW.get())) {
+            hasBow = true;
         }
 
         if (bone.getName().equals("head")) {
@@ -429,6 +479,130 @@ public class WCAccesoriesLayer extends GeoRenderLayer<WCatEntity> {
                         accessoryBuffer,
                         partialTick,
                         light,
+                        packedOverlay,
+                        1f, 1f, 1f, 1f
+                );
+
+                poseStack.popPose();
+                buffer = bufferSource.getBuffer(renderType);
+            }
+            if (hasHat) {
+                var bakedModel = catHatModel.getBakedModel(catHatModel.getModelResource(animatable));
+
+                poseStack.pushPose();
+
+                poseStack.translate(0.0D, 0.68D, -0.6D);
+                float scale = 0.25f;
+                poseStack.scale(scale, scale, scale);
+
+
+                RenderType accessoryRenderType = RenderType.entityCutout(catHatModel.getTextureResource(animatable));
+
+                VertexConsumer accessoryBuffer = bufferSource.getBuffer(accessoryRenderType);
+
+                float interpolatedYaw = Mth.lerp(partialTick, animatable.yBodyRotO, animatable.yBodyRot);
+                poseStack.mulPose(Axis.YP.rotationDegrees(interpolatedYaw + 180f));
+
+
+                catHatRenderer.reRender(
+                        bakedModel,
+                        poseStack,
+                        bufferSource,
+                        animatable,
+                        accessoryRenderType,
+                        accessoryBuffer,
+                        partialTick,
+                        packedLight,
+                        packedOverlay,
+                        1f, 1f, 1f, 1f
+                );
+
+                poseStack.popPose();
+                buffer = bufferSource.getBuffer(renderType);
+            }
+
+            if (hasBow) {
+                ItemStack stack = animatable.getItemBySlot(EquipmentSlot.HEAD);
+                ItemStack redBow = Compatibilities.getCuriosItem(animatable.getPlayerBoundUuid(), ModItems.CAT_RED_BOW.get());
+                ItemStack pinkBow = Compatibilities.getCuriosItem(animatable.getPlayerBoundUuid(), ModItems.CAT_PINK_BOW.get());
+
+                if (!redBow.isEmpty()) {
+                    stack = redBow;
+                } else if (!pinkBow.isEmpty()) {
+                    stack = pinkBow;
+                }
+
+                if (stack.is(ModItems.CAT_RED_BOW.get())) {
+                    catBowModel.texture = AccessoryModel.HEAD_BOW_TEXTURES[1];
+                }
+                else catBowModel.texture = AccessoryModel.HEAD_BOW_TEXTURES[0];
+
+                var bakedModel = catBowModel.getBakedModel(catBowModel.getModelResource(animatable));
+
+                poseStack.pushPose();
+
+//                poseStack.translate(0.20D, 0.55D, -0.50D);
+//                poseStack.mulPose(Axis.YP.rotationDegrees(90f));
+//                poseStack.mulPose(Axis.XP.rotationDegrees(-10f));
+
+                poseStack.translate(0.045D, 0.59D, -0.65D);
+                poseStack.mulPose(Axis.YP.rotationDegrees(205f));
+                poseStack.mulPose(Axis.XP.rotationDegrees(-25f));
+
+                float scale = 0.30f;
+                poseStack.scale(scale, scale, scale);
+
+                RenderType accessoryRenderType = RenderType.entityCutout(catBowModel.getTextureResource(animatable));
+
+                VertexConsumer accessoryBuffer = bufferSource.getBuffer(accessoryRenderType);
+
+                float interpolatedYaw = Mth.lerp(partialTick, animatable.yBodyRotO, animatable.yBodyRot);
+                poseStack.mulPose(Axis.YP.rotationDegrees(interpolatedYaw + 180f));
+
+                catBowRenderer.reRender(
+                        bakedModel,
+                        poseStack,
+                        bufferSource,
+                        animatable,
+                        accessoryRenderType,
+                        accessoryBuffer,
+                        partialTick,
+                        packedLight,
+                        packedOverlay,
+                        1f, 1f, 1f, 1f
+                );
+
+                poseStack.popPose();
+                buffer = bufferSource.getBuffer(renderType);
+            }
+
+            if (hasSkullMask) {
+                var bakedModel = skullMaskModel.getBakedModel(skullMaskModel.getModelResource(animatable));
+
+                poseStack.pushPose();
+
+                poseStack.translate(0.0D, 0.427D, -0.57D);
+                float scale = 1f;
+                poseStack.scale(scale, scale, scale);
+
+
+                RenderType accessoryRenderType = RenderType.entityCutout(skullMaskModel.getTextureResource(animatable));
+
+                VertexConsumer accessoryBuffer = bufferSource.getBuffer(accessoryRenderType);
+
+                float interpolatedYaw = Mth.lerp(partialTick, animatable.yBodyRotO, animatable.yBodyRot);
+                poseStack.mulPose(Axis.YP.rotationDegrees(interpolatedYaw + 180f));
+
+
+                skullMaskRenderer.reRender(
+                        bakedModel,
+                        poseStack,
+                        bufferSource,
+                        animatable,
+                        accessoryRenderType,
+                        accessoryBuffer,
+                        partialTick,
+                        packedLight,
                         packedOverlay,
                         1f, 1f, 1f, 1f
                 );
@@ -1281,6 +1455,43 @@ public class WCAccesoriesLayer extends GeoRenderLayer<WCatEntity> {
                         bakedModel,
                         poseStack, bufferSource, animatable, accessoryRenderType, accessoryBuffer,
                         partialTick, light, packedOverlay,
+                        1f, 1f, 1f, 1f
+                );
+
+                poseStack.popPose();
+                buffer = bufferSource.getBuffer(renderType);
+            }
+
+            if (hasChestBow) {
+                catBowModel.texture = AccessoryModel.HEAD_BOW_TEXTURES[2];
+
+                var bakedModel = catBowModel.getBakedModel(catBowModel.getModelResource(animatable));
+
+                poseStack.pushPose();
+
+                poseStack.translate(0.0D, 0.14D, -0.480D);
+                poseStack.mulPose(Axis.YP.rotationDegrees(180f));
+                float scale = 0.45f;
+                poseStack.scale(scale, scale, scale);
+
+                RenderType accessoryRenderType = RenderType.entityCutout(catBowModel.getTextureResource(animatable));
+
+                VertexConsumer accessoryBuffer = bufferSource.getBuffer(accessoryRenderType);
+
+                float interpolatedYaw = Mth.lerp(partialTick, animatable.yBodyRotO, animatable.yBodyRot);
+                poseStack.mulPose(Axis.YP.rotationDegrees(interpolatedYaw + 180f));
+
+
+                catBowRenderer.reRender(
+                        bakedModel,
+                        poseStack,
+                        bufferSource,
+                        animatable,
+                        accessoryRenderType,
+                        accessoryBuffer,
+                        partialTick,
+                        packedLight,
+                        packedOverlay,
                         1f, 1f, 1f, 1f
                 );
 

@@ -21,9 +21,9 @@ public class ClanTerritoryEvents {
     public static void onBlockBreak(BlockEvent.BreakEvent event) {
         if (!(event.getPlayer() instanceof ServerPlayer player)) return;
 
-        if (!WCEServerConfig.Server.ENFORCE_TERRITORIES.get()) return;
+        if (!WCEServerConfig.SERVER.ENFORCE_TERRITORIES.get()) return;
 
-        if (!WCEServerConfig.Server.PROTECT_PLACE_AND_BREAK_BLOCKS.get()) return;
+        if (!WCEServerConfig.SERVER.PROTECT_PLACE_AND_BREAK_BLOCKS.get()) return;
 
         if (player.isCreative()) return;
 
@@ -40,9 +40,9 @@ public class ClanTerritoryEvents {
     public static void onBlockPlace(BlockEvent.EntityPlaceEvent event) {
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
 
-        if (!WCEServerConfig.Server.ENFORCE_TERRITORIES.get()) return;
+        if (!WCEServerConfig.SERVER.ENFORCE_TERRITORIES.get()) return;
 
-        if (!WCEServerConfig.Server.PROTECT_PLACE_AND_BREAK_BLOCKS.get()) return;
+        if (!WCEServerConfig.SERVER.PROTECT_PLACE_AND_BREAK_BLOCKS.get()) return;
 
         if (player.isCreative()) return;
 
@@ -60,9 +60,9 @@ public class ClanTerritoryEvents {
     public static void onRightClick(PlayerInteractEvent.RightClickBlock event) {
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
 
-        if (!WCEServerConfig.Server.ENFORCE_TERRITORIES.get()) return;
+        if (!WCEServerConfig.SERVER.ENFORCE_TERRITORIES.get()) return;
 
-        if (!WCEServerConfig.Server.PROTECT_CONTAINERS.get()) return;
+        if (!WCEServerConfig.SERVER.PROTECT_CONTAINERS.get()) return;
 
         ChunkPos pos = new ChunkPos(event.getPos());
         if (isInEnemyTerritory(player, pos)) {

@@ -8,6 +8,7 @@ import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.sounds.SoundSource;
 import net.snowteb.warriorcats_events.WCEClient;
 import net.snowteb.warriorcats_events.entity.ModEntities;
+import net.snowteb.warriorcats_events.entity.custom.WCGenetics;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.sound.ModSounds;
 
@@ -48,8 +49,10 @@ public class MemberScrollList extends AbstractSelectionList<MemberScrollList.Mem
         this.addEntry(new MemberEntry(name, id));
     }
 
-    public void addOption(String name, UUID id, int varID, boolean usingVar) {
-        this.addEntry(new MemberEntry(name, id, varID, usingVar));
+    public void addOption(String name, UUID id, int varID, boolean usingVar,
+                          boolean onGeneticalSkin, WCGenetics genetics, WCGenetics chimeraGens,
+                          WCGenetics.GeneticalVariants variants, WCGenetics.GeneticalChimeraVariants chimeraVariants) {
+        this.addEntry(new MemberEntry(name, id, varID, usingVar, onGeneticalSkin, genetics, chimeraGens, variants, chimeraVariants));
     }
 
     public MemberEntry getSelectedEntry() {
@@ -69,7 +72,8 @@ public class MemberScrollList extends AbstractSelectionList<MemberScrollList.Mem
             this.id = id;
         }
 
-        public MemberEntry(String name, UUID id, int varID, boolean usingVariant) {
+        public MemberEntry(String name, UUID id, int varID, boolean usingVariant, boolean onGeneticalSkin, WCGenetics genetics, WCGenetics chimeraGens,
+                           WCGenetics.GeneticalVariants variants, WCGenetics.GeneticalChimeraVariants chimeraVariants) {
             this.name = name;
             this.id = id;
             this.varID = varID;
@@ -84,6 +88,12 @@ public class MemberScrollList extends AbstractSelectionList<MemberScrollList.Mem
                 this.wCatEntity.yHeadRot = 0;
                 this.wCatEntity.yBodyRot = 0;
                 this.wCatEntity.setXRot(0);
+
+                this.wCatEntity.setOnGeneticalSkin(onGeneticalSkin);
+                this.wCatEntity.setGenetics(genetics);
+                this.wCatEntity.setChimeraGenetics(chimeraGens);
+                this.wCatEntity.setGeneticalVariants(variants);
+                this.wCatEntity.setGeneticalVariantsChimera(chimeraVariants);
             }
         }
 
@@ -118,8 +128,6 @@ public class MemberScrollList extends AbstractSelectionList<MemberScrollList.Mem
             );
 
             if (usingVariant) {
-
-
 
                 int imageX = pLeft + (pWidth - 15);
                 int centerY = pTop + 14;

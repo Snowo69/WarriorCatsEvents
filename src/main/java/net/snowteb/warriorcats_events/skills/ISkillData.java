@@ -24,4 +24,7 @@ public interface ISkillData {
     void setArmorLevel(int level);
 
     void copyFrom(ISkillData other);
+
+    boolean isClimbUnlocked();
+    void setClimbUnlocked(boolean climbUnlocked);
 }

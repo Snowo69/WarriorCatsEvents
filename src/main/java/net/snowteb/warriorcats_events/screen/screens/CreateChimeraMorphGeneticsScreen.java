@@ -201,6 +201,8 @@ public class CreateChimeraMorphGeneticsScreen extends Screen {
                 btn -> {
                     closing = true;
                     animationTime = 0f;
+                    WCEClient.nextMenuSound();
+
                 }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
                 60, 20, 0.8f, 0xFFFFFFFF
         );

@@ -99,6 +99,7 @@
   "effect.warriorcats_events.eagle_escapist": "Eagle Escapist",
   "effect.warriorcats_events.sharp_scent": "Sharp Nose",
   "effect.warriorcats_events.sharp_sight": "Sharp Sight",
+  "effect.warriorcats_events.thirsty": "Thirsty",
 
   "entity.warriorcats_events.warrior_cat": "Wild Cat",
   "entity.warriorcats_events.mouse": "Mouse",
@@ -221,8 +222,21 @@
   "block.warriorcats_events.pebbles": "Pebbles",
 
   "item.warriorcats_events.moss_ball": "Moss Ball",
-  "entity.warriorcats_events.moss_ball": "Moss Ball"
+  "entity.warriorcats_events.moss_ball": "Moss Ball",
 
+  "item.warriorcats_events.cat_hat": "Cat Hat",
+  "item.warriorcats_events.head_pink_bow": "Head Pink Bow",
+  "item.warriorcats_events.head_red_bow": "Head Red Bow",
+  "item.warriorcats_events.black_bow": "Black Bow",
+  "item.warriorcats_events.skull_mask": "Skull Mask",
 
-
+  "block.warriorcats_events.white_kittypet_bowl": "White Kittypet Bowl",
+  "block.warriorcats_events.orange_kittypet_bowl": "Orange Kittypet Bowl",
+  "block.warriorcats_events.magenta_kittypet_bowl": "Magenta Kittypet Bowl",
+  "block.warriorcats_events.blue_kittypet_bowl": "Blue Kittypet Bowl",
+  "block.warriorcats_events.yellow_kittypet_bowl": "Yellow Kittypet Bowl",
+  "block.warriorcats_events.lime_kittypet_bowl": "Lime Kittypet Bowl",
+  "block.warriorcats_events.pink_kittypet_bowl": "Pink Kittypet Bowl",
+  "block.warriorcats_events.black_kittypet_bowl": "Black Kittypet Bowl",
+  "block.warriorcats_events.red_kittypet_bowl": "Red Kittypet Bowl"
 }

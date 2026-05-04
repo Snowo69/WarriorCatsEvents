@@ -69,6 +69,9 @@ public class MossBallEntity extends ThrowableItemProjectile {
     private static final EntityDataAccessor<Integer> WATER =
             SynchedEntityData.defineId(MossBallEntity.class, EntityDataSerializers.INT);
 
+    private static final EntityDataAccessor<Integer> HONEY =
+            SynchedEntityData.defineId(MossBallEntity.class, EntityDataSerializers.INT);
+
     public MossBallEntity(EntityType<? extends ThrowableItemProjectile> type, Level level) {
         super(type, level);
     }
@@ -89,15 +92,23 @@ public class MossBallEntity extends ThrowableItemProjectile {
         this.entityData.define(LIFE, 0);
         this.entityData.define(STACK, new ItemStack(ModItems.MOSS_BALL.get()));
         this.entityData.define(WATER, 0);
+        this.entityData.define(HONEY, 0);
     }
 
     public int getWater() {
-        if (!this.entityData.hasItem(WATER)) return 0;
         return this.entityData.get(WATER);
     }
 
     public void setWater(int water) {
         this.entityData.set(WATER, water);
+    }
+
+    public int getHoney() {
+        return this.entityData.get(HONEY);
+    }
+
+    public void setHoney(int honey) {
+        this.entityData.set(HONEY, honey);
     }
 
     @Override
@@ -108,10 +119,18 @@ public class MossBallEntity extends ThrowableItemProjectile {
         } else {
             if (this.tickCount % (10 - (this.getWater() / 2)) == 0 && this.getWater() > 0) {
 
-                this.level().addParticle(ParticleTypes.FALLING_WATER,
+                this.level().addParticle(ParticleTypes.FALLING_DRIPSTONE_WATER,
                         this.position().x, this.position().y + 0.2, this.position().z,
                         0.0D, 0.0D, 0.0D);
 
+
+            }
+
+            if (this.tickCount % (10 - (this.getHoney() / 2)) == 0 && this.getHoney() > 0) {
+
+                this.level().addParticle(ParticleTypes.FALLING_HONEY,
+                        this.position().x, this.position().y + 0.1, this.position().z,
+                        0.0D, 0.0D, 0.0D);
 
             }
         }
@@ -219,7 +238,9 @@ public class MossBallEntity extends ThrowableItemProjectile {
 
         float waterFactor = Mth.clamp(this.getWater() / 10f, 0f, 1f);
 
-        return Math.max(0.55f * (1 - waterFactor), 0.2f);
+        float constant = 0.55f;
+        if (this.getHoney() > 0) constant = 0.85f;
+        return Math.max(constant * (1 - waterFactor), 0.2f);
     }
 
     public int getLife() {
@@ -248,6 +269,7 @@ public class MossBallEntity extends ThrowableItemProjectile {
         pCompound.putInt("Life", this.getLife());
         pCompound.put("Stack", this.getItem().save(new CompoundTag()));
         pCompound.putInt("Water", this.getWater());
+        pCompound.putInt("Honey", this.getHoney());
     }
 
     @Override
@@ -271,6 +293,10 @@ public class MossBallEntity extends ThrowableItemProjectile {
         if (pCompound.contains("Water")) {
             this.setWater(pCompound.getInt("Water"));
         }
+
+        if (pCompound.contains("Honey")) {
+            this.setHoney(pCompound.getInt("Honey"));
+        }
     }
 
     @Override
@@ -278,10 +304,11 @@ public class MossBallEntity extends ThrowableItemProjectile {
 
         if ((this.level() instanceof ServerLevel sLevel)) {
             if (pHand == InteractionHand.MAIN_HAND) {
-                if (!pPlayer.isUsingItem()){
+                if (!pPlayer.isUsingItem() && this.getLife() > 10){
                     ItemStack stack = this.getItem();
 
                     MossBallItem.setWaterLevel(stack, this.getWater());
+                    MossBallItem.setHoneyLevel(stack, this.getHoney());
 
                     if (!pPlayer.addItem(stack)) {
                         pPlayer.drop(stack, false);
@@ -313,7 +340,7 @@ public class MossBallEntity extends ThrowableItemProjectile {
             if (entity instanceof LivingEntity livingEntity) {
                 Vec3 direction = this.position().subtract(livingEntity.position()).normalize();
 
-                double strength = 0.5;
+                double strength = 0.7;
                 if (livingEntity instanceof WCatEntity cat) {
                     float chance = cat.getRandom().nextFloat() * 0.4f;
                     strength = 0.1 + chance;
@@ -328,6 +355,14 @@ public class MossBallEntity extends ThrowableItemProjectile {
                 this.setBounce(1.0f);
 
                 this.setLife(Mth.clamp(this.getLife() - 100, 0, this.getLife()));
+
+                if (!this.level().isClientSide() && !this.isInFluidType()) {
+                    ServerLevel level = (ServerLevel) this.level();
+                    level.playSound(this, this.blockPosition(),
+                            SoundEvents.SLIME_JUMP_SMALL, SoundSource.NEUTRAL,
+                            this.getBounce() * .4f, this.getBounce() * 1.3f
+                    );
+                }
             }
         }
 
@@ -354,8 +389,21 @@ public class MossBallEntity extends ThrowableItemProjectile {
                 this.setBounce(1.0f);
 
                 this.setLife(Mth.clamp(this.getLife() - 100, 0, this.getLife()));
+                this.markHurt();
+
+                if (!this.level().isClientSide() && !this.isInFluidType()) {
+                    ServerLevel level = (ServerLevel) this.level();
+                    level.playSound(this, this.blockPosition(),
+                            SoundEvents.SLIME_JUMP_SMALL, SoundSource.NEUTRAL,
+                            this.getBounce() * .4f, this.getBounce() * 1.3f
+                    );
+                }
             }
         }
     }
 
+    @Override
+    public void onSyncedDataUpdated(EntityDataAccessor<?> pKey) {
+        super.onSyncedDataUpdated(pKey);
+    }
 }

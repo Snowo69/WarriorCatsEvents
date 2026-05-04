@@ -27,6 +27,10 @@ public class HerbsRecipe implements Recipe<RecipeWrapper> {
         this.result = result;
     }
 
+    @Override
+    public NonNullList<Ingredient> getIngredients() {
+        return ingredients;
+    }
 
     @Override
     public boolean matches(RecipeWrapper pContainer, Level pLevel) {
@@ -86,7 +90,7 @@ public class HerbsRecipe implements Recipe<RecipeWrapper> {
 
     @Override
     public ItemStack getResultItem(RegistryAccess pRegistryAccess) {
-        return result;
+        return result.copy();
     }
 
     @Override

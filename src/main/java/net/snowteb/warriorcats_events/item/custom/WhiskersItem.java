@@ -25,15 +25,17 @@ public class WhiskersItem extends ItemWithToolTip {
     @Override
     public InteractionResult interactLivingEntity(ItemStack pStack, Player pPlayer, LivingEntity pInteractionTarget, InteractionHand pUsedHand) {
 
+//        if (true) {
+//            Player target = pPlayer;
         if (pInteractionTarget instanceof Player target) {
             if (!pPlayer.level().isClientSide()) {
 
                 String name = target.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
                         .map(WCEPlayerData::getMorphName).orElse("Unnamed");
                 String clanName = target.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
-                        .map(WCEPlayerData::getClanName).orElse("No clan");
-                int gender = target.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
-                        .map(WCEPlayerData::getGenderData).orElse(2);
+                        .map(cap -> cap.getClanName(pPlayer.level())).orElse("No clan");
+                String gender = target.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+                        .map(WCEPlayerData::getGenderText).orElse("Unspecified");
 
                 String mateName = (target.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
                         .map(WCEPlayerData::getMateName).orElse(Component.literal("No mate"))).getString();
@@ -47,8 +49,11 @@ public class WhiskersItem extends ItemWithToolTip {
                 int myKitCooldown = pPlayer.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
                         .map(WCEPlayerData::getPlayerKitsCooldown).orElse(1);
 
+                String bio = (target.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+                        .map(WCEPlayerData::getCharacterBio).orElse(""));
+
                 WCEPlayerData.PackedData targetData =
-                        new WCEPlayerData.PackedData(name, clanName, gender, mateName, age, targetKitCooldown);
+                        new WCEPlayerData.PackedData(name, clanName, gender, mateName, age, targetKitCooldown, bio);
 
                 UUID targetUUID = target.getUUID();
 
@@ -56,7 +61,7 @@ public class WhiskersItem extends ItemWithToolTip {
                     ModPackets.sendToPlayer(new S2CSyncClanDataPacket(data), (ServerPlayer) pPlayer);
                 });
 
-                ModPackets.sendToPlayer(new OpenPlayerCatDataScreenPacket(targetData, targetUUID, myKitCooldown), (ServerPlayer) pPlayer);
+                ModPackets.sendToPlayer(new OpenPlayerCatDataScreenPacket(targetData, targetUUID, myKitCooldown, false), (ServerPlayer) pPlayer);
 
             }
 

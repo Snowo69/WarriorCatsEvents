@@ -45,6 +45,16 @@ public class ModBlockLootTables extends BlockLootSubProvider {
 
         this.dropSelf(ModBlocks.PEBBLES.get());
 
+        this.dropSelf(ModBlocks.WHITE_KITTYPET_BOWL.get());
+        this.dropSelf(ModBlocks.ORANGE_KITTYPET_BOWL.get());
+        this.dropSelf(ModBlocks.MAGENTA_KITTYPET_BOWL.get());
+        this.dropSelf(ModBlocks.BLUE_KITTYPET_BOWL.get());
+        this.dropSelf(ModBlocks.YELLOW_KITTYPET_BOWL.get());
+        this.dropSelf(ModBlocks.LIME_KITTYPET_BOWL.get());
+        this.dropSelf(ModBlocks.PINK_KITTYPET_BOWL.get());
+        this.dropSelf(ModBlocks.BLACK_KITTYPET_BOWL.get());
+        this.dropSelf(ModBlocks.RED_KITTYPET_BOWL.get());
+
         //DOCK
         {this.add(ModBlocks.DOCK.get(), block -> this.applyExplosionDecay(
                 block, LootTable.lootTable().withPool(LootPool.lootPool().when(

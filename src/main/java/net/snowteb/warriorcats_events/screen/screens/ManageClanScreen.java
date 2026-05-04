@@ -4,6 +4,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
@@ -12,10 +13,13 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.level.ChunkPos;
+import net.snowteb.warriorcats_events.WCEClient;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.client.ClanInfo;
+import net.snowteb.warriorcats_events.client.ClientPacketHandles;
 import net.snowteb.warriorcats_events.client.ClientTerritoryData;
 import net.snowteb.warriorcats_events.entity.ModEntities;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
@@ -24,9 +28,11 @@ import net.snowteb.warriorcats_events.network.packet.c2s.clan.CtSClaimTerritory;
 import net.snowteb.warriorcats_events.network.packet.c2s.clan.CtSManageClanMemberPacket;
 import net.snowteb.warriorcats_events.network.packet.c2s.clan.CtSUnclaimTerritory;
 import net.snowteb.warriorcats_events.managers.ClanSymbol;
+import net.snowteb.warriorcats_events.network.packet.c2s.clan.RenameClanPacket;
 import net.snowteb.warriorcats_events.screen.widgets.GradientButton;
 import net.snowteb.warriorcats_events.screen.widgets.MemberScrollList;
 import net.snowteb.warriorcats_events.screen.widgets.ModButton;
+import net.snowteb.warriorcats_events.sound.ModSounds;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 
@@ -59,6 +65,12 @@ public class ManageClanScreen extends Screen {
     private ChunkPos currentChunkPos;
     private boolean isInOwnTerritory = false;
     private boolean isTheCore = false;
+
+    private ModButton renameClan;
+
+    private EditBox renameBox;
+
+    private Button backButton;
 
 
     public static final Quaternionf rotation = new Quaternionf(0.0F, 0.0F, 0.0F, 0.0F);
@@ -194,6 +206,26 @@ public class ManageClanScreen extends Screen {
             }
         }
 
+        renameClan = new ModButton(
+                50,
+                10,
+                60, 10,
+                Component.literal("Rename"),
+                btn -> {
+                    drawRenameMenu();
+                },
+                new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                60, 10, 0.8f, true
+        );
+
+        backButton = Button.builder(
+                Component.literal("Back"),
+                btn -> {
+                    this.onClose();
+                    WCEClient.playLocalSound(ModSounds.MENU_ACCEPT.get(), SoundSource.AMBIENT, 0.2f, 1.0f);
+                    ClientPacketHandles.openSpecificClan(clanInfo.name, clanInfo.uuid);
+                }
+        ).bounds(10, this.height - 25, 60, 15).build();
 
         drawMainMenu();
 
@@ -347,35 +379,6 @@ public class ManageClanScreen extends Screen {
 
             pGuiGraphics.drawCenteredString(font, selectedMember.getPerms(), infoX, infoY - 15, 0xAAAAAA);
 
-
-            /*
-            float scale = 1.2f;
-            String name = selectedMember.getPlayerMorphName();
-
-            int x = infoX - 65;
-            int y = infoY - 30;
-
-            PoseStack poseStack = new PoseStack();
-            poseStack.translate(x, y, 0);
-            poseStack.scale(scale, scale, 1f);
-
-            font.drawInBatch(
-                    name,
-                    0,
-                    0,
-                    0xFFFFFF,
-                    false,
-                    poseStack.last().pose(),
-                    pGuiGraphics.bufferSource(),
-                    Font.DisplayMode.NORMAL,
-                    0,
-                    15728880
-            );
-
-            pGuiGraphics.flush();
-            */
-
-
             infoY += 50;
 
             if (currentMenu.equals("main")) {
@@ -430,7 +433,7 @@ public class ManageClanScreen extends Screen {
 
         }
 
-        if (currentMenu.equals("claimChunk") || currentMenu.equals("unclaimChunk")) {
+        if (currentMenu.equals("claimChunk") || currentMenu.equals("unclaimChunk") || currentMenu.equals("renameClan")) {
 
             pGuiGraphics.fill(centerX - 70, centerY - 80, centerX + 70, centerY + 65, 0, 0xFF000017);
             pGuiGraphics.fillGradient(centerX - 70, centerY - 80, centerX + 70, centerY + 65, 0x8800104C, 0);
@@ -446,9 +449,11 @@ public class ManageClanScreen extends Screen {
                         centerX, centerY - 60, 0xFFFFFF);
 
                 pGuiGraphics.drawCenteredString(this.font,
-                        Component.literal("Cost: 300XP").withStyle(ChatFormatting.GRAY),
+                        Component.literal("Cost: 450-850XP").withStyle(ChatFormatting.GRAY),
                         centerX, centerY - 40, 0xFFFFFF);
-            } else {
+            }
+
+            if (currentMenu.equals("unclaimChunk")){
                 String message = "";
                 if (isInOwnTerritory) {
                     if (isTheCore) {
@@ -461,6 +466,20 @@ public class ManageClanScreen extends Screen {
                     message = "You cannot unclaim territory you don't own.";
                     saveAndUnclaim.visible = false;
                 }
+                int y = 60;
+
+                List<FormattedCharSequence> wrapped = this.font.split(FormattedText.of(message), 120);
+                for (FormattedCharSequence subLine : wrapped) {
+
+                    pGuiGraphics.drawCenteredString(this.font,subLine, centerX, y, 0xFFFFFFFF);
+
+                    y += this.font.lineHeight;
+                }
+            }
+
+            if (currentMenu.equals("renameClan")) {
+                String message = "Renaming clan";
+
                 int y = 60;
 
                 List<FormattedCharSequence> wrapped = this.font.split(FormattedText.of(message), 120);
@@ -488,8 +507,11 @@ public class ManageClanScreen extends Screen {
         this.addRenderableWidget(changePerms);
         this.addRenderableWidget(membersList);
 
+        this.addRenderableWidget(renameClan);
+
         this.addRenderableWidget(claimTerritory);
         this.addRenderableWidget(unclaimTerritory);
+        this.addRenderableWidget(backButton);
     }
 
     private void drawChangeRankMenu() {
@@ -790,6 +812,58 @@ public class ManageClanScreen extends Screen {
         this.addRenderableWidget(closeClaimTerritory);
         this.addRenderableWidget(territoryName);
 
+    }
+
+    private void drawRenameMenu() {
+//        this.clearWidgets();
+        currentMenu = "renameClan";
+
+        renameClan.active = false;
+        claimTerritory.active = false;
+        unclaimTerritory.active = false;
+
+        int centerY = this.height / 2;
+        int centerX = this.width / 2;
+
+        this.addRenderableWidget(new ModButton(
+                centerX - 65,
+                centerY + 40,
+                60, 15,
+                Component.literal("Back"),
+                btn -> {
+                    drawMainMenu();
+                    renameClan.active = true;
+                    claimTerritory.active = true;
+                    unclaimTerritory.active = true;
+                },
+                new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                80, 20
+        ));
+
+        this.addRenderableWidget(new ModButton(
+                centerX + 5,
+                centerY + 40,
+                60, 15,
+                Component.literal("Save"),
+                btn -> {
+                    if (renameBox != null) {
+                        ModPackets.sendToServer(new RenameClanPacket(renameBox.getValue()));
+                        this.onClose();
+                    }
+                },
+                new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                80, 20
+        ));
+
+        renameBox = new EditBox(this.font, centerX - 50, centerY,
+                100, 20,
+                Component.literal("Rename"));
+
+        renameBox.setHint(Component.literal("New clan name").withStyle(ChatFormatting.DARK_GRAY));
+
+        renameBox.setMaxLength(20);
+
+        this.addRenderableWidget(renameBox);
     }
 
     private void saveAndClaimChunk() {

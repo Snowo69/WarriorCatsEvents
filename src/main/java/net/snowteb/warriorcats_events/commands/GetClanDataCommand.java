@@ -32,14 +32,13 @@ public class GetClanDataCommand {
             String genderText = switch (cap.getGenderData()) {
                 case 0 -> "Male";
                 case 1 -> "Female";
-                case 2 -> "Non binary";
-                default -> "Unspecified";
+                default -> cap.getGenderText();
             };
 
             source.sendSuccess(
                     () -> Component.literal("Showing clan data from ").append(targetToShow.getName().copy()).append(Component.literal(
                                     "\n==================" +
-                                    "\nClan: " + cap.getClanName() +
+                                    "\nClan: " + cap.getClanName(targetToShow.serverLevel()) +
                                     "\nClanUUID: " + cap.getCurrentClanUUID() +
                                     "\nCharacter Name: " + cap.getMorphName() +
                                     "\nMate: " + cap.getMateName().copy() +

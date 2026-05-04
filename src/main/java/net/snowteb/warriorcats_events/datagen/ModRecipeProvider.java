@@ -112,14 +112,14 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .save(pWriter);
 
         //
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.TRAVELING_HERBS.get(), 1)
-                .requires(ModItems.SORREL.get())
-                .requires(ModItems.BURNET.get())
-                .requires(ModItems.DAISY.get())
-                .requires(ModItems.CHAMOMILE.get())
-                .requires(ModItems.DOCK_LEAVES.get())
-                .unlockedBy(getHasName(ModItems.DOCK_LEAVES.get()), has(ModItems.DOCK_LEAVES.get()))
-                .save(pWriter);
+//        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.TRAVELING_HERBS.get(), 1)
+//                .requires(ModItems.SORREL.get())
+//                .requires(ModItems.BURNET.get())
+//                .requires(ModItems.DAISY.get())
+//                .requires(ModItems.CHAMOMILE.get())
+//                .requires(ModItems.DOCK_LEAVES.get())
+//                .unlockedBy(getHasName(ModItems.DOCK_LEAVES.get()), has(ModItems.DOCK_LEAVES.get()))
+//                .save(pWriter);
         //
 
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.WARRIORNAMERANDOMIZER.get(), 1)
@@ -155,14 +155,14 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .save(pWriter);
 
         //
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.FRESHKILL_AND_HERBS_BUNDLE.get(), 2)
-                .requires(ModTags.Items.HERBS)
-                .requires(ModTags.Items.PREY)
-                .requires(ModTags.Items.HERBS)
-                .requires(ModTags.Items.PREY)
-                .requires(ModItems.DOCK_LEAVES.get())
-                .unlockedBy("has_item", has(ModTags.Items.PREY))
-                .save(pWriter);
+//        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.FRESHKILL_AND_HERBS_BUNDLE.get(), 2)
+//                .requires(ModTags.Items.HERBS)
+//                .requires(ModTags.Items.PREY)
+//                .requires(ModTags.Items.HERBS)
+//                .requires(ModTags.Items.PREY)
+//                .requires(ModItems.DOCK_LEAVES.get())
+//                .unlockedBy("has_item", has(ModTags.Items.PREY))
+//                .save(pWriter);
 
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.DOCK_POULTICE.get(), 1)
                 .requires(ModItems.DOCK_LEAVES.get())
@@ -643,6 +643,91 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .requires(ModTags.Items.WCE_FEATHERS)
                 .unlockedBy("has_item", has(ModTags.Items.FEATHERS))
                 .save(pWriter, new ResourceLocation(WarriorCatsEvents.MODID, "feather_from_wce_feather"));
+
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.SKULL_MASK.get())
+                .pattern(" B ")
+                .pattern("BAB")
+                .pattern(" B ")
+                .define('A', ModTags.Items.SKULLS)
+                .define('B', Items.BONE)
+                .unlockedBy("has_item", has(Items.BONE))
+                .save(pWriter);
+
+
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.WHITE_KITTYPET_BOWL.get(), 1)
+                .pattern("   ")
+                .pattern("BAB")
+                .pattern("BBB")
+                .define('A', Items.IRON_INGOT)
+                .define('B', Items.WHITE_TERRACOTTA)
+                .unlockedBy("has_item", has(Items.IRON_INGOT))
+                .save(pWriter);
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.ORANGE_KITTYPET_BOWL.get(), 1)
+                .pattern("   ")
+                .pattern("BAB")
+                .pattern("BBB")
+                .define('A', Items.IRON_INGOT)
+                .define('B', Items.ORANGE_TERRACOTTA)
+                .unlockedBy("has_item", has(Items.IRON_INGOT))
+                .save(pWriter);
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.MAGENTA_KITTYPET_BOWL.get(), 1)
+                .pattern("   ")
+                .pattern("BAB")
+                .pattern("BBB")
+                .define('A', Items.IRON_INGOT)
+                .define('B', Items.MAGENTA_TERRACOTTA)
+                .unlockedBy("has_item", has(Items.IRON_INGOT))
+                .save(pWriter);
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.BLUE_KITTYPET_BOWL.get(), 1)
+                .pattern("   ")
+                .pattern("BAB")
+                .pattern("BBB")
+                .define('A', Items.IRON_INGOT)
+                .define('B', Items.BLUE_TERRACOTTA)
+                .unlockedBy("has_item", has(Items.IRON_INGOT))
+                .save(pWriter);
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.YELLOW_KITTYPET_BOWL.get(), 1)
+                .pattern("   ")
+                .pattern("BAB")
+                .pattern("BBB")
+                .define('A', Items.IRON_INGOT)
+                .define('B', Items.YELLOW_TERRACOTTA)
+                .unlockedBy("has_item", has(Items.IRON_INGOT))
+                .save(pWriter);
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.LIME_KITTYPET_BOWL.get(), 1)
+                .pattern("   ")
+                .pattern("BAB")
+                .pattern("BBB")
+                .define('A', Items.IRON_INGOT)
+                .define('B', Items.LIME_TERRACOTTA)
+                .unlockedBy("has_item", has(Items.IRON_INGOT))
+                .save(pWriter);
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.PINK_KITTYPET_BOWL.get(), 1)
+                .pattern("   ")
+                .pattern("BAB")
+                .pattern("BBB")
+                .define('A', Items.IRON_INGOT)
+                .define('B', Items.PINK_TERRACOTTA)
+                .unlockedBy("has_item", has(Items.IRON_INGOT))
+                .save(pWriter);
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.BLACK_KITTYPET_BOWL.get(), 1)
+                .pattern("   ")
+                .pattern("BAB")
+                .pattern("BBB")
+                .define('A', Items.IRON_INGOT)
+                .define('B', Items.BLACK_TERRACOTTA)
+                .unlockedBy("has_item", has(Items.IRON_INGOT))
+                .save(pWriter);
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.RED_KITTYPET_BOWL.get(), 1)
+                .pattern("   ")
+                .pattern("BAB")
+                .pattern("BBB")
+                .define('A', Items.IRON_INGOT)
+                .define('B', Items.RED_TERRACOTTA)
+                .unlockedBy("has_item", has(Items.IRON_INGOT))
+                .save(pWriter);
 
 //
 //        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.MOSS_BALL.get(), 2)

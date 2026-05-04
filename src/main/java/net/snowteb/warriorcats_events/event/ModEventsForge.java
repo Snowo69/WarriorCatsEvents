@@ -29,10 +29,13 @@ import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.alchemy.PotionUtils;
+import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
@@ -45,16 +48,15 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.block.ModBlocks;
-import net.snowteb.warriorcats_events.block.custom.MakeshiftBedBlock;
-import net.snowteb.warriorcats_events.block.custom.MossBedBlock;
-import net.snowteb.warriorcats_events.block.custom.PreyBonesBlock;
-import net.snowteb.warriorcats_events.block.custom.StoneCraftingTable;
+import net.snowteb.warriorcats_events.block.custom.*;
+import net.snowteb.warriorcats_events.block.entity.KittypetBowlBlockEntity;
 import net.snowteb.warriorcats_events.clan.ClanData;
 import net.snowteb.warriorcats_events.clan.WCEPlayerData;
 import net.snowteb.warriorcats_events.clan.WCEPlayerDataProvider;
 import net.snowteb.warriorcats_events.client.LeapClientState;
 import net.snowteb.warriorcats_events.effect.ModEffects;
 import net.snowteb.warriorcats_events.entity.custom.EagleEntity;
+import net.snowteb.warriorcats_events.entity.custom.MossBallEntity;
 import net.snowteb.warriorcats_events.entity.custom.WCatAvoidGoal;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.item.ModFoodHerbs;
@@ -68,6 +70,7 @@ import net.snowteb.warriorcats_events.util.ModTags;
 import net.snowteb.warriorcats_events.zconfig.WCEServerConfig;
 import tocraft.walkers.api.PlayerShape;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -84,6 +87,31 @@ public class ModEventsForge {
 
         BlockPos pos = event.getPos();
         BlockState blockState = level.getBlockState(pos);
+
+        if ((level.getBlockState(pos).getBlock() instanceof KittyPetBowl bowlBlock)) {
+            if (player.getItemInHand(hand).is(Items.WATER_BUCKET) && !player.isShiftKeyDown()) {
+                boolean handled = false;
+                if (!level.isClientSide()) {
+                    if (level.getBlockEntity(pos) instanceof KittypetBowlBlockEntity bowl) {
+
+                        if (bowl.canRefillWater()) {
+                            bowl.performFillWater((ServerLevel) level, bowlBlock.getCenterOfBowl(pos, blockState), false);
+
+                            if (!player.getAbilities().instabuild) {
+                                player.setItemInHand(event.getHand(), new ItemStack(Items.BUCKET));
+                            }
+
+                            bowlBlock.updateBlockStateFromEntity(bowl, blockState, level, pos);
+                            handled = true;
+                        }
+                    }
+                }
+
+                if (handled) event.setCancellationResult(InteractionResult.SUCCESS);
+                else  event.setCancellationResult(InteractionResult.CONSUME);
+                event.setCanceled(true);
+            }
+        }
 
         if ((blockState.getBlock() instanceof StoneCraftingTable table)) {
             if ((PlayerShape.getCurrentShape(player) instanceof Animal)) {
@@ -278,56 +306,61 @@ public class ModEventsForge {
     public static void onFoodEaten(LivingEntityUseItemEvent.Finish event) {
         if (!(event.getEntity() instanceof Player player)) return;
         ItemStack stack = event.getItem();
-        if (!stack.isEdible()) return;
+
         if (player.level().isClientSide()) return;
 
         player.getCapability(PlayerThirstProvider.PLAYER_THIRST).ifPresent(thirst -> {
 
-            if (stack.getItem().getFoodProperties() == ModFoodHerbs.SORREL) {
-                int randomThirst = 2 + player.getRandom().nextInt(3);
-                thirst.addThirst(randomThirst);
-            }
-
-            if (stack.getItem().getFoodProperties() == ModFoodHerbs.TRAVELING_HERBS) {
-                thirst.addThirst(4);
-            }
-
-            if (stack.getItem().getFoodProperties() == ModFoodHerbs.MOUSE_FOOD) {
-                int randomThirst = 1 + player.getRandom().nextInt(2);
-                thirst.addThirst(randomThirst);
-            }
-
-            if (stack.getItem().getFoodProperties() == ModFoodHerbs.SQUIRREL_FOOD) {
-                int randomThirst = 2 + player.getRandom().nextInt(2);
-                thirst.addThirst(randomThirst);
-            }
-
-            if (stack.getItem().getFoodProperties() == ModFoodHerbs.PIGEON_FOOD) {
-                int randomThirst = 2 + player.getRandom().nextInt(2);
-                thirst.addThirst(randomThirst);
-            }
-
-            if (WCEServerConfig.SERVER.VANILLA_MEAT_BONUS.get()) {
-                if (stack.is(Items.CHICKEN) || stack.is(Items.PORKCHOP)
-                        || stack.is(Items.BEEF) || stack.is(Items.MUTTON)
-                        || stack.is(Items.RABBIT) || stack.is(Items.SALMON)
-                        || stack.is(Items.COD) || stack.is(Items.TROPICAL_FISH)
-                        || stack.is(Items.SWEET_BERRIES)) {
-                    int randomThirst = 1 + player.getRandom().nextInt(1);
+            if (stack.isEdible()) {
+                if (stack.getItem().getFoodProperties() == ModFoodHerbs.SORREL) {
+                    int randomThirst = 2 + player.getRandom().nextInt(3);
                     thirst.addThirst(randomThirst);
-                    if (!stack.is(Items.SWEET_BERRIES)) {
-                        player.getFoodData().eat(3, 0.84f);
+                }
+
+                if (stack.getItem().getFoodProperties() == ModFoodHerbs.TRAVELING_HERBS) {
+                    thirst.addThirst(4);
+                }
+
+                if (stack.getItem().getFoodProperties() == ModFoodHerbs.MOUSE_FOOD) {
+                    int randomThirst = 1 + player.getRandom().nextInt(2);
+                    thirst.addThirst(randomThirst);
+                }
+
+                if (stack.getItem().getFoodProperties() == ModFoodHerbs.SQUIRREL_FOOD) {
+                    int randomThirst = 2 + player.getRandom().nextInt(2);
+                    thirst.addThirst(randomThirst);
+                }
+
+                if (stack.getItem().getFoodProperties() == ModFoodHerbs.PIGEON_FOOD) {
+                    int randomThirst = 2 + player.getRandom().nextInt(2);
+                    thirst.addThirst(randomThirst);
+                }
+
+                if (WCEServerConfig.SERVER.VANILLA_MEAT_BONUS.get()) {
+                    if (stack.is(Items.CHICKEN) || stack.is(Items.PORKCHOP)
+                            || stack.is(Items.BEEF) || stack.is(Items.MUTTON)
+                            || stack.is(Items.RABBIT) || stack.is(Items.SALMON)
+                            || stack.is(Items.COD) || stack.is(Items.TROPICAL_FISH)
+                            || stack.is(Items.SWEET_BERRIES)) {
+                        int randomThirst = 1 + player.getRandom().nextInt(1);
+                        thirst.addThirst(randomThirst);
+                        if (!stack.is(Items.SWEET_BERRIES)) {
+                            player.getFoodData().eat(3, 0.84f);
+                        }
                     }
+                }
+
+                if (stack.is(ModTags.Items.ADDITIONAL_PREY)) {
+                    int randomThirst = 1 + player.getRandom().nextInt(2);
+                    thirst.addThirst(randomThirst);
+                    player.getFoodData().eat(4, 0.84f);
                 }
             }
 
-            if (stack.is(ModTags.Items.ADDITIONAL_PREY)) {
-                int randomThirst = 1 + player.getRandom().nextInt(1);
+            if (stack.is(Items.POTION) && PotionUtils.getPotion(stack) == Potions.WATER) {
+                int randomThirst = 2 + player.getRandom().nextInt(2);
                 thirst.addThirst(randomThirst);
-                player.getFoodData().eat(4, 0.84f);
             }
-
-
 
 
             if (player instanceof ServerPlayer serverPlayer) {
@@ -335,34 +368,36 @@ public class ModEventsForge {
             }
         });
 
-        if (stack.getItem() == ModItems.YARROW.get()) {
+        if (stack.isEdible()) {
+            if (stack.getItem() == ModItems.YARROW.get()) {
 
-            if (player.hasEffect(MobEffects.POISON)) {
-                player.removeEffect(MobEffects.POISON);
+                if (player.hasEffect(MobEffects.POISON)) {
+                    player.removeEffect(MobEffects.POISON);
+                }
+                if (player.hasEffect(ModEffects.DEATHBERRIES.get())) {
+                    player.removeEffect(ModEffects.DEATHBERRIES.get());
+                }
+
             }
-            if (player.hasEffect(ModEffects.DEATHBERRIES.get())) {
-                player.removeEffect(ModEffects.DEATHBERRIES.get());
-            }
 
-        }
-
-        if (stack.is(Items.CHICKEN) || stack.is(Items.PORKCHOP)
-                || stack.is(Items.BEEF) || stack.is(Items.MUTTON)
-                || stack.is(Items.RABBIT) || stack.is(Items.SALMON)
-                || stack.is(Items.COD) || stack.is(Items.TROPICAL_FISH)
-                || stack.is(ModItems.SQUIRREL_FOOD.get()) || stack.is(ModItems.PIGEON_FOOD.get())
-                || stack.is(ModItems.MOUSE_FOOD.get())
-        ) {
-            if (event.getEntity().level().random.nextFloat() < 0.22) {
-                Level level = event.getEntity().level();
-                LivingEntity entity = event.getEntity();
-                if (entity instanceof Player && level instanceof ServerLevel) {
-                    ItemStack bonestack = new ItemStack(Items.BONE, 1 + level.getRandom().nextInt(3));
-                    ItemEntity itemEnt = new ItemEntity(level, entity.getX(), entity.getY(), entity.getZ(), bonestack);
-                    itemEnt.setDeltaMovement(entity.getLookAngle().scale(0.3));
-                    itemEnt.setPickUpDelay(60);
-                    level.addFreshEntity(itemEnt);
-                    level.playSound(null, itemEnt.blockPosition(), SoundEvents.TURTLE_EGG_CRACK, SoundSource.PLAYERS, 0.8f, 1.0f);
+            if (stack.is(Items.CHICKEN) || stack.is(Items.PORKCHOP)
+                    || stack.is(Items.BEEF) || stack.is(Items.MUTTON)
+                    || stack.is(Items.RABBIT) || stack.is(Items.SALMON)
+                    || stack.is(Items.COD) || stack.is(Items.TROPICAL_FISH)
+                    || stack.is(ModItems.SQUIRREL_FOOD.get()) || stack.is(ModItems.PIGEON_FOOD.get())
+                    || stack.is(ModItems.MOUSE_FOOD.get())
+            ) {
+                if (event.getEntity().level().random.nextFloat() < 0.19) {
+                    Level level = event.getEntity().level();
+                    LivingEntity entity = event.getEntity();
+                    if (entity instanceof Player && level instanceof ServerLevel) {
+                        ItemStack bonestack = new ItemStack(Items.BONE, 1 + level.getRandom().nextInt(3));
+                        ItemEntity itemEnt = new ItemEntity(level, entity.getX(), entity.getY(), entity.getZ(), bonestack);
+                        itemEnt.setDeltaMovement(entity.getLookAngle().scale(0.3));
+                        itemEnt.setPickUpDelay(60);
+                        level.addFreshEntity(itemEnt);
+                        level.playSound(null, itemEnt.blockPosition(), SoundEvents.TURTLE_EGG_CRACK, SoundSource.PLAYERS, 0.8f, 1.0f);
+                    }
                 }
             }
         }
@@ -606,13 +641,21 @@ public class ModEventsForge {
                 return;
             }
 
-            LivingEntity owner = wcat.getOwner();
-            if (owner == null) {
-                return;
-            }
+//            UUID ownerUUID = wcat.getOwnerUUID();
+//            if (ownerUUID == null) {
+//                return;
+//            }
+//
+//            if (!ownerUUID.equals(player.getUUID())) {
+//                return;
+//            }
 
-            if (!owner.getUUID().equals(player.getUUID())) {
-                return;
+            {
+                AABB box = wcat.getBoundingBox().inflate(0.5);
+                List<MossBallEntity> mossBalls = wcat.level().getEntitiesOfClass(MossBallEntity.class, box);
+                if (!mossBalls.isEmpty()) {
+                    event.setCanceled(true);
+                }
             }
 
             if (player instanceof ServerPlayer serverPlayer) {
@@ -652,20 +695,5 @@ public class ModEventsForge {
             }
         }
     }
-
-//    @SubscribeEvent
-//    public static void onPlayerHurt(LivingHurtEvent event) {
-//        if (!(event.getEntity() instanceof Player player)) return;
-//
-//        ItemStack head = player.getItemBySlot(EquipmentSlot.HEAD);
-//
-//        if (head.getItem() instanceof FlowerCrownItem) {
-//            head.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(EquipmentSlot.HEAD));
-//        }
-//        if (head.getItem() instanceof FlowerArmorItem) {
-//            head.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(EquipmentSlot.CHEST));
-//        }
-//    }
-
 
 }
