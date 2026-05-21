@@ -9,38 +9,34 @@ import net.snowteb.warriorcats_events.zconfig.WCEServerConfig;
 import java.util.UUID;
 
 public class PlayerSkill implements ISkillData {
-    /*
-    public static int defaultSpeedCost = 30;
-    public static int defaultHPcost = 160;
-    public static int defaultDMGcost = 40;
-    public static int defaultJumpcost = 420;
-    public static int defaultArmorcost = 420;
 
-    public static int defaultStealthcost = 2921;
+    public static final double speedMultiplier = 0.025;
+    public static final double hpMultiplier = 0.1;
+    public static final double damageMultiplier = 0.09;
+    public static final double jumpMultiplier = 0.093;
+    public static final double armorMultiplier = 2.5;
 
-     */
-
-public static int getDefaultSpeedCost() {
+    public static int getDefaultSpeedCost() {
     return (int) (30 * WCEServerConfig.SERVER.SKILL_COST_MULTIPLIER.get());
 }
-public static int getDefaultHPCost() {
+    public static int getDefaultHPCost() {
     return (int) (160 * WCEServerConfig.SERVER.SKILL_COST_MULTIPLIER.get());
 }
-public static int getDefaultDMGCost() {
+    public static int getDefaultDMGCost() {
     return (int) (40 * WCEServerConfig.SERVER.SKILL_COST_MULTIPLIER.get());
 }
-public static int getDefaultJumpCost() {
+    public static int getDefaultJumpCost() {
     return (int) (300 * WCEServerConfig.SERVER.SKILL_COST_MULTIPLIER.get());
 }
-public static int getDefaultArmorCost() {
+    public static int getDefaultArmorCost() {
     return (int) (300 * WCEServerConfig.SERVER.SKILL_COST_MULTIPLIER.get());
 }
-public static int getDefaultStealthCost() {
+    public static int getDefaultStealthCost() {
     return (int) (2921 * WCEServerConfig.SERVER.SKILL_COST_MULTIPLIER.get());
 }
-public static int getDefaultClimbCost() {
-    return (int) (1800 * WCEServerConfig.SERVER.SKILL_COST_MULTIPLIER.get());
-}
+    public static int getDefaultClimbCost() {
+        return (int) (1800 * WCEServerConfig.SERVER.SKILL_COST_MULTIPLIER.get());
+    }
 
 
     public static int maxSpeedLevel = 10;
@@ -160,7 +156,7 @@ public static int getDefaultClimbCost() {
         var speedAttr = player.getAttribute(Attributes.MOVEMENT_SPEED);
         if (speedAttr != null) {
             speedAttr.removeModifier(PlayerSkill.SPEED_SKILL_UUID);
-            double bonus = (0.025* WCEServerConfig.SERVER.SKILL_SPEED_MULTIPLIER.get()) * newStore.getSpeedLevel();
+            double bonus = (speedMultiplier * WCEServerConfig.SERVER.SKILL_SPEED_MULTIPLIER.get()) * newStore.getSpeedLevel();
             if (bonus > 0) {
                 speedAttr.addPermanentModifier(
                         new AttributeModifier(
@@ -175,7 +171,8 @@ public static int getDefaultClimbCost() {
         var hpAttr = player.getAttribute(Attributes.MAX_HEALTH);
         if (hpAttr != null) {
             hpAttr.removeModifier(PlayerSkill.HP_SKILL_UUID);
-            double bonus = (0.1*WCEServerConfig.SERVER.SKILL_HP_MULTIPLIER.get()) * newStore.getHPLevel();
+
+            double bonus = (hpMultiplier *WCEServerConfig.SERVER.SKILL_HP_MULTIPLIER.get()) * newStore.getHPLevel();
             if (bonus > 0) {
                 hpAttr.addPermanentModifier(
                         new AttributeModifier(
@@ -190,7 +187,7 @@ public static int getDefaultClimbCost() {
         var dmgAttr = player.getAttribute(Attributes.ATTACK_DAMAGE);
         if (dmgAttr != null) {
             dmgAttr.removeModifier(PlayerSkill.DMG_SKILL_UUID);
-            double bonus = (0.12*WCEServerConfig.SERVER.SKILL_DMG_MULTIPLIER.get()) * newStore.getDMGLevel();
+            double bonus = (damageMultiplier *WCEServerConfig.SERVER.SKILL_DMG_MULTIPLIER.get()) * newStore.getDMGLevel();
             if (bonus > 0) {
                 dmgAttr.addPermanentModifier(
                         new AttributeModifier(
@@ -205,7 +202,7 @@ public static int getDefaultClimbCost() {
         var jumpAttr = player.getAttribute(ModAttributes.PLAYER_JUMP.get());
         if (jumpAttr != null) {
             jumpAttr.removeModifier(PlayerSkill.JUMP_SKILL_UUID);
-            double bonus = (0.093*WCEServerConfig.SERVER.SKILL_JUMP_MULTIPLIER.get()) * newStore.getJumpLevel();
+            double bonus = (jumpMultiplier *WCEServerConfig.SERVER.SKILL_JUMP_MULTIPLIER.get()) * newStore.getJumpLevel();
             if (bonus > 0) {
                 jumpAttr.addPermanentModifier(
                         new AttributeModifier(
@@ -220,7 +217,7 @@ public static int getDefaultClimbCost() {
         var armorAttr = player.getAttribute(Attributes.ARMOR);
         if (armorAttr != null) {
             armorAttr.removeModifier(PlayerSkill.ARMOR_SKILL_UUID);
-            double bonus = (3.5*WCEServerConfig.SERVER.SKILL_ARMOR_MULTIPLIER.get()) * newStore.getArmorLevel();
+            double bonus = (armorMultiplier *WCEServerConfig.SERVER.SKILL_ARMOR_MULTIPLIER.get()) * newStore.getArmorLevel();
             if (bonus > 0) {
                 armorAttr.addPermanentModifier(
                         new AttributeModifier(

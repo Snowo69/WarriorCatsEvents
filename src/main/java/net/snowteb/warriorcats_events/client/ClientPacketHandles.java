@@ -2,10 +2,14 @@ package net.snowteb.warriorcats_events.client;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.snowteb.warriorcats_events.clan.WCEPlayerData;
+import net.snowteb.warriorcats_events.diseases.Diseaseable;
 import net.snowteb.warriorcats_events.entity.custom.EagleEntity;
 import net.snowteb.warriorcats_events.entity.custom.WCGenetics;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
@@ -30,12 +34,15 @@ public class ClientPacketHandles {
         }
     }
 
-    public static void openKitSpawnScreen() {
+    public static void openKitSpawnScreen(int entityID) {
 
         Minecraft mc = Minecraft.getInstance();
         if (mc.level == null) return;
 
-        mc.setScreen(new KitCreateScreen());
+        WCatEntity kitten = (WCatEntity) mc.level.getEntity(entityID);
+        if (kitten == null) return;
+
+        mc.setScreen(new KitCreateScreen(kitten));
     }
 
     public static void openAncientStickScreen(List<Integer> entityIds, List<Integer> eagleIds) {
@@ -146,6 +153,21 @@ public class ClientPacketHandles {
         Minecraft.getInstance().execute(() -> {
             Minecraft mc = Minecraft.getInstance();
             mc.setScreen(new SetPoseMenu());
+        });
+    }
+
+    public static void setDiseaseData(CompoundTag tag, int id) {
+        Entity target = Minecraft.getInstance().level.getEntity(id);
+        if (target == null) return;
+        if (target instanceof Diseaseable<?> diseaseable) {
+            diseaseable.loadDiseasesNBT(tag);
+        }
+    }
+
+    public static void openChangelogScreen() {
+        Minecraft.getInstance().execute(() -> {
+           Minecraft mc = Minecraft.getInstance();
+           mc.setScreen(new WCEChangelogScreen(null));
         });
     }
 }

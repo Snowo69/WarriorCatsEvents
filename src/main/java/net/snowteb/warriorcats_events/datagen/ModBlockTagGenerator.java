@@ -10,6 +10,7 @@ import net.minecraftforge.common.data.ExistingFileHelper;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.block.ModBlocks;
 import net.snowteb.warriorcats_events.integration.CompatibilityTags;
+import net.snowteb.warriorcats_events.item.ModItems;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.CompletableFuture;
@@ -34,8 +35,9 @@ public class ModBlockTagGenerator extends BlockTagsProvider {
                 ModBlocks.KELP_BED.get(), ModBlocks.STONE_BED.get(), ModBlocks.LAVENDER_BED.get());
 
         this.tag(CompatibilityTags.SERENE_SEASONS_SPRING_CROPS_BLOCK).add(ModBlocks.DOCK.get(), ModBlocks.SORRELPLANT.get(), ModBlocks.BURNETPLANT.get(), ModBlocks.DAISYPLANT.get());
-        this.tag(CompatibilityTags.SERENE_SEASONS_SUMMER_CROPS_BLOCK).add(ModBlocks.CHAMOMILEPLANT.get(), ModBlocks.CATMINTPLANT.get(), ModBlocks.YARROWPLANT.get());
-        this.tag(CompatibilityTags.SERENE_SEASONS_AUTUMN_CROPS_BLOCK).add(ModBlocks.DEATHBERRIESBUSH.get());
+        this.tag(CompatibilityTags.SERENE_SEASONS_SUMMER_CROPS_BLOCK).add(ModBlocks.CHAMOMILEPLANT.get(), ModBlocks.CATMINTPLANT.get(), ModBlocks.YARROWPLANT.get(), ModBlocks.FEVERFEWPLANT.get(), ModBlocks.COMFREYPLANT.get());
+        this.tag(CompatibilityTags.SERENE_SEASONS_AUTUMN_CROPS_BLOCK).add(ModBlocks.DEATHBERRIESBUSH.get(), ModBlocks.COMFREYPLANT.get());
+        this.tag(CompatibilityTags.SERENE_SEASONS_WINTER_CROPS_BLOCK).add(ModBlocks.JUNIPERPLANT.get());
 
     }
 }

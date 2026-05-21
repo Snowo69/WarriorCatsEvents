@@ -9,6 +9,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraftforge.network.NetworkEvent;
+import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.skills.ISkillData;
 import net.snowteb.warriorcats_events.skills.PlayerSkill;
 import net.snowteb.warriorcats_events.skills.PlayerSkillProvider;
@@ -71,7 +72,7 @@ public class CtSMoreJumpPacket {
                     if (attribute == null) return;
 
                     attribute.removeModifier(JUMP_SKILL_UUID);
-                    double bonus = (0.093* WCEServerConfig.SERVER.SKILL_JUMP_MULTIPLIER.get()) * (currentLevel + 1);
+                    double bonus = (PlayerSkill.jumpMultiplier * WCEServerConfig.SERVER.SKILL_JUMP_MULTIPLIER.get()) * (currentLevel + 1);
                     attribute.addPermanentModifier(new AttributeModifier(
                             JUMP_SKILL_UUID,
                             "skill_jump_bonus",
@@ -92,7 +93,7 @@ public class CtSMoreJumpPacket {
                         if (server != null) {
 
                             Advancement adv = server.getAdvancements()
-                                    .getAdvancement(new ResourceLocation("warriorcats_events:skill_jump_advancement"));
+                                    .getAdvancement(ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID,"skill_jump_advancement"));
 
                             if (adv != null) {
                                 player.getAdvancements().award(adv, "unlock_skill");

@@ -10,6 +10,8 @@
     "EntityTeamColorMixin",
     "GameRendererHitMixin",
     "HeldMossBallMixin",
+    "LevelRendererMixin",
+    "LightTextureMixin",
     "LocalPlayerMixin",
     "MinecraftMixin",
     "ScreenClickedComponentMixin",

@@ -14,7 +14,7 @@ public class NumbEffect extends MobEffect {
          * When this effect is active, it applied an Attribute of negative movement speed.
          */
         this.addAttributeModifier(Attributes.MOVEMENT_SPEED,
-                "7f5d3d4b-1a2c-4e28-b7f1-9f8c5d9b6a3d",
+                "7f5d3d4b-1a2c-4e28-b7f1-9f8c5d9b6aff",
                 -1.0F, AttributeModifier.Operation.MULTIPLY_BASE);
 
     }

@@ -29,7 +29,7 @@ public class ModPackets {
 
     public static void register() {
         SimpleChannel net = NetworkRegistry.ChannelBuilder
-                .named(new ResourceLocation(WarriorCatsEvents.MODID, "messages"))
+                .named(ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "messages"))
                 .networkProtocolVersion(() -> "1.0")
                 .clientAcceptedVersions(s -> true)
                 .serverAcceptedVersions(s -> true)
@@ -486,7 +486,29 @@ public class ModPackets {
                 .consumerMainThread(SyncExhaustionPacket::handle)
                 .add();
 
+        net.messageBuilder(SyncDiseasesPacket.class, 72, NetworkDirection.PLAY_TO_CLIENT)
+                .decoder(SyncDiseasesPacket::new)
+                .encoder(SyncDiseasesPacket::toBytes)
+                .consumerMainThread(SyncDiseasesPacket::handle)
+                .add();
 
+        net.messageBuilder(CtSTakeCatPacket.class, 73, NetworkDirection.PLAY_TO_SERVER)
+                .decoder(CtSTakeCatPacket::decode)
+                .encoder(CtSTakeCatPacket::encode)
+                .consumerMainThread(CtSTakeCatPacket::handle)
+                .add();
+
+        net.messageBuilder(CtSNameKitPacket.class, 74, NetworkDirection.PLAY_TO_SERVER)
+                .decoder(CtSNameKitPacket::new)
+                .encoder(CtSNameKitPacket::toBytes)
+                .consumerMainThread(CtSNameKitPacket::handle)
+                .add();
+
+        net.messageBuilder(OpenChangelogScreenPacket.class, 75, NetworkDirection.PLAY_TO_CLIENT)
+                .decoder(OpenChangelogScreenPacket::new)
+                .encoder(OpenChangelogScreenPacket::toBytes)
+                .consumerMainThread(OpenChangelogScreenPacket::handle)
+                .add();
 
     }
 

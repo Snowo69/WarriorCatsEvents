@@ -17,7 +17,7 @@ public class GlobalLootModifiers extends GlobalLootModifierProvider {
     @Override
     protected void start() {
         this.add("collar_from_villages", new AddItemModifier(new LootItemCondition[]{
-            new LootTableIdCondition.Builder(new ResourceLocation("chests/village_toolsmith")).build()
+            new LootTableIdCondition.Builder(ResourceLocation.withDefaultNamespace("chests/village_toolsmith")).build()
         }, ModItems.RED_CAT_COLLAR.get()));
     }
 }

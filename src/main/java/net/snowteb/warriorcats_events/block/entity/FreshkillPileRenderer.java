@@ -24,12 +24,13 @@ import net.snowteb.warriorcats_events.block.custom.FreshkillPileBlock;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 
+import java.util.Iterator;
 import java.util.List;
 
 public class FreshkillPileRenderer implements BlockEntityRenderer<FreshkillPileBlockEntity> {
 
     private static final ResourceLocation BOTTOM =
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/block/fresh_kill_pile2.png");
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/block/fresh_kill_pile2.png");
 
 
     public FreshkillPileRenderer(BlockEntityRendererProvider.Context context) {

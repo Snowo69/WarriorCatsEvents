@@ -17,17 +17,17 @@ public class ElytraModel extends GeoModel<WCatEntity> {
     private ResourceLocation texture;
 
     public static final ResourceLocation DEV_TEXTURE =
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/elytra_dev.png");
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/accessories/elytra_dev.png");
     public static final ResourceLocation DEV_TEXTURE2 =
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/elytra_dev2.png");
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/accessories/elytra_dev2.png");
 
     public ElytraModel() {
-        texture = new ResourceLocation("minecraft", "textures/entity/elytra.png");
+        texture = ResourceLocation.withDefaultNamespace("textures/entity/elytra.png");
     }
 
     @Override
     public ResourceLocation getModelResource(WCatEntity animatable) {
-        return new ResourceLocation(WarriorCatsEvents.MODID, "geo/wcat.elytra.geo.json");
+        return ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "geo/wcat.elytra.geo.json");
     }
 
     @Override
@@ -37,7 +37,7 @@ public class ElytraModel extends GeoModel<WCatEntity> {
 
     @Override
     public ResourceLocation getAnimationResource(WCatEntity squirrelEntity) {
-        return new ResourceLocation(WarriorCatsEvents.MODID, "animations/elytra.animation.json");
+        return ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "animations/elytra.animation.json");
     }
 
     @Override

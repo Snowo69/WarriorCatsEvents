@@ -8,6 +8,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.snowteb.warriorcats_events.clan.WCEPlayerData;
 import net.snowteb.warriorcats_events.clan.WCEPlayerDataProvider;
+import net.snowteb.warriorcats_events.diseases.Diseaseable;
 import net.snowteb.warriorcats_events.network.ModPackets;
 import net.snowteb.warriorcats_events.network.packet.s2c.clan.OpenClanSetupScreenPacket;
 import net.snowteb.warriorcats_events.network.packet.s2c.clan.S2CSyncClanDataPacket;
@@ -70,6 +71,10 @@ public class InfoProfileCommand {
 
 
         UUID targetUUID = player.getUUID();
+
+        if (player instanceof Diseaseable<?> diseaseable) {
+            diseaseable.onChange();
+        }
 
         ModPackets.sendToPlayer(new OpenPlayerCatDataScreenPacket(targetData, targetUUID, myKitCooldown, true), player);
 

@@ -19,6 +19,7 @@ import net.minecraft.world.level.ChunkPos;
 import net.snowteb.warriorcats_events.WCEClient;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.client.ClanInfo;
+import net.snowteb.warriorcats_events.client.ClientClanCache;
 import net.snowteb.warriorcats_events.client.ClientPacketHandles;
 import net.snowteb.warriorcats_events.client.ClientTerritoryData;
 import net.snowteb.warriorcats_events.entity.ModEntities;
@@ -99,7 +100,7 @@ public class ManageClanScreen extends Screen {
                 Component.literal("Claim Territory"),
                 btn -> {
                     drawClaimChunkMenu();
-                }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                 80, 20, 0xFF00104C
         );
 
@@ -109,7 +110,7 @@ public class ManageClanScreen extends Screen {
                 Component.literal("Unclaim Territory"),
                 btn -> {
                     drawUnclaimChunkMenu();
-                }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                 80, 20, 0xFF00104C
         );
 
@@ -136,7 +137,7 @@ public class ManageClanScreen extends Screen {
                 btn -> {
                     drawConfirmKickMenu();
                 },
-                new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                 80, 20
         );
 
@@ -148,7 +149,7 @@ public class ManageClanScreen extends Screen {
                         btn -> {
                                 drawChangeRankMenu();
                             },
-                        new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                        ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                 80, 20
                 );
 
@@ -160,7 +161,7 @@ public class ManageClanScreen extends Screen {
                 btn -> {
                     drawChangePermsMenu();
                 },
-                new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                 80, 20
         );
 
@@ -174,7 +175,7 @@ public class ManageClanScreen extends Screen {
                 btn -> {
                     this.membersList.setSelected(null);
                 },
-                new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                 20, 20
         );
 
@@ -214,7 +215,7 @@ public class ManageClanScreen extends Screen {
                 btn -> {
                     drawRenameMenu();
                 },
-                new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                 60, 10, 0.8f, true
         );
 
@@ -332,10 +333,20 @@ public class ManageClanScreen extends Screen {
 
 
             WCatEntity entityToRender = new WCatEntity(ModEntities.WCAT.get(), Minecraft.getInstance().level);
-            entityToRender.setAnImage(true);
-            entityToRender.setPlayerBoundUuid(UUID.nameUUIDFromBytes(ModEntities.WCAT.get().toString().getBytes()));
+
+            entityToRender.setAnImage(false);
+            entityToRender.setPlayerBoundUuid(selectedMember.getPlayerUUID());
             entityToRender.setShowMorphName(false);
-            entityToRender.setVariant(selectedMember.getVariantData());
+
+            entityToRender.setOnGeneticalSkin(selectedMember.isOnGeneticalSkin());
+            entityToRender.setVariant(selectedMember.getMorphVariant());
+            entityToRender.setGender(1);
+
+            entityToRender.setGenetics(selectedMember.getGenetics());
+            entityToRender.setGeneticalVariants(selectedMember.getVariants());
+            entityToRender.setChimeraGenetics(selectedMember.getChimeraGenetics());
+            entityToRender.setGeneticalVariantsChimera(selectedMember.getChimeraVariants());
+
             entityToRender.setOnGround(true);
             entityToRender.setYRot(0);
             entityToRender.yHeadRot = 0;
@@ -348,7 +359,6 @@ public class ManageClanScreen extends Screen {
                 entityScale = 10;
                 entityYLocation -= 13;
             }
-
 
             InventoryScreen.renderEntityInInventory(pGuiGraphics, infoX+2, entityYLocation, entityScale, pose , rotation, entityToRender);
 
@@ -531,7 +541,7 @@ public class ManageClanScreen extends Screen {
                 btn -> {
                     drawMainMenu();
                 },
-                new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                 20, 20, 1.1f
         ));
 
@@ -544,7 +554,7 @@ public class ManageClanScreen extends Screen {
                     ModPackets.sendToServer(new CtSManageClanMemberPacket("changerank", "kit", selectedMember.getPlayerUUID(), selectedMember.getPlayerMorphName()));
                     this.onClose();
                     },
-                new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                 80, 20
         ));
 
@@ -559,7 +569,7 @@ public class ManageClanScreen extends Screen {
                     ModPackets.sendToServer(new CtSManageClanMemberPacket("changerank", "apprentice", selectedMember.getPlayerUUID(), selectedMember.getPlayerMorphName()));
                     this.onClose();
                 },
-                new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                 90, 20
         ));
         initialY += 15;
@@ -573,7 +583,7 @@ public class ManageClanScreen extends Screen {
                     ModPackets.sendToServer(new CtSManageClanMemberPacket("changerank", "warrior", selectedMember.getPlayerUUID(), selectedMember.getPlayerMorphName()));
                     this.onClose();
                 },
-                new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                 80, 20
         ));
         initialY += 15;
@@ -587,7 +597,7 @@ public class ManageClanScreen extends Screen {
                     ModPackets.sendToServer(new CtSManageClanMemberPacket("changerank", "elder", selectedMember.getPlayerUUID(), selectedMember.getPlayerMorphName()));
                     this.onClose();
                 },
-                new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                 80, 20
         ));
         initialY += 15;
@@ -601,7 +611,7 @@ public class ManageClanScreen extends Screen {
                     ModPackets.sendToServer(new CtSManageClanMemberPacket("changerank", "queen", selectedMember.getPlayerUUID(), selectedMember.getPlayerMorphName()));
                     this.onClose();
                 },
-                new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                 80, 20
         ));
         initialY += 15;
@@ -615,7 +625,7 @@ public class ManageClanScreen extends Screen {
                     ModPackets.sendToServer(new CtSManageClanMemberPacket("changerank", "medapp", selectedMember.getPlayerUUID(), selectedMember.getPlayerMorphName()));
                     this.onClose();
                 },
-                new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                 80, 20
         ));
         initialY += 15;
@@ -629,7 +639,7 @@ public class ManageClanScreen extends Screen {
                     ModPackets.sendToServer(new CtSManageClanMemberPacket("changerank", "medicine", selectedMember.getPlayerUUID(), selectedMember.getPlayerMorphName()));
                     this.onClose();
                 },
-                new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                 80, 20
         ));
         initialY += 15;
@@ -643,7 +653,7 @@ public class ManageClanScreen extends Screen {
                     ModPackets.sendToServer(new CtSManageClanMemberPacket("changerank", "deputy", selectedMember.getPlayerUUID(), selectedMember.getPlayerMorphName()));
                     this.onClose();
                 },
-                new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                 80, 20
         ));
 
@@ -666,7 +676,7 @@ public class ManageClanScreen extends Screen {
                 btn -> {
                     drawMainMenu();
                 },
-                new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                 20, 20, 1.1f
         ));
 
@@ -679,7 +689,7 @@ public class ManageClanScreen extends Screen {
                     ModPackets.sendToServer(new CtSManageClanMemberPacket("changeperms", "admin", selectedMember.getPlayerUUID(), selectedMember.getPlayerMorphName()));
                     this.onClose();
                 },
-                new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                 80, 20
         ));
 
@@ -694,7 +704,7 @@ public class ManageClanScreen extends Screen {
                     ModPackets.sendToServer(new CtSManageClanMemberPacket("changeperms", "member", selectedMember.getPlayerUUID(), selectedMember.getPlayerMorphName()));
                     this.onClose();
                 },
-                new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                 90, 20
         ));
         initialY += 20;
@@ -708,7 +718,7 @@ public class ManageClanScreen extends Screen {
                     ModPackets.sendToServer(new CtSManageClanMemberPacket("changeperms", "guest", selectedMember.getPlayerUUID(), selectedMember.getPlayerMorphName()));
                     this.onClose();
                 },
-                new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                 80, 20
         ));
 
@@ -732,7 +742,7 @@ public class ManageClanScreen extends Screen {
                 btn -> {
                     drawMainMenu();
                 },
-                new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                 20, 20,1.1f
         ));
 
@@ -747,7 +757,7 @@ public class ManageClanScreen extends Screen {
                     ModPackets.sendToServer(new CtSManageClanMemberPacket("kick", "none", selectedMember.getPlayerUUID(), selectedMember.getPlayerMorphName()));
                     this.onClose();
                 },
-                new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                 80, 20
         ));
 
@@ -761,7 +771,7 @@ public class ManageClanScreen extends Screen {
                 btn -> {
                     drawMainMenu();
                 },
-                new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                 90, 20
         ));
     }
@@ -792,7 +802,7 @@ public class ManageClanScreen extends Screen {
                 btn -> {
                     drawMainMenu();
                 },
-                new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                 80, 20
         );
 
@@ -804,7 +814,7 @@ public class ManageClanScreen extends Screen {
                 btn -> {
                     saveAndClaimChunk();
                 },
-                new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                 80, 20
         );
 
@@ -836,7 +846,7 @@ public class ManageClanScreen extends Screen {
                     claimTerritory.active = true;
                     unclaimTerritory.active = true;
                 },
-                new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                 80, 20
         ));
 
@@ -851,7 +861,7 @@ public class ManageClanScreen extends Screen {
                         this.onClose();
                     }
                 },
-                new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                 80, 20
         ));
 
@@ -894,7 +904,7 @@ public class ManageClanScreen extends Screen {
                 btn -> {
                     drawMainMenu();
                 },
-                new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                 80, 20
         );
 
@@ -906,7 +916,7 @@ public class ManageClanScreen extends Screen {
                 btn -> {
                     saveAndUnclaimChunk();
                 },
-                new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                 80, 20
         );
 

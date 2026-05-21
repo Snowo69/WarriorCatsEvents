@@ -70,7 +70,7 @@ public class SaveChatMorphScreen extends Screen {
                 btn -> {
                     saveMorph();
 
-                }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                 80, 20, 1f
         );
 
@@ -80,7 +80,7 @@ public class SaveChatMorphScreen extends Screen {
                 Component.literal("Close"),
                 btn -> {
                     this.onClose();
-                }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                 80, 20, 1f
         );
 

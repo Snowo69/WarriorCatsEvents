@@ -7,21 +7,25 @@ import net.snowteb.warriorcats_events.client.ClientPacketHandles;
 import java.util.function.Supplier;
 
 public class StCKitCreateScreenPacket {
+    private final int entityID;
 
-    public StCKitCreateScreenPacket() {
+    public StCKitCreateScreenPacket(int entityID) {
+        this.entityID = entityID;
     }
 
     public StCKitCreateScreenPacket(FriendlyByteBuf buf) {
+        this.entityID = buf.readInt();
     }
 
     public void toBytes(FriendlyByteBuf buf) {
+        buf.writeInt(entityID);
     }
 
     public void handle(Supplier<NetworkEvent.Context> supplier) {
         NetworkEvent.Context ctx = supplier.get();
 
         ctx.enqueueWork(() -> {
-            ClientPacketHandles.openKitSpawnScreen();
+            ClientPacketHandles.openKitSpawnScreen(entityID);
         });
 
         ctx.setPacketHandled(true);

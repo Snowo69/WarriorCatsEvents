@@ -14,6 +14,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.player.Player;
+import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.clan.ClanData;
 import net.snowteb.warriorcats_events.client.EntityChatBubbleManager;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
@@ -36,13 +37,13 @@ public class WCRenderer extends GeoEntityRenderer<WCatEntity> {
     private static final Map<String, ResourceLocation> TEXTURE_CACHE = new HashMap<>();
 
     private static final ResourceLocation PLAYER_MORPH_TEXTURE =
-            new ResourceLocation("warriorcats_events", "textures/hud/player_morph_icon.png");
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/hud/player_morph_icon.png");
 
     private static final ResourceLocation PLAYER_TEXT_BUBBLE =
-            new ResourceLocation("warriorcats_events", "textures/hud/player_text_bubble.png");
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/hud/player_text_bubble.png");
 
     private static final ResourceLocation BIG_PLAYER_TEXT_BUBBLE =
-            new ResourceLocation("warriorcats_events", "textures/hud/big_player_text_bubble.png");
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/hud/big_player_text_bubble.png");
 
     public WCRenderer(EntityRendererProvider.Context context) {
         super(context, new WCModel());
@@ -52,15 +53,6 @@ public class WCRenderer extends GeoEntityRenderer<WCatEntity> {
         this.shadowStrength = 0.5F;
     }
 
-    /**
-     * Fallback.
-     * This also sets a texture for each variant.
-     */
-//    @Override
-//    public ResourceLocation getTextureLocation(WCatEntity entity) {
-//        int variant = entity.getVariant();
-//        return WCModel.TEXTURES[Math.max(0, Math.min(variant, WCModel.TEXTURES.length - 1))];
-//    }
     @Override
     public ResourceLocation getTextureLocation(WCatEntity cat) {
 
@@ -78,7 +70,7 @@ public class WCRenderer extends GeoEntityRenderer<WCatEntity> {
 
         if (texture == null) {
             LayerTexture skin = new LayerTexture(layers);
-            texture = new ResourceLocation(key);
+            texture = ResourceLocation.parse(key);
             Minecraft.getInstance().getTextureManager().register(texture, skin);
             TEXTURE_CACHE.put(key, texture);
         }
@@ -111,11 +103,6 @@ public class WCRenderer extends GeoEntityRenderer<WCatEntity> {
     public void render(WCatEntity entity, float entityYaw, float partialTick,
                        PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
 
-
-        /**
-         * If the entity is the entity the player is playing as (The one the player is morphed into), then set isPlayerShape.
-         */
-
         if (entity.getPlayerBoundUuid().equals(ClanData.EMPTY_UUID) && !entity.isAnImage()) {
             float ageMoons = entity.getAgeInMoons();
             float percentage = ageMoons / 12.0F;
@@ -129,14 +116,6 @@ public class WCRenderer extends GeoEntityRenderer<WCatEntity> {
                 poseStack.scale(1.75f, 1.75f, 1.75f);
             }
         }
-
-
-//        if (entity.isBaby()) {
-//            poseStack.scale(0.4f, 0.4f, 0.4f);
-//        }
-//        if (entity.isAppScale() && entity.isBaby()) {
-//            poseStack.scale(1.75f, 1.75f, 1.75f);
-//        }
 
         super.render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
 
@@ -502,7 +481,14 @@ public class WCRenderer extends GeoEntityRenderer<WCatEntity> {
         return result;
     }
 
-
+    @Override
+    public boolean isShaking(WCatEntity cat) {
+        if (!cat.getPlayerBoundUuid().equals(ClanData.EMPTY_UUID)) {
+            Player player = cat.level().getPlayerByUUID(cat.getPlayerBoundUuid());
+            if (player != null) return (player.isFullyFrozen());
+        }
+        return super.isShaking(animatable);
+    }
 }
 
 

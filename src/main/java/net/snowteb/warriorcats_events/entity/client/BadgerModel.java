@@ -16,17 +16,17 @@ public class BadgerModel extends GeoModel<BadgerEntity> {
 
     @Override
     public ResourceLocation getModelResource(BadgerEntity object) {
-        return new ResourceLocation(WarriorCatsEvents.MODID, "geo/badger.geo.json");
+        return ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "geo/badger.geo.json");
     }
 
     @Override
     public ResourceLocation getTextureResource(BadgerEntity entity) {
-        return new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/badger/badger_1.png");
+        return ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/badger/badger_1.png");
     }
 
     @Override
     public ResourceLocation getAnimationResource(BadgerEntity animatable) {
-        return new ResourceLocation(WarriorCatsEvents.MODID, "animations/badger.animation.json");
+        return ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "animations/badger.animation.json");
     }
 
 

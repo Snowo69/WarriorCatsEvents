@@ -13,6 +13,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.network.NetworkEvent;
 import net.snowteb.warriorcats_events.clan.WCEPlayerData;
 import net.snowteb.warriorcats_events.clan.WCEPlayerDataProvider;
+import net.snowteb.warriorcats_events.diseases.Diseaseable;
 import net.snowteb.warriorcats_events.skills.ISkillData;
 import net.snowteb.warriorcats_events.skills.PlayerSkillProvider;
 import net.snowteb.warriorcats_events.sound.ModSounds;
@@ -45,6 +46,12 @@ public class CtSPerformLeapPacket {
             if (!WCEServerConfig.SERVER.LEAP_SERVER.get()) {
                 player.displayClientMessage(Component.literal("Leaping is disabled in this server").withStyle(ChatFormatting.RED), true);
                 return;
+            }
+
+            if (player instanceof Diseaseable<?> diseaseable) {
+                if (!diseaseable.canLeap()) {
+                    return;
+                }
             }
 
             float leapPower = (float) packet.power /100;

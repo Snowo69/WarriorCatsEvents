@@ -12,7 +12,7 @@ import net.snowteb.warriorcats_events.screen.menus.FreshKillPileMenu;
 
 public class FreshkillPileScreen extends AbstractContainerScreen<FreshKillPileMenu>  {
     private static final ResourceLocation TEXTURE =
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/fresh_kill_pile.png");
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/gui/fresh_kill_pile.png");
 
     public FreshkillPileScreen(FreshKillPileMenu pMenu, Inventory pPlayerInventory, Component pTitle) {
         super(pMenu, pPlayerInventory, pTitle);

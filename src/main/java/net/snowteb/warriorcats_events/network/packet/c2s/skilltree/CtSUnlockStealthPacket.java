@@ -8,6 +8,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.NetworkEvent;
+import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.skills.ISkillData;
 import net.snowteb.warriorcats_events.skills.PlayerSkill;
 import net.snowteb.warriorcats_events.skills.PlayerSkillProvider;
@@ -71,7 +72,7 @@ public class CtSUnlockStealthPacket {
                     if (server != null) {
 
                         Advancement adv = server.getAdvancements()
-                                .getAdvancement(new ResourceLocation("warriorcats_events:skill_stealth_advancement"));
+                                .getAdvancement(ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID,"skill_stealth_advancement"));
 
                         if (adv != null) {
                             player.getAdvancements().award(adv, "unlock_skill");

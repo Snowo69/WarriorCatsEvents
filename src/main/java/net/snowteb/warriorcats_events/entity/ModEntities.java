@@ -21,42 +21,42 @@ public class ModEntities {
             ENTITY_TYPES.register("mouse",
                     () -> EntityType.Builder.of(MouseEntity::new, MobCategory.CREATURE)
                             .sized(0.7f,0.7f)
-                            .build(new ResourceLocation(WarriorCatsEvents.MODID, "mouse").toString()));
+                            .build(ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "mouse").toString()));
     public static final RegistryObject<EntityType<SquirrelEntity>> SQUIRREL =
             ENTITY_TYPES.register("squirrel",
                     () -> EntityType.Builder.of(SquirrelEntity::new, MobCategory.CREATURE)
                             .sized(0.7f,0.7f)
-                            .build(new ResourceLocation(WarriorCatsEvents.MODID, "squirrel").toString()));
+                            .build(ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "squirrel").toString()));
     public static final RegistryObject<EntityType<WCatEntity>> WCAT =
             ENTITY_TYPES.register("warrior_cat",
                     () -> EntityType.Builder.of(WCatEntity::new, MobCategory.CREATURE)
                             .sized(0.69f,0.69f)
-                            .build(new ResourceLocation(WarriorCatsEvents.MODID, "warrior_cat").toString()));
+                            .build(ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "warrior_cat").toString()));
 
     public static final RegistryObject<EntityType<PigeonEntity>> PIGEON =
             ENTITY_TYPES.register("pigeon",
                     () -> EntityType.Builder.of(PigeonEntity::new, MobCategory.CREATURE)
                             .sized(0.9f,0.9f)
-                            .build(new ResourceLocation(WarriorCatsEvents.MODID, "pigeon").toString()));
+                            .build(ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "pigeon").toString()));
 
     public static final RegistryObject<EntityType<BadgerEntity>> BADGER =
             ENTITY_TYPES.register("badger",
                     () -> EntityType.Builder.of(BadgerEntity::new, MobCategory.CREATURE)
                             .sized(1f,1f)
-                            .build(new ResourceLocation(WarriorCatsEvents.MODID, "badger").toString()));
+                            .build(ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "badger").toString()));
 
     public static final RegistryObject<EntityType<EagleEntity>> EAGLE =
             ENTITY_TYPES.register("golden_eagle",
                     () -> EntityType.Builder.of(EagleEntity::new, MobCategory.CREATURE)
                             .sized(1f,1f)
-                            .build(new ResourceLocation(WarriorCatsEvents.MODID, "golden_eagle").toString()));
+                            .build(ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "golden_eagle").toString()));
 
 
     public static final RegistryObject<EntityType<MossBallEntity>> MOSS_BALL =
             ENTITY_TYPES.register("moss_ball",
                     () -> EntityType.Builder.<MossBallEntity>of(MossBallEntity::new, MobCategory.MISC)
                             .sized(0.35f, 0.35f)
-                            .build(new ResourceLocation(WarriorCatsEvents.MODID, "moss_ball").toString()));
+                            .build(ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "moss_ball").toString()));
 
 
 

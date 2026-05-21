@@ -31,7 +31,7 @@ public class TitleScreenMixin {
     private PanoramaRenderer redirectPanorama(CubeMap original) {
         if (WCEClientConfig.CLIENT.CUSTOM_PANORAMA.get()) {
             return new PanoramaRenderer(
-                    new CubeMap(new ResourceLocation("warriorcats_events:textures/gui/title/background/panorama"))
+                    new CubeMap(ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID,"textures/gui/title/background/panorama"))
             );
         } else {
             return new PanoramaRenderer(original);
@@ -61,8 +61,8 @@ public class TitleScreenMixin {
         int width = mc.getWindow().getGuiScaledWidth();
         Font font = mc.font;
 
-        ResourceLocation logo = new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/wce_logo.png");
-        ResourceLocation cat = new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/cat_overlay.png");
+        ResourceLocation logo = ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/gui/wce_logo.png");
+        ResourceLocation cat = ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/gui/cat_overlay.png");
 
         int centerX = width / 2;
 

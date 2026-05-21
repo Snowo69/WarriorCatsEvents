@@ -19,10 +19,8 @@ import net.snowteb.warriorcats_events.block.ModBlocks;
 import net.snowteb.warriorcats_events.block.custom.PreyBonesBlock;
 import net.snowteb.warriorcats_events.entity.ModEntities;
 import net.snowteb.warriorcats_events.item.custom.*;
-//import net.snowteb.warriorcats_events.item.custom.LeaderCallItem;
 import net.snowteb.warriorcats_events.sound.ModSounds;
 import net.snowteb.warriorcats_events.util.ItemWithToolTip;
-import net.snowteb.warriorcats_events.util.PoulticeTooltip;
 import vazkii.patchouli.api.PatchouliAPI;
 
 import javax.annotation.Nullable;
@@ -129,7 +127,7 @@ public class ModItems {
                 public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
                     if (!level.isClientSide) {
                         PatchouliAPI.get().openBookGUI((ServerPlayer) player,
-                                new ResourceLocation("warriorcats_events", "warriors_guide"));
+                                ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "warriors_guide"));
                     }
                     return InteractionResultHolder.sidedSuccess(player.getItemInHand(hand), level.isClientSide());
                 }
@@ -232,13 +230,41 @@ public static final RegistryObject<Item> FLOWER_CROWN = ITEMS.register("flower_c
     public static final RegistryObject<Item> YARROW = ITEMS.register("yarrow_leaves",
             () -> new ItemWithToolTip(new Item.Properties().food(ModFoodHerbs.YARROW),
                     "item.warriorcats_events.yarrow.tooltip"));
+    public static final RegistryObject<Item> FEVERFEW = ITEMS.register("feverfew_leaves",
+            () -> new ItemWithToolTip(new Item.Properties().food(ModFoodHerbs.FEVERFEW),
+                    "item.warriorcats_events.feverfew.tooltip"));
+    public static final RegistryObject<Item> JUNIPER_BERRIES = ITEMS.register("juniper_berries",
+            () -> new ItemWithToolTip(new Item.Properties().food(ModFoodHerbs.JUNIPER),
+                    "item.warriorcats_events.juniper.tooltip"));
+    public static final RegistryObject<Item> POPPY_SEEDS = ITEMS.register("poppy_seeds",
+            () -> new ItemWithToolTip(new Item.Properties().food(ModFoodHerbs.POPPY_SEEDS),
+                    "item.warriorcats_events.poppy_seeds.tooltip"));
+    public static final RegistryObject<Item> COMFREY_ROOT = ITEMS.register("comfrey_root",
+            () -> new ItemWithToolTip(new Item.Properties(),
+                    "item.warriorcats_events.comfrey_root.tooltip"));
+    public static final RegistryObject<Item> COMFREY_LEAVES = ITEMS.register("comfrey_leaves",
+            () -> new ItemWithToolTip(new Item.Properties(),
+                    "item.warriorcats_events.comfrey_leaves.tooltip"));
 
 
     public static final RegistryObject<Item> TRAVELING_HERBS = ITEMS.register("traveling_herbs",
             () -> new ItemWithToolTip(new Item.Properties().food(ModFoodHerbs.TRAVELING_HERBS),
             "item.warriorcats_events.traveling_herbs.tooltip"));
+
+
+
+
     public static final RegistryObject<Item> DOCK_POULTICE = ITEMS.register("dock_poultice",
-            () -> new PoulticeTooltip(new Item.Properties().stacksTo(16)));
+            () -> new DockPoultice(new Item.Properties().stacksTo(16)));
+    public static final RegistryObject<Item> YARROW_POULTICE = ITEMS.register("yarrow_poultice",
+            () -> new YarrowPoultice(new Item.Properties().stacksTo(16)));
+    public static final RegistryObject<Item> COMFREY_POULTICE = ITEMS.register("comfrey_poultice",
+            () -> new ComfreyPoultice(new Item.Properties().stacksTo(16)));
+
+    public static final RegistryObject<Item> COBWEB_WITH_A_STICK = ITEMS.register("cobweb_on_a_stick",
+            () -> new ItemWithToolTip(new Item.Properties().stacksTo(1),
+                    "item.warriorcats_events.cobweb_on_a_stick.tooltip"));
+
 
     public static final RegistryObject<Item> MOUSE_FOOD = ITEMS.register("mouse",
             () -> new Item(new Item.Properties().food(ModFoodHerbs.MOUSE_FOOD)));
@@ -250,6 +276,17 @@ public static final RegistryObject<Item> FLOWER_CROWN = ITEMS.register("flower_c
             () -> new Item(new Item.Properties().food(ModFoodHerbs.EAGLE_MEAT_FOOD)));
     public static final RegistryObject<Item> SHREDDED_MEAT = ITEMS.register("shredded_meat",
             () -> new Item(new Item.Properties().food(ModFoodHerbs.SHREDDED_MEAT)));
+
+    public static final RegistryObject<Item> SUS_MOUSE_FOOD = ITEMS.register("suspicious_mouse",
+            () -> new SuspiciousFoodItem(new Item.Properties().food(ModFoodHerbs.MOUSE_FOOD)));
+    public static final RegistryObject<Item> SUS_SQUIRREL_FOOD = ITEMS.register("suspicious_squirrel",
+            () -> new SuspiciousFoodItem(new Item.Properties().food(ModFoodHerbs.SQUIRREL_FOOD)));
+    public static final RegistryObject<Item> SUS_PIGEON_FOOD = ITEMS.register("suspicious_pigeon",
+            () -> new SuspiciousFoodItem(new Item.Properties().food(ModFoodHerbs.PIGEON_FOOD)));
+    public static final RegistryObject<Item> SUS_EAGLE_MEAT_FOOD = ITEMS.register("suspicious_golden_eagle_meat",
+            () -> new SuspiciousFoodItem(new Item.Properties().food(ModFoodHerbs.EAGLE_MEAT_FOOD)));
+    public static final RegistryObject<Item> SUS_SHREDDED_MEAT = ITEMS.register("suspicious_shredded_meat",
+            () -> new SuspiciousFoodItem(new Item.Properties().food(ModFoodHerbs.SHREDDED_MEAT)));
 
     public static final RegistryObject<Item> WHISKERS = ITEMS.register("whiskers",
             () -> new WhiskersItem(new Item.Properties().stacksTo(1).durability(400),
@@ -267,8 +304,10 @@ public static final RegistryObject<Item> FLOWER_CROWN = ITEMS.register("flower_c
             () -> new ItemWithToolTip(new Item.Properties(),
                     "item.warriorcats_events.freshkill_and_herbs.tooltip"));
 
+    public static final RegistryObject<Item> LEG_WRAP = ITEMS.register("leg_wrap",
+            () -> new LegWrapItem("item.warriorcats_events.leg_wrap.tooltip"));
 
-    // DO NOT REMOVE ANY OF THIS
+
     public static final RegistryObject<Item> DOCK = ITEMS.register("dock",
             () -> new BlockItem(ModBlocks.DOCK.get(), new Item.Properties()));
     public static final RegistryObject<Item> SORRELPLANT = ITEMS.register("sorrel",
@@ -285,6 +324,12 @@ public static final RegistryObject<Item> FLOWER_CROWN = ITEMS.register("flower_c
             () -> new BlockItem(ModBlocks.CATMINTPLANT.get(), new Item.Properties()));
     public static final RegistryObject<Item> YARROWPLANT = ITEMS.register("yarrow",
             () -> new BlockItem(ModBlocks.YARROWPLANT.get(), new Item.Properties()));
+    public static final RegistryObject<Item> FEVERFEWPLANT = ITEMS.register("feverfew",
+            () -> new BlockItem(ModBlocks.FEVERFEWPLANT.get(), new Item.Properties()));
+    public static final RegistryObject<Item> JUNIPERPLANT = ITEMS.register("juniper",
+            () -> new BlockItem(ModBlocks.JUNIPERPLANT.get(), new Item.Properties()));
+    public static final RegistryObject<Item> COMFREYPLANT = ITEMS.register("comfrey",
+            () -> new BlockItem(ModBlocks.COMFREYPLANT.get(), new Item.Properties()));
 
 
 

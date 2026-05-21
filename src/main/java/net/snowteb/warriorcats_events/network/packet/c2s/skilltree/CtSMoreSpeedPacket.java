@@ -10,6 +10,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraftforge.network.NetworkEvent;
+import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.skills.ISkillData;
 import net.snowteb.warriorcats_events.skills.PlayerSkill;
 import net.snowteb.warriorcats_events.skills.PlayerSkillProvider;
@@ -63,7 +64,7 @@ public class CtSMoreSpeedPacket {
                 var attribute = player.getAttribute(Attributes.MOVEMENT_SPEED);
                 if (attribute == null) return;
                 attribute.removeModifier(SPEED_SKILL_UUID);
-                double bonus = (0.025* WCEServerConfig.SERVER.SKILL_SPEED_MULTIPLIER.get()) * (currentLevel + 1);
+                double bonus = (PlayerSkill.speedMultiplier * WCEServerConfig.SERVER.SKILL_SPEED_MULTIPLIER.get()) * (currentLevel + 1);
                 attribute.addPermanentModifier(new AttributeModifier(
                         SPEED_SKILL_UUID,
                         "skill_speed_bonus",
@@ -84,7 +85,7 @@ public class CtSMoreSpeedPacket {
                     if (server != null) {
 
                         Advancement adv = server.getAdvancements()
-                                .getAdvancement(new ResourceLocation("warriorcats_events:skill_speed_advancement"));
+                                .getAdvancement(ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID,"skill_speed_advancement"));
 
                         if (adv != null) {
                             player.getAdvancements().award(adv, "unlock_skill");

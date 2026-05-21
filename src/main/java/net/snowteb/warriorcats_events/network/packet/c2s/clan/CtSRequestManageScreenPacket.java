@@ -10,6 +10,7 @@ import net.snowteb.warriorcats_events.clan.ClanData;
 import net.snowteb.warriorcats_events.clan.WCEPlayerData;
 import net.snowteb.warriorcats_events.clan.WCEPlayerDataProvider;
 import net.snowteb.warriorcats_events.client.ClanInfo;
+import net.snowteb.warriorcats_events.entity.custom.WCGenetics;
 import net.snowteb.warriorcats_events.network.ModPackets;
 import net.snowteb.warriorcats_events.network.packet.s2c.clan.S2CManageClanPacket;
 
@@ -53,7 +54,7 @@ public class CtSRequestManageScreenPacket {
                             .getPlayerList().getPlayer(uuid);
 
                     String morphName = data.playerMorphNames.getOrDefault(uuid, "Unknown");
-                    int morphData = data.playerMorphData.getOrDefault(uuid, 0);
+                    WCGenetics.PackedGeneticData morphData = data.playerMorphData.getOrDefault(uuid, WCGenetics.PackedGeneticData.empty());
                     String rank = String.valueOf(clan.members.get(uuid));
                     String perms = String.valueOf(clan.memberPerms.get(uuid));
                     String age = "Undefined";
@@ -65,7 +66,9 @@ public class CtSRequestManageScreenPacket {
                         isOnline = true;
                     }
 
-                    ClanInfo.Member member = new ClanInfo.Member(uuid, morphName, rank, perms, age, isOnline, morphData);
+                    ClanInfo.Member member = new ClanInfo.Member(uuid, morphName, rank, perms, age, isOnline,
+                            morphData.genetics, morphData.variants, morphData.chimerasGenetics, morphData.chimeraVariants,
+                            morphData.onGeneticalSkin, morphData.morphSkin);
 
                     playersInClan.put(uuid, member);
                 }

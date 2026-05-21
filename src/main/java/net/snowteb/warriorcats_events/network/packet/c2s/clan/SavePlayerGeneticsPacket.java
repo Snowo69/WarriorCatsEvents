@@ -2,12 +2,15 @@ package net.snowteb.warriorcats_events.network.packet.c2s.clan;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.network.NetworkEvent;
+import net.snowteb.warriorcats_events.clan.ClanData;
 import net.snowteb.warriorcats_events.clan.WCEPlayerData;
 import net.snowteb.warriorcats_events.clan.WCEPlayerDataProvider;
+import net.snowteb.warriorcats_events.diseases.Diseaseable;
 import net.snowteb.warriorcats_events.entity.ModEntities;
 import net.snowteb.warriorcats_events.entity.custom.WCGenetics;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
@@ -91,29 +94,14 @@ public class SavePlayerGeneticsPacket {
             });
 
             int shapeData = packet.defaultVariant;
-//            int shapeAge = 0;
-//            boolean isApprentice = false;
-//            WCEPlayerData.Age age = player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
-//                    .map(WCEPlayerData::getMorphAge).orElse(WCEPlayerData.Age.ADULT);
-//
-//            if (age == WCEPlayerData.Age.KIT) {
-//                shapeAge = -1000;
-//            } else if (age == WCEPlayerData.Age.APPRENTICE) {
-//                shapeAge = -500;
-//                isApprentice = true;
-//
-//            } else if (age == WCEPlayerData.Age.ADULT){
-//                shapeAge = 0;
-//            }
 
             WCatEntity shape = createShape(ModEntities.WCAT.get(), player.level(), shapeData, player);
-//
-//            shape.setAppScale(isApprentice);
-//            shape.setAge(shapeAge);
 
             if (!PlayerShape.updateShapes(player, shape)) {
                 player.sendSystemMessage(Component.literal("Couldn't update your morph"));
             }
+
+            if (player instanceof Diseaseable<?> diseaseable) diseaseable.onChange();
 
 
         });
@@ -121,7 +109,7 @@ public class SavePlayerGeneticsPacket {
         ctx.get().setPacketHandled(true);
     }
 
-    private static WCatEntity createShape(EntityType<WCatEntity> type, Level level, int data, ServerPlayer player) {
+    private static WCatEntity createShape(EntityType<WCatEntity> type, Level level, int defaultVariant, ServerPlayer player) {
         WCatEntity cat = new WCatEntity(type, level);
 
         String shapeNameString = player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
@@ -165,7 +153,7 @@ public class SavePlayerGeneticsPacket {
 
         Component name = Component.literal(shapeNameString + genderS);
 
-        cat.setVariant(data);
+        cat.setVariant(defaultVariant);
 
         cat.setCustomName(name);
         cat.setCustomNameVisible(true);
@@ -197,6 +185,13 @@ public class SavePlayerGeneticsPacket {
             } else {
                 cat.setNonGeneticalValues(cap.getPlayerGenetics(), cap.getPlayerGeneticalVariants().size);
             }
+
+
+            ClanData data = ClanData.get(((ServerLevel) level).getServer().overworld());
+            data.playerMorphData.put(player.getUUID(), new WCGenetics.PackedGeneticData(cap.getPlayerGenetics(),
+                    cap.getPlayerGeneticalVariants(), cap.getPlayerChimeraGenetics(),
+                    cap.getPlayerChimeraVariants(), cap.isOnGeneticalSkin(), cap.getVariantData()));
+            data.setDirty();
 
             cat.setIdlePose(cap.getIdlePose());
 

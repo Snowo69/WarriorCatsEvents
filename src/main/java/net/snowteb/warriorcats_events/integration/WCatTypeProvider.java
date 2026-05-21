@@ -8,6 +8,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.snowteb.warriorcats_events.clan.ClanData;
 import net.snowteb.warriorcats_events.clan.WCEPlayerData;
+import net.snowteb.warriorcats_events.diseases.DiseaseManager;
 import net.snowteb.warriorcats_events.entity.client.WCModel;
 import net.snowteb.warriorcats_events.entity.custom.WCGenetics;
 import net.snowteb.warriorcats_events.clan.WCEPlayerDataProvider;
@@ -33,14 +34,25 @@ public class WCatTypeProvider extends TypeProvider<WCatEntity> {
     public WCatEntity create(EntityType<WCatEntity> type, Level level, int data, Player player) {
         WCatEntity cat = new WCatEntity(type, level);
 
-        player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {
-            cap.setVariantData(data);
-        });
-
         if (player instanceof ServerPlayer serverPlayer) {
             ClanData clanData = ClanData.get(serverPlayer.serverLevel().getServer().overworld());
-            clanData.playerMorphData.put(player.getUUID(), data);
+
+            player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {
+                cap.setVariantData(data);
+
+                WCGenetics.PackedGeneticData morphData =
+                        new WCGenetics.PackedGeneticData(cap.getPlayerGenetics(),
+                                cap.getPlayerGeneticalVariants(),
+                                cap.getPlayerChimeraGenetics(),
+                                cap.getPlayerChimeraVariants(),
+                                cap.isOnGeneticalSkin(), cap.getVariantData());
+
+                clanData.playerMorphData.put(player.getUUID(), morphData);
+            });
+
             clanData.setDirty();
+
+            DiseaseManager.refreshData(serverPlayer);
         }
 
         String shapeNameString = player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)

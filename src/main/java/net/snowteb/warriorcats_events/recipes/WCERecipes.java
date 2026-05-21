@@ -24,7 +24,7 @@ public class WCERecipes {
     public static final RegistryObject<RecipeType<HerbsRecipe>> HERBS =
             TYPES.register("herbs", () -> new RecipeType<>() {
                 public String toString() {
-                    return new ResourceLocation(WarriorCatsEvents.MODID, "herbs").toString();
+                    return ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "herbs").toString();
                 }
             });
 

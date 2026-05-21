@@ -41,7 +41,7 @@ public class AncientStickScreen extends Screen {
     private static final int SHOW_TIME = 80;
 
     private static final ResourceLocation SHOWALLCATS =
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/showallcats.png");
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/gui/showallcats.png");
 
 
     public AncientStickScreen(List<WCatEntity> cats, List<EagleEntity> eagles) {

@@ -28,6 +28,9 @@ public class ModPlacedFeatures {
     public static final ResourceKey<PlacedFeature> CATMINT_PLACED_KEY = registerKey("catmint_placed");
     public static final ResourceKey<PlacedFeature> GLOWSHROOM_PLACED_KEY = registerKey("glowshroom_placed");
     public static final ResourceKey<PlacedFeature> YARROW_PLACED_KEY = registerKey("yarrow_placed");
+    public static final ResourceKey<PlacedFeature> FEVERFEW_PLACED_KEY = registerKey("feverfew_placed");
+    public static final ResourceKey<PlacedFeature> JUNIPER_PLACED_KEY = registerKey("juniper_placed");
+    public static final ResourceKey<PlacedFeature> COMFREY_PLACED_KEY = registerKey("comfrey_placed");
 
     public static final ResourceKey<PlacedFeature> LAVENDER_PLACED_KEY = registerKey("lavender_placed");
 
@@ -62,12 +65,24 @@ public class ModPlacedFeatures {
                 List.of(RarityFilter.onAverageOnceEvery(80), InSquarePlacement.spread(),
                         PlacementUtils.HEIGHTMAP_WORLD_SURFACE, BiomeFilter.biome()));
 
+        register(context, FEVERFEW_PLACED_KEY, configuredFeatures.getOrThrow(ModConfiguredFeatures.FEVERFEW_KEY),
+                List.of(RarityFilter.onAverageOnceEvery(80), InSquarePlacement.spread(),
+                        PlacementUtils.HEIGHTMAP_WORLD_SURFACE, BiomeFilter.biome()));
+
+        register(context, JUNIPER_PLACED_KEY, configuredFeatures.getOrThrow(ModConfiguredFeatures.JUNIPER_KEY),
+                List.of(RarityFilter.onAverageOnceEvery(100), InSquarePlacement.spread(),
+                        PlacementUtils.HEIGHTMAP_WORLD_SURFACE, BiomeFilter.biome()));
+
+        register(context, COMFREY_PLACED_KEY, configuredFeatures.getOrThrow(ModConfiguredFeatures.COMFREY_KEY),
+                List.of(RarityFilter.onAverageOnceEvery(80), InSquarePlacement.spread(),
+                        PlacementUtils.HEIGHTMAP_WORLD_SURFACE, BiomeFilter.biome()));
+
         register(context, DEATHBERRIES_PLACED_KEY, configuredFeatures.getOrThrow(ModConfiguredFeatures.DEATHBERRIES_KEY),
                 List.of(RarityFilter.onAverageOnceEvery(100), InSquarePlacement.spread(),
                         PlacementUtils.HEIGHTMAP_WORLD_SURFACE, BiomeFilter.biome()));
 
         register(context, CATMINT_PLACED_KEY, configuredFeatures.getOrThrow(ModConfiguredFeatures.CATMINT_KEY),
-                List.of(RarityFilter.onAverageOnceEvery(100), InSquarePlacement.spread(),
+                List.of(RarityFilter.onAverageOnceEvery(110), InSquarePlacement.spread(),
                         PlacementUtils.HEIGHTMAP_WORLD_SURFACE, BiomeFilter.biome()));
 
         register(context, GLOWSHROOM_PLACED_KEY, configuredFeatures.getOrThrow(ModConfiguredFeatures.GLOWSHROOM_KEY),
@@ -92,7 +107,7 @@ public class ModPlacedFeatures {
 
 
     private static ResourceKey<PlacedFeature> registerKey(String name) {
-        return ResourceKey.create(Registries.PLACED_FEATURE, new ResourceLocation(WarriorCatsEvents.MODID, name));
+        return ResourceKey.create(Registries.PLACED_FEATURE, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, name));
     }
 
     private static void register(BootstapContext<PlacedFeature> context, ResourceKey<PlacedFeature> key, Holder<ConfiguredFeature<?, ?>> configuration,

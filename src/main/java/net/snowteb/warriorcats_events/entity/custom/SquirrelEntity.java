@@ -15,6 +15,7 @@ import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.entity.ModEntities;
 import net.snowteb.warriorcats_events.item.ModItems;
 import net.snowteb.warriorcats_events.sound.ModSounds;
@@ -104,7 +105,7 @@ public class SquirrelEntity extends Animal implements GeoEntity {
 
     @Override
     protected ResourceLocation getDefaultLootTable() {
-        return new ResourceLocation("warriorcats_events", "entities/squirrel");
+        return ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "entities/squirrel");
     }
 
 

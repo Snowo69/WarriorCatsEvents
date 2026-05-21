@@ -28,6 +28,7 @@ public class WCEServerConfig {
         public final ForgeConfigSpec.BooleanValue TELEPORT_WHEN_JOIN;
         public final ForgeConfigSpec.BooleanValue CAN_EAGLES_BE_TAMED;
         public final ForgeConfigSpec.BooleanValue THIRST;
+        public final ForgeConfigSpec.BooleanValue DISEASES;
 
         public final ForgeConfigSpec.BooleanValue ENFORCE_TERRITORIES;
         public final ForgeConfigSpec.BooleanValue PROTECT_PLACE_AND_BREAK_BLOCKS;
@@ -97,6 +98,10 @@ public class WCEServerConfig {
             THIRST = builder
                     .comment("Whether thirst is enabled")
                     .define("thirst", true);
+
+            DISEASES = builder
+                    .comment("Whether the disease system is enabled")
+                    .define("diseases", true);
 
             builder.push("wce_territories");
 

@@ -102,7 +102,7 @@ public class Sequence {
         return this;
     }
 
-    public Sequence build() {
+    public Sequence run() {
         SequenceManager.add(this);
         return this;
     }
@@ -127,6 +127,7 @@ public class Sequence {
             r.run();
         } catch (Exception e) {
             WarriorCatsEvents.LOGGER.warn("A Sequence step has thrown an exception: ", e);
+
         }
     }
 
@@ -146,6 +147,6 @@ public class Sequence {
 //    .then(() -> {
 //        level.playSound(null, player.blockPosition(), SoundEvents.CAT_HISS, SoundSource.PLAYERS, 0.2f ,1.5f);
 //    })
-//    .build();
+//    .run();
 
 }

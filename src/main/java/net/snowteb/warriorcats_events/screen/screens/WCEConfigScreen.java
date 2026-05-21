@@ -9,6 +9,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.snowteb.warriorcats_events.WCEClient;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
+import net.snowteb.warriorcats_events.compat.CompatibilitiesClient;
 import net.snowteb.warriorcats_events.screen.widgets.GradientSwitchButton;
 import net.snowteb.warriorcats_events.screen.widgets.GradientToggleButton;
 import net.snowteb.warriorcats_events.zconfig.WCEClientConfig;
@@ -29,6 +30,7 @@ public class WCEConfigScreen extends Screen {
     private GradientSwitchButton ownChatBubblesButton;
     private GradientSwitchButton displayTerritoryButton;
     private GradientSwitchButton customPanoramaButton;
+    private GradientSwitchButton sereneSeasonsOverlayButton;
 
     private GradientToggleButton doneButton;
     private GradientToggleButton changelogButton;
@@ -40,6 +42,7 @@ public class WCEConfigScreen extends Screen {
     private boolean ownChatBubblesTemp;
     private boolean displayTerritoryTemp;
     private boolean customPanoramaTemp;
+    private boolean sereneSeasonsOverlayTemp;
 
     public WCEConfigScreen(Screen parent) {
         super(Component.literal("Warrior Cats Events"));
@@ -58,6 +61,7 @@ public class WCEConfigScreen extends Screen {
         ownChatBubblesTemp = WCEClientConfig.CLIENT.OWN_CHAT_BUBBLES.get();
         displayTerritoryTemp = WCEClientConfig.CLIENT.DISPLAY_TERRITORY.get();
         customPanoramaTemp = WCEClientConfig.CLIENT.CUSTOM_PANORAMA.get();
+        sereneSeasonsOverlayTemp = WCEClientConfig.CLIENT.SERENE_SEASONS_OVERLAY.get();
 
         centerY -= 10;
 
@@ -117,6 +121,16 @@ public class WCEConfigScreen extends Screen {
                 }, 0xFFFFFF, 0.8f
         );
 
+        if (CompatibilitiesClient.SERENESEASONS_LOADED){
+            sereneSeasonsOverlayButton = new GradientSwitchButton(
+                    centerX + 20, centerY + 40, 100, 15,
+                    "Seasons Overlay", sereneSeasonsOverlayTemp,
+                    btn -> {
+                        sereneSeasonsOverlayTemp = !sereneSeasonsOverlayTemp;
+                    }, 0xFFFFFF, 0.8f
+            );
+        }
+
 
 
         doneButton = new GradientToggleButton(
@@ -124,7 +138,7 @@ public class WCEConfigScreen extends Screen {
                 Component.literal("Done"),
                 btn -> {
                     save();
-                },  new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                },  ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                 60, 20, 1f, 0xFFFFFFFF
         );
 
@@ -133,7 +147,7 @@ public class WCEConfigScreen extends Screen {
                 Component.literal("Last Changelog"),
                 btn -> {
                     Minecraft.getInstance().setScreen(new WCEChangelogScreen(this));
-                },  new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                },  ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                 60, 20, 1f, 0xFFFFFFFF
         );
 
@@ -144,6 +158,10 @@ public class WCEConfigScreen extends Screen {
         this.addRenderableWidget(ownChatBubblesButton);
         this.addRenderableWidget(displayTerritoryButton);
         this.addRenderableWidget(customPanoramaButton);
+
+        if (CompatibilitiesClient.SERENESEASONS_LOADED) {
+            this.addRenderableWidget(sereneSeasonsOverlayButton);
+        }
 
         this.addRenderableWidget(changelogButton);
 
@@ -189,6 +207,7 @@ public class WCEConfigScreen extends Screen {
         WCEClientConfig.CLIENT.OWN_CHAT_BUBBLES.set(ownChatBubblesTemp);
         WCEClientConfig.CLIENT.DISPLAY_TERRITORY.set(displayTerritoryTemp);
         WCEClientConfig.CLIENT.CUSTOM_PANORAMA.set(customPanoramaTemp);
+        WCEClientConfig.CLIENT.SERENE_SEASONS_OVERLAY.set(sereneSeasonsOverlayTemp);
 
         WCEClientConfig.SPEC.save();
         onClose();

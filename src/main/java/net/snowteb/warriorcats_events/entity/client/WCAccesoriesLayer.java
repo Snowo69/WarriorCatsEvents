@@ -19,7 +19,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
-import net.snowteb.warriorcats_events.compat.Compatibilities;
+import net.snowteb.warriorcats_events.compat.CompatibilitiesClient;
 import net.snowteb.warriorcats_events.entity.custom.WCGenetics;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.item.ModItems;
@@ -39,92 +39,101 @@ public class WCAccesoriesLayer extends GeoRenderLayer<WCatEntity> {
     private final SquirrelAccessoryModel squirrelAccessoryModel = new SquirrelAccessoryModel();
 
     private final AccessoryModel flowerCrownAccesoryModel = new AccessoryModel(
-            new ResourceLocation(WarriorCatsEvents.MODID, "geo/wcat.flowercrown.geo.json"),
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/flowercrown.png")
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "geo/wcat.flowercrown.geo.json"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/accessories/flowercrown.png")
     );
 
     private final AccessoryModel leafManeAccesoryModel = new AccessoryModel(
-            new ResourceLocation(WarriorCatsEvents.MODID, "geo/leaf_mane.geo.json"),
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/leaf_mane.png")
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "geo/leaf_mane.geo.json"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/accessories/leaf_mane.png")
     );
 
     private final AccessoryModel flowerAccesoryModel = new AccessoryModel(
-            new ResourceLocation(WarriorCatsEvents.MODID, "geo/wcat.floweraccessory.geo.json"),
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/flower_accessory.png")
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "geo/wcat.floweraccessory.geo.json"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/accessories/flower_accessory.png")
     );
 
     private final AccessoryModel tailVinesModel = new AccessoryModel(
-            new ResourceLocation(WarriorCatsEvents.MODID, "geo/wcat.tail_vine_wrap.geo2.json"),
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/green_texture.png")
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "geo/wcat.tail_vine_wrap.geo2.json"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/accessories/green_texture.png")
     );
 
     private final AccessoryModel socksModel = new AccessoryModel(
-            new ResourceLocation(WarriorCatsEvents.MODID, "geo/wcat.socks.geo.json"),
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/cat_socks.png")
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "geo/wcat.socks.geo.json"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/accessories/cat_socks.png")
     );
 
     private final AccessoryModel leafShieldModel = new AccessoryModel(
-            new ResourceLocation(WarriorCatsEvents.MODID, "geo/wcat.leaf_shield.geo.json"),
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/leaf_shield.png")
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "geo/wcat.leaf_shield.geo.json"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/accessories/leaf_shield.png")
     );
 
     private final AccessoryModel tailLichenModel = new AccessoryModel(
-            new ResourceLocation(WarriorCatsEvents.MODID, "geo/wcat.tail_lichen.geo.json"),
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/tail_lichen.png")
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "geo/wcat.tail_lichen.geo.json"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/accessories/tail_lichen.png")
     );
 
     private final AccessoryModel dandelionModel = new AccessoryModel(
-            new ResourceLocation(WarriorCatsEvents.MODID, "geo/wcat.head_dandelion.geo.json"),
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/head_dandelion.png")
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "geo/wcat.head_dandelion.geo.json"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/accessories/head_dandelion.png")
     );
 
 
     private final AccessoryModel bodyFeathersModelUp = new AccessoryModel(
-            new ResourceLocation(WarriorCatsEvents.MODID, "geo/wcat.body_feathers_up.geo.json"),
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/chicken_feathers.png")
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "geo/wcat.body_feathers_up.geo.json"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/accessories/chicken_feathers.png")
     );
     private final AccessoryModel bodyFeathersModelMid = new AccessoryModel(
-            new ResourceLocation(WarriorCatsEvents.MODID, "geo/wcat.body_feathers_mid.geo.json"),
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/chicken_feathers.png")
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "geo/wcat.body_feathers_mid.geo.json"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/accessories/chicken_feathers.png")
     );
     private final AccessoryModel bodyFeathersModelDown = new AccessoryModel(
-            new ResourceLocation(WarriorCatsEvents.MODID, "geo/wcat.body_feathers_down.geo.json"),
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/chicken_feathers.png")
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "geo/wcat.body_feathers_down.geo.json"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/accessories/chicken_feathers.png")
     );
 
     private final AccessoryModel bodyVultureFeathersModelMid = new AccessoryModel(
-            new ResourceLocation(WarriorCatsEvents.MODID, "geo/wcat.body_vulture_feathers_mid.geo.json"),
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/black_vulture_feathers.png")
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "geo/wcat.body_vulture_feathers_mid.geo.json"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/accessories/black_vulture_feathers.png")
     );
     private final AccessoryModel bodyVultureFeathersModelUp = new AccessoryModel(
-            new ResourceLocation(WarriorCatsEvents.MODID, "geo/wcat.body_vulture_feathers_up.geo.json"),
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/black_vulture_feathers.png")
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "geo/wcat.body_vulture_feathers_up.geo.json"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/accessories/black_vulture_feathers.png")
     );
 
     private final AccessoryModel collarModel = new AccessoryModel(
-            new ResourceLocation(WarriorCatsEvents.MODID, "geo/wcat.collar.geo.json"),
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/collar_0.png")
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "geo/wcat.collar.geo.json"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/accessories/collar_0.png")
     );
 
     private final AccessoryModel berryModel = new AccessoryModel(
-            new ResourceLocation(WarriorCatsEvents.MODID, "geo/wcat.head_berry.geo.json"),
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/head_sweetberry.png")
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "geo/wcat.head_berry.geo.json"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/accessories/head_sweetberry.png")
     );
 
     private final AccessoryModel catHatModel = new AccessoryModel(
-            new ResourceLocation(WarriorCatsEvents.MODID, "geo/wcat.hat.geo.json"),
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/cat_hat.png")
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "geo/wcat.hat.geo.json"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/accessories/cat_hat.png")
     );
 
 
     private final AccessoryModel catBowModel = new AccessoryModel(
-            new ResourceLocation(WarriorCatsEvents.MODID, "geo/wcat.head_bow.geo.json"),
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/red_bow.png")
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "geo/wcat.head_bow.geo.json"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/accessories/red_bow.png")
     );
 
     private final AccessoryModel skullMaskModel = new AccessoryModel(
-            new ResourceLocation(WarriorCatsEvents.MODID, "geo/wcat.skull_mask.geo.json"),
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/skull_mask.png")
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "geo/wcat.skull_mask.geo.json"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/accessories/skull_mask.png")
+    );
+
+    private final AccessoryModel pawWrapModel0 = new AccessoryModel(
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "geo/wcat.paw_wrap_0.geo.json"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/accessories/paw_wrap.png")
+    );
+    private final AccessoryModel pawWrapModel1 = new AccessoryModel(
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "geo/wcat.paw_wrap_1.geo.json"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/accessories/paw_wrap.png")
     );
 
 
@@ -147,6 +156,7 @@ public class WCAccesoriesLayer extends GeoRenderLayer<WCatEntity> {
     private final AccessoryRenderer catHatRenderer;
     private final AccessoryRenderer catBowRenderer;
     private final AccessoryRenderer skullMaskRenderer;
+    private final AccessoryRenderer pawWrapRenderer;
 
 
     public WCAccesoriesLayer(GeoRenderer<WCatEntity> entityRendererIn, EntityRendererProvider.Context context) {
@@ -171,6 +181,7 @@ public class WCAccesoriesLayer extends GeoRenderLayer<WCatEntity> {
         this.skullMaskRenderer = new AccessoryRenderer(context, skullMaskModel);
 
         this.elytraRenderer = new AccessoryRenderer(context, elytraModel);
+        this.pawWrapRenderer = new AccessoryRenderer(context, pawWrapModel0);
     }
 
     @Override
@@ -254,16 +265,19 @@ public class WCAccesoriesLayer extends GeoRenderLayer<WCatEntity> {
                 .getItemBySlot(EquipmentSlot.HEAD)
                 .is(ModItems.SKULL_MASK.get());
 
-        if (Compatibilities.hasCuriosItem(animatable.getPlayerBoundUuid(), ModItems.FLOWER_CROWN.get())) hasCrown = true;
-        if (Compatibilities.hasCuriosItem(animatable.getPlayerBoundUuid(), ModItems.LEAF_MANE.get())) hasMane = true;
-        if (Compatibilities.hasCuriosItem(animatable.getPlayerBoundUuid(), ModItems.HEAD_FLOWER.get())) hasFlower = true;
-        if (Compatibilities.hasCuriosItem(animatable.getPlayerBoundUuid(), ModItems.HEAD_DANDELION.get())) hasDandelion = true;
-        if (Compatibilities.hasCuriosItem(animatable.getPlayerBoundUuid(), ModItems.HEAD_LEAF.get())) hasLeaf = true;
-        if (Compatibilities.hasCuriosItem(animatable.getPlayerBoundUuid(), ModItems.TAIL_VINES.get())) hasTailVines = true;
-        if (Compatibilities.hasCuriosItem(animatable.getPlayerBoundUuid(), ModItems.DRAPED_TAIL_VINES.get())) hasDrapedTailVines = true;
-        if (Compatibilities.hasCuriosItem(animatable.getPlayerBoundUuid(), ModItems.CAT_HAT.get())) hasHat = true;
-        if (Compatibilities.hasCuriosItem(animatable.getPlayerBoundUuid(), ModItems.CAT_BLACK_BOW.get())) hasChestBow = true;
-        if (Compatibilities.hasCuriosItem(animatable.getPlayerBoundUuid(), ModItems.SKULL_MASK.get())) hasSkullMask = true;
+
+
+
+        if (CompatibilitiesClient.hasCuriosItem(animatable.getPlayerBoundUuid(), ModItems.FLOWER_CROWN.get())) hasCrown = true;
+        if (CompatibilitiesClient.hasCuriosItem(animatable.getPlayerBoundUuid(), ModItems.LEAF_MANE.get())) hasMane = true;
+        if (CompatibilitiesClient.hasCuriosItem(animatable.getPlayerBoundUuid(), ModItems.HEAD_FLOWER.get())) hasFlower = true;
+        if (CompatibilitiesClient.hasCuriosItem(animatable.getPlayerBoundUuid(), ModItems.HEAD_DANDELION.get())) hasDandelion = true;
+        if (CompatibilitiesClient.hasCuriosItem(animatable.getPlayerBoundUuid(), ModItems.HEAD_LEAF.get())) hasLeaf = true;
+        if (CompatibilitiesClient.hasCuriosItem(animatable.getPlayerBoundUuid(), ModItems.TAIL_VINES.get())) hasTailVines = true;
+        if (CompatibilitiesClient.hasCuriosItem(animatable.getPlayerBoundUuid(), ModItems.DRAPED_TAIL_VINES.get())) hasDrapedTailVines = true;
+        if (CompatibilitiesClient.hasCuriosItem(animatable.getPlayerBoundUuid(), ModItems.CAT_HAT.get())) hasHat = true;
+        if (CompatibilitiesClient.hasCuriosItem(animatable.getPlayerBoundUuid(), ModItems.CAT_BLACK_BOW.get())) hasChestBow = true;
+        if (CompatibilitiesClient.hasCuriosItem(animatable.getPlayerBoundUuid(), ModItems.SKULL_MASK.get())) hasSkullMask = true;
 
         boolean hasBerry = animatable
                 .getItemBySlot(EquipmentSlot.HEAD)
@@ -271,8 +285,8 @@ public class WCAccesoriesLayer extends GeoRenderLayer<WCatEntity> {
                 .getItemBySlot(EquipmentSlot.HEAD)
                 .is(ModItems.HEAD_GLOWBERRY.get());
 
-        if (Compatibilities.hasCuriosItem(animatable.getPlayerBoundUuid(), ModItems.HEAD_GLOWBERRY.get())
-        || Compatibilities.hasCuriosItem(animatable.getPlayerBoundUuid(), ModItems.HEAD_SWEETBERRY.get())) {
+        if (CompatibilitiesClient.hasCuriosItem(animatable.getPlayerBoundUuid(), ModItems.HEAD_GLOWBERRY.get())
+        || CompatibilitiesClient.hasCuriosItem(animatable.getPlayerBoundUuid(), ModItems.HEAD_SWEETBERRY.get())) {
             hasBerry = true;
         }
 
@@ -282,8 +296,12 @@ public class WCAccesoriesLayer extends GeoRenderLayer<WCatEntity> {
                 .getItemBySlot(EquipmentSlot.HEAD)
                 .is(ModItems.CAT_RED_BOW.get());
 
-        if (Compatibilities.hasCuriosItem(animatable.getPlayerBoundUuid(), ModItems.CAT_PINK_BOW.get())
-                || Compatibilities.hasCuriosItem(animatable.getPlayerBoundUuid(), ModItems.CAT_RED_BOW.get())) {
+        boolean hasLegWrap = animatable.isWrappedPaw()
+                || animatable.getItemBySlot(EquipmentSlot.FEET).is(ModItems.LEG_WRAP.get())
+                || CompatibilitiesClient.hasCuriosItem(animatable.getPlayerBoundUuid(), ModItems.LEG_WRAP.get());
+
+        if (CompatibilitiesClient.hasCuriosItem(animatable.getPlayerBoundUuid(), ModItems.CAT_PINK_BOW.get())
+                || CompatibilitiesClient.hasCuriosItem(animatable.getPlayerBoundUuid(), ModItems.CAT_RED_BOW.get())) {
             hasBow = true;
         }
 
@@ -437,8 +455,8 @@ public class WCAccesoriesLayer extends GeoRenderLayer<WCatEntity> {
             }
             if (hasBerry) {
                 ItemStack stack = animatable.getItemBySlot(EquipmentSlot.HEAD);
-                ItemStack glowberry = Compatibilities.getCuriosItem(animatable.getPlayerBoundUuid(), ModItems.HEAD_GLOWBERRY.get());
-                ItemStack sweetberry = Compatibilities.getCuriosItem(animatable.getPlayerBoundUuid(), ModItems.HEAD_SWEETBERRY.get());
+                ItemStack glowberry = CompatibilitiesClient.getCuriosItem(animatable.getPlayerBoundUuid(), ModItems.HEAD_GLOWBERRY.get());
+                ItemStack sweetberry = CompatibilitiesClient.getCuriosItem(animatable.getPlayerBoundUuid(), ModItems.HEAD_SWEETBERRY.get());
 
                 if (!glowberry.isEmpty()) {
                     stack = glowberry;
@@ -523,8 +541,8 @@ public class WCAccesoriesLayer extends GeoRenderLayer<WCatEntity> {
 
             if (hasBow) {
                 ItemStack stack = animatable.getItemBySlot(EquipmentSlot.HEAD);
-                ItemStack redBow = Compatibilities.getCuriosItem(animatable.getPlayerBoundUuid(), ModItems.CAT_RED_BOW.get());
-                ItemStack pinkBow = Compatibilities.getCuriosItem(animatable.getPlayerBoundUuid(), ModItems.CAT_PINK_BOW.get());
+                ItemStack redBow = CompatibilitiesClient.getCuriosItem(animatable.getPlayerBoundUuid(), ModItems.CAT_RED_BOW.get());
+                ItemStack pinkBow = CompatibilitiesClient.getCuriosItem(animatable.getPlayerBoundUuid(), ModItems.CAT_PINK_BOW.get());
 
                 if (!redBow.isEmpty()) {
                     stack = redBow;
@@ -784,7 +802,7 @@ public class WCAccesoriesLayer extends GeoRenderLayer<WCatEntity> {
         }
 
         if (socksStack.isEmpty()) {
-            ItemStack curiosStack = Compatibilities.getCuriosItem(
+            ItemStack curiosStack = CompatibilitiesClient.getCuriosItem(
                     animatable.getPlayerBoundUuid(),
                     CatSocksArmorItem.class
             );
@@ -1090,7 +1108,7 @@ public class WCAccesoriesLayer extends GeoRenderLayer<WCatEntity> {
         }
 
         if (featherStack.isEmpty()) {
-            ItemStack curiosStack = Compatibilities.getCuriosItem(
+            ItemStack curiosStack = CompatibilitiesClient.getCuriosItem(
                     animatable.getPlayerBoundUuid(),
                     FeathersArmorItem.class
             );
@@ -1366,7 +1384,7 @@ public class WCAccesoriesLayer extends GeoRenderLayer<WCatEntity> {
             }
 
             if (collarStack.isEmpty()) {
-                ItemStack curiosStack = Compatibilities.getCuriosItem(
+                ItemStack curiosStack = CompatibilitiesClient.getCuriosItem(
                         animatable.getPlayerBoundUuid(), CollarArmorItem.class
                 );
 
@@ -1509,7 +1527,7 @@ public class WCAccesoriesLayer extends GeoRenderLayer<WCatEntity> {
             }
 
             if (elytraStack.isEmpty()) {
-                ItemStack curiosStack = Compatibilities.getCuriosItem(
+                ItemStack curiosStack = CompatibilitiesClient.getCuriosItem(
                         animatable.getPlayerBoundUuid(), ElytraItem.class
                 );
 
@@ -1591,6 +1609,77 @@ public class WCAccesoriesLayer extends GeoRenderLayer<WCatEntity> {
             }
         }
 
+        if (hasLegWrap) {
+            if (bone.getName().equals("front_right_legDOWN")) {
+                var bakedModel = pawWrapModel0.getBakedModel(pawWrapModel0.getModelResource(animatable));
+
+                poseStack.pushPose();
+
+                poseStack.translate(0.07D, 0.0D, -0.249D);
+                poseStack.mulPose(Axis.YP.rotationDegrees(0f));
+                float scale = 0.5f;
+                poseStack.scale(scale, scale, scale);
+
+                RenderType accessoryRenderType = RenderType.entityCutout(pawWrapModel0.getTextureResource(animatable));
+
+                VertexConsumer accessoryBuffer = bufferSource.getBuffer(accessoryRenderType);
+
+                float interpolatedYaw = Mth.lerp(partialTick, animatable.yBodyRotO, animatable.yBodyRot);
+                poseStack.mulPose(Axis.YP.rotationDegrees(interpolatedYaw + 180f));
+
+
+                pawWrapRenderer.reRender(
+                        bakedModel,
+                        poseStack,
+                        bufferSource,
+                        animatable,
+                        accessoryRenderType,
+                        accessoryBuffer,
+                        partialTick,
+                        packedLight,
+                        packedOverlay,
+                        1f, 1f, 1f, 1f
+                );
+
+                poseStack.popPose();
+                buffer = bufferSource.getBuffer(renderType);
+            }
+
+            if (bone.getName().equals("front_right_legUPPER")) {
+                var bakedModel = pawWrapModel1.getBakedModel(pawWrapModel1.getModelResource(animatable));
+
+                poseStack.pushPose();
+
+                poseStack.translate(0.07D, 0.0D, -0.249D);
+                poseStack.mulPose(Axis.YP.rotationDegrees(0f));
+                float scale = 0.5f;
+                poseStack.scale(scale, scale, scale);
+
+                RenderType accessoryRenderType = RenderType.entityCutout(pawWrapModel1.getTextureResource(animatable));
+
+                VertexConsumer accessoryBuffer = bufferSource.getBuffer(accessoryRenderType);
+
+                float interpolatedYaw = Mth.lerp(partialTick, animatable.yBodyRotO, animatable.yBodyRot);
+                poseStack.mulPose(Axis.YP.rotationDegrees(interpolatedYaw + 180f));
+
+                pawWrapRenderer.reRender(
+                        bakedModel,
+                        poseStack,
+                        bufferSource,
+                        animatable,
+                        accessoryRenderType,
+                        accessoryBuffer,
+                        partialTick,
+                        packedLight,
+                        packedOverlay,
+                        1f, 1f, 1f, 1f
+                );
+
+                poseStack.popPose();
+                buffer = bufferSource.getBuffer(renderType);
+            }
+        }
+
     }
 
     @Override
@@ -1622,6 +1711,6 @@ public class WCAccesoriesLayer extends GeoRenderLayer<WCatEntity> {
             }
         }
 
-        return new ResourceLocation("textures/entity/elytra.png");
+        return ResourceLocation.withDefaultNamespace("textures/entity/elytra.png");
     }
 }

@@ -23,7 +23,10 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.snowteb.warriorcats_events.WCEClient;
+import net.snowteb.warriorcats_events.clan.ClanData;
 import net.snowteb.warriorcats_events.climbing.ClimbingConstants;
+import net.snowteb.warriorcats_events.diseases.DiseaseTypes;
+import net.snowteb.warriorcats_events.diseases.Diseaseable;
 import net.snowteb.warriorcats_events.effect.ModEffects;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.managers.ClimbDataAccessor;
@@ -50,6 +53,18 @@ public class LivingEntityMixin implements ClimbDataAccessor {
                 amount = 0.4f*amount;
             }
         }
+
+        if (source.is(DamageTypes.FALL)) {
+            if (entity instanceof Diseaseable<?> diseaseable) {
+                boolean isAShape = entity instanceof WCatEntity cat && !(cat.getPlayerBoundUuid().equals(ClanData.EMPTY_UUID));
+                if (amount > 12f && !isAShape) {
+                    if (diseaseable.getEntity().getRandom().nextFloat() < 0.75f) {
+                        diseaseable.addDisease(DiseaseTypes.BROKEN_PAW, true);
+                    }
+                }
+            }
+        }
+
 
         return amount;
     }
@@ -177,6 +192,9 @@ public class LivingEntityMixin implements ClimbDataAccessor {
 
                 if (shape instanceof WCatEntity && this.wce$isClimbing()) {
                     if (wce$exhaustionLevel < MAX_EXHAUSTION_LEVEL) wce$exhaustionLevel++;
+                    if (player instanceof Diseaseable<?> diseaseable
+                            && diseaseable.hasDisease(DiseaseTypes.SORE_PADS)) wce$exhaustionLevel += 3;
+
                     float exhaustionToAdd = 3f * wce$getExhaustionCoefficientToOne(wce$exhaustionLevel);
 
                     float coefficient = wce$getExhaustionCoefficientToOne(wce$exhaustionLevel);
@@ -223,7 +241,6 @@ public class LivingEntityMixin implements ClimbDataAccessor {
     private float wce$getExhaustionCoefficientToOne(int exhaustionLevel) {
         return (float) Math.pow(((double) (exhaustionLevel) / MAX_EXHAUSTION_LEVEL), 3);
     }
-
 
 
     @Unique
@@ -347,8 +364,18 @@ public class LivingEntityMixin implements ClimbDataAccessor {
         }
     }
 
+    @Unique
+    private int wce$sprintTime = 0;
     @Inject(method = "tick", at = @At("HEAD"))
     public void tick(CallbackInfo ci) {
+
+        LivingEntity self = (LivingEntity) (Object) this;
+        if (!self.level().isClientSide()) {
+            if (self.isSprinting()) wce$sprintTime++;
+            else if (wce$sprintTime > 0) wce$sprintTime--;
+        }
+
+
         this.wce$climbManager();
         this.wce$exhaustionManager();
     }
@@ -445,6 +472,16 @@ public class LivingEntityMixin implements ClimbDataAccessor {
         this.wce$setClimbing(false);
         this.wce$setGraceTimer(0);
         this.wce$setClimbTick(0);
+    }
+
+    @Override
+    public int wce$getExhaustion() {
+        return wce$exhaustionLevel;
+    }
+
+    @Override
+    public int wce$getSprintTime() {
+        return wce$sprintTime;
     }
 
 }

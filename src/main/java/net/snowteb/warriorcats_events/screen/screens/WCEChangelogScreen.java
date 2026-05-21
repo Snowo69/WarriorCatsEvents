@@ -2,6 +2,7 @@ package net.snowteb.warriorcats_events.screen.screens;
 
 import com.mojang.math.Axis;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -12,9 +13,11 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.snowteb.warriorcats_events.WCEClient;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
+import net.snowteb.warriorcats_events.screen.widgets.ChangelogScrollList;
 import net.snowteb.warriorcats_events.screen.widgets.GradientToggleButton;
 import org.lwjgl.glfw.GLFW;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static net.snowteb.warriorcats_events.screen.screens.CreateClanScreen.BG_TEXTURE;
@@ -24,26 +27,11 @@ public class WCEChangelogScreen extends Screen {
 
     private final Screen parent;
 
-    private String line1 = "";
-    private String line2 = "";
-    private String line3 = "";
-    private String line4 = "";
-    private String line5 = "";
-    private String line6 = "";
-    private String line7 = "";
-    private String line8 = "";
-    private String line9 = "";
-    private String line10 = "";
-    private String line11 = "";
-    private String line12 = "";
-    private String line13 = "";
-    private String line14 = "";
-    private String line15 = "";
-    private String line16 = "";
-    private String line17 = "";
-    private String line18 = "";
+    private List<String> lines = new ArrayList<>();
 
     private GradientToggleButton backButton;
+
+    private ChangelogScrollList changelogList;
 
     public WCEChangelogScreen(Screen parent) {
         super(Component.literal("Warrior Cats Events"));
@@ -61,17 +49,27 @@ public class WCEChangelogScreen extends Screen {
         int centerX = width / 2;
         int centerY = height / 2;
 
+        lines.clear();
         defineChangelogLines();
+
+        changelogList = new ChangelogScrollList(Minecraft.getInstance(), 270, 200,
+                centerY-50, centerY+80, 50);
+        changelogList.setLeftPos(centerX-136);
+        changelogList.setLogs(lines);
+        changelogList.setRenderTopAndBottom(false);
+
+
 
         backButton = new GradientToggleButton(
                 centerX - 135, centerY + 90, 40, 17,
                 Component.literal("Back"),
                 btn -> {
                     onClose();
-                },  new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                },  ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                 60, 20, 1f, 0xFFFFFFFF
         );
 
+        this.addRenderableWidget(changelogList);
         this.addRenderableWidget(backButton);
 
     }
@@ -108,19 +106,16 @@ public class WCEChangelogScreen extends Screen {
 
         int y = 0;
 
-        List<String> lines = List.of(line1, line2, line3, line4, line5, line6,
-                line7, line8, line9, line10, line11, line12, line13, line14, line15, line16, line17, line18);
-
-        for (String line : lines) {
-            List<FormattedCharSequence> wrapped = this.font.split(FormattedText.of(line), 550);
-            for (FormattedCharSequence subLine : wrapped) {
-
-
-                pGuiGraphics.drawString(this.font,subLine, 0, y, 0xFFFFFFFF);
-                y += this.font.lineHeight;
-            }
-            y+=6;
-        }
+//        for (String line : lines) {
+//            List<FormattedCharSequence> wrapped = this.font.split(FormattedText.of(line), 550);
+//            for (FormattedCharSequence subLine : wrapped) {
+//
+//
+//                pGuiGraphics.drawString(this.font,subLine, 0, y, 0xFFFFFFFF);
+//                y += this.font.lineHeight;
+//            }
+//            y+=6;
+//        }
         pGuiGraphics.pose().popPose();
 
 
@@ -183,45 +178,67 @@ public class WCEChangelogScreen extends Screen {
     }
 
     private void defineChangelogLines() {
-        line1 = "- Added Climbing system! Unlock the climb skill through the skill tree, use the keybind \"C\" by default to start climbing.";
-        line2 = "- Thirst system can now be disabled through world config";
-        line3 = "- Skill tree attributes now only apply when on cat form";
-        line4 = "- Fixed some screens not showing cat npcs correctly ";
-        line5 = "- You can now rename clans through `/wce clan manage`";
-        line6 = "- Fixed scars and silver variant not loading from saved morphs";
-        line7 = "- Reworked territory claiming. The cost is now more expensive, but the claimed territory has been expanded from 1 chunk to 9 chunks.";
-        line8 = "- Added bio for characters and a custom gender field. Use `/wce info profile`";
-        line9 = "- Added honey mossball. Put a moss-ball and a honey bottle or honey block on a crafting rock to get a honey moss-ball. These not only restore food, but will also bounce a lot more!";
-        line10 = "- Removed vanilla (Crafting Table) recipes for: Freshkill & herbs, Traveling Herbs. These are now crafted through the Crafting Rock";
-        line11 = "- Added JEI compatibility. Recipes for certain items now will show their Crafting Rock recipe. ";
-        line12 = "- Drinking water from bottles now also restores thirst";
-        line13 = "- Added kittypet bowls of different colors.";
-        line14 = "- Now its not possible to attack cats too close to moss-balls";
-        line15 = "- Added accesories only obtained from villages chests: Pink bow, red bow, black bow, cat hat. And added Skull Mask";
-        line16 = "- Saved eagles from drowning (now for good)";
-        line17 = "- Other minor adjustements and fixes";
-        line18 = "";
+        lines.add("1.9.0 | Diseases and more!");
+        lines.add("It has been requested and asked for so much... It took a while and a hard work but it's finally here...\n" +
+                "\n" +
+                "Allow me to introduce the diseases system!\n" +
+                "These will add a brand new level of complexity and challenge to the gameplay. \n" +
+                "\n" +
+                "Diseases will be obtained in different ways. Some are more common in certain environments, some others are caused by other circumstances such as falls or the presence of other conditions.\n" +
+                "\n" +
+                "The new diseases and conditions added for this update are: Greencough, Whitecough, Broken Leg, Chills, Deathberries Poisoning, Fever, Sore Pads.\n" +
+                "\n" +
+                "If you like to use the mod Serene Seasons, compatibility has been added for it so that Greencough might be a real issue during Leaf-bare...\n" +
+                "\n" +
+                "This update also adds a few more herbs and a few adjustements to the ones that were already in.\n" +
+                "\n" +
+                "You better start collecting herbs, because now those will be really needed.");
+        lines.add("Changelog");
+
+        lines.add("- Added the new Diseases system. Check the Warrior's Guide in game or the Wiki for more information.");
+        lines.add("- Added Server config for Diseases system. You can also use `/gamerule wceDiseases`");
+        lines.add("- The Serene Seasons season will now be displayed on the upper left side of the screen. You can disable this through the client config.");
+        lines.add("- Added new Crafting Rock recipes for Comfrey poultice, leg wrap, poppy seeds, and yarrow poultice.");
+        lines.add("- Reworked and improved the Changelog screen.");
+        lines.add("- Reworked the Deathberries. It is no longer an effect, and will now be a disease. This will make Deathberries poisoning now actually deadly unless its treated.");
+        lines.add("- Balanced some skills from the skill tree. Nerfed the Jump skill, you will now jump high only when sprinting.");
+        lines.add("- Prey spawns for territory slightly balanced");
+        lines.add("- Added `/wce disease ` commands.");
+        lines.add("- Added `/wce changelog` command.");
+        lines.add("- Fixed player morphs not showing correctly in the clan manage screen.");
+        lines.add("- Fixed tree stumps not changing the clan name when a clan is renamed.");
+        lines.add("- Added Feverfew, Feverfew leaves, Juniper, Juniper berries, Poppy seeds, Comfrey, Comfrey leaves, Comfrey root, Yarrow poultice, Comfrey poultice, Cobweb on a stick, Leg wrap.");
+        lines.add("- Spiders now have a chance to drop Cobweb.");
+        lines.add("- Added suspicious prey, mixed on a Crafting Rock using any wce prey or meat and deathberries. This prey will cause the same effect as eating Deathberries. Hold shift while hovering a prey item in your inventory to see if it is poisoned.");
+        lines.add("- Added preview for kits spawned through the Kit item.");
+        lines.add("- Boosted vanilla rabbit spawns.");
+        lines.add("- Whiskers will now repair through time when they are in your inventory and are not being used. \n");
+        lines.add("- Improved Claws and Whiskers tooltips. You can now view all their usages in the item itself when holding shift while hovering it in your inventory.");
+        lines.add("- Other minor adjustments");
+
+        lines.add("Thank you for reading 🐈");
     }
 
 //    private void defineChangelogLines() {
-//        line1 = "";
-//        line2 = "";
-//        line3 = "";
-//        line4 = "";
-//        line5 = "";
-//        line6 = "";
-//        line7 = "";
-//        line8 = "";
-//        line9 = "";
-//        line10 = "";
-//        line11 = "";
-//        line12 = "";
-//        line13 = "";
-//        line14 = "";
-//        line15 = "";
-//        line16 = "";
-//        line17 = "";
-//        line18 = "";
+//        lines.add("");
+//        lines.add("");
+//        lines.add("Changelog");
+
+//        lines.add("");
+//        lines.add("");
+//        lines.add("");
+//        lines.add("");
+//        lines.add("");
+//        lines.add("");
+//        lines.add("");
+//        lines.add("");
+//        lines.add("");
+//        lines.add("");
+//        lines.add("");
+//        lines.add("");
+//        lines.add("");
+//
+//        lines.add("Thank you for reading 🐈");
 //    }
 
 

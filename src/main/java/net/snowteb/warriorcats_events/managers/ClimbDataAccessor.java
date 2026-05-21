@@ -13,4 +13,8 @@ public interface ClimbDataAccessor {
 
     void wce$startClimb();
     void wce$stopClimb();
+
+    int wce$getExhaustion();
+
+    int wce$getSprintTime();
 }

@@ -47,6 +47,7 @@ import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.scores.Team;
+import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.effect.ModEffects;
 import net.snowteb.warriorcats_events.item.ModItems;
 import net.snowteb.warriorcats_events.sound.ModSounds;
@@ -1442,7 +1443,7 @@ public class EagleEntity extends FlyingMob implements GeoEntity, OwnableEntity {
                                 MinecraftServer server = serverPlayer.getServer();
                                 if (server != null) {
                                     Advancement adv = server.getAdvancements()
-                                            .getAdvancement(new ResourceLocation("warriorcats_events:tame_eagle"));
+                                            .getAdvancement(ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID,"tame_eagle"));
                                     if (adv != null) {
                                         serverPlayer.getAdvancements().award(adv, "tame_eagle");
                                     }

@@ -6,11 +6,15 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
+import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.network.ModPackets;
 import net.snowteb.warriorcats_events.network.packet.c2s.cats.CtSCreateAndSpawnKitPacket;
+import net.snowteb.warriorcats_events.network.packet.c2s.cats.CtSNameKitPacket;
+import org.joml.Quaternionf;
 
 public class KitCreateScreen extends Screen {
     private int textCooldown = 0;
@@ -21,51 +25,16 @@ public class KitCreateScreen extends Screen {
 
 //    private VariantScrollList variantScrollList;
 
+    private final WCatEntity kitten;
 
 
-
-    public KitCreateScreen() {
+    public KitCreateScreen(WCatEntity kitten) {
         super(Component.literal("Kit"));
+        this.kitten = kitten;
     }
 
-
-//    private static final ResourceLocation[] VARIANTS = {
-//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var_empty.png"),
-//
-//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var1.png"),
-//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var2.png"),
-//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var3.png"),
-//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var4.png"),
-//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var5.png"),
-//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var6.png"),
-//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var7.png"),
-//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var8.png"),
-//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var9.png"),
-//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var10.png"),
-//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var11.png"),
-//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var12.png"),
-//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var13.png"),
-//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var14.png"),
-//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var15.png"),
-//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var16.png"),
-//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var17.png"),
-//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var18.png"),
-//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var19.png"),
-//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var20.png"),
-//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var21.png"),
-//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var22.png"),
-//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var23.png"),
-//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var24.png"),
-//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var25.png"),
-//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var26.png"),
-//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var27.png"),
-//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var28.png"),
-//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var29.png"),
-//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/var30.png")
-//    };
-
     private static final ResourceLocation BANNER =
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/banner.png");
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/gui/clan_setup/banner.png");
 
 
     @Override
@@ -107,21 +76,6 @@ public class KitCreateScreen extends Screen {
                 pGuiGraphics.drawString(Minecraft.getInstance().font, "<Prefix>", centerx-43, centery +34, 0xFF7d7d7d);
         }
 
-        ResourceLocation currentVariant;
-
-//        int selected = 0;
-//        if (variantScrollList.getSelectedEntry() != null) {
-//            selected = variantScrollList.getSelectedEntry().getId();
-//        }
-
-//        if (selected != null) {
-//            int variant = selected.getId() + 1;
-//            currentVariant = VARIANTS[variant];
-//
-//        } else {
-//            currentVariant = VARIANTS[0];
-//        }
-
         if (textCooldown > 0) {
             pGuiGraphics.drawString(Minecraft.getInstance().font, "Some fields are empty",
                     centerx - 55, centery + 75, 0xFFFF0000);
@@ -130,67 +84,35 @@ public class KitCreateScreen extends Screen {
 
         super.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
 
-//        pGuiGraphics.enableScissor(centerx - 32, centery - 60, centerx + 32, centery +4);
-//        pGuiGraphics.blit(currentVariant, centerx - 32, centery - 60,
-//                0, 0,
-//                256, 256,
-//                64, 64
-//        );
-//        pGuiGraphics.disableScissor();
 
 
-//        int xPosition = -230;
-//        int yPosition = -120;
+        kitten.setOnGround(true);
+        kitten.setYRot(0);
+        kitten.yHeadRot = 0;
+        kitten.yBodyRot = 0;
 
-//        pGuiGraphics.enableScissor(centerx + xPosition, centery + yPosition, centerx + xPosition + 200, centery + yPosition + 56);
-//        pGuiGraphics.blit(
-//                BANNER,
-//                centerx - 230, centery - 120,
-//                0, 0,
-//                800, 225,
-//                200, 56
-//        );
-//        pGuiGraphics.disableScissor();
+        pGuiGraphics.pose().pushPose();
 
-//        if (!ClientClanData.get().isOnGeneticalSkin()) {
-//            pGuiGraphics.renderOutline(centerx-71, centery - 106, 148, 58, 0xFFFFFFFF);
-//
-//
-//            WCatEntity entityToRender = new WCatEntity(ModEntities.WCAT.get(), Minecraft.getInstance().level);
-//
-//            entityToRender.setOnGeneticalSkin(false);
-//            entityToRender.setOnGround(true);
-//            entityToRender.setVariant(selected);
-//            if (variantScrollList.getSelectedEntry() != null) {
-//                entityToRender.setVariant(variantScrollList.getSelectedEntry().getId());
-//            }
-//            entityToRender.setYRot(0);
-//            entityToRender.yHeadRot = 0;
-//            entityToRender.yBodyRot = 0;
-//
-//            pGuiGraphics.pose().pushPose();
-//
-//            pGuiGraphics.pose().translate(centerx, centery + 5, 0);
-//
-//            float scale = 1.4f;
-//
-//            pGuiGraphics.pose().scale(scale, scale, scale);
-//
-//            Quaternionf rotation = new Quaternionf(0.0F, 0.0F, 0.0F, 0.0F);
-//            Quaternionf pose = new Quaternionf(0.8F, 0.0F, 0.3F, 0.0F);
-//
-//            InventoryScreen.renderEntityInInventory(
-//                    pGuiGraphics,
-//                    0,
-//                    0,
-//                    48,
-//                    pose,
-//                    rotation,
-//                    entityToRender
-//            );
-//
-//            pGuiGraphics.pose().popPose();
-//        }
+        pGuiGraphics.pose().translate(centerx, centery - 10, 0);
+
+        float scale = 3.4f;
+
+        pGuiGraphics.pose().scale(scale, scale, scale);
+
+        Quaternionf rotation = new Quaternionf(0.0F, 0.0F, 0.0F, 0.0F);
+        Quaternionf pose = new Quaternionf(0.8F, 0.0F, 0.3F, 0.0F);
+
+        InventoryScreen.renderEntityInInventory(
+                pGuiGraphics,
+                0,
+                0,
+                48,
+                pose,
+                rotation,
+                kitten
+        );
+
+        pGuiGraphics.pose().popPose();
 
 
     }
@@ -305,12 +227,6 @@ public class KitCreateScreen extends Screen {
 
     private void onSave() {
         String kitPrefix = kitPrefixBox.getValue().trim();
-//        VariantScrollList.CatEntry selectedVariant = variantScrollList.getSelectedEntry();
-
-//        if (kitPrefix.isEmpty() || (selectedVariant == null && !ClientClanData.get().isOnGeneticalSkin())) {
-//            textCooldown = 100;
-//            return;
-//        }
 
         if (kitPrefix.isEmpty()) {
             textCooldown = 100;
@@ -320,17 +236,9 @@ public class KitCreateScreen extends Screen {
 
         String prefix = kitPrefixBox.getValue().trim();
 
-        int variant = 0;
-//        VariantScrollList.CatEntry selected = variantScrollList.getSelectedEntry();
-
-//        if (selected != null) {
-//            variant = selected.getId();
-//        }
-
-
         this.minecraft.setScreen(null);
 
-        ModPackets.sendToServer(new CtSCreateAndSpawnKitPacket(prefix, variant));
+        ModPackets.sendToServer(new CtSNameKitPacket(prefix, kitten.getId()));
 
     }
 

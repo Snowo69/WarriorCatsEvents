@@ -12,6 +12,7 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.common.MinecraftForge;
 import net.snowteb.warriorcats_events.block.ModBlocks;
 import net.snowteb.warriorcats_events.block.entity.ModBlockEntities;
+import net.snowteb.warriorcats_events.diseases.DiseaseRegistry;
 import net.snowteb.warriorcats_events.effect.ModEffects;
 import net.snowteb.warriorcats_events.entity.ModEntities;
 import net.snowteb.warriorcats_events.integration.WCatIntegration;
@@ -37,10 +38,10 @@ import java.util.concurrent.Executors;
 @Mod(WarriorCatsEvents.MODID)
 public class WarriorCatsEvents {
     public static final String MODID = "warriorcats_events";
-    public static final String MOD_VERSION = "1.8.0";
+    public static final String MOD_VERSION = "1.9.0";
     public static final Logger LOGGER = LogUtils.getLogger();
 
-    public static final ExecutorService teleportExecutor = Executors.newSingleThreadExecutor();
+    public static final ExecutorService singleThreadExecutor = Executors.newSingleThreadExecutor();
 
 
     public static class Collaborators {
@@ -81,10 +82,6 @@ public class WarriorCatsEvents {
                 ModConfig.Type.CLIENT, WCEClientConfig.SPEC,
                 MODID + "-client.toml");
 
-//        ModLoadingContext.get().registerConfig(
-//                ModConfig.Type.COMMON, WCEPreyItemsConfig.SPEC,
-//                MODID + "-prey_items-common.toml");
-
         ModSounds.register(modEventBus);
         ModItems.register(modEventBus);
         ModBlocks.register(modEventBus);
@@ -97,6 +94,7 @@ public class WarriorCatsEvents {
         WCECreativeTab.CREATIVE_TABS.register(modEventBus);
         WCEParticles.register(modEventBus);
         WCERecipes.register(modEventBus);
+        DiseaseRegistry.init();
 
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(this::addCreative);
@@ -109,7 +107,7 @@ public class WarriorCatsEvents {
         event.enqueueWork(() -> {
             ModPackets.register();
 
-            Integrations.register(WCatIntegration.MODID, WCatIntegration::new);
+            Integrations.register(WarriorCatsEvents.MODID, WCatIntegration::new);
 
         });
 
@@ -132,6 +130,14 @@ public class WarriorCatsEvents {
             event.accept(ModItems.MOUSE_FOOD);
             event.accept(ModItems.SQUIRREL_FOOD);
             event.accept(ModItems.PIGEON_FOOD);
+            event.accept(ModItems.SHREDDED_MEAT);
+            event.accept(ModItems.EAGLE_MEAT_FOOD);
+
+            event.accept(ModItems.SUS_MOUSE_FOOD);
+            event.accept(ModItems.SUS_SQUIRREL_FOOD);
+            event.accept(ModItems.SUS_PIGEON_FOOD);
+            event.accept(ModItems.SUS_SHREDDED_MEAT);
+            event.accept(ModItems.SUS_EAGLE_MEAT_FOOD);
 
             event.accept(ModItems.TRAVELING_HERBS);
 

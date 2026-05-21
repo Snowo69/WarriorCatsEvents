@@ -74,16 +74,32 @@ public class ClanInfo {
         private final String permissions;
         private final String age;
         private final boolean isOnline;
-        private final int variantData;
 
-        public Member(UUID playerUUID, String morphName, String rank, String permissions, String age, boolean isOnline, int variantData) {
+        private final WCGenetics genetics;
+        private final WCGenetics.GeneticalVariants variants;
+        private final WCGenetics chimeraGenetics;
+        private final WCGenetics.GeneticalChimeraVariants chimeraVariants;
+        private final boolean onGeneticalSkin;
+        private final int morphVariant;
+
+
+        public Member(UUID playerUUID, String morphName, String rank, String permissions, String age, boolean isOnline,
+                      WCGenetics genetics, WCGenetics.GeneticalVariants variants,
+                      WCGenetics chimeraGenetics, WCGenetics.GeneticalChimeraVariants chimeraVariants,
+                      boolean onGeneticalSkin, int morphVariant) {
             this.playerUUID = playerUUID;
             this.morphName = morphName;
             this.rank = rank;
             this.permissions = permissions;
             this.age = age;
             this.isOnline = isOnline;
-            this.variantData = variantData;
+
+            this.genetics = genetics;
+            this.variants = variants;
+            this.chimeraGenetics = chimeraGenetics;
+            this.chimeraVariants = chimeraVariants;
+            this.onGeneticalSkin = onGeneticalSkin;
+            this.morphVariant = morphVariant;
         }
 
         public UUID getPlayerUUID() { return playerUUID; }
@@ -92,7 +108,12 @@ public class ClanInfo {
         public String getPerms() { return permissions; }
         public String getPlayerMorphAge() { return age; }
         public boolean isPlayerOnline() { return isOnline; }
-        public int getVariantData() { return variantData; }
+        public WCGenetics getGenetics() { return genetics; }
+        public WCGenetics.GeneticalVariants getVariants() { return variants; }
+        public WCGenetics getChimeraGenetics() { return chimeraGenetics; }
+        public WCGenetics.GeneticalChimeraVariants getChimeraVariants() { return chimeraVariants; }
+        public boolean isOnGeneticalSkin() { return onGeneticalSkin; }
+        public int getMorphVariant() { return morphVariant; }
     }
 
 

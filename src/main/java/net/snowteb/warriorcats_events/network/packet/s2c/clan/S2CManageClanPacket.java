@@ -3,7 +3,9 @@ package net.snowteb.warriorcats_events.network.packet.s2c.clan;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.NetworkEvent;
 import net.snowteb.warriorcats_events.client.ClanInfo;
+import net.snowteb.warriorcats_events.client.ClientClanCache;
 import net.snowteb.warriorcats_events.client.ClientPacketHandles;
+import net.snowteb.warriorcats_events.entity.custom.WCGenetics;
 
 import java.util.*;
 import java.util.function.Supplier;
@@ -35,7 +37,13 @@ public class S2CManageClanPacket {
             buf.writeUtf(member.getPerms());
             buf.writeUtf(member.getPlayerMorphAge());
             buf.writeBoolean(member.isPlayerOnline());
-            buf.writeInt(member.getVariantData());
+
+            member.getGenetics().encode(buf);
+            member.getVariants().encode(buf);
+            member.getChimeraGenetics().encode(buf);
+            member.getChimeraVariants().encode(buf);
+            buf.writeBoolean(member.isOnGeneticalSkin());
+            buf.writeInt(member.getMorphVariant());
         }
 
         buf.writeInt(info.symbolIndex);
@@ -60,7 +68,13 @@ public class S2CManageClanPacket {
             String perms = buf.readUtf();
             String age = buf.readUtf();
             boolean isOnline = buf.readBoolean();
-            int variantData = buf.readInt();
+
+            WCGenetics genetics = WCGenetics.decode(buf);
+            WCGenetics.GeneticalVariants variants = WCGenetics.GeneticalVariants.decode(buf);
+            WCGenetics chimeraGenetics = WCGenetics.decode(buf);
+            WCGenetics.GeneticalChimeraVariants chimeraVariants = WCGenetics.GeneticalChimeraVariants.decode(buf);
+            boolean onGeneticalSkin = buf.readBoolean();
+            int morphVariant = buf.readInt();
 
             ClanInfo.Member member = new ClanInfo.Member(
                     memberUUID,
@@ -69,7 +83,12 @@ public class S2CManageClanPacket {
                     perms,
                     age,
                     isOnline,
-                    variantData
+                    genetics,
+                    variants,
+                    chimeraGenetics,
+                    chimeraVariants,
+                    onGeneticalSkin,
+                    morphVariant
             );
             playersInClan.put(memberUUID, member);
         }

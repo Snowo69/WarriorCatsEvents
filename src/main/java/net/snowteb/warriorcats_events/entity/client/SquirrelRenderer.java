@@ -17,7 +17,7 @@ public class SquirrelRenderer extends GeoEntityRenderer<SquirrelEntity> {
 
     @Override
     public ResourceLocation getTextureLocation(SquirrelEntity animatable) {
-        return new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/squirrel.png");
+        return ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/squirrel.png");
     }
 
     @Override

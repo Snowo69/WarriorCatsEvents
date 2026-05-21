@@ -203,7 +203,7 @@ public class CreateChimeraMorphGeneticsScreen extends Screen {
                     animationTime = 0f;
                     WCEClient.nextMenuSound();
 
-                }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                 60, 20, 0.8f, 0xFFFFFFFF
         );
 
@@ -223,7 +223,7 @@ public class CreateChimeraMorphGeneticsScreen extends Screen {
                         mainSectionActiveMenu = "base";
                         this.removeWidget(baseChimeraVariantList);
                         this.addRenderableWidget(baseChimeraVariantList);
-                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                     80, 20, 0.8f, 0xFFFFFFFF
             );
 
@@ -236,7 +236,7 @@ public class CreateChimeraMorphGeneticsScreen extends Screen {
                         if (setTortieButton.isSelected()) this.addRenderableWidget(orangeVariantList);
 
 
-                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                     80, 20, 0.8f, 0xFFFFFFFF
             );
 
@@ -249,7 +249,7 @@ public class CreateChimeraMorphGeneticsScreen extends Screen {
                         if (setHighWhiteButton.isSelected() || setLowWhiteButton.isSelected()) this.addRenderableWidget(whiteVariantList);
 
 
-                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                     80, 20, 0.8f, 0xFFFFFFFF
             );
 
@@ -263,7 +263,7 @@ public class CreateChimeraMorphGeneticsScreen extends Screen {
                             this.addRenderableWidget(albinoVariantList);
 
 
-                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                     80, 20, 0.8f, 0xFFFFFFFF
             );
 
@@ -278,7 +278,7 @@ public class CreateChimeraMorphGeneticsScreen extends Screen {
                         selectMainSection(diluteSection);
                         mainSectionActiveMenu = "dilute";
 
-                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                     80, 20, 0.8f, 0xFFFFFFFF
             );
 
@@ -292,7 +292,7 @@ public class CreateChimeraMorphGeneticsScreen extends Screen {
                             this.removeWidget(tabbyVariantList);
                             this.addRenderableWidget(tabbyVariantList);
                         }
-                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                     80, 20, 0.8f, 0xFFFFFFFF
             );
 
@@ -306,7 +306,7 @@ public class CreateChimeraMorphGeneticsScreen extends Screen {
                             this.removeWidget(silverVariantList);
                             this.addRenderableWidget(silverVariantList);
                         }
-                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                     80, 20, 0.8f, 0xFFFFFFFF
             );
 
@@ -318,7 +318,7 @@ public class CreateChimeraMorphGeneticsScreen extends Screen {
                         mainSectionActiveMenu = "details";
                         this.removeWidget(noiseList);
                         this.addRenderableWidget(noiseList);
-                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                     80, 20, 0.8f, 0xFFFFFFFF
             );
 
@@ -332,7 +332,7 @@ public class CreateChimeraMorphGeneticsScreen extends Screen {
                         this.addRenderableWidget(rufousingSlider);
                         this.removeWidget(blueRufousingSlider);
                         this.addRenderableWidget(blueRufousingSlider);
-                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                     80, 20, 0.8f, 0xFFFFFFFF
             );
 
@@ -346,7 +346,7 @@ public class CreateChimeraMorphGeneticsScreen extends Screen {
                     btn -> {
                         selectBase(setBlackButton);
                         geneticsChimera.base = setBlack;
-                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                     80, 20, 0.8f, 0xFFFFFFFF
             );
 
@@ -356,7 +356,7 @@ public class CreateChimeraMorphGeneticsScreen extends Screen {
                     btn -> {
                         selectBase(setChocolateButton);
                         geneticsChimera.base = setChocolate;
-                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                     80, 20, 0.8f, 0xFFFFFFFF
             );
 
@@ -366,7 +366,7 @@ public class CreateChimeraMorphGeneticsScreen extends Screen {
                     btn -> {
                         selectBase(setCinnamonButton);
                         geneticsChimera.base = setCinnamon;
-                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                     80, 20, 0.8f, 0xFFFFFFFF
             );
 
@@ -399,7 +399,7 @@ public class CreateChimeraMorphGeneticsScreen extends Screen {
                         selectOrange(setOrangeButton);
                         geneticsChimera.orangeBase = setOrange;
                         this.removeWidget(orangeVariantList);
-                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                     80, 20, 0.8f, 0xFFFFFFFF
             );
 
@@ -411,7 +411,7 @@ public class CreateChimeraMorphGeneticsScreen extends Screen {
                         geneticsChimera.orangeBase = setTortie;
                         this.addRenderableWidget(orangeVariantList);
 
-                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                     80, 20, 0.8f, 0xFFFFFFFF
             );
 
@@ -422,7 +422,7 @@ public class CreateChimeraMorphGeneticsScreen extends Screen {
                         selectOrange(setNotOrangeButton);
                         geneticsChimera.orangeBase = setNotOrange;
                         this.removeWidget(orangeVariantList);
-                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                     80, 20, 0.8f, 0xFFFFFFFF
             );
 
@@ -453,7 +453,7 @@ public class CreateChimeraMorphGeneticsScreen extends Screen {
                         selectWhite(setFullWhiteButton);
                         geneticsChimera.whiteRatio = setFullWhite;
                         this.removeWidget(whiteVariantList);
-                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                     80, 20, 0.8f, 0xFFFFFFFF
             );
 
@@ -466,7 +466,7 @@ public class CreateChimeraMorphGeneticsScreen extends Screen {
                         this.removeWidget(whiteVariantList);
                         this.addRenderableWidget(whiteVariantList);
 
-                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                     80, 20, 0.8f, 0xFFFFFFFF
             );
 
@@ -478,7 +478,7 @@ public class CreateChimeraMorphGeneticsScreen extends Screen {
                         geneticsChimera.whiteRatio = setLowWhite;
                         this.removeWidget(whiteVariantList);
                         this.addRenderableWidget(whiteVariantList);
-                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                     80, 20, 0.8f, 0xFFFFFFFF
             );
 
@@ -489,7 +489,7 @@ public class CreateChimeraMorphGeneticsScreen extends Screen {
                         selectWhite(setNoWhiteButton);
                         geneticsChimera.whiteRatio = setNotWhite;
                         this.removeWidget(whiteVariantList);
-                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                     80, 20, 0.8f, 0xFFFFFFFF
             );
 
@@ -520,7 +520,7 @@ public class CreateChimeraMorphGeneticsScreen extends Screen {
                         selectAlbino(setNotAlbinoButton);
                         geneticsChimera.albino = setNotAlbino;
                         this.removeWidget(albinoVariantList);
-                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                     80, 20, 0.8f, 0xFFFFFFFF
             );
 
@@ -532,7 +532,7 @@ public class CreateChimeraMorphGeneticsScreen extends Screen {
                         geneticsChimera.albino = setTrueAlbino;
                         this.removeWidget(albinoVariantList);
 
-                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                     80, 20, 0.8f, 0xFFFFFFFF
             );
 
@@ -545,7 +545,7 @@ public class CreateChimeraMorphGeneticsScreen extends Screen {
                         this.removeWidget(albinoVariantList);
                         this.addRenderableWidget(albinoVariantList);
 
-                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                     80, 20, 0.8f, 0xFFFFFFFF
             );
 
@@ -557,7 +557,7 @@ public class CreateChimeraMorphGeneticsScreen extends Screen {
                         geneticsChimera.albino = setMink;
                         this.removeWidget(albinoVariantList);
                         this.addRenderableWidget(albinoVariantList);
-                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                     80, 20, 0.8f, 0xFFFFFFFF
             );
 
@@ -570,7 +570,7 @@ public class CreateChimeraMorphGeneticsScreen extends Screen {
                         this.removeWidget(albinoVariantList);
                         this.addRenderableWidget(albinoVariantList);
 
-                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                     80, 20, 0.8f, 0xFFFFFFFF
             );
 
@@ -670,7 +670,7 @@ public class CreateChimeraMorphGeneticsScreen extends Screen {
                         this.removeWidget(tabbyVariantList);
                         this.addRenderableWidget(tabbyVariantList);
 
-                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                     80, 20, 0.8f, 0xFFFFFFFF
             );
 
@@ -682,7 +682,7 @@ public class CreateChimeraMorphGeneticsScreen extends Screen {
                         geneticsChimera.tabbyStripes = setTabbyStripesClassic;
                         this.removeWidget(tabbyVariantList);
                         this.addRenderableWidget(tabbyVariantList);
-                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                     80, 20, 0.8f, 0xFFFFFFFF
             );
 

@@ -19,6 +19,7 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.entity.ModEntities;
 import net.snowteb.warriorcats_events.item.ModItems;
 import net.snowteb.warriorcats_events.sound.ModSounds;
@@ -152,7 +153,7 @@ public class BadgerEntity extends Animal implements GeoEntity {
 
     @Override
     protected ResourceLocation getDefaultLootTable() {
-        return new ResourceLocation("warriorcats_events", "entities/badger");
+        return ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "entities/badger");
     }
 
     @Override

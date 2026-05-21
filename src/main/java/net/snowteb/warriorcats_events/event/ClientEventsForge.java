@@ -15,12 +15,14 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
@@ -30,6 +32,9 @@ import net.minecraftforge.fml.common.Mod;
 import net.snowteb.warriorcats_events.WCEClient;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.client.LeapClientState;
+import net.snowteb.warriorcats_events.compat.CompatibilitiesClient;
+import net.snowteb.warriorcats_events.diseases.Disease;
+import net.snowteb.warriorcats_events.diseases.Diseaseable;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.managers.ClimbDataAccessor;
 import net.snowteb.warriorcats_events.network.ModPackets;
@@ -39,9 +44,10 @@ import net.snowteb.warriorcats_events.screen.menus.EmoteMenu;
 import net.snowteb.warriorcats_events.screen.screens.SkillScreen;
 import net.snowteb.warriorcats_events.screen.menus.PlaySoundMenu;
 import net.snowteb.warriorcats_events.sound.ModSounds;
-import net.snowteb.warriorcats_events.stealth.PlayerStealthProvider;
 import net.snowteb.warriorcats_events.zconfig.WCEServerConfig;
 import tocraft.walkers.api.PlayerShape;
+
+import java.util.List;
 
 import static net.minecraft.client.renderer.LevelRenderer.getLightColor;
 import static net.snowteb.warriorcats_events.WCEClient.*;
@@ -201,107 +207,23 @@ public class ClientEventsForge {
         }
     }
 
-
-
-
-    @SubscribeEvent
-    public static void onOverlayRender(RenderGuiOverlayEvent.Pre event) {
-
-        LocalPlayer player = Minecraft.getInstance().player;
-        Minecraft mc = Minecraft.getInstance();
-        if (player == null) return;
-        if (!mc.isWindowActive()) return;
-        if (mc.screen != null) return;
-        if (mc.level == null) return;
-
-        player.getCapability(PlayerStealthProvider.STEALTH_MODE).ifPresent(cap -> {
-
-            if (!cap.isUnlocked()) return;
-
-//            ResourceLocation screen = new ResourceLocation(WarriorCatsEvents.MODID,
-//                    "textures/hud/stealth_overlay_4.png");
-
-            ResourceLocation screen = new ResourceLocation(WarriorCatsEvents.MODID,
-                    "textures/hud/stealth/stealthbg.png");
-
-            ResourceLocation topLeft = new ResourceLocation(WarriorCatsEvents.MODID,
-                    "textures/hud/stealth/stealth_tl.png");
-            ResourceLocation topRight = new ResourceLocation(WarriorCatsEvents.MODID,
-                    "textures/hud/stealth/stealth_tr.png");
-            ResourceLocation bottomLeft = new ResourceLocation(WarriorCatsEvents.MODID,
-                    "textures/hud/stealth/stealth_bl.png");
-            ResourceLocation bottomRight = new ResourceLocation(WarriorCatsEvents.MODID,
-                    "textures/hud/stealth/stealth_br.png");
-
-            /**
-             * If the stealth is on, render an overlay.
-             */
-            if (cap.isStealthOn()) {
-
-                GuiGraphics pGuiGraphics = event.getGuiGraphics();
-                int width = Minecraft.getInstance().getWindow().getGuiScaledWidth();
-                int height = Minecraft.getInstance().getWindow().getGuiScaledHeight();
-
-                int fragmentSize = 110;
-
-                RenderSystem.enableBlend();
-                pGuiGraphics.blit(
-                        screen,
-                        0, 0,
-                        0, 0,
-                        width, height,
-                        width, height
-                );
-                RenderSystem.disableBlend();
-
-                pGuiGraphics.blit(topLeft,
-                        0, 0,
-                        0, 0,
-                        fragmentSize + 20, fragmentSize + 20,
-                        fragmentSize+ 20, fragmentSize+ 20
-                );
-                pGuiGraphics.blit(topRight,
-                        width - fragmentSize - 20, 0,
-                        0, 0,
-                        fragmentSize+ 20, fragmentSize+ 20,
-                        fragmentSize+ 20, fragmentSize+ 20
-                );
-
-                pGuiGraphics.blit(bottomLeft,
-                        0, height - fragmentSize,
-                        0, 0,
-                        fragmentSize, fragmentSize,
-                        fragmentSize, fragmentSize
-                );
-
-                pGuiGraphics.blit(bottomRight,
-                        width - fragmentSize, height - fragmentSize,
-                        0, 0,
-                        fragmentSize, fragmentSize,
-                        fragmentSize, fragmentSize
-                );
-
-            }
-        });
-    }
-
     private static ResourceLocation currentMouseTexture =
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/hud/mouse_unclicked.png");
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/hud/mouse_unclicked.png");
     private static ResourceLocation currentRightMouseTexture =
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/hud/mouse_right_unclicked.png");
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/hud/mouse_right_unclicked.png");
 
 //    private static ResourceLocation climbIcon =
-//            new ResourceLocation(WarriorCatsEvents.MODID, "textures/hud/climb_icon.png");
+//            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/hud/climb_icon.png");
 
     private static ResourceLocation climbingIcon =
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/hud/climbing_icon.png");
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/hud/climbing_icon.png");
 
     private static ResourceLocation exhaustionBarSprite =
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/hud/exhaustion_level_bar.png");
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/hud/exhaustion_level_bar.png");
 
 
     private static ResourceLocation climbBarSprite =
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/hud/climb_cooldown_bar.png");
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/hud/climb_cooldown_bar.png");
 
     private static int lastToggleTick = 0;
 
@@ -320,6 +242,10 @@ public class ClientEventsForge {
             new PlaySoundMenu().render(event.getGuiGraphics());
         }
 
+        CompatibilitiesClient.sereneSeasonsOverlay(event.getGuiGraphics(), player.level());
+
+        diseaseOverlay(event, player, mcinstance);
+
         climbOverlay(event, mcinstance, player);
 
         eagleUnlatchOverlay(event, mcinstance);
@@ -330,6 +256,81 @@ public class ClientEventsForge {
 
         leapOverlay(event, mcinstance, player);
 
+    }
+
+    private static void diseaseOverlay(RenderGuiOverlayEvent.Post event, LocalPlayer player, Minecraft mcinstance) {
+        if (!WCEServerConfig.SERVER.DISEASES.get()) return;
+
+        if (player instanceof Diseaseable<?> diseaseable) {
+            List<Disease<?>> list = diseaseable.getList();
+            if (!list.isEmpty() && mcinstance.screen == null) {
+                GuiGraphics pGuiGraphics = event.getGuiGraphics();
+                int width = mcinstance.getWindow().getGuiScaledWidth();
+                int height = mcinstance.getWindow().getGuiScaledHeight();
+
+                pGuiGraphics.pose().pushPose();
+                pGuiGraphics.pose().translate(0, height - 5, 0);
+                float scale = 0.8f;
+                pGuiGraphics.pose().scale(scale, scale, scale);
+
+                int y1 = 0;
+                for (Disease<?> disease : list) {
+                    {
+                        Component finalText = Component.literal("   ").withStyle(Style.EMPTY.withColor(WCEClient.diseaseTextColor(disease)));
+
+                        if (!disease.canHeal()) {
+                            finalText = finalText.copy()
+                                    .append(Component.literal("| ").withStyle(ChatFormatting.DARK_GRAY))
+                                    .append(Component.literal("⏱").withStyle(ChatFormatting.GOLD).withStyle(ChatFormatting.BOLD));
+                        } else {
+                            finalText = finalText.copy()
+                                    .append(Component.literal("| ").withStyle(ChatFormatting.DARK_GRAY));
+
+                            if (disease.shouldShowUnhealed()) {
+                                for (int i = 0; i < disease.getCures().size(); i++) {
+                                    finalText = finalText.copy().append("   ");
+                                }
+                            } else {
+                                finalText = finalText.copy().append("   ");
+                            }
+                        }
+
+                        pGuiGraphics.renderTooltip(Minecraft.getInstance().font,
+                                finalText,
+                                0, y1);
+
+                        int iconSize = 10;
+                        pGuiGraphics.pose().pushPose();
+                        pGuiGraphics.pose().translate(0, y1, 401);
+                        pGuiGraphics.blit(disease.getType().getIcon(),
+                                iconSize + 1, -iconSize - 3,
+                                0,0,
+                                iconSize, iconSize,
+                                iconSize, iconSize);
+
+                        if (disease.shouldShowUnhealed()) {
+                            int x = 0;
+
+                            float scale2 = 0.70f;
+                            int offset = Minecraft.getInstance().font.width(finalText);
+                            pGuiGraphics.pose().translate(offset, -iconSize - 4, 0);
+                            pGuiGraphics.pose().scale(scale2, scale2, scale2);
+                            for (ItemStack stack : disease.getCures()) {
+
+                                pGuiGraphics.renderItem(stack, x, 1);
+
+                                x -= iconSize + 8;
+                            }
+
+                        }
+
+                        pGuiGraphics.pose().popPose();
+                    }
+                    y1 -= 18;
+                }
+                pGuiGraphics.pose().popPose();
+            }
+        }
     }
 
     private static void climbOverlay(RenderGuiOverlayEvent.Post event, Minecraft mcinstance, LocalPlayer player) {
@@ -484,22 +485,22 @@ public class ClientEventsForge {
         int width = mcinstance.getWindow().getGuiScaledWidth();
         int height = mcinstance.getWindow().getGuiScaledHeight();
 
-        ResourceLocation emptyBar = new ResourceLocation(WarriorCatsEvents.MODID,
+        ResourceLocation emptyBar = ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID,
                 "textures/hud/leapbar_empty.png");
-        ResourceLocation fillBar = new ResourceLocation(WarriorCatsEvents.MODID,
+        ResourceLocation fillBar = ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID,
                 "textures/hud/leapbar_fill.png");
-        ResourceLocation mouseClick = new ResourceLocation(WarriorCatsEvents.MODID,
+        ResourceLocation mouseClick = ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID,
                 "textures/hud/mouse_clicked.png");
-        ResourceLocation mouseUnclick = new ResourceLocation(WarriorCatsEvents.MODID,
+        ResourceLocation mouseUnclick = ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID,
                 "textures/hud/mouse_unclicked.png");
-        ResourceLocation mouseRightClick = new ResourceLocation(WarriorCatsEvents.MODID,
+        ResourceLocation mouseRightClick = ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID,
                 "textures/hud/mouse_right_clicked.png");
-        ResourceLocation mouseRightUnclick = new ResourceLocation(WarriorCatsEvents.MODID,
+        ResourceLocation mouseRightUnclick = ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID,
                 "textures/hud/mouse_right_unclicked.png");
 
-        ResourceLocation unlockedCross = new ResourceLocation(WarriorCatsEvents.MODID,
+        ResourceLocation unlockedCross = ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID,
                 "textures/hud/targetnotlocked_cross.png");
-        ResourceLocation lockedCross = new ResourceLocation(WarriorCatsEvents.MODID,
+        ResourceLocation lockedCross = ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID,
                 "textures/hud/targetlocked_cross.png");
 
         int leapPower = LeapClientState.getLeapPowerCounter();
@@ -577,11 +578,11 @@ public class ClientEventsForge {
             int width = mcinstance.getWindow().getGuiScaledWidth();
             int height = mcinstance.getWindow().getGuiScaledHeight();
 
-            ResourceLocation emptyBar = new ResourceLocation(WarriorCatsEvents.MODID,
+            ResourceLocation emptyBar = ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID,
                     "textures/hud/sprintbar_empty.png");
-            ResourceLocation fillBar = new ResourceLocation(WarriorCatsEvents.MODID,
+            ResourceLocation fillBar = ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID,
                     "textures/hud/sprintbar_fill.png");
-            ResourceLocation readyBar = new ResourceLocation(WarriorCatsEvents.MODID,
+            ResourceLocation readyBar = ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID,
                     "textures/hud/sprintbar_ready.png");
 
 
@@ -654,9 +655,9 @@ public class ClientEventsForge {
             int centerX = width / 2;
             int centerY = height / 2 + 10;
 
-            ResourceLocation emptyBar = new ResourceLocation(WarriorCatsEvents.MODID,
+            ResourceLocation emptyBar = ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID,
                     "textures/hud/escape_bar_empty.png");
-            ResourceLocation fillBar = new ResourceLocation(WarriorCatsEvents.MODID,
+            ResourceLocation fillBar = ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID,
                     "textures/hud/escape_bar_fill.png");
 
             int toFill = centerX - 100 + setFreeCounter;
@@ -691,7 +692,7 @@ public class ClientEventsForge {
                 event.getPartialTick(), pos.x, pos.y, pos.z);
     }
 
-    private static final ResourceLocation WIND = new ResourceLocation(WarriorCatsEvents.MODID, "textures/environment/wind.png");
+    private static final ResourceLocation WIND = ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/environment/wind.png");
 
     private static final float[] windSizeX = new float[1024];
     private static final float[] windSizeZ = new float[1024];

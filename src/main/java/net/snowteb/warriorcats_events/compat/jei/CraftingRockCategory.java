@@ -18,8 +18,8 @@ import org.jetbrains.annotations.Nullable;
 
 public class CraftingRockCategory implements IRecipeCategory<HerbsRecipe> {
 
-    public static final ResourceLocation UID = new ResourceLocation(WarriorCatsEvents.MODID, "crafting_rock");
-    public static final ResourceLocation TEXTURE = new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/crafting_rock_jei.png");
+    public static final ResourceLocation UID = ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "crafting_rock");
+    public static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/gui/crafting_rock_jei.png");
 
     public static final RecipeType<HerbsRecipe> HERBS_RECIPE_TYPE = new RecipeType<>(UID, HerbsRecipe.class);
 

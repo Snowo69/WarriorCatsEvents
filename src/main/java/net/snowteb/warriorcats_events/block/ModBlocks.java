@@ -16,6 +16,7 @@ import net.snowteb.warriorcats_events.util.ModBlockSetTypes;
 import net.snowteb.warriorcats_events.item.ModItems;
 import net.snowteb.warriorcats_events.util.ModSoundTypes;
 
+import java.util.List;
 import java.util.function.Supplier;
 
 public class ModBlocks {
@@ -65,15 +66,13 @@ public class ModBlocks {
             ));
 
 
-
-
     public static final RegistryObject<Block> STONE_CRAFTING_TABLE = BLOCKS.register("stone_crafting_table",
             ()  -> new StoneCraftingTable(BlockBehaviour.Properties.copy(Blocks.STONE).strength(0.2F).noOcclusion()));
 
     public static final RegistryObject<Block> DOCK = BLOCKS.register("dock",
             () -> new GenericBushBlock(
                     BlockBehaviour.Properties.copy(Blocks.SWEET_BERRY_BUSH).randomTicks(),
-                    ModItems.DOCK_LEAVES,
+                    List.of(new GenericBushBlock.DropItem(ModItems.DOCK_LEAVES, 1f)),
                     1,
                     3,
                     SoundEvents.AZALEA_LEAVES_FALL
@@ -81,7 +80,7 @@ public class ModBlocks {
     public static final RegistryObject<Block> SORRELPLANT = BLOCKS.register("sorrel",
             () -> new GenericBushBlock(
                     BlockBehaviour.Properties.copy(Blocks.SWEET_BERRY_BUSH).randomTicks(),
-                    ModItems.SORREL,
+                    List.of(new GenericBushBlock.DropItem(ModItems.SORREL, 1f)),
                     1,
                     3,
                     SoundEvents.AZALEA_LEAVES_FALL
@@ -89,7 +88,7 @@ public class ModBlocks {
     public static final RegistryObject<Block> BURNETPLANT = BLOCKS.register("burnet",
             () -> new GenericBushBlock(
                     BlockBehaviour.Properties.copy(Blocks.SWEET_BERRY_BUSH).randomTicks(),
-                    ModItems.BURNET,
+                    List.of(new GenericBushBlock.DropItem(ModItems.BURNET, 1f)),
                     1,
                     3,
                     SoundEvents.AZALEA_LEAVES_FALL
@@ -97,7 +96,7 @@ public class ModBlocks {
     public static final RegistryObject<Block> CHAMOMILEPLANT = BLOCKS.register("chamomile_stems",
             () -> new GenericBushBlock(
                     BlockBehaviour.Properties.copy(Blocks.SWEET_BERRY_BUSH).randomTicks(),
-                    ModItems.CHAMOMILE,
+                    List.of(new GenericBushBlock.DropItem(ModItems.CHAMOMILE, 1f)),
                     1,
                     3,
                     SoundEvents.AZALEA_LEAVES_FALL
@@ -105,7 +104,7 @@ public class ModBlocks {
     public static final RegistryObject<Block> DAISYPLANT = BLOCKS.register("daisy",
             () -> new GenericBushBlock(
                     BlockBehaviour.Properties.copy(Blocks.SWEET_BERRY_BUSH).randomTicks(),
-                    ModItems.DAISY,
+                    List.of(new GenericBushBlock.DropItem(ModItems.DAISY, 1f)),
                     1,
                     3,
                     SoundEvents.AZALEA_LEAVES_FALL
@@ -113,7 +112,7 @@ public class ModBlocks {
     public static final RegistryObject<Block> CATMINTPLANT = BLOCKS.register("catmint",
             () -> new GenericBushBlock(
                     BlockBehaviour.Properties.copy(Blocks.SWEET_BERRY_BUSH).randomTicks(),
-                    ModItems.CATMINT,
+                    List.of(new GenericBushBlock.DropItem(ModItems.CATMINT, 1f)),
                     1,
                     3,
                     SoundEvents.AZALEA_LEAVES_FALL
@@ -121,7 +120,7 @@ public class ModBlocks {
     public static final RegistryObject<Block> DEATHBERRIESBUSH = BLOCKS.register("deathberries_bush",
             () -> new GenericBushBlock(
                     BlockBehaviour.Properties.copy(Blocks.SWEET_BERRY_BUSH).randomTicks(),
-                    ModItems.DEATHBERRIES,
+                    List.of(new GenericBushBlock.DropItem(ModItems.DEATHBERRIES, 1f)),
                     1,
                     2,
                     SoundEvents.AZALEA_LEAVES_FALL
@@ -129,12 +128,39 @@ public class ModBlocks {
     public static final RegistryObject<Block> YARROWPLANT = BLOCKS.register("yarrow",
             () -> new GenericBushBlock(
                     BlockBehaviour.Properties.copy(Blocks.SWEET_BERRY_BUSH).randomTicks(),
-                    ModItems.YARROW,
+                    List.of(new GenericBushBlock.DropItem(ModItems.YARROW, 1f)),
                     1,
                     2,
                     SoundEvents.AZALEA_LEAVES_FALL
             ));
 
+    public static final RegistryObject<Block> FEVERFEWPLANT = BLOCKS.register("feverfew",
+            () -> new GenericBushBlock(
+                    BlockBehaviour.Properties.copy(Blocks.SWEET_BERRY_BUSH).randomTicks(),
+                    List.of(new GenericBushBlock.DropItem(ModItems.FEVERFEW, 1f)),
+                    1,
+                    2,
+                    SoundEvents.AZALEA_LEAVES_FALL
+            ));
+
+    public static final RegistryObject<Block> JUNIPERPLANT = BLOCKS.register("juniper",
+            () -> new BigBushBlock(
+                    BlockBehaviour.Properties.copy(Blocks.SWEET_BERRY_BUSH).randomTicks(),
+                    ModItems.JUNIPER_BERRIES,
+                    1,
+                    2,
+                    SoundEvents.AZALEA_LEAVES_FALL
+            ));
+
+    public static final RegistryObject<Block> COMFREYPLANT = BLOCKS.register("comfrey",
+            () -> new GenericBushBlock(
+                    BlockBehaviour.Properties.copy(Blocks.SWEET_BERRY_BUSH).randomTicks(),
+                    List.of(new GenericBushBlock.DropItem(ModItems.COMFREY_LEAVES, 1f),
+                            new GenericBushBlock.DropItem(ModItems.COMFREY_ROOT, 0.25f)),
+                    1,
+                    2,
+                    SoundEvents.AZALEA_LEAVES_FALL
+            ));
 
 
 

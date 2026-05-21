@@ -17,7 +17,7 @@ public class ModTags {
         public static final TagKey<Block> HIT_THROUGH_BLOCKS = tag("hit_through_blocks");
 
         private static TagKey<Block> tag(String name) {
-            return BlockTags.create(new ResourceLocation(WarriorCatsEvents.MODID, name));
+            return BlockTags.create(ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, name));
         }
     }
 
@@ -26,7 +26,7 @@ public class ModTags {
         public static final TagKey<EntityType<?>> PREDATOR_MOBS = tag("predator_mobs");
 
         private static TagKey<EntityType<?>> tag(String name) {
-            return TagKey.create(Registries.ENTITY_TYPE, new ResourceLocation(WarriorCatsEvents.MODID, name));
+            return TagKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, name));
         }
     }
 
@@ -39,9 +39,11 @@ public class ModTags {
         public static final TagKey<Item> ADDITIONAL_PREY = tag("additional_prey");
         public static final TagKey<Item> SKULLS = tag("skulls");
         public static final TagKey<Item> FILL_BOWL = tag("fill_bowl");
+        public static final TagKey<Item> LEAF_WRAPPINGS = tag("leaf_wrappings");
+        public static final TagKey<Item> SUSPICIOUS_FOOD = tag("suspicious_food");
 
         private static TagKey<Item> tag(String name) {
-               return ItemTags.create(new ResourceLocation(WarriorCatsEvents.MODID, name));
+               return ItemTags.create(ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, name));
         }
     }
 }

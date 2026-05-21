@@ -23,11 +23,19 @@ public class ModItemModelProvider extends ItemModelProvider {
         simpleItem(ModItems.GENERATIONS_MUSIC_DISC);
         simpleItem(ModItems.WHISKERS);
         simpleItem(ModItems.CLAWS);
+
         simpleItem(ModItems.MOUSE_FOOD);
         simpleItem(ModItems.SQUIRREL_FOOD);
         simpleItem(ModItems.PIGEON_FOOD);
         simpleItem(ModItems.EAGLE_MEAT_FOOD);
         simpleItem(ModItems.SHREDDED_MEAT);
+
+        simpleItem(ModItems.SUS_MOUSE_FOOD);
+        simpleItem(ModItems.SUS_SQUIRREL_FOOD);
+        simpleItem(ModItems.SUS_PIGEON_FOOD);
+        simpleItem(ModItems.SUS_EAGLE_MEAT_FOOD);
+        simpleItem(ModItems.SUS_SHREDDED_MEAT);
+
         simpleItem(ModItems.WARRIORNAMERANDOMIZER);
         simpleItem(ModItems.FRESHKILL_AND_HERBS_BUNDLE);
         simpleItem(ModItems.TRAVELING_HERBS);
@@ -95,6 +103,18 @@ public class ModItemModelProvider extends ItemModelProvider {
 
         simpleItem(ModItems.PEBBLES_ITEM);
 
+
+
+        simpleItem(ModItems.JUNIPERPLANT);
+
+
+        simpleItem(ModItems.LEG_WRAP);
+        simpleItem(ModItems.YARROW_POULTICE);
+        simpleItem(ModItems.COMFREY_LEAVES);
+        simpleItem(ModItems.COMFREY_ROOT);
+        simpleItem(ModItems.COMFREY_POULTICE);
+        simpleItem(ModItems.COBWEB_WITH_A_STICK);
+
 //        simpleItem(ModItems.MOSS_BALL);
 
 
@@ -119,6 +139,9 @@ public class ModItemModelProvider extends ItemModelProvider {
         basicItem(ModItems.DEATHBERRIES.get());
         basicItem(ModItems.CATMINT.get());
         basicItem(ModItems.YARROW.get());
+        basicItem(ModItems.FEVERFEW.get());
+        basicItem(ModItems.JUNIPER_BERRIES.get());
+        basicItem(ModItems.POPPY_SEEDS.get());
         basicItem(ModItems.GLOW_SHROOM.get());
         basicItem(ModItems.MYSTIC_FLOWERS_BOUQUET.get());
         basicItem(ModItems.STRANGE_SHINY_STONE.get());
@@ -127,60 +150,66 @@ public class ModItemModelProvider extends ItemModelProvider {
         {
             withExistingParent(
                     ModBlocks.DOCK.getId().getPath(),
-                    new ResourceLocation("item/generated")
+                    ResourceLocation.withDefaultNamespace("item/generated")
             ).texture("layer0",
-                    new ResourceLocation(WarriorCatsEvents.MODID, "block/dock_stage0")
+                    ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "block/dock_stage0")
             );
             withExistingParent(
                     ModBlocks.SORRELPLANT.getId().getPath(),
-                    new ResourceLocation("item/generated")
+                    ResourceLocation.withDefaultNamespace("item/generated")
             ).texture("layer0",
-                    new ResourceLocation(WarriorCatsEvents.MODID, "block/sorrel_stage0")
+                    ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "block/sorrel_stage0")
             );
             withExistingParent(
                     ModBlocks.BURNETPLANT.getId().getPath(),
-                    new ResourceLocation("item/generated")
+                    ResourceLocation.withDefaultNamespace("item/generated")
             ).texture("layer0",
-                    new ResourceLocation(WarriorCatsEvents.MODID, "block/burnet_stage0")
+                    ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "block/burnet_stage0")
             );
             withExistingParent(
                     ModBlocks.CHAMOMILEPLANT.getId().getPath(),
-                    new ResourceLocation("item/generated")
+                    ResourceLocation.withDefaultNamespace("item/generated")
             ).texture("layer0",
-                    new ResourceLocation(WarriorCatsEvents.MODID, "block/chamomile_stage0")
+                    ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "block/chamomile_stage0")
             );
             withExistingParent(
                     ModBlocks.DAISYPLANT.getId().getPath(),
-                    new ResourceLocation("item/generated")
+                    ResourceLocation.withDefaultNamespace("item/generated")
             ).texture("layer0",
-                    new ResourceLocation(WarriorCatsEvents.MODID, "block/daisy_stage0")
+                    ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "block/daisy_stage0")
             );
             withExistingParent(
                     ModBlocks.DEATHBERRIESBUSH.getId().getPath(),
-                    new ResourceLocation("item/generated")
+                    ResourceLocation.withDefaultNamespace("item/generated")
             ).texture("layer0",
-                    new ResourceLocation(WarriorCatsEvents.MODID, "block/deathberries_stage0")
+                    ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "block/deathberries_stage0")
             );
             withExistingParent(
                     ModBlocks.CATMINTPLANT.getId().getPath(),
-                    new ResourceLocation("item/generated")
+                    ResourceLocation.withDefaultNamespace("item/generated")
             ).texture("layer0",
-                    new ResourceLocation(WarriorCatsEvents.MODID, "block/catmint_stage0")
+                    ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "block/catmint_stage0")
             );
             withExistingParent(
                     ModBlocks.YARROWPLANT.getId().getPath(),
-                    new ResourceLocation("item/generated")
+                    ResourceLocation.withDefaultNamespace("item/generated")
             ).texture("layer0",
-                    new ResourceLocation(WarriorCatsEvents.MODID, "block/yarrow_stage0")
+                    ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "block/yarrow_stage0")
+            );
+            withExistingParent(
+                    ModBlocks.FEVERFEWPLANT.getId().getPath(),
+                    ResourceLocation.withDefaultNamespace("item/generated")
+            ).texture("layer0",
+                    ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "block/feverfew_stage0")
+            );
+            withExistingParent(
+                    ModBlocks.COMFREYPLANT.getId().getPath(),
+                    ResourceLocation.withDefaultNamespace("item/generated")
+            ).texture("layer0",
+                    ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "block/comfrey_stage0")
             );
 
         }
-
-//
-//        saplingItem(ModBlocks.STARRYTREE_SAPLING);
-//        saplingItem(ModBlocks.DARKTREE_SAPLING);
-
-
 
 
     }
@@ -189,18 +218,18 @@ public class ModItemModelProvider extends ItemModelProvider {
 
     private ItemModelBuilder simpleItem(RegistryObject<Item> item) {
         return withExistingParent(item.getId().getPath(),
-                new ResourceLocation("item/generated")).texture("layer0",
-                new ResourceLocation(WarriorCatsEvents.MODID, "item/" + item.getId().getPath()));
+                ResourceLocation.withDefaultNamespace("item/generated")).texture("layer0",
+                ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "item/" + item.getId().getPath()));
     }
     private ItemModelBuilder simpleBlockItem(RegistryObject<Block> item) {
         return withExistingParent(item.getId().getPath(),
-                new ResourceLocation("item/generated")).texture("layer0",
-                new ResourceLocation(WarriorCatsEvents.MODID, "item/" + item.getId().getPath()));
+                ResourceLocation.withDefaultNamespace("item/generated")).texture("layer0",
+                ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "item/" + item.getId().getPath()));
     }
     private ItemModelBuilder saplingItem(RegistryObject<Block> item) {
         return withExistingParent(item.getId().getPath(),
-                new ResourceLocation("item/generated")).texture("layer0",
-                new ResourceLocation(WarriorCatsEvents.MODID, "block/" + item.getId().getPath()));
+                ResourceLocation.withDefaultNamespace("item/generated")).texture("layer0",
+                ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "block/" + item.getId().getPath()));
     }
 
 

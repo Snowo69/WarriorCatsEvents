@@ -5,6 +5,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.NetworkEvent;
+import net.snowteb.warriorcats_events.diseases.Diseaseable;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.managers.ClimbDataAccessor;
 import net.snowteb.warriorcats_events.zconfig.WCEServerConfig;
@@ -35,6 +36,12 @@ public class CtSClimbPacket {
             if (!WCEServerConfig.SERVER.SKILL_TREE_SERVER.get()) {
                 player.sendSystemMessage(Component.literal("Skill tree is disabled for this world.").withStyle(ChatFormatting.RED));
                 return;
+            }
+
+            if (player instanceof Diseaseable<?> diseaseable) {
+                if (!diseaseable.canClimb()) {
+                    return;
+                }
             }
 
             if (player instanceof ClimbDataAccessor climber) {

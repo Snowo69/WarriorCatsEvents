@@ -17,7 +17,7 @@ import java.util.List;
  * <p>
  * Might not be the greatest thing, but might as well be useful to someone one day.
  * <p>
- * Remember to include the SequenceManager.tick() in the Server or Client tick.
+ * Remember to include the SequenceManager.tick() in the level tick.
  */
 
 

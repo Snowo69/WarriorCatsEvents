@@ -85,6 +85,9 @@ public class SaveClanDataPacket {
             boolean onGeneticalSkn = player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
                             .map(WCEPlayerData::isOnGeneticalSkin).orElse(false);
 
+            int morphPose = player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+                    .map(WCEPlayerData::getIdlePose).orElse(0);
+
             player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {
                 cap.copyFrom(packet.data);
                 cap.setCurrentClanUUID(currentClanUUID);
@@ -92,6 +95,7 @@ public class SaveClanDataPacket {
                 cap.setMateName(currentMateComponent);
                 cap.setCharacterBio(currentBio);
                 cap.setGenderText(currentGender);
+                cap.setIdlePose(morphPose);
 
                 cap.setPlayerGenetics(currentGenetics);
                 cap.setPlayerGeneticalVariants(currentGeneticVariants);
@@ -145,7 +149,15 @@ public class SaveClanDataPacket {
 
             player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA).ifPresent(cap -> {
                 data.playerMorphNames.put(player.getUUID(), cap.getMorphName());
-                data.playerMorphData.put(player.getUUID(), cap.getVariantData());
+
+                WCGenetics.PackedGeneticData morphData =
+                        new WCGenetics.PackedGeneticData(cap.getPlayerGenetics(),
+                                cap.getPlayerGeneticalVariants(),
+                                cap.getPlayerChimeraGenetics(),
+                                cap.getPlayerChimeraVariants(),
+                                cap.isOnGeneticalSkin(), cap.getVariantData());
+
+                data.playerMorphData.put(player.getUUID(), morphData);
 
                 ClanData.Clan clan = data.getClan(cap.getCurrentClanUUID());
                 if (clan != null) {
@@ -244,6 +256,7 @@ public class SaveClanDataPacket {
                         variantsChimera.blueRufousingVariant, variantsChimera.orangeVar, variantsChimera.whiteVar, variantsChimera.tabbyVar
                         , variantsChimera.albinoVar, variantsChimera.noise, variantsChimera.silverVar);
                 cat.setGender(1);
+                cat.setIdlePose(cap.getIdlePose());
             }
         });
 

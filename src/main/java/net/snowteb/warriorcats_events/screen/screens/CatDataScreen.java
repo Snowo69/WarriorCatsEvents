@@ -7,8 +7,12 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.snowteb.warriorcats_events.WCEClient;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
+import net.snowteb.warriorcats_events.clan.ClanData;
+import net.snowteb.warriorcats_events.client.ClanInfo;
 import net.snowteb.warriorcats_events.client.ClientClanData;
+import net.snowteb.warriorcats_events.diseases.Diseaseable;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.network.ModPackets;
 import net.snowteb.warriorcats_events.network.packet.c2s.cats.*;
@@ -52,16 +56,16 @@ public class CatDataScreen extends Screen {
     private String activeMenu = "main";
 
     private static final ResourceLocation CAT_NAME_TOAST =
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/cat_toast.png");
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/gui/clan_setup/cat_toast.png");
 
 
     private static final ResourceLocation SOCIALHEARTS_EMPTY =
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/socialhearts_empty.png");
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/gui/clan_setup/socialhearts_empty.png");
 
     private static final ResourceLocation SOCIALHEARTS_FILL =
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/socialhearts_fill.png");
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/gui/clan_setup/socialhearts_fill.png");
     private static final ResourceLocation HEARTS_FILL =
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/hearts_fill.png");
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/gui/clan_setup/hearts_fill.png");
 
 
     public CatDataScreen(Component pTitle, WCatEntity cat) {
@@ -78,9 +82,6 @@ public class CatDataScreen extends Screen {
 
         int xPositionPanel = 10;
 
-
-//        pGuiGraphics.blit(BG_TEXTURE, 0, 0, 0, 0
-//                , this.width, this.height, this.width, this.height);
 
         pGuiGraphics.blit(CAT_NAME_TOAST, 0, 0, 0, 0
                 , 172, 57, 172, 57);
@@ -115,7 +116,7 @@ public class CatDataScreen extends Screen {
         pGuiGraphics.disableScissor();
 
 
-        if (name != null){
+        if (name != null) {
             if (interactionCooldownTooltip && wCatEntity.isTame()) {
                 pGuiGraphics.renderTooltip(Minecraft.getInstance().font, Component.empty().append(preText).append(name).append(" already interacted recently."), this.width, 30);
             }
@@ -186,23 +187,6 @@ public class CatDataScreen extends Screen {
         pGuiGraphics.drawCenteredString(Minecraft.getInstance().font, name, 75, 11, 0xFFFFFF);
         pGuiGraphics.pose().popPose();
 
-//        pGuiGraphics.drawString(Minecraft.getInstance().font, moodText, centerX - 55, centerY-110, 0xFFFFFF);
-//        pGuiGraphics.drawString(Minecraft.getInstance().font, clanName, centerX + xOffset, centerY-50 + yOffset, 0xFFFFFF);
-//        pGuiGraphics.drawString(Minecraft.getInstance().font, genderText, centerX + xOffset, centerY-30 + yOffset, 0xFFFFFF);
-//        pGuiGraphics.drawString(Minecraft.getInstance().font, ageText, centerX + xOffset, centerY-10 + yOffset, 0xFFFFFF);
-//        pGuiGraphics.drawString(Minecraft.getInstance().font, personalityText, centerX + xOffset, centerY+10 + yOffset, 0xFFFFFF);
-//        pGuiGraphics.drawString(Minecraft.getInstance().font, rankText, centerX + xOffset, centerY+30 + yOffset, 0xFFFFFF);
-//        pGuiGraphics.drawString(Minecraft.getInstance().font, catMate, centerX + xOffset, centerY+50 + yOffset, 0xFFFFFF);
-//        pGuiGraphics.drawString(Minecraft.getInstance().font, expectingText, centerX  + xOffset, centerY+70 + yOffset, 0xFFFFFF);
-//        if (expectingKits) {
-//            pGuiGraphics.drawString(Minecraft.getInstance().font, KitTime, centerX +xOffset, centerY+90 + yOffset, 0xFFFFFF);
-//        }
-
-        int boxX = xPositionPanel + 100;
-        int boxY = 60;
-        int boxWidth = 50;
-        int boxHeight = 16;
-
         boolean renderFriendshipText = pMouseX >= 43 && pMouseX <= 142 && pMouseY >= 28 && pMouseY <= 37 && wCatEntity.isTame();
 
         {
@@ -248,21 +232,6 @@ public class CatDataScreen extends Screen {
             pGuiGraphics.renderTooltip(Minecraft.getInstance().font, Component.empty().append(preText).append(friendshipLevelText) , pMouseX, pMouseY);
         }
 
-//        {
-//            int yOffset = 15;
-//            pGuiGraphics.renderTooltip(Minecraft.getInstance().font, Component.empty().append(preText).append(clanName), xPositionPanel, 70 + yOffset);
-//            pGuiGraphics.renderTooltip(Minecraft.getInstance().font, Component.empty().append(preText).append(genderText), xPositionPanel, 90 + yOffset);
-//            pGuiGraphics.renderTooltip(Minecraft.getInstance().font, Component.empty().append(preText).append(parentsText), xPositionPanel, 110 + yOffset);
-//            pGuiGraphics.renderTooltip(Minecraft.getInstance().font, Component.empty().append(preText).append(ageText), xPositionPanel, 130 + yOffset);
-//            pGuiGraphics.renderTooltip(Minecraft.getInstance().font, Component.empty().append(preText).append(personalityText), xPositionPanel, 150 + yOffset);
-//            pGuiGraphics.renderTooltip(Minecraft.getInstance().font, Component.empty().append(preText).append(moodText), xPositionPanel, 170 + yOffset);
-//            pGuiGraphics.renderTooltip(Minecraft.getInstance().font, Component.empty().append(preText).append(rankText), xPositionPanel, 190 + yOffset);
-//            pGuiGraphics.renderTooltip(Minecraft.getInstance().font, Component.empty().append(preText).append(catMate), xPositionPanel, 210 + yOffset);
-//            pGuiGraphics.renderTooltip(Minecraft.getInstance().font, Component.empty().append(preText).append(expectingText), xPositionPanel, 230 + yOffset);
-//            if (expectingKits) {
-//                pGuiGraphics.renderTooltip(Minecraft.getInstance().font, Component.empty().append(preText).append(KitTime), xPositionPanel, 250 + yOffset);
-//            }
-//        }
 
         {
             pGuiGraphics.pose().pushPose();
@@ -289,21 +258,8 @@ public class CatDataScreen extends Screen {
 
         pGuiGraphics.pose().popPose();
 
-//        pGuiGraphics.enableScissor(centerX - 135, centerY - 65, centerX - 71, centerY - 1);
-//        pGuiGraphics.blit(currentVariant, centerX - 135, centerY - 65,
-//                0, 0,
-//                256, 256,
-//                64, 64
-//        );
-//        pGuiGraphics.disableScissor();
+        WCEClient.renderDiseaseTooltipsUtD(wCatEntity, pGuiGraphics, 170, 16, pMouseX, pMouseY);
 
-//        pGuiGraphics.enableScissor(xPositionPanel + 85, centerY - 65, xPositionPanel + 149, centerY - 1);
-//        pGuiGraphics.blit(currentVariant, xPositionPanel + 85, centerY - 65,
-//                0, 0,
-//                256, 256,
-//                64, 64
-//        );
-//        pGuiGraphics.disableScissor();
 
     }
 
@@ -472,40 +428,6 @@ public class CatDataScreen extends Screen {
         }
 
 
-//        talkInteractButton = Button.builder(
-//                Component.literal("Talk"),
-//                btn -> {
-//                    ModPackets.sendToServer(new PerformInteractionTalkPacket(wCatEntity.getId()));
-//                    this.onClose();
-//                    Minecraft.getInstance().setScreen(null);
-//                }
-//        ).bounds(this.width - 85, 10, 80, 20).build();
-//
-//        givePreyInteractButton = Button.builder(
-//                Component.literal("Give Prey"),
-//                btn -> {
-//                    ModPackets.sendToServer(new PerformInteractionGivePreyPacket(wCatEntity.getId()));
-//                    this.onClose();
-//                    Minecraft.getInstance().setScreen(null);
-//                }
-//        ).bounds(this.width - 85, 35, 80, 20).build();
-//
-//        showAffectionInteractButton = Button.builder(
-//                Component.literal("Show Affection"),
-//                btn -> {
-//                    ModPackets.sendToServer(new PerformInteractionShowAffectionPacket(wCatEntity.getId()));
-//                    this.onClose();
-//                    Minecraft.getInstance().setScreen(null);
-//                }
-//        ).bounds(this.width - 85, 60, 80, 20).build();
-//
-//        if (wCatEntity.isTame() && wCatEntity.getInteractionCooldown() <=0) {
-//            this.addRenderableWidget(givePreyInteractButton);
-//            this.addRenderableWidget(talkInteractButton);
-//            this.addRenderableWidget(showAffectionInteractButton);
-//        } else {
-//            interactionCooldownTooltip = true;
-//        }
         activeMenu = "main";
         drawMainMenu();
 
@@ -573,9 +495,7 @@ public class CatDataScreen extends Screen {
                         drawModeMenu();
                     }
             ).bounds(this.width - 85, 35, 80, 20).build());
-        }
 
-        if (wCatEntity.isTame() && wCatEntity.getOwner() == Minecraft.getInstance().player) {
             this.addRenderableWidget(Button.builder(
                     Component.literal("Home"),
                     btn -> {
@@ -583,6 +503,18 @@ public class CatDataScreen extends Screen {
                         drawHomeMenu();
                     }
             ).bounds(this.width - 85, 60, 80, 20).build());
+        } else {
+            if (!wCatEntity.getClanUUID().equals(ClanData.EMPTY_UUID)){
+                if (wCatEntity.getClanUUID().equals(ClientClanData.get().getCurrentClanUUID())) {
+                    this.addRenderableWidget(Button.builder(
+                            Component.literal("Take"),
+                            btn -> {
+                                ModPackets.sendToServer(new CtSTakeCatPacket(wCatEntity.getId()));
+                                onClose();
+                            }
+                    ).bounds(this.width - 85, 35, 80, 20).build());
+                }
+            }
         }
 
         this.addRenderableWidget(Button.builder(
@@ -628,7 +560,7 @@ public class CatDataScreen extends Screen {
                     ModPackets.sendToServer(new PerformInteractionPacket(wCatEntity.getId(), WCatEntity.CatInteraction.GIVE_ITEM));
                     this.onClose();
                 },
-                new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                 80, 20, 0.9f
         ));
         this.addRenderableWidget(new ModButton(
@@ -640,7 +572,7 @@ public class CatDataScreen extends Screen {
                     ModPackets.sendToServer(new PerformInteractionPacket(wCatEntity.getId(), WCatEntity.CatInteraction.SHOW_AFFECTION));
                     this.onClose();
                 },
-                new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                 80, 20, 0.9f
         ));
         if (wCatEntity.getRank() != WCatEntity.Rank.KIT && wCatEntity.getRank() != WCatEntity.Rank.APPRENTICE) {
@@ -653,7 +585,7 @@ public class CatDataScreen extends Screen {
                         ModPackets.sendToServer(new PerformInteractionPacket(wCatEntity.getId(), WCatEntity.CatInteraction.TALK));
                         this.onClose();
                     },
-                    new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                     80, 20,0.9f
             ));
         }
@@ -679,7 +611,7 @@ public class CatDataScreen extends Screen {
                                     this.onClose();
                                 }
                             },
-                            new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                             80, 20,0.9f
                     ));
                 }
@@ -713,7 +645,7 @@ public class CatDataScreen extends Screen {
                     ModPackets.sendToServer(new CatSetModePacket(wCatEntity.getId(), WCatEntity.CatMode.FOLLOW));
                     Minecraft.getInstance().setScreen(null);
                 },
-                new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                 80, 20,0.9f
         ));
         this.addRenderableWidget(new ModButton(
@@ -725,7 +657,7 @@ public class CatDataScreen extends Screen {
                     ModPackets.sendToServer(new CatSetModePacket(wCatEntity.getId(), WCatEntity.CatMode.SIT));
                     Minecraft.getInstance().setScreen(null);
                 },
-                new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                 80, 20, 0.9f
         ));
         this.addRenderableWidget(new ModButton(
@@ -737,7 +669,7 @@ public class CatDataScreen extends Screen {
                     ModPackets.sendToServer(new CatSetModePacket(wCatEntity.getId(), WCatEntity.CatMode.WANDER));
                     Minecraft.getInstance().setScreen(null);
                 },
-                new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                 80, 20, 0.9f
         ));
 
@@ -767,7 +699,7 @@ public class CatDataScreen extends Screen {
                     ModPackets.sendToServer(new CatHomeActionsPacket(wCatEntity.getId(), 1));
                     Minecraft.getInstance().setScreen(null);
                 },
-                new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                 80, 20,0.9f
         ));
         this.addRenderableWidget(new ModButton(
@@ -779,7 +711,7 @@ public class CatDataScreen extends Screen {
                     ModPackets.sendToServer(new CatHomeActionsPacket(wCatEntity.getId(), 0));
                     Minecraft.getInstance().setScreen(null);
                 },
-                new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                 80, 20, 0.9f
         ));
 

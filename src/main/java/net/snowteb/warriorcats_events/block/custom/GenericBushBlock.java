@@ -25,20 +25,23 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.snowteb.warriorcats_events.particles.WCEParticles;
 
+import java.util.List;
 import java.util.function.Supplier;
 
 public class GenericBushBlock extends SweetBerryBushBlock {
 
-    private final Supplier<Item> dropItem;
+    private final List<DropItem> dropItems;
     private final int minDrop;
     private final int maxDrop;
     private final SoundEvent harvestSound;
 
-    public GenericBushBlock(Properties props, Supplier<Item> dropItem, int minDrop, int maxDrop, SoundEvent harvestSound) {
+    public GenericBushBlock(Properties props, List<DropItem> dropItem, int minDrop, int maxDrop, SoundEvent harvestSound) {
         super(props);
-        this.dropItem = dropItem;
+        this.dropItems = dropItem;
         this.minDrop = minDrop;
         this.maxDrop = maxDrop;
         this.harvestSound = harvestSound;
@@ -46,7 +49,8 @@ public class GenericBushBlock extends SweetBerryBushBlock {
 
     @Override
     public ItemStack getCloneItemStack(BlockGetter level, BlockPos pos, BlockState state) {
-        return new ItemStack(dropItem.get());
+        if (dropItems.isEmpty()) return ItemStack.EMPTY;
+        return new ItemStack(dropItems.get(0).item().get());
     }
 
 
@@ -69,8 +73,12 @@ public class GenericBushBlock extends SweetBerryBushBlock {
         }
 
         if (age > 1) {
-            int amount = minDrop + level.random.nextInt(maxDrop - minDrop + 1);
-            popResource(level, pos, new ItemStack(dropItem.get(), amount));
+            for (DropItem dropItem : this.dropItems) {
+                if (level.getRandom().nextFloat() < dropItem.chance()){
+                    int amount = minDrop + level.random.nextInt(maxDrop - minDrop + 1);
+                    popResource(level, pos, new ItemStack(dropItem.item().get(), amount));
+                }
+            }
 
             level.playSound(null, pos, harvestSound,
                     SoundSource.BLOCKS, 1.0F, 0.8F + level.random.nextFloat() * 0.4F);
@@ -151,5 +159,7 @@ public class GenericBushBlock extends SweetBerryBushBlock {
 
         super.performBonemeal(pLevel, pRandom, pPos, pState);
     }
+
+    public record DropItem(Supplier<Item> item, float chance){}
 
 }
