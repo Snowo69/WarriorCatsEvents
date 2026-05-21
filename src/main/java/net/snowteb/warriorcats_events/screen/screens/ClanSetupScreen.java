@@ -62,10 +62,10 @@ public class ClanSetupScreen extends Screen {
 
 
     private static final ResourceLocation BANNER =
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/banner.png");
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/gui/clan_setup/banner.png");
 
     private static final ResourceLocation BG_TEXTURE =
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/background_scene.png");
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/gui/clan_setup/background_scene.png");
 
 
     @Override
@@ -296,7 +296,7 @@ public class ClanSetupScreen extends Screen {
 //        randomizeButton = Button.builder(
 //                Component.literal("@"),
 //                btn -> randomSufix = Minecraft.getInstance().player.getRandom().nextInt(WCatEntity.SUFIXES.length)
-//        ).bounds(centerX + 75, centerY - 40, 20, 20).build();
+//        ).bounds(centerX + 75, centerY - 40, 20, 20).run();
 //        this.addRenderableWidget(randomizeButton);
 
         setRandomPrefix = Button.builder(

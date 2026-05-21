@@ -68,6 +68,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.network.NetworkHooks;
 import net.minecraftforge.network.PacketDistributor;
+import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.block.ModBlocks;
 import net.snowteb.warriorcats_events.block.custom.LavenderPetalsBlock;
 import net.snowteb.warriorcats_events.block.custom.MossBedBlock;
@@ -78,6 +79,9 @@ import net.snowteb.warriorcats_events.clan.ClanData;
 import net.snowteb.warriorcats_events.clan.WCEPlayerData;
 import net.snowteb.warriorcats_events.clan.WCEPlayerDataProvider;
 import net.snowteb.warriorcats_events.client.LeapClientState;
+import net.snowteb.warriorcats_events.damagesources.WCEDamageTypes;
+import net.snowteb.warriorcats_events.diseases.*;
+import net.snowteb.warriorcats_events.diseases.kinds.BrokenPaw;
 import net.snowteb.warriorcats_events.effect.ModEffects;
 import net.snowteb.warriorcats_events.entity.ModEntities;
 import net.snowteb.warriorcats_events.entity.client.WCModel;
@@ -87,6 +91,7 @@ import net.snowteb.warriorcats_events.managers.ClimbDataAccessor;
 import net.snowteb.warriorcats_events.network.ModPackets;
 import net.snowteb.warriorcats_events.network.packet.s2c.cats.OpenCatDataScreenPacket;
 import net.snowteb.warriorcats_events.network.packet.s2c.clan.S2CSyncClanDataPacket;
+import net.snowteb.warriorcats_events.network.packet.s2c.others.SyncDiseasesPacket;
 import net.snowteb.warriorcats_events.particles.WCEParticles;
 import net.snowteb.warriorcats_events.screen.menus.WCatMenu;
 import net.snowteb.warriorcats_events.sound.ModSounds;
@@ -112,7 +117,7 @@ import static net.snowteb.warriorcats_events.entity.custom.WCatEntity.Rank.*;
  * Welcome to by far the most complicated shi to understand.
  */
 
-public class WCatEntity extends TamableAnimal implements GeoEntity {
+public class WCatEntity extends TamableAnimal implements GeoEntity, Diseaseable<WCatEntity> {
 
     public enum CatMode {
         SIT,
@@ -469,10 +474,70 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
     private static final EntityDataAccessor<Boolean> IS_WAKING_UP =
             SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.BOOLEAN);
 
+    private static final EntityDataAccessor<Boolean> BROKEN_PAW =
+            SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> WRAPED_PAW =
+            SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.BOOLEAN);
+
     private int restingForTicks = 0;
     private int chillingForTicks = 0;
 
     private int sittingForTicks = 0;
+
+
+    private final List<Disease<?>> diseaseList = new ArrayList<>();
+    @Override
+    public List<Disease<?>> getList() {
+        return diseaseList;
+    }
+
+    @Override
+    public void loadDiseasesNBT(CompoundTag tag) {
+        Diseaseable.super.loadDiseasesNBT(tag);
+        if (tag.contains("brokenPaw")) {
+            this.entityData.set(BROKEN_PAW, tag.getBoolean("brokenPaw"));
+        }
+        if (tag.contains("wrapedPaw")) {
+            this.entityData.set(WRAPED_PAW, tag.getBoolean("wrapedPaw"));
+        }
+    }
+
+    @Override
+    public void writeDiseasesNBT(CompoundTag tag) {
+        Diseaseable.super.writeDiseasesNBT(tag);
+        tag.putBoolean("brokenPaw", this.entityData.get(BROKEN_PAW));
+        tag.putBoolean("wrapedPaw", this.entityData.get(WRAPED_PAW));
+    }
+
+    @Override
+    public void onChange() {
+        Diseaseable.super.onChange();
+        if (!this.level().isClientSide()) {
+            this.setBrokenPaw(this.hasDisease(DiseaseTypes.BROKEN_PAW));
+            boolean wrappedPaw = this.getDisease(DiseaseTypes.BROKEN_PAW) instanceof BrokenPaw bp
+                    && bp.isBoneWrapped();
+            this.setWrappedPaw(wrappedPaw);
+        }
+    }
+
+    public void setBrokenPaw(boolean value) {
+        this.entityData.set(BROKEN_PAW, value);
+    }
+
+    public boolean isBrokenPaw() {
+        return this.entityData.get(BROKEN_PAW)
+                && !this.entityData.get(WRAPED_PAW)
+                ;
+    }
+
+    public void setWrappedPaw(boolean value) {
+        this.entityData.set(WRAPED_PAW, value);
+    }
+
+    public boolean isWrappedPaw() {
+        return this.entityData.get(WRAPED_PAW) && this.entityData.get(BROKEN_PAW);
+    }
+
 
     public boolean isRestingFromSitting() {
         return this.entityData.get(SITTING_INDEX) == 3;
@@ -2598,6 +2663,10 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
             }
         }
 
+        if (DiseaseManager.healDiseaseMobInteract(itemstack, this)) {
+            return InteractionResult.SUCCESS;
+        }
+
         if (this.getRank() == MEDICINE && this.isTame() && this.getOwner() == pPlayer) {
             if (PlayerShape.getCurrentShape(pPlayer) instanceof Animal) {
                 if (!pPlayer.getItemInHand(pHand).isEmpty()) {
@@ -2869,6 +2938,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
         if (this.isTame() && itemstack.is(ModItems.CATMINT.get()) &&
                 this.getRank() != MEDICINE && !this.isExpectingKits() && !this.isBaby()) {
+
             if (!this.level().isClientSide()) {
                 if (((ServerLevel) this.level()).getEntity(this.getMateUUID()) instanceof Player) {
                     return InteractionResult.PASS;
@@ -3206,6 +3276,10 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
             if (!level().isClientSide()) {
                 itemstack.hurtAndBreak(1, pPlayer, (p) -> p.broadcastBreakEvent(pHand));
 
+                if (pPlayer instanceof ServerPlayer sPlayer) {
+                    ModPackets.sendToPlayer(new SyncDiseasesPacket(this.getId(), this.diseaseData()), sPlayer);
+                }
+
                 if (this.isTame() && this.getOwner() == pPlayer) {
                     if (this.getPersonality() == Personality.NONE || this.getPersonality() == null) {
                         this.assignRandomPersonality(this.random);
@@ -3334,7 +3408,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                         if (server != null) {
 
                             Advancement adv = server.getAdvancements()
-                                    .getAdvancement(new ResourceLocation("warriorcats_events:fed_kit_deathberries"));
+                                    .getAdvancement(ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID,"fed_kit_deathberries"));
 
                             if (adv != null) {
                                 serverPlayer.getAdvancements().award(adv, "fed_kit_deathberries");
@@ -3503,7 +3577,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
      * <p>
      * If the other parent is a Wild cat, and this cat is tamed, and the other one is tamed:
      * Then if this cats gender is 1, and if the other cats gender is 0, then set this cat to expect kits and send the advancement.
-     * Then reset the love counter, this so the she cat doesn't spawn infinite kits for no reason.
+     * Then reset the love counter, this so the she cat doesn't spawn isInfinite kits for no reason.
      * <p>
      * This method is called in both cats, so its not necessary to make two logics.
      */
@@ -3535,7 +3609,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                 MinecraftServer server = serverPlayer.getServer();
                 if (server != null) {
                     Advancement adv = server.getAdvancements()
-                            .getAdvancement(new ResourceLocation("warriorcats_events:bred_wildcat"));
+                            .getAdvancement(ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID,"bred_wildcat"));
                     if (adv != null) {
                         serverPlayer.getAdvancements().award(adv, "bred_wildcat");
                     }
@@ -3554,7 +3628,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                 MinecraftServer server = serverPlayer.getServer();
                 if (server != null) {
                     Advancement adv = server.getAdvancements()
-                            .getAdvancement(new ResourceLocation("warriorcats_events:homo_bred"));
+                            .getAdvancement(ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID,"homo_bred"));
                     if (adv != null) {
                         serverPlayer.getAdvancements().award(adv, "homo_bred");
                     }
@@ -3569,6 +3643,9 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         partner.setMate(thisName);
         this.setMateUUID(otherParent.getUUID());
         partner.setMateUUID(this.getUUID());
+
+        if (mateName == null) mateName = Component.empty();
+        if (thisName == null) thisName = Component.empty();
 
         Component message = Component.empty()
                 .append(mateName.copy())
@@ -4005,6 +4082,8 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
         CompoundTag patrolData = this.savePatrolDataNBT();
         tag.put("PatrolData", patrolData);
+
+        this.writeDiseasesNBT(tag);
     }
 
     @Override
@@ -4217,6 +4296,8 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
         this.loadPatrolDataNBT(tag);
 
+        this.loadDiseasesNBT(tag);
+
     }
 
     /**
@@ -4399,6 +4480,14 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
             }
         }
 
+//        if (this.getPlayerBoundUuid().equals(ClanData.EMPTY_UUID)){
+//            if (this.hasEffect(ModEffects.NUMB_EFFECT.get())) {
+//                tAnimationState.getController().setAnimation(RawAnimation.begin()
+//                        .then("animation.wcat.fall_death", Animation.LoopType.PLAY_ONCE)
+//                        .then("animation.wcat.death_idle", Animation.LoopType.LOOP));
+//                return PlayState.CONTINUE;
+//            }
+//        }
 
         if (this.isResting() || this.entityData.get(SITTING_INDEX) == 3) {
             if (this.isWakingUp()) {
@@ -4500,8 +4589,13 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                 tAnimationState.getController().setAnimationSpeed(0.185 * Math.exp(9.91 * speed));
 
             } else {
-                tAnimationState.getController().setAnimation(RawAnimation.begin().
-                        then("animation.wcat.walk" + this.entityData.get(IDLE_POSE), Animation.LoopType.LOOP));
+                if (this.isBrokenPaw()) {
+                    tAnimationState.getController().setAnimation(RawAnimation.begin().
+                            then("animation.wcat.walk_limp", Animation.LoopType.LOOP));
+                } else {
+                    tAnimationState.getController().setAnimation(RawAnimation.begin().
+                            then("animation.wcat.walk" + this.entityData.get(IDLE_POSE), Animation.LoopType.LOOP));
+                }
                 tAnimationState.getController().setAnimationSpeed(animSpeed);
 
             }
@@ -4549,8 +4643,14 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         }
         if (animPlayed && tAnimationState.getController().hasAnimationFinished()) {
 
-            tAnimationState.getController().setAnimation(RawAnimation.begin()
-                    .then("animation.wcat.idle" + this.entityData.get(IDLE_POSE), Animation.LoopType.LOOP));
+            if (this.isBrokenPaw()) {
+                tAnimationState.getController().setAnimation(RawAnimation.begin().
+                        then("animation.wcat.idle_limp", Animation.LoopType.LOOP));
+            } else {
+                tAnimationState.getController().setAnimation(RawAnimation.begin()
+                        .then("animation.wcat.idle" + this.entityData.get(IDLE_POSE), Animation.LoopType.LOOP));
+            }
+
             tAnimationState.getController().setAnimationSpeed(1f);
             animPlayed = false;
 
@@ -4574,8 +4674,13 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
             animPlayed = false;
         } else if (!animPlayed) {
 
-            tAnimationState.getController().setAnimation(RawAnimation.begin().
-                    then("animation.wcat.idle" + this.entityData.get(IDLE_POSE), Animation.LoopType.LOOP));
+            if (this.isBrokenPaw()) {
+                tAnimationState.getController().setAnimation(RawAnimation.begin().
+                        then("animation.wcat.idle_limp", Animation.LoopType.LOOP));
+            } else {
+                tAnimationState.getController().setAnimation(RawAnimation.begin().
+                        then("animation.wcat.idle" + this.entityData.get(IDLE_POSE), Animation.LoopType.LOOP));
+            }
             tAnimationState.getController().setAnimationSpeed(1f);
         }
 
@@ -5081,6 +5186,9 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
         this.entityData.define(SITTING_INDEX, 0);
         this.entityData.define(CHILLING_INDEX, 0);
         this.entityData.define(IS_WAKING_UP, false);
+
+        this.entityData.define(BROKEN_PAW, false);
+        this.entityData.define(WRAPED_PAW, false);
 
 
     }
@@ -6393,7 +6501,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
                 if (WCGenetics.Chimerism.isChimera(this.entityData.get(CHIMERA_GENE))) {
                     Advancement adv = server.getAdvancements()
-                            .getAdvancement(new ResourceLocation("warriorcats_events:chimera_obtained"));
+                            .getAdvancement(ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID,"chimera_obtained"));
                     if (adv != null) {
                         serverPlayer.getAdvancements().award(adv, "chimera_obtained");
                     }
@@ -6401,7 +6509,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
                 if (WCGenetics.EyesAnomaly.isHeteroChromic(this.entityData.get(EYES_ANOMALY))) {
                     Advancement adv = server.getAdvancements()
-                            .getAdvancement(new ResourceLocation("warriorcats_events:heterochromic_obtained"));
+                            .getAdvancement(ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID,"heterochromic_obtained"));
                     if (adv != null) {
                         serverPlayer.getAdvancements().award(adv, "heterochromic_obtained");
                     }
@@ -6409,7 +6517,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
                 if (WCGenetics.Albino.isTrueAlbino(this.entityData.get(ALBINO)) || WCGenetics.Albino.isTrueAlbino(this.entityData.get(ALBINO_CHIMERA))) {
                     Advancement adv = server.getAdvancements()
-                            .getAdvancement(new ResourceLocation("warriorcats_events:albino_obtained"));
+                            .getAdvancement(ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID,"albino_obtained"));
                     if (adv != null) {
                         serverPlayer.getAdvancements().award(adv, "albino_obtained");
                     }
@@ -6426,7 +6534,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
                 MinecraftServer server = serverPlayer.getServer();
                 if (server != null) {
                     Advancement adv = server.getAdvancements()
-                            .getAdvancement(new ResourceLocation("warriorcats_events:moonmoon"));
+                            .getAdvancement(ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID,"moonmoon"));
                     if (adv != null) {
                         serverPlayer.getAdvancements().award(adv, "moonmoon");
                     }
@@ -6615,6 +6723,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
     public void tick() {
         super.tick();
 
+        this.diseaseTick();
 
         if (!this.level().isClientSide()) {
 
@@ -7084,6 +7193,9 @@ public class WCatEntity extends TamableAnimal implements GeoEntity {
 
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
+        if (source.is(WCEDamageTypes.GREENCOUGH) || source.is(WCEDamageTypes.WHITECOUGH)) {
+            return ModSounds.WILDCAT_COUGH.get();
+        }
         return SoundEvents.CAT_HURT;
     }
 

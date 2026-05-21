@@ -1,18 +1,32 @@
 package net.snowteb.warriorcats_events;
 
 import com.mojang.blaze3d.platform.InputConstants;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.FormattedText;
+import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.FormattedCharSequence;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.snowteb.warriorcats_events.diseases.DiseaseManager;
+import net.snowteb.warriorcats_events.diseases.Disease;
+import net.snowteb.warriorcats_events.diseases.Diseaseable;
 import net.snowteb.warriorcats_events.managers.ClimbDataAccessor;
 import net.snowteb.warriorcats_events.sound.ModSounds;
+import net.snowteb.warriorcats_events.zconfig.WCEServerConfig;
 import org.lwjgl.glfw.GLFW;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class WCEClient {
     public static boolean isRenderingEmoteMenu = false;
@@ -20,27 +34,27 @@ public class WCEClient {
     public static final int MAX_EMOTES = 12;
     public static final KeyMapping EMOTES_HUD_MENU_KEY = new KeyMapping("key.warriorcats_events.emotes", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_Y, "key.category.warriorcats_events.key");
 
-    public static final ResourceLocation WCE_TITLE = new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/wce_title_hd.png");
+    public static final ResourceLocation WCE_TITLE = ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/gui/wce_title_hd.png");
 
-    public static final ResourceLocation WCE_LOGO = new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/wce_logo.png");
+    public static final ResourceLocation WCE_LOGO = ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/gui/wce_logo.png");
 
     public static class EmoteIndexData {
 
-        private static final ResourceLocation ICON_NONE = new ResourceLocation(WarriorCatsEvents.MODID, "textures/hud/emotes/none_icon.png");
-        private static final ResourceLocation ICON_MORPH = new ResourceLocation(WarriorCatsEvents.MODID, "textures/hud/emotes/morph_icon.png");
-        private static final ResourceLocation ICON_ATTACK = new ResourceLocation(WarriorCatsEvents.MODID, "textures/hud/emotes/attack_icon.png");
-        private static final ResourceLocation ICON_GROOM = new ResourceLocation(WarriorCatsEvents.MODID, "textures/hud/emotes/groom_icon.png");
-        private static final ResourceLocation ICON_LAY = new ResourceLocation(WarriorCatsEvents.MODID, "textures/hud/emotes/lay_icon.png");
-        private static final ResourceLocation ICON_SCRATCH = new ResourceLocation(WarriorCatsEvents.MODID, "textures/hud/emotes/scratch_icon.png");
-        private static final ResourceLocation ICON_STAND = new ResourceLocation(WarriorCatsEvents.MODID, "textures/hud/emotes/stand_icon.png");
-        private static final ResourceLocation ICON_STRETCH = new ResourceLocation(WarriorCatsEvents.MODID, "textures/hud/emotes/stretch_icon.png");
-        private static final ResourceLocation ICON_SIT = new ResourceLocation(WarriorCatsEvents.MODID, "textures/hud/emotes/sit_icon.png");
-        private static final ResourceLocation ICON_LOAF = new ResourceLocation(WarriorCatsEvents.MODID, "textures/hud/emotes/loaf_icon.png");
-        private static final ResourceLocation ICON_BACKFLIP = new ResourceLocation(WarriorCatsEvents.MODID, "textures/hud/emotes/backflip_icon.png");
-        private static final ResourceLocation ICON_SLEEP = new ResourceLocation(WarriorCatsEvents.MODID, "textures/hud/emotes/sleep_icon.png");
-        private static final ResourceLocation ICON_DEAD = new ResourceLocation(WarriorCatsEvents.MODID, "textures/hud/emotes/dead_icon.png");
-        private static final ResourceLocation ICON_ROLL = new ResourceLocation(WarriorCatsEvents.MODID, "textures/hud/emotes/roll_icon.png");
-        private static final ResourceLocation ICON_SCARED = new ResourceLocation(WarriorCatsEvents.MODID, "textures/hud/emotes/scared_icon.png");
+        private static final ResourceLocation ICON_NONE = ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/hud/emotes/none_icon.png");
+        private static final ResourceLocation ICON_MORPH = ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/hud/emotes/morph_icon.png");
+        private static final ResourceLocation ICON_ATTACK = ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/hud/emotes/attack_icon.png");
+        private static final ResourceLocation ICON_GROOM = ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/hud/emotes/groom_icon.png");
+        private static final ResourceLocation ICON_LAY = ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/hud/emotes/lay_icon.png");
+        private static final ResourceLocation ICON_SCRATCH = ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/hud/emotes/scratch_icon.png");
+        private static final ResourceLocation ICON_STAND = ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/hud/emotes/stand_icon.png");
+        private static final ResourceLocation ICON_STRETCH = ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/hud/emotes/stretch_icon.png");
+        private static final ResourceLocation ICON_SIT = ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/hud/emotes/sit_icon.png");
+        private static final ResourceLocation ICON_LOAF = ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/hud/emotes/loaf_icon.png");
+        private static final ResourceLocation ICON_BACKFLIP = ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/hud/emotes/backflip_icon.png");
+        private static final ResourceLocation ICON_SLEEP = ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/hud/emotes/sleep_icon.png");
+        private static final ResourceLocation ICON_DEAD = ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/hud/emotes/dead_icon.png");
+        private static final ResourceLocation ICON_ROLL = ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/hud/emotes/roll_icon.png");
+        private static final ResourceLocation ICON_SCARED = ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/hud/emotes/scared_icon.png");
 
         public static ResourceLocation getIcon(int index) {
             return switch (index) {
@@ -188,6 +202,181 @@ public class WCEClient {
         float strenght = 0.6f;
         localPlayer.setDeltaMovement(angle.scale(strenght));
         climbCooldown = 15;
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public static void renderDiseaseTooltipsDtU(Diseaseable<?> entity, GuiGraphics pGuiGraphics, int x, int y, int pMouseX, int pMouseY) {
+        if (!WCEServerConfig.SERVER.DISEASES.get()) return;
+
+        List<Disease<?>> list = entity.getList();
+        if (list.isEmpty()) return;
+
+        pGuiGraphics.pose().pushPose();
+        pGuiGraphics.pose().translate(x, y, 0);
+        float scale = 0.8f;
+        pGuiGraphics.pose().scale(scale, scale, scale);
+
+        int y1 = 0;
+        for (Disease<?> disease : list) {
+            int color = diseaseTextColor(disease);
+
+            Component text = Component.literal(disease.getType().getName().getString()).withStyle(Style.EMPTY.withColor(color));
+            renderDiseaseTooltip(pGuiGraphics, text, 0, y1, disease, pMouseX, pMouseY);
+            y1 -= 18;
+        }
+        pGuiGraphics.pose().popPose();
+
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public static void renderDiseaseTooltipsUtD(Diseaseable<?> entity, GuiGraphics pGuiGraphics, int x, int y, int pMouseX, int pMouseY) {
+        if (!WCEServerConfig.SERVER.DISEASES.get()) return;
+
+        List<Disease<?>> list = entity.getList();
+        if (list.isEmpty()) return;
+
+        pGuiGraphics.pose().pushPose();
+        pGuiGraphics.pose().translate(x, y, 0);
+        float scale = 0.7f;
+        pGuiGraphics.pose().scale(scale, scale, scale);
+
+        int y1 = 0;
+        for (Disease<?> disease : list) {
+            int color = diseaseTextColor(disease);
+
+            Component text = Component.literal(disease.getType().getName().getString()).withStyle(Style.EMPTY.withColor(color));
+
+            int localMouseX = (int)((pMouseX - x) / scale);
+            int localMouseY = (int)((pMouseY - y) / scale);
+
+            renderDiseaseTooltip(pGuiGraphics, text, 0, y1, disease, localMouseX, localMouseY);
+            y1 += 18;
+        }
+        pGuiGraphics.pose().popPose();
+
+    }
+
+    private static void renderDiseaseTooltip(GuiGraphics pGuiGraphics, Component pText, int x, int y, Disease<?> disease, int pMouseX, int pMouseY) {
+        Component finalText = Component.literal("   ")
+                .append(pText.copy())
+                .append(Component.literal(" | ").withStyle(ChatFormatting.DARK_GRAY))
+                .append(Component.literal("҉ " + disease.getLevel() + "/" + disease.getType().getMaxLevel()).withStyle(ChatFormatting.DARK_RED))
+                .append(Component.literal(" | ").withStyle(ChatFormatting.DARK_GRAY))
+                .append(Component.literal("➕ " + disease.getHealedLevel() + "/" + disease.getType().getMaxHealLevel()).withStyle(ChatFormatting.DARK_GREEN))
+                ;
+
+        if (!disease.shouldShowUnhealed()) {
+            finalText = finalText.copy()
+                    .append(Component.literal(" | ").withStyle(ChatFormatting.DARK_GRAY))
+                    .append(Component.literal("⏱").withStyle(ChatFormatting.GOLD).withStyle(ChatFormatting.BOLD));
+        } else {
+            finalText = finalText.copy()
+                    .append(Component.literal(" | ").withStyle(ChatFormatting.DARK_GRAY));
+
+            if (disease.shouldShowUnhealed()){
+                for (int i = 0; i < disease.getCures().size(); i++) {
+                    finalText = finalText.copy().append("   ");
+                }
+            } else {
+                finalText = finalText.copy().append("   ");
+            }
+        }
+
+        pGuiGraphics.renderTooltip(Minecraft.getInstance().font, finalText, x, y);
+
+        int iconSize = 10;
+        int offset = Minecraft.getInstance().font.width(finalText);
+
+        pGuiGraphics.pose().pushPose();
+        pGuiGraphics.pose().translate(0,0, 500);
+
+        boolean isHovered = pMouseX >= x+iconSize && pMouseX <= x+offset+iconSize+5
+                && pMouseY >= y-iconSize-5 && pMouseY <= y-2;
+        if (isHovered) {
+            renderDiseaseDescriptionTooltip(pGuiGraphics, disease, pMouseX, pMouseY);
+        }
+        pGuiGraphics.pose().popPose();
+
+        pGuiGraphics.pose().pushPose();
+        pGuiGraphics.pose().translate(0, 0, 401);
+        pGuiGraphics.blit(disease.getType().getIcon(),
+                x + iconSize + 1,y - iconSize - 3,
+                0,0,
+                iconSize, iconSize,
+                iconSize, iconSize);
+
+
+        if (disease.shouldShowUnhealed()) {
+            int x2 = 0;
+
+            float scale = 0.70f;
+            pGuiGraphics.pose().translate(offset, y - iconSize - 5, 0);
+            pGuiGraphics.pose().scale(scale, scale, scale);
+
+            for (ItemStack stack : disease.getCures()) {
+                pGuiGraphics.renderItem(stack, x2, 1);
+                x2 -= iconSize + 8;
+            }
+
+        }
+
+
+        pGuiGraphics.pose().popPose();
+    }
+
+    private static void renderDiseaseDescriptionTooltip(GuiGraphics pGuiGraphics, Disease<?> disease, int x, int y) {
+
+        String healedLevel = "Healed: " + disease.getHealedLevel() + "/" + disease.getType().getMaxHealLevel();
+        String severenessLevel = "Stage: " + disease.getLevel() + "/" + disease.getType().getMaxLevel();
+
+        Component description = Component.empty()
+                .append(disease.getType().getName().copy()).withStyle(Style.EMPTY.withColor(diseaseTextColor(disease)))
+                .append(Component.literal(" | ").withStyle(ChatFormatting.GRAY))
+                .append(Component.literal(severenessLevel).withStyle(ChatFormatting.RED))
+                .append(Component.literal(" | ").withStyle(ChatFormatting.GRAY))
+                .append(Component.literal(healedLevel).withStyle(ChatFormatting.GREEN))
+                ;
+
+
+
+        List<FormattedCharSequence> lines = new ArrayList<>();
+        lines.add(description.getVisualOrderText());
+        lines.add(Component.literal("").getVisualOrderText());
+
+        lines.addAll(Minecraft.getInstance().font.split(
+                        disease.getType()
+                                .getDescription()
+                                .copy()
+                                .withStyle(ChatFormatting.GRAY),
+                250
+        ));
+
+        pGuiGraphics.pose().pushPose();
+        pGuiGraphics.pose().translate(x, y + 10, 0);
+        float scale = 0.70f;
+        pGuiGraphics.pose().scale(scale, scale, scale);
+        pGuiGraphics.renderTooltip(Minecraft.getInstance().font,
+                lines,
+                0, 0
+        );
+        pGuiGraphics.pose().popPose();
+
+    }
+
+    public static int diseaseTextColor(Disease<?> disease) {
+
+        float progress = (float)(disease.getLevel() - 1) / (disease.getType().getMaxLevel() - 1);
+
+        int red = 255;
+        float curve = progress * progress;
+
+        int green = (int)(255 * (1f - curve));
+        int blue = (int)(255 * (1f - progress * 4f));
+
+        blue = Math.max(0, blue);
+        green = Math.max(0, green);
+
+        return (red << 16) | (green << 8) | blue;
     }
 
 }

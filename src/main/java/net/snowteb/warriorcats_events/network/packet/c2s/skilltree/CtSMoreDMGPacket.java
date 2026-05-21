@@ -10,6 +10,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraftforge.network.NetworkEvent;
+import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.skills.ISkillData;
 import net.snowteb.warriorcats_events.skills.PlayerSkill;
 import net.snowteb.warriorcats_events.skills.PlayerSkillProvider;
@@ -65,7 +66,7 @@ public class CtSMoreDMGPacket {
                 if (attribute == null) return;
 
                 attribute.removeModifier(DMG_SKILL_UUID);
-                double bonus = (0.12* WCEServerConfig.SERVER.SKILL_DMG_MULTIPLIER.get()) * (currentLevel + 1);
+                double bonus = (PlayerSkill.damageMultiplier* WCEServerConfig.SERVER.SKILL_DMG_MULTIPLIER.get()) * (currentLevel + 1);
                 attribute.addPermanentModifier(new AttributeModifier(
                         DMG_SKILL_UUID,
                         "skill_dmg_bonus",
@@ -86,7 +87,7 @@ public class CtSMoreDMGPacket {
                     if (server != null) {
 
                         Advancement adv = server.getAdvancements()
-                                .getAdvancement(new ResourceLocation("warriorcats_events:skill_damage_advancement"));
+                                .getAdvancement(ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID,"skill_damage_advancement"));
 
                         if (adv != null) {
                             player.getAdvancements().award(adv, "unlock_skill");

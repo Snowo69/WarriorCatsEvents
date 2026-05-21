@@ -74,6 +74,10 @@ public class SpecificClanScreen extends Screen {
         menuY = -200;
 
         this.clan = ClientClanCache.getClan(specificUUID);
+        if (this.clan == null) {
+            Minecraft.getInstance().setScreen(null);
+            return;
+        }
 
         int centerX = width / 2;
         int centerY = height / 2;
@@ -87,7 +91,7 @@ public class SpecificClanScreen extends Screen {
                     selectFirstOptions(membersButton);
                     drawShowPlayerOrCatsMembers();
                 },
-                new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                 80, 20, clan.color
         );
 
@@ -100,7 +104,7 @@ public class SpecificClanScreen extends Screen {
                     selectFirstOptions(logsButton);
                     drawShowLogsMembers();
                 },
-                new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                 80, 20,  clan.color
         );
 
@@ -120,7 +124,7 @@ public class SpecificClanScreen extends Screen {
                     }
 
                 },
-                new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                 80, 20,  clan.color
         );
 
@@ -178,7 +182,7 @@ public class SpecificClanScreen extends Screen {
                     WCEClient.playLocalSound(ModSounds.MENU_OPEN.get(), SoundSource.NEUTRAL, 0.8f,1.3f);
                     Minecraft.getInstance().setScreen(new ClanListScreen(false));
                 },
-                new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                 80, 20, 0.8f,  clan.color
         );
 
@@ -189,7 +193,7 @@ public class SpecificClanScreen extends Screen {
                     searchBarActive = true;
                     this.removeWidget(searchBarActiveButton);
                 },
-                new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                 80, 20, 1.0f
         );
 
@@ -379,7 +383,7 @@ public class SpecificClanScreen extends Screen {
 //        this.addRenderableWidget(
 //                Button.builder(Component.literal("Back"), btn -> {
 //                    Minecraft.getInstance().setScreen(new ClanListScreen());
-//                }).bounds(centerX - 20, centerY + 70, 40, 20).build()
+//                }).bounds(centerX - 20, centerY + 70, 40, 20).run()
 //        );
 
         this.addRenderableWidget(backButton);
@@ -403,7 +407,7 @@ public class SpecificClanScreen extends Screen {
                     selectMemberType(npcs);
                     drawShowCatsMembers();
                 },
-                new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                 80, 15,0.8f,  clan.color
         );
 
@@ -416,7 +420,7 @@ public class SpecificClanScreen extends Screen {
                     selectMemberType(players);
                     drawShowPlayerMembers();
                 },
-                new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                 80, 20,0.8f,  clan.color
         );
 
@@ -496,7 +500,7 @@ public class SpecificClanScreen extends Screen {
                     btn -> {
                         drawSendLogWidgets();
                     },
-                    new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                     80, 20, 0.8f,  clan.color
             ));
         }

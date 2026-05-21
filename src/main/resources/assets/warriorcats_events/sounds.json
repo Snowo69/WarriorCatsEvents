@@ -174,9 +174,9 @@
 
   "entity.eagle.ambient": {
     "sounds": [
+      { "name": "warriorcats_events:entity/eagle/eagle_call_0", "volume": 0.7, "pitch": 0.9 },
       { "name": "warriorcats_events:entity/eagle/eagle_call_1", "volume": 0.7, "pitch": 0.9 },
       { "name": "warriorcats_events:entity/eagle/eagle_call_2", "volume": 0.7, "pitch": 0.9 },
-      { "name": "warriorcats_events:entity/eagle/eagle_call_3", "volume": 0.7, "pitch": 0.9 },
       { "name": "warriorcats_events:entity/eagle/eagle_ambient_0", "volume": 0.7, "pitch": 1.0 }
     ]
   },
@@ -186,9 +186,9 @@
       { "name": "warriorcats_events:entity/eagle/eagle_hurt_0", "volume": 0.7, "pitch": 1.0 },
       { "name": "warriorcats_events:entity/eagle/eagle_hurt_1", "volume": 0.7, "pitch": 1.0 },
       { "name": "warriorcats_events:entity/eagle/eagle_hurt_2", "volume": 0.7, "pitch": 1.0 },
+      { "name": "warriorcats_events:entity/eagle/eagle_call_0", "volume": 0.7, "pitch": 1.0 },
       { "name": "warriorcats_events:entity/eagle/eagle_call_1", "volume": 0.7, "pitch": 1.0 },
-      { "name": "warriorcats_events:entity/eagle/eagle_call_2", "volume": 0.7, "pitch": 1.0 },
-      { "name": "warriorcats_events:entity/eagle/eagle_call_3", "volume": 0.7, "pitch": 1.0 }
+      { "name": "warriorcats_events:entity/eagle/eagle_call_2", "volume": 0.7, "pitch": 1.0 }
     ]
   },
   "entity.eagle.death": {
@@ -207,9 +207,9 @@
   },
   "entity.eagle.call": {
     "sounds": [
+      { "name": "warriorcats_events:entity/eagle/eagle_call_0", "volume": 0.7, "pitch": 0.9 },
       { "name": "warriorcats_events:entity/eagle/eagle_call_1", "volume": 0.7, "pitch": 0.9 },
-      { "name": "warriorcats_events:entity/eagle/eagle_call_2", "volume": 0.7, "pitch": 0.9 },
-      { "name": "warriorcats_events:entity/eagle/eagle_call_3", "volume": 0.7, "pitch": 0.9 }
+      { "name": "warriorcats_events:entity/eagle/eagle_call_2", "volume": 0.7, "pitch": 0.9 }
     ]
   },
 
@@ -219,6 +219,19 @@
       { "name": "warriorcats_events:collar/bell_1", "volume": 1.0, "pitch": 1.0 },
       { "name": "warriorcats_events:collar/bell_2", "volume": 1.0, "pitch": 1.0 },
       { "name": "warriorcats_events:collar/bell_3", "volume": 1.0, "pitch": 1.0 }
+    ]
+  },
+
+  "entity.cat_cough": {
+    "sounds": [
+      { "name": "warriorcats_events:entity/cat_cough/cat_cough_0", "volume": 0.7, "pitch": 1.1},
+      { "name": "warriorcats_events:entity/cat_cough/cat_cough_1", "volume": 0.7, "pitch": 1.1},
+      { "name": "warriorcats_events:entity/cat_cough/cat_cough_2", "volume": 0.7, "pitch": 1.1},
+      { "name": "warriorcats_events:entity/cat_cough/cat_cough_3", "volume": 0.7, "pitch": 1.1},
+      { "name": "warriorcats_events:entity/cat_cough/cat_cough_4", "volume": 0.7, "pitch": 1.2},
+      { "name": "warriorcats_events:entity/cat_cough/cat_cough_5", "volume": 0.7, "pitch": 1.1},
+      { "name": "warriorcats_events:entity/cat_cough/cat_cough_6", "volume": 0.7, "pitch": 1.1},
+      { "name": "warriorcats_events:entity/cat_cough/cat_cough_7", "volume": 0.7, "pitch": 1.1}
     ]
   }
 }

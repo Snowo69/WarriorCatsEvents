@@ -14,6 +14,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.TamableAnimal;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
@@ -39,7 +40,11 @@ import net.snowteb.warriorcats_events.clan.ClanData;
 import net.snowteb.warriorcats_events.clan.WCEPlayerData;
 import net.snowteb.warriorcats_events.clan.WCEPlayerDataProvider;
 import net.snowteb.warriorcats_events.commands.*;
+import net.snowteb.warriorcats_events.diseases.kinds.BrokenPaw;
+import net.snowteb.warriorcats_events.diseases.DiseaseTypes;
+import net.snowteb.warriorcats_events.diseases.Diseaseable;
 import net.snowteb.warriorcats_events.entity.custom.EagleEntity;
+import net.snowteb.warriorcats_events.entity.custom.WCGenetics;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.item.ModItems;
 import net.snowteb.warriorcats_events.managers.*;
@@ -76,36 +81,15 @@ public class ModEvents2 {
     public static void onServerTick(TickEvent.ServerTickEvent event) {
         if (event.phase != TickEvent.Phase.END) return;
 
-//
-//        List<ServerPlayer> playerList = event.getServer().getPlayerList().getPlayers();
-//        if(!playerList.isEmpty()) {
-//
-//            ServerLevel sLevel = event.getServer().getLevel(ServerLevel.OVERWORLD);
-//            if (sLevel != null) {
-//                boolean allPlayersSleeping = true;
-//                for (ServerPlayer it : playerList) {
-//                    if(!it.isSleeping() && !it.isSpectator()) {
-//                        allPlayersSleeping = false;
-//                        break;
-//                    }
-//                }
-//                if(allPlayersSleeping) {
-//                    if(sleepTick < 95) {
-//                        sleepTick++;
-//                    } else {
-//                        sLevel.setDayTime(sLevel.getDayTime() / 24000 * 24000 + 24000);
-//                        sLevel.setWeatherParameters(48000, 0, false, false);
-//                        for (ServerPlayer it : playerList) {
-//                            it.stopSleeping();
-//                        }
-//                        sleepTick = 0;
-//                    }
-//                } else {
-//                    sleepTick = 0;
-//                }
-//            }
-//        }
-
+        if (!ClanData.CHUNK_TASKS.isEmpty()) {
+            for (int i = 0; i < 5; i++) {
+                Runnable task = ClanData.CHUNK_TASKS.poll();
+                if (task == null) {
+                    break;
+                }
+                task.run();
+            }
+        }
 
 
         MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
@@ -256,6 +240,8 @@ public class ModEvents2 {
         InfoProfileCommand.register(event.getDispatcher());
         ResyncShapesCommand.register(event.getDispatcher());
         WCEGameruleCommand.register(event.getDispatcher());
+        DiseaseCommands.register(event.getDispatcher());
+        ChangelogCommand.register(event.getDispatcher());
 
 
         ConfigCommand.register(event.getDispatcher());
@@ -268,12 +254,12 @@ public class ModEvents2 {
             if(!event.getObject().getCapability(PlayerThirstProvider.PLAYER_THIRST).isPresent()) {
                 PlayerThirstProvider provider = new PlayerThirstProvider();
                 provider.getOrCreateThirst();
-                event.addCapability(new ResourceLocation(WarriorCatsEvents.MODID, "properties"), provider);
+                event.addCapability(ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "properties"), provider);
 
-                event.addCapability(new ResourceLocation(WarriorCatsEvents.MODID, "skill_data"),
+                event.addCapability(ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "skill_data"),
                         new PlayerSkillProvider());
 
-                event.addCapability(new ResourceLocation(WarriorCatsEvents.MODID, "stealth_mode"),
+                event.addCapability(ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "stealth_mode"),
                         new PlayerStealthProvider());
 
             }
@@ -281,7 +267,7 @@ public class ModEvents2 {
             if (!event.getObject().getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA).isPresent()) {
                 WCEPlayerDataProvider provider = new WCEPlayerDataProvider();
                 provider.getOrCreateClanData();
-                event.addCapability(new ResourceLocation(WarriorCatsEvents.MODID, "clan_data"), provider);
+                event.addCapability(ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "clan_data"), provider);
             }
 
         }
@@ -772,15 +758,32 @@ public class ModEvents2 {
     public static void onJump(LivingEvent.LivingJumpEvent event) {
         if (!(event.getEntity() instanceof Player player)) return;
 
-        double extra = player.getAttribute(ModAttributes.PLAYER_JUMP.get()).getValue();
+        boolean canJumpBoost = true;
 
-        if (extra > 0) {
-            player.setDeltaMovement(
-                    player.getDeltaMovement().x,
-                    player.getDeltaMovement().y + extra,
-                    player.getDeltaMovement().z
-            );
+        if (player instanceof Diseaseable<?> diseaseable) {
+            if (diseaseable.hasDisease(DiseaseTypes.BROKEN_PAW)) {
+                if (diseaseable.getDisease(DiseaseTypes.BROKEN_PAW) instanceof BrokenPaw brokenPaw) {
+                    brokenPaw.hurt(player);
+                    canJumpBoost = false;
+                    player.setDeltaMovement(player.getDeltaMovement().add(0, -0.04, 0));
+                }
+            }
         }
+
+
+        if (player.isSprinting() && canJumpBoost) {
+            AttributeInstance att = player.getAttribute(ModAttributes.PLAYER_JUMP.get());
+            if (att == null) return;
+            double extra = att.getValue();
+            if (extra > 0) {
+                player.setDeltaMovement(
+                        player.getDeltaMovement().x,
+                        player.getDeltaMovement().y + extra,
+                        player.getDeltaMovement().z
+                );
+            }
+        }
+
     }
 
 
@@ -823,7 +826,15 @@ public class ModEvents2 {
                 ModPackets.sendToPlayer(new S2CSyncClanDataPacket(cap), sPlayer);
 
                 clanData.playerMorphNames.put(player.getUUID(), cap.getMorphName());
-                clanData.playerMorphData.put(player.getUUID(), cap.getVariantData());
+                WCGenetics.PackedGeneticData morphData =
+                        new WCGenetics.PackedGeneticData(cap.getPlayerGenetics(),
+                                cap.getPlayerGeneticalVariants(),
+                                cap.getPlayerChimeraGenetics(),
+                                cap.getPlayerChimeraVariants(),
+                                cap.isOnGeneticalSkin(), cap.getVariantData());
+
+                clanData.playerMorphData.put(player.getUUID(), morphData);
+
                 clanData.setDirty();
             });
 

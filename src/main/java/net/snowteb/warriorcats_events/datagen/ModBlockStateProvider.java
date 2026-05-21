@@ -3,10 +3,7 @@ package net.snowteb.warriorcats_events.datagen;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.DoorBlock;
-import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.SweetBerryBushBlock;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.client.model.generators.ModelFile;
@@ -15,8 +12,6 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.block.ModBlocks;
-
-import java.util.function.Function;
 
 import static net.snowteb.warriorcats_events.WarriorCatsEvents.MODID;
 
@@ -37,6 +32,10 @@ public class ModBlockStateProvider extends BlockStateProvider {
         makeBush(((SweetBerryBushBlock) ModBlocks.DEATHBERRIESBUSH.get()), "deathberries_stage", "deathberries_stage");
         makeBush(((SweetBerryBushBlock) ModBlocks.CATMINTPLANT.get()), "catmint_stage", "catmint_stage");
         makeBush(((SweetBerryBushBlock) ModBlocks.YARROWPLANT.get()), "yarrow_stage", "yarrow_stage");
+        makeBush(((SweetBerryBushBlock) ModBlocks.FEVERFEWPLANT.get()), "feverfew_stage", "feverfew_stage");
+        makeBigBush(((SweetBerryBushBlock) ModBlocks.JUNIPERPLANT.get()), "juniper_stage", "juniper_stage");
+        makeBush(((SweetBerryBushBlock) ModBlocks.COMFREYPLANT.get()), "comfrey_stage", "comfrey_stage");
+
 
 //        saplingBlock(ModBlocks.STARRYTREE_SAPLING);
 //        saplingBlock(ModBlocks.DARKTREE_SAPLING);
@@ -47,12 +46,12 @@ public class ModBlockStateProvider extends BlockStateProvider {
 //        logBlock(((RotatedPillarBlock) ModBlocks.DARK_LOG.get()));
 //        axisBlock(((RotatedPillarBlock) ModBlocks.STRIPPED_DARK_LOG.get()),
 //                blockTexture(ModBlocks.STRIPPED_DARK_LOG.get()),
-//                new ResourceLocation(MODID, "block/stripped_dark_log_top"));
+//                ResourceLocation.fromNamespaceAndPath(MODID, "block/stripped_dark_log_top"));
 //
 //        logBlock(((RotatedPillarBlock) ModBlocks.STARRY_LOG.get()));
 //        axisBlock(((RotatedPillarBlock) ModBlocks.STRIPPED_STARRY_LOG.get()),
 //                blockTexture(ModBlocks.STRIPPED_STARRY_LOG.get()),
-//                new ResourceLocation(MODID, "block/stripped_starry_log_top"));
+//                ResourceLocation.fromNamespaceAndPath(MODID, "block/stripped_starry_log_top"));
 //
 //
 //        blockItem(ModBlocks.DARK_LOG);
@@ -73,7 +72,7 @@ public class ModBlockStateProvider extends BlockStateProvider {
     }
     private void leavesBlock(RegistryObject<Block> blockRegistryObject) {
         simpleBlockWithItem(blockRegistryObject.get(),
-                models().singleTexture(ForgeRegistries.BLOCKS.getKey(blockRegistryObject.get()).getPath(), new ResourceLocation("minecraft:block/leaves"),
+                models().singleTexture(ForgeRegistries.BLOCKS.getKey(blockRegistryObject.get()).getPath(), ResourceLocation.fromNamespaceAndPath("minecraft","block/leaves"),
                         "all", blockTexture(blockRegistryObject.get())).renderType("cutout"));
     }
     public void makeBush(SweetBerryBushBlock block, String modelBaseName, String textureBaseName) {
@@ -87,8 +86,27 @@ public class ModBlockStateProvider extends BlockStateProvider {
                     new ConfiguredModel(
                             models().cross(
                                     modelBaseName + age,
-                                    new ResourceLocation(WarriorCatsEvents.MODID, texPath)
+                                    ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, texPath)
                             ).renderType("cutout")
+                    )
+            };
+        });
+    }
+
+    public void makeBigBush(SweetBerryBushBlock block, String modelBaseName, String textureBaseName) {
+
+        getVariantBuilder(block).forAllStates(state -> {
+
+            int age = state.getValue(SweetBerryBushBlock.AGE);
+
+            String texPath = "block/" + textureBaseName + age;
+
+            return new ConfiguredModel[]{
+                    new ConfiguredModel(
+                            models().withExistingParent(
+                                    modelBaseName + age,
+                                    modLoc("custom/big_cross")
+                            ).texture("cross", modLoc(texPath)).renderType("cutout")
                     )
             };
         });

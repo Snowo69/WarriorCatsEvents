@@ -23,7 +23,7 @@ public class JEIPlugin implements IModPlugin {
 
     @Override
     public ResourceLocation getPluginUid() {
-        return new ResourceLocation(WarriorCatsEvents.MODID,"jei_plugin");
+        return ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID,"jei_plugin");
     }
 
     @Override

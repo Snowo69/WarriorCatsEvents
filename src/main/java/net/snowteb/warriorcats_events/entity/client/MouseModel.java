@@ -14,17 +14,17 @@ import software.bernie.geckolib.model.data.EntityModelData;
 public class MouseModel extends GeoModel<MouseEntity> {
     @Override
     public ResourceLocation getModelResource(MouseEntity mouseEntity) {
-        return new ResourceLocation(WarriorCatsEvents.MODID, "geo/mouse.geo.json");
+        return ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "geo/mouse.geo.json");
     }
 
     @Override
     public ResourceLocation getTextureResource(MouseEntity mouseEntity) {
-        return new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/mouse.png");
+        return ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/mouse.png");
     }
 
     @Override
     public ResourceLocation getAnimationResource(MouseEntity mouseEntity) {
-        return new ResourceLocation(WarriorCatsEvents.MODID, "animations/mouse.animation.json");
+        return ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "animations/mouse.animation.json");
     }
 
     @Override

@@ -4,6 +4,7 @@
     "warriorcats_events:tooth_from_wolf",
     "warriorcats_events:tooth_from_fox",
     "warriorcats_events:tooth_from_badger",
+    "warriorcats_events:cobweb_from_spider",
 
     "warriorcats_events:burnet_from_burnet",
     "warriorcats_events:catmint_from_catmint",
@@ -13,6 +14,9 @@
     "warriorcats_events:dock_from_dock",
     "warriorcats_events:sorrel_from_sorrel",
     "warriorcats_events:yarrow_from_yarrow",
+    "warriorcats_events:feverfew_from_feverfew",
+    "warriorcats_events:juniper_from_juniper",
+    "warriorcats_events:comfrey_from_comfrey",
     "warriorcats_events:generations_disc",
 
     "warriorcats_events:accessories_from_villages"

@@ -17,6 +17,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.levelgen.Heightmap;
+import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.entity.ModEntities;
 import net.snowteb.warriorcats_events.sound.ModSounds;
 import net.snowteb.warriorcats_events.util.MoveToGrassGoal;
@@ -94,7 +95,7 @@ public class MouseEntity extends Animal implements GeoEntity {
 
     @Override
     protected ResourceLocation getDefaultLootTable() {
-        return new ResourceLocation("warriorcats_events", "entities/mouse");
+        return ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "entities/mouse");
     }
 
     @Override

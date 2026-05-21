@@ -17,7 +17,7 @@ public class BadgerRenderer extends GeoEntityRenderer<BadgerEntity> {
 
     @Override
     public ResourceLocation getTextureLocation(BadgerEntity animatable) {
-        return new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/badger/badger_1.png");
+        return ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/badger/badger_1.png");
     }
 
     @Override

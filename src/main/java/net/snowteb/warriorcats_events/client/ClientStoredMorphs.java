@@ -22,7 +22,7 @@ public class ClientStoredMorphs {
 
     private static final Path FILE_PATH =
             Minecraft.getInstance().gameDirectory.toPath().resolve("config")
-                    .resolve("warriorcats_events").resolve("morphs.json");
+                    .resolve(WarriorCatsEvents.MODID).resolve("morphs.json");
 
     public static MorphsFile DATA = new MorphsFile();
 

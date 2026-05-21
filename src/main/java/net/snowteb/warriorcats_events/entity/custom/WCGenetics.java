@@ -1,5 +1,6 @@
 package net.snowteb.warriorcats_events.entity.custom;
 
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.util.RandomSource;
 
@@ -1000,5 +1001,173 @@ public class WCGenetics {
         return sb.toString();
     }
 
+    public static class PackedGeneticData {
+        public final WCGenetics genetics;
+        public final WCGenetics.GeneticalVariants variants;
+        public final WCGenetics chimerasGenetics;
+        public final WCGenetics.GeneticalChimeraVariants chimeraVariants;
+
+        public final boolean onGeneticalSkin;
+        public final int morphSkin;
+
+        public PackedGeneticData(WCGenetics genetics, WCGenetics.GeneticalVariants variants,
+                                 WCGenetics chimerasGenetics, WCGenetics.GeneticalChimeraVariants chimeraVariants, boolean onGeneticalSkin, int morphSkin) {
+            this.genetics = genetics;
+            this.variants = variants;
+
+            this.variants.rufousingVariant = this.genetics.rufousing;
+            this.variants.blueRufousingVariant = this.genetics.blueRufousing;
+
+            this.chimerasGenetics = chimerasGenetics;
+            this.chimeraVariants = chimeraVariants;
+            this.onGeneticalSkin = onGeneticalSkin;
+            this.morphSkin = morphSkin;
+        }
+
+        public static PackedGeneticData empty() {
+            return new PackedGeneticData(new WCGenetics(), new WCGenetics.GeneticalVariants(),
+                    new WCGenetics(), new WCGenetics.GeneticalChimeraVariants(),
+                    false, 0);
+        }
+    }
+
+    public static void writeGeneticsNBT(CompoundTag morphData, WCGenetics genetics, GeneticalVariants variants,
+                                        WCGenetics chimeraGenetics, GeneticalChimeraVariants chimeraVariants,
+                                        boolean isOnGeneticalSkin, int morphVariant) {
+        morphData.putBoolean("Genetical", isOnGeneticalSkin);
+        morphData.putInt("MorphVariant", morphVariant);
+
+        morphData.putString("ChestFur", genetics.chestFur);
+        morphData.putString("BellyFur", genetics.bellyFur);
+        morphData.putString("LegsFur", genetics.legsFur);
+        morphData.putString("HeadFur", genetics.headFur);
+        morphData.putString("CheekFur", genetics.cheekFur);
+        morphData.putString("BackFur", genetics.backFur);
+        morphData.putString("TailFur", genetics.tailFur);
+        morphData.putString("Bobtail", genetics.bobtail);
+
+        morphData.putString("Base", genetics.base);
+        morphData.putString("OrangeBase", genetics.orangeBase);
+        morphData.putString("WhiteRatio", genetics.whiteRatio);
+        morphData.putString("Albino", genetics.albino);
+        morphData.putString("Dilute", genetics.dilute);
+        morphData.putString("Agouti", genetics.agouti);
+        morphData.putString("TabbyStripes", genetics.tabbyStripes);
+        morphData.putString("EyesAnomaly", genetics.eyesAnomaly);
+        morphData.putString("Silver", genetics.silver);
+
+        morphData.putString("EyeColorLeft", variants.eyeColorLeft);
+        morphData.putString("EyeColorRight", variants.eyeColorRight);
+        morphData.putInt("Rufousing", variants.rufousingVariant);
+        morphData.putInt("BlueRufousing", variants.blueRufousingVariant);
+        morphData.putInt("OrangeBaseVariant", variants.orangeVar);
+        morphData.putInt("WhiteRatioVariant", variants.whiteVar);
+        morphData.putInt("AlbinoVariant", variants.albinoVar);
+        morphData.putInt("TabbyStripesVariant", variants.tabbyVar);
+        morphData.putInt("EyeColorVariantLeft", variants.leftEyeVar);
+        morphData.putInt("EyeColorVariantRight", variants.rightEyeVar);
+        morphData.putInt("Noise", variants.noise);
+        morphData.putInt("SilverVariant", variants.silverVar);
+        morphData.putFloat("Size", variants.size);
+        morphData.putInt("Scars", variants.scars);
+
+        morphData.putString("BaseChimera", chimeraGenetics.base);
+        morphData.putString("OrangeBaseChimera", chimeraGenetics.orangeBase);
+        morphData.putString("WhiteRatioChimera", chimeraGenetics.whiteRatio);
+        morphData.putString("AlbinoChimera", chimeraGenetics.albino);
+        morphData.putString("DiluteChimera", chimeraGenetics.dilute);
+        morphData.putString("AgoutiChimera", chimeraGenetics.agouti);
+        morphData.putString("TabbyStripesChimera", chimeraGenetics.tabbyStripes);
+        morphData.putString("SilverChimera", chimeraGenetics.silver);
+        morphData.putInt("RufousingChimera", chimeraGenetics.rufousing);
+        morphData.putInt("BlueRufousingChimera", chimeraGenetics.blueRufousing);
+        morphData.putString("ChimeraGene", chimeraGenetics.chimeraGene);
+
+
+        morphData.putInt("OrangeBaseVariantChimera", chimeraVariants.orangeVar);
+        morphData.putInt("WhiteRatioVariantChimera", chimeraVariants.whiteVar);
+        morphData.putInt("AlbinoVariantChimera", chimeraVariants.albinoVar);
+        morphData.putInt("TabbyStripesVariantChimera", chimeraVariants.tabbyVar);
+        morphData.putInt("NoiseChimera", chimeraVariants.noise);
+        morphData.putInt("SilverVariantChimera", chimeraVariants.silverVar);
+    }
+
+    public static PackedGeneticData loadGeneticsNBT(CompoundTag morphData) {
+
+        boolean genetical = morphData.getBoolean("Genetical");
+        int morphVariant = morphData.getInt("MorphVariant");
+
+        WCGenetics genetics = new WCGenetics();
+
+        genetics.chestFur = morphData.getString("ChestFur");
+        genetics.bellyFur = morphData.getString("BellyFur");
+        genetics.legsFur = morphData.getString("LegsFur");
+        genetics.headFur = morphData.getString("HeadFur");
+        genetics.cheekFur = morphData.getString("CheekFur");
+        genetics.backFur = morphData.getString("BackFur");
+        genetics.tailFur = morphData.getString("TailFur");
+        genetics.bobtail = morphData.getString("Bobtail");
+        genetics.base = morphData.getString("Base");
+        genetics.orangeBase = morphData.getString("OrangeBase");
+        genetics.whiteRatio = morphData.getString("WhiteRatio");
+        genetics.albino = morphData.getString("Albino");
+        genetics.dilute = morphData.getString("Dilute");
+        genetics.agouti = morphData.getString("Agouti");
+        genetics.tabbyStripes = morphData.getString("TabbyStripes");
+        genetics.eyesAnomaly = morphData.getString("EyesAnomaly");
+        genetics.silver = morphData.getString("Silver");
+
+        WCGenetics.GeneticalVariants variants = new WCGenetics.GeneticalVariants();
+
+        variants.eyeColorLeft = morphData.getString("EyeColorLeft");
+        variants.eyeColorRight = morphData.getString("EyeColorRight");
+        variants.rufousingVariant = morphData.getInt("Rufousing");
+        variants.blueRufousingVariant = morphData.getInt("BlueRufousing");
+        variants.orangeVar = morphData.getInt("OrangeBaseVariant");
+        variants.whiteVar = morphData.getInt("WhiteRatioVariant");
+        variants.albinoVar = morphData.getInt("AlbinoVariant");
+        variants.tabbyVar = morphData.getInt("TabbyStripesVariant");
+        variants.leftEyeVar = morphData.getInt("EyeColorVariantLeft");
+        variants.rightEyeVar = morphData.getInt("EyeColorVariantRight");
+        variants.noise = morphData.getInt("Noise");
+        variants.silverVar = morphData.getInt("SilverVariant");
+        variants.size = morphData.getFloat("Size");
+        variants.scars = morphData.getInt("Scars");
+
+        WCGenetics chimeraGenetics = new WCGenetics();
+
+        chimeraGenetics.base = morphData.getString("BaseChimera");
+        chimeraGenetics.orangeBase = morphData.getString("OrangeBaseChimera");
+        chimeraGenetics.whiteRatio = morphData.getString("WhiteRatioChimera");
+        chimeraGenetics.albino = morphData.getString("AlbinoChimera");
+        chimeraGenetics.dilute = morphData.getString("DiluteChimera");
+        chimeraGenetics.agouti = morphData.getString("AgoutiChimera");
+        chimeraGenetics.tabbyStripes = morphData.getString("TabbyStripesChimera");
+        chimeraGenetics.silver = morphData.getString("SilverChimera");
+        chimeraGenetics.rufousing = morphData.getInt("RufousingChimera");
+        chimeraGenetics.blueRufousing = morphData.getInt("BlueRufousingChimera");
+        chimeraGenetics.chimeraGene = morphData.getString("ChimeraGene");
+
+        WCGenetics.GeneticalChimeraVariants chimeraVariants = new WCGenetics.GeneticalChimeraVariants();
+
+        chimeraVariants.orangeVar = morphData.getInt("OrangeBaseVariantChimera");
+        chimeraVariants.whiteVar = morphData.getInt("WhiteRatioVariantChimera");
+        chimeraVariants.albinoVar = morphData.getInt("AlbinoVariantChimera");
+        chimeraVariants.tabbyVar = morphData.getInt("TabbyStripesVariantChimera");
+        chimeraVariants.noise = morphData.getInt("NoiseChimera");
+        chimeraVariants.silverVar = morphData.getInt("SilverVariantChimera");
+
+        variants.rufousingVariant = genetics.rufousing;
+        variants.blueRufousingVariant = genetics.rufousing;
+
+        return new PackedGeneticData(
+                genetics,
+                variants,
+                chimeraGenetics,
+                chimeraVariants,
+                genetical,
+                morphVariant
+        );
+    }
 
 }

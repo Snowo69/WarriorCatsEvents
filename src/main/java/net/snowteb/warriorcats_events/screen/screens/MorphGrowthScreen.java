@@ -104,14 +104,6 @@ public class MorphGrowthScreen extends Screen {
         int centerY = this.height / 2;
 
 
-        pGuiGraphics.drawCenteredString(this.font, "Squirrels hunted: " + squirrelKilled, centerX, 35, 0xDDDDFF);
-        pGuiGraphics.drawCenteredString(this.font, "Mice hunted: " + mouseKilled, centerX, 45, 0xDDDDFF);
-        pGuiGraphics.drawCenteredString(this.font, "Pigeon hunted: " + pigeonKilled, centerX, 55, 0xDDDDFF);
-        pGuiGraphics.drawCenteredString(this.font, "Badger killed: " + badgerKilled, centerX, 65, 0xDDDDFF);
-//        pGuiGraphics.drawCenteredString(this.font, "Moss collected: " + mossCollected, centerX, 75, 0xDDDDFF);
-        pGuiGraphics.drawCenteredString(this.font, "Feathers collected: " + feathersCollected, centerX, 75, 0xDDDDFF);
-        pGuiGraphics.drawCenteredString(this.font, "Time played: " + minutesPlayed + " min", centerX, 85, 0xDDDDFF);
-        pGuiGraphics.drawCenteredString(this.font, "Time survived: " + hoursSurvived + " h", centerX, 95, 0xDDDDFF);
 
         pGuiGraphics.pose().pushPose();
         pGuiGraphics.pose().scale(0.8f,0.8f,0.8f);
@@ -132,6 +124,21 @@ public class MorphGrowthScreen extends Screen {
         pGuiGraphics.drawCenteredString(font, this.title, centerX, textY, 0xFFFFFFFF);
         int lineY = textY + 14;
         pGuiGraphics.hLine(boxLeft + 8, boxRight - 8, lineY, 0xFFFFFFFF);
+
+        textY += 20;
+        pGuiGraphics.drawCenteredString(this.font, "Squirrels hunted: " + squirrelKilled, centerX, textY, 0xDDDDFF);
+        textY += 10;
+        pGuiGraphics.drawCenteredString(this.font, "Mice hunted: " + mouseKilled, centerX, textY, 0xDDDDFF);
+        textY += 10;
+        pGuiGraphics.drawCenteredString(this.font, "Pigeon hunted: " + pigeonKilled, centerX, textY, 0xDDDDFF);
+        textY += 10;
+        pGuiGraphics.drawCenteredString(this.font, "Badger killed: " + badgerKilled, centerX, textY, 0xDDDDFF);
+        textY += 10;
+        pGuiGraphics.drawCenteredString(this.font, "Feathers collected: " + feathersCollected, centerX, textY, 0xDDDDFF);
+        textY += 10;
+        pGuiGraphics.drawCenteredString(this.font, "Time played: " + minutesPlayed + " min", centerX, textY, 0xDDDDFF);
+        textY += 10;
+        pGuiGraphics.drawCenteredString(this.font, "Time survived: " + hoursSurvived + " h", centerX, textY, 0xDDDDFF);
 
 
         super.render(pGuiGraphics, mouseX, mouseY, partialTick);

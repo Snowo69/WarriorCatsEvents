@@ -17,7 +17,7 @@ public class EagleRenderer extends GeoEntityRenderer<EagleEntity> {
 
     @Override
     public ResourceLocation getTextureLocation(EagleEntity entity) {
-        return new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/eagle.png");
+        return ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/eagle.png");
     }
 
 

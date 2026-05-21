@@ -15,17 +15,17 @@ public class EagleModel extends GeoModel<EagleEntity> {
 
     @Override
     public ResourceLocation getModelResource(EagleEntity object) {
-        return new ResourceLocation(WarriorCatsEvents.MODID, "geo/eagle.geo.json");
+        return ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "geo/eagle.geo.json");
     }
 
     @Override
     public ResourceLocation getTextureResource(EagleEntity entity) {
-        return new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/eagle.png");
+        return ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/eagle.png");
     }
 
     @Override
     public ResourceLocation getAnimationResource(EagleEntity animatable) {
-        return new ResourceLocation(WarriorCatsEvents.MODID, "animations/eagle.animation.json");
+        return ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "animations/eagle.animation.json");
     }
 
 

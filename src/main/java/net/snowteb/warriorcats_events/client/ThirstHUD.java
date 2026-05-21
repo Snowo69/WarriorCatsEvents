@@ -14,11 +14,11 @@ import tocraft.walkers.api.PlayerShape;
 
 public class ThirstHUD {
 
-    private static final ResourceLocation FILLED_THIRST = new ResourceLocation(WarriorCatsEvents.MODID,
+    private static final ResourceLocation FILLED_THIRST = ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID,
             "textures/hud/filled.png");
-    private static final ResourceLocation HALF_THIRST = new ResourceLocation(WarriorCatsEvents.MODID,
+    private static final ResourceLocation HALF_THIRST = ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID,
             "textures/hud/half.png");
-    private static final ResourceLocation EMPTY_THIRST = new ResourceLocation(WarriorCatsEvents.MODID,
+    private static final ResourceLocation EMPTY_THIRST = ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID,
             "textures/hud/empty.png");
 
     public static final IGuiOverlay HUD_THIRST = ((gui, guiGraphics, partialTick, screenWidth, screenHeight) -> {

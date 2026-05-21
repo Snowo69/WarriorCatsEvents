@@ -7,9 +7,9 @@ import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
@@ -33,6 +33,7 @@ import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -54,6 +55,8 @@ import net.snowteb.warriorcats_events.clan.ClanData;
 import net.snowteb.warriorcats_events.clan.WCEPlayerData;
 import net.snowteb.warriorcats_events.clan.WCEPlayerDataProvider;
 import net.snowteb.warriorcats_events.client.LeapClientState;
+import net.snowteb.warriorcats_events.diseases.*;
+import net.snowteb.warriorcats_events.diseases.kinds.BrokenPaw;
 import net.snowteb.warriorcats_events.effect.ModEffects;
 import net.snowteb.warriorcats_events.entity.custom.EagleEntity;
 import net.snowteb.warriorcats_events.entity.custom.MossBallEntity;
@@ -61,6 +64,7 @@ import net.snowteb.warriorcats_events.entity.custom.WCatAvoidGoal;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.item.ModFoodHerbs;
 import net.snowteb.warriorcats_events.item.ModItems;
+import net.snowteb.warriorcats_events.managers.Sequence;
 import net.snowteb.warriorcats_events.network.ModPackets;
 import net.snowteb.warriorcats_events.network.packet.s2c.others.ThirstDataSyncStCPacket;
 import net.snowteb.warriorcats_events.particles.WCEParticles;
@@ -87,6 +91,23 @@ public class ModEventsForge {
 
         BlockPos pos = event.getPos();
         BlockState blockState = level.getBlockState(pos);
+
+        if (level.getBlockState(pos).is(Blocks.COBWEB)) {
+            ItemStack stack = event.getItemStack();
+            if (stack.is(Items.STICK)) {
+                if (!level.isClientSide()) {
+                    level.destroyBlock(pos, false);
+                    stack.shrink(1);
+
+                    ItemStack newStack = new ItemStack(ModItems.COBWEB_WITH_A_STICK.get());
+                    if (!player.addItem(newStack)) {
+                        player.drop(newStack, false);
+                    }
+                }
+                event.setCancellationResult(InteractionResult.SUCCESS);
+                event.setCanceled(true);
+            }
+        }
 
         if ((level.getBlockState(pos).getBlock() instanceof KittyPetBowl bowlBlock)) {
             if (player.getItemInHand(hand).is(Items.WATER_BUCKET) && !player.isShiftKeyDown()) {
@@ -116,32 +137,28 @@ public class ModEventsForge {
         if ((blockState.getBlock() instanceof StoneCraftingTable table)) {
             if ((PlayerShape.getCurrentShape(player) instanceof Animal)) {
                 if (player.isShiftKeyDown()) {
-                    if (!level.isClientSide()) {
-                        if (table.handleHerbsRecipeCraftingBlockState(blockState, level, pos, player, hand)) {
-                            if (level instanceof ServerLevel sLevel) {
-                                Vec3 position = pos.getCenter();
+                    if (table.handleHerbsRecipeCraftingBlockState(blockState, level, pos, player, hand)) {
+                        if (level instanceof ServerLevel sLevel) {
+                            Vec3 position = pos.getCenter();
 
-                                Direction facing = blockState.getValue(StoneCraftingTable.FACING);
+                            Direction facing = blockState.getValue(StoneCraftingTable.FACING);
 
-                                position = switch (facing) {
-                                    case NORTH -> position.add(0,0,0.1);
-                                    case SOUTH -> position.add(0,0,-0.1);
-                                    case WEST -> position.add(0.1,0,0);
-                                    case EAST -> position.add(-0.1,0,0);
-                                    default -> position;
-                                };
+                            position = switch (facing) {
+                                case NORTH -> position.add(0, 0, 0.1);
+                                case SOUTH -> position.add(0, 0, -0.1);
+                                case WEST -> position.add(0.1, 0, 0);
+                                case EAST -> position.add(-0.1, 0, 0);
+                                default -> position;
+                            };
 
-                                sLevel.sendParticles(
-                                        WCEParticles.HERBS_FALL.get(),
-                                        position.x, position.y - 0.1, position.z,
-                                        10, 0.1, 0.0, 0.1, 0.005);
-                            }
-
-                            event.setCanceled(true);
-                            event.setCancellationResult(InteractionResult.SUCCESS);
+                            sLevel.sendParticles(
+                                    WCEParticles.HERBS_FALL.get(),
+                                    position.x, position.y - 0.1, position.z,
+                                    10, 0.1, 0.0, 0.1, 0.005);
                         }
-                    } else {
-                        LeapClientState.setCanceled();
+
+                        event.setCanceled(true);
+                        event.setCancellationResult(InteractionResult.SUCCESS);
                     }
                 }
             }
@@ -309,6 +326,8 @@ public class ModEventsForge {
 
         if (player.level().isClientSide()) return;
 
+        if (player instanceof ServerPlayer sPlayer) DiseaseManager.healDisease(stack, sPlayer);
+
         player.getCapability(PlayerThirstProvider.PLAYER_THIRST).ifPresent(thirst -> {
 
             if (stack.isEdible()) {
@@ -369,16 +388,6 @@ public class ModEventsForge {
         });
 
         if (stack.isEdible()) {
-            if (stack.getItem() == ModItems.YARROW.get()) {
-
-                if (player.hasEffect(MobEffects.POISON)) {
-                    player.removeEffect(MobEffects.POISON);
-                }
-                if (player.hasEffect(ModEffects.DEATHBERRIES.get())) {
-                    player.removeEffect(ModEffects.DEATHBERRIES.get());
-                }
-
-            }
 
             if (stack.is(Items.CHICKEN) || stack.is(Items.PORKCHOP)
                     || stack.is(Items.BEEF) || stack.is(Items.MUTTON)
@@ -401,6 +410,8 @@ public class ModEventsForge {
                 }
             }
         }
+
+        ModFoodHerbs.herbsEffects(stack, player);
     }
 
 
@@ -417,39 +428,49 @@ public class ModEventsForge {
     public static void onFall(LivingFallEvent event) {
         LivingEntity entity = event.getEntity();
 
-        ServerPlayer owner = null;
-        if (entity instanceof ServerPlayer sp) {
-            owner = sp;
-        } else {
-            if (entity.level() == null || !entity.level().isClientSide()) {
-                var server = entity.getServer();
-                if (server != null) {
-                    for (ServerPlayer candidate : server.getPlayerList().getPlayers()) {
-                        LivingEntity currentShape = PlayerShape.getCurrentShape(candidate);
-                        if (currentShape != null && currentShape.getUUID().equals(entity.getUUID())) {
-                            owner = candidate;
-                            break;
+        if (!(entity instanceof Player || entity instanceof WCatEntity)) return;
+        if ((entity instanceof Player p && !(PlayerShape.getCurrentShape(p) instanceof WCatEntity))) return;
+
+        if (entity instanceof WCatEntity cat) {
+            if (cat.level().isClientSide()) return;
+
+            if (cat.getPlayerBoundUuid().equals(ClanData.EMPTY_UUID)) {
+                if (cat.returnHomeFlag) {
+                    event.setDistance(Math.max(0f, event.getDistance() - 12f));
+                } else {
+                    if (cat.allowReducedFallDamage()) {
+                        event.setDistance(Math.max(0f, event.getDistance() - 9f));
+                    }
+                }
+            } else {
+                Player player = cat.level().getPlayerByUUID(cat.getPlayerBoundUuid());
+                if (player instanceof ServerPlayer sPlayer) {
+                    if (sPlayer instanceof Diseaseable<?> diseaseable) {
+                        if (diseaseable.allowReducedFallDamage()) {
+                            sPlayer.getCapability(PlayerSkillProvider.SKILL_DATA).ifPresent(cap -> {
+                                if (cap.getJumpLevel() > 2) {
+                                    event.setDistance(Math.max(0f, event.getDistance() - 8f));
+                                }
+                            });
+                        } else {
+                            if (diseaseable.hasDisease(DiseaseTypes.BROKEN_PAW)) {
+                                event.setDistance(event.getDistance() + 8f);
+                            }
                         }
                     }
                 }
             }
-        }
-        if (owner != null) {
-            owner.getCapability(PlayerSkillProvider.SKILL_DATA).ifPresent(cap -> {
-                if (cap.getJumpLevel() > 2) {
-                    event.setDistance(Math.max(0f, event.getDistance() - 3f));
-                }
-            });
+
         }
 
-        if (entity instanceof WCatEntity wCat) {
-            if (wCat.returnHomeFlag) {
-                event.setDistance(Math.max(0f, event.getDistance() - 10f));
-            } else {
-                event.setDistance(Math.max(0f, event.getDistance() - 6f));
+    }
+
+    private static void sendServerMsg(LivingEntity entity, String message) {
+        if (entity.level() instanceof ServerLevel slevel) {
+            for (ServerPlayer sPlayer : slevel.players()) {
+                sPlayer.sendSystemMessage(Component.literal(message));
             }
         }
-
     }
 
     /**
@@ -460,27 +481,19 @@ public class ModEventsForge {
     public static void onEntityJoinWorld(EntityJoinLevelEvent event) {
         if (event.getLevel().isClientSide()) return;
 
+        if (event.getEntity() instanceof Diseaseable<?> diseaseable) {
+            ServerLevel sLevel = ((ServerLevel) event.getLevel());
+            new Sequence(sLevel).wait(10).then(() -> diseaseable.onChange()).run();
+        }
+
         if (event.getEntity() instanceof Creeper creeper) {
-//
-//            creeper.goalSelector.getAvailableGoals().removeIf(g
-//                    -> g.getGoal() instanceof AvoidEntityGoal<?>);
-//
+
             boolean alreadyHasAvoid = creeper.goalSelector.getAvailableGoals().stream()
                     .anyMatch(g -> g.getGoal() instanceof WCatAvoidGoal);
 
             if (!alreadyHasAvoid) {
                 creeper.goalSelector.addGoal(3, new WCatAvoidGoal(creeper, 12.0F, 1.3D, 1.2D));
             }
-
-//            creeper.goalSelector.addGoal(3,
-//                    new AvoidEntityGoal<>(
-//                            creeper,
-//                            WCatEntity.class,
-//                            12.0F,
-//                            1.3D,
-//                            1.2D
-//                    )
-//            );
 
         }
 
@@ -640,15 +653,6 @@ public class ModEventsForge {
             if (!wcat.isTame()) {
                 return;
             }
-
-//            UUID ownerUUID = wcat.getOwnerUUID();
-//            if (ownerUUID == null) {
-//                return;
-//            }
-//
-//            if (!ownerUUID.equals(player.getUUID())) {
-//                return;
-//            }
 
             {
                 AABB box = wcat.getBoundingBox().inflate(0.5);

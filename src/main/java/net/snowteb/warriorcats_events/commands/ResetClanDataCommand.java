@@ -8,6 +8,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.snowteb.warriorcats_events.clan.ClanData;
 import net.snowteb.warriorcats_events.clan.WCEPlayerDataProvider;
+import net.snowteb.warriorcats_events.entity.custom.WCGenetics;
 import net.snowteb.warriorcats_events.network.ModPackets;
 import net.snowteb.warriorcats_events.network.packet.s2c.clan.S2CSyncClanDataPacket;
 
@@ -34,7 +35,15 @@ public class ResetClanDataCommand {
             cap.reset();
             ModPackets.sendToPlayer(new S2CSyncClanDataPacket(cap), player);
             data.playerMorphNames.put(player.getUUID(), cap.getMorphName());
-            data.playerMorphData.put(player.getUUID(), cap.getVariantData());
+
+            WCGenetics.PackedGeneticData morphData =
+                    new WCGenetics.PackedGeneticData(cap.getPlayerGenetics(),
+                            cap.getPlayerGeneticalVariants(),
+                            cap.getPlayerChimeraGenetics(),
+                            cap.getPlayerChimeraVariants(),
+                            cap.isOnGeneticalSkin(), cap.getVariantData());
+
+            data.playerMorphData.put(player.getUUID(), morphData);
             data.setDirty();
         });
 

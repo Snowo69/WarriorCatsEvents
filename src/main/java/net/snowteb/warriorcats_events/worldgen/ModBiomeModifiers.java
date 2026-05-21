@@ -24,6 +24,9 @@ public class ModBiomeModifiers {
     public static final ResourceKey<BiomeModifier> ADD_CATMINT = registerKey("add_catmint");
     public static final ResourceKey<BiomeModifier> ADD_GLOWSHROOM = registerKey("add_glowshroom");
     public static final ResourceKey<BiomeModifier> ADD_YARROW = registerKey("add_yarrow");
+    public static final ResourceKey<BiomeModifier> ADD_FEVERFEW = registerKey("add_feverfew");
+    public static final ResourceKey<BiomeModifier> ADD_JUNIPER = registerKey("add_juniper");
+    public static final ResourceKey<BiomeModifier> ADD_COMFREY = registerKey("add_comfrey");
 
     public static final ResourceKey<BiomeModifier> ADD_LAVENDER = registerKey("add_lavender");
 
@@ -76,6 +79,21 @@ public class ModBiomeModifiers {
                 HolderSet.direct(placedFeatures.getOrThrow(ModPlacedFeatures.YARROW_PLACED_KEY)),
                 GenerationStep.Decoration.VEGETAL_DECORATION));
 
+        context.register(ADD_FEVERFEW, new ForgeBiomeModifiers.AddFeaturesBiomeModifier(
+                biomes.getOrThrow(BiomeTags.IS_OVERWORLD),
+                HolderSet.direct(placedFeatures.getOrThrow(ModPlacedFeatures.FEVERFEW_PLACED_KEY)),
+                GenerationStep.Decoration.VEGETAL_DECORATION));
+
+        context.register(ADD_JUNIPER, new ForgeBiomeModifiers.AddFeaturesBiomeModifier(
+                biomes.getOrThrow(BiomeTags.IS_OVERWORLD),
+                HolderSet.direct(placedFeatures.getOrThrow(ModPlacedFeatures.JUNIPER_PLACED_KEY)),
+                GenerationStep.Decoration.VEGETAL_DECORATION));
+
+        context.register(ADD_COMFREY, new ForgeBiomeModifiers.AddFeaturesBiomeModifier(
+                biomes.getOrThrow(BiomeTags.IS_OVERWORLD),
+                HolderSet.direct(placedFeatures.getOrThrow(ModPlacedFeatures.COMFREY_PLACED_KEY)),
+                GenerationStep.Decoration.VEGETAL_DECORATION));
+
         context.register(ADD_GLOWSHROOM, new ForgeBiomeModifiers.AddFeaturesBiomeModifier(
                 biomes.getOrThrow(BiomeTags.IS_OVERWORLD),
                 HolderSet.direct(placedFeatures.getOrThrow(ModPlacedFeatures.GLOWSHROOM_PLACED_KEY)),
@@ -98,7 +116,7 @@ public class ModBiomeModifiers {
 
 
     private static ResourceKey<BiomeModifier> registerKey(String name) {
-        return ResourceKey.create(ForgeRegistries.Keys.BIOME_MODIFIERS, new ResourceLocation(WarriorCatsEvents.MODID, name));
+        return ResourceKey.create(ForgeRegistries.Keys.BIOME_MODIFIERS, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, name));
     }
 
 }

@@ -21,11 +21,11 @@ public class CompatibilityTags {
     public static final TagKey<Item> SERENE_SEASONS_WINTER_CROPS = externalItemTag(SERENE_SEASONS, "winter_crops");
 
     private static TagKey<Block> externalBlockTag(String modId, String path) {
-        return BlockTags.create(new ResourceLocation(modId, path));
+        return BlockTags.create(ResourceLocation.fromNamespaceAndPath(modId, path));
     }
 
     private static TagKey<Item> externalItemTag(String modId, String path) {
-        return ItemTags.create(new ResourceLocation(modId, path));
+        return ItemTags.create(ResourceLocation.fromNamespaceAndPath(modId, path));
     }
 
 }

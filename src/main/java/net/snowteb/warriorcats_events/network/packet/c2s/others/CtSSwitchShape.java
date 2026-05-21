@@ -9,6 +9,7 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.network.NetworkEvent;
 import net.snowteb.warriorcats_events.clan.WCEPlayerData;
 import net.snowteb.warriorcats_events.clan.WCEPlayerDataProvider;
+import net.snowteb.warriorcats_events.diseases.DiseaseManager;
 import net.snowteb.warriorcats_events.entity.ModEntities;
 import net.snowteb.warriorcats_events.entity.custom.WCGenetics;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
@@ -41,7 +42,6 @@ public class CtSSwitchShape {
                     .map(cap -> cap.getVariantData())
                     .orElse(0);
 
-//                WCatEntity cat = new WCatTypeProvider().create(ModEntities.WCAT.get(), player.level(), variantData);
                 WCatEntity cat = create(ModEntities.WCAT.get(), player.level(), variantData, player);
                 cat.setVariant(variantData);
 
@@ -58,6 +58,8 @@ public class CtSSwitchShape {
                         PlayerSkill.removeAttributes(player);
                     });
                 }
+
+                DiseaseManager.refreshData(player);
 
 
         });

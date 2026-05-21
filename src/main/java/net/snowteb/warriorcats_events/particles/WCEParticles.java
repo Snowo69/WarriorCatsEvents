@@ -19,6 +19,12 @@ public class WCEParticles {
     public static final RegistryObject<SimpleParticleType> LAVENDER =
             PARTICLES.register("lavender", () -> new SimpleParticleType(true));
 
+    public static final RegistryObject<SimpleParticleType> GREENCOUGH =
+            PARTICLES.register("greencough", () -> new SimpleParticleType(true));
+
+    public static final RegistryObject<SimpleParticleType> WHITECOUGH =
+            PARTICLES.register("whitecough", () -> new SimpleParticleType(true));
+
 
     public static final RegistryObject<SimpleParticleType> HERBS =
             PARTICLES.register("herbs", () -> new SimpleParticleType(true));

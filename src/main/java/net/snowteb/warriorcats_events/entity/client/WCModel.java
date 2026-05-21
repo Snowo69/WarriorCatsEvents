@@ -5,7 +5,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
-import net.snowteb.warriorcats_events.compat.Compatibilities;
+import net.snowteb.warriorcats_events.compat.CompatibilitiesClient;
 import net.snowteb.warriorcats_events.entity.custom.WCGenetics;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.item.ModItems;
@@ -23,65 +23,65 @@ public class WCModel extends GeoModel<WCatEntity> {
      * An array list of all the textures available.
      */
     public static final ResourceLocation[] TEXTURES = {
-            new ResourceLocation("warriorcats_events:textures/entity/wcat/wcskin1.png"),
-            new ResourceLocation("warriorcats_events:textures/entity/wcat/wcskin2.png"),
-            new ResourceLocation("warriorcats_events:textures/entity/wcat/wcskin3.png"),
-            new ResourceLocation("warriorcats_events:textures/entity/wcat/wcskin4.png"),
-            new ResourceLocation("warriorcats_events:textures/entity/wcat/wcskin5.png"),
-            new ResourceLocation("warriorcats_events:textures/entity/wcat/wcskin6.png"), // 5
-            new ResourceLocation("warriorcats_events:textures/entity/wcat/wcskin7.png"),
-            new ResourceLocation("warriorcats_events:textures/entity/wcat/wcskin8.png"),
-            new ResourceLocation("warriorcats_events:textures/entity/wcat/wcskin9.png"),
-            new ResourceLocation("warriorcats_events:textures/entity/wcat/wcskin10.png"),
-            new ResourceLocation("warriorcats_events:textures/entity/wcat/wcskin11.png"), //10
-            new ResourceLocation("warriorcats_events:textures/entity/wcat/wcskin12.png"),
-            new ResourceLocation("warriorcats_events:textures/entity/wcat/chestnutpatch.png"),
-            new ResourceLocation("warriorcats_events:textures/entity/wcat/ratstar.png"),
-            new ResourceLocation("warriorcats_events:textures/entity/wcat/twitchstream.png"),
-            new ResourceLocation("warriorcats_events:textures/entity/wcat/blazepit.png"), // 15
-            new ResourceLocation("warriorcats_events:textures/entity/wcat/bengalpelt.png"),
-            new ResourceLocation("warriorcats_events:textures/entity/wcat/sparrowstar.png"),
-            new ResourceLocation("warriorcats_events:textures/entity/wcat/foxeater.png"),
-            new ResourceLocation("warriorcats_events:textures/entity/wcat/willowsong.png"),
-            new ResourceLocation("warriorcats_events:textures/entity/wcat/wcskin13.png"), //20
-            new ResourceLocation("warriorcats_events:textures/entity/wcat/wcskin14.png"),
-            new ResourceLocation("warriorcats_events:textures/entity/wcat/wcskin15.png"),
-            new ResourceLocation("warriorcats_events:textures/entity/wcat/wcskin16.png"),
-            new ResourceLocation("warriorcats_events:textures/entity/wcat/wcskin17.png"),
-            new ResourceLocation("warriorcats_events:textures/entity/wcat/wcskin18.png"), //25
-            new ResourceLocation("warriorcats_events:textures/entity/wcat/wcskin19.png"),
-            new ResourceLocation("warriorcats_events:textures/entity/wcat/wcskin20.png"),
-            new ResourceLocation("warriorcats_events:textures/entity/wcat/wcskin21.png"),
-            new ResourceLocation("warriorcats_events:textures/entity/wcat/wcskin22.png"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/wcat/wcskin1.png"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/wcat/wcskin2.png"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/wcat/wcskin3.png"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/wcat/wcskin4.png"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/wcat/wcskin5.png"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/wcat/wcskin6.png"), // 5
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/wcat/wcskin7.png"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/wcat/wcskin8.png"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/wcat/wcskin9.png"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/wcat/wcskin10.png"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/wcat/wcskin11.png"), //10
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/wcat/wcskin12.png"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/wcat/chestnutpatch.png"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/wcat/ratstar.png"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/wcat/twitchstream.png"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/wcat/blazepit.png"), // 15
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/wcat/bengalpelt.png"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/wcat/sparrowstar.png"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/wcat/foxeater.png"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/wcat/willowsong.png"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/wcat/wcskin13.png"), //20
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/wcat/wcskin14.png"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/wcat/wcskin15.png"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/wcat/wcskin16.png"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/wcat/wcskin17.png"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/wcat/wcskin18.png"), //25
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/wcat/wcskin19.png"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/wcat/wcskin20.png"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/wcat/wcskin21.png"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/wcat/wcskin22.png"),
 
-            new ResourceLocation("warriorcats_events:textures/entity/wcat/albino.png"), //30
-            new ResourceLocation("warriorcats_events:textures/entity/wcat/bengal.png"),
-            new ResourceLocation("warriorcats_events:textures/entity/wcat/brindle_tortie.png"),
-            new ResourceLocation("warriorcats_events:textures/entity/wcat/brown_cream_calico.png"),
-            new ResourceLocation("warriorcats_events:textures/entity/wcat/brown_cream_calico2.png"),
-            new ResourceLocation("warriorcats_events:textures/entity/wcat/brown_cream_calico3.png"), //35
-            new ResourceLocation("warriorcats_events:textures/entity/wcat/caramel.png"),
-            new ResourceLocation("warriorcats_events:textures/entity/wcat/frostdawn.png"),
-            new ResourceLocation("warriorcats_events:textures/entity/wcat/gray_white_tabby.png"),
-            new ResourceLocation("warriorcats_events:textures/entity/wcat/hailflake.png"),
-            new ResourceLocation("warriorcats_events:textures/entity/wcat/karpati.png"), //40
-            new ResourceLocation("warriorcats_events:textures/entity/wcat/leafstar.png"),
-            new ResourceLocation("warriorcats_events:textures/entity/wcat/longtail.png"),
-            new ResourceLocation("warriorcats_events:textures/entity/wcat/mothpaw.png"),
-            new ResourceLocation("warriorcats_events:textures/entity/wcat/redtail.png"),
-            new ResourceLocation("warriorcats_events:textures/entity/wcat/salem.png"), // 45
-            new ResourceLocation("warriorcats_events:textures/entity/wcat/short_hair.png"),
-            new ResourceLocation("warriorcats_events:textures/entity/wcat/stoneflare.png"),
-            new ResourceLocation("warriorcats_events:textures/entity/wcat/tortie_point.png"),
-            new ResourceLocation("warriorcats_events:textures/entity/wcat/turtleheart.png"),
-            new ResourceLocation("warriorcats_events:textures/entity/wcat/violetdew.png"), //50
-            new ResourceLocation("warriorcats_events:textures/entity/wcat/patch.png"),
-            new ResourceLocation("warriorcats_events:textures/entity/wcat/parlee.png"), //52
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/wcat/albino.png"), //30
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/wcat/bengal.png"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/wcat/brindle_tortie.png"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/wcat/brown_cream_calico.png"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/wcat/brown_cream_calico2.png"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/wcat/brown_cream_calico3.png"), //35
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/wcat/caramel.png"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/wcat/frostdawn.png"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/wcat/gray_white_tabby.png"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/wcat/hailflake.png"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/wcat/karpati.png"), //40
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/wcat/leafstar.png"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/wcat/longtail.png"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/wcat/mothpaw.png"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/wcat/redtail.png"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/wcat/salem.png"), // 45
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/wcat/short_hair.png"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/wcat/stoneflare.png"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/wcat/tortie_point.png"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/wcat/turtleheart.png"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/wcat/violetdew.png"), //50
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/wcat/patch.png"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/wcat/parlee.png"), //52
     };
 
     @Override
     public ResourceLocation getModelResource(WCatEntity object) {
-        return new ResourceLocation(WarriorCatsEvents.MODID, "geo/wcat.geo.json");
+        return ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "geo/wcat.geo.json");
     }
 
     /**
@@ -94,7 +94,7 @@ public class WCModel extends GeoModel<WCatEntity> {
 
     @Override
     public ResourceLocation getAnimationResource(WCatEntity animatable) {
-        return new ResourceLocation(WarriorCatsEvents.MODID, "animations/wcat.animation.json");
+        return ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "animations/wcat.animation.json");
     }
 
 
@@ -152,7 +152,7 @@ public class WCModel extends GeoModel<WCatEntity> {
 
         {
             boolean hasFlowerArmor = animatable.getItemBySlot(EquipmentSlot.CHEST).is(ModItems.FLOWER_ARMOR.get());
-            if (Compatibilities.hasCuriosItem(animatable.getPlayerBoundUuid(), ModItems.FLOWER_ARMOR.get()))
+            if (CompatibilitiesClient.hasCuriosItem(animatable.getPlayerBoundUuid(), ModItems.FLOWER_ARMOR.get()))
                 hasFlowerArmor = true;
 
 
@@ -164,7 +164,7 @@ public class WCModel extends GeoModel<WCatEntity> {
             {
 
                 boolean hasTeethClaws = animatable.getItemBySlot(EquipmentSlot.FEET).is(ModItems.TEETH_CLAWS.get());
-                if (Compatibilities.hasCuriosItem(animatable.getPlayerBoundUuid(), ModItems.TEETH_CLAWS.get()))
+                if (CompatibilitiesClient.hasCuriosItem(animatable.getPlayerBoundUuid(), ModItems.TEETH_CLAWS.get()))
                     hasTeethClaws = true;
 
 

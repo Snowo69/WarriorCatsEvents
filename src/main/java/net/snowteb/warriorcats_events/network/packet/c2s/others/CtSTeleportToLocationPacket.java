@@ -199,7 +199,7 @@ public class CtSTeleportToLocationPacket {
                 .registryOrThrow(Registries.STRUCTURE)
                 .getHolderOrThrow(
                         ResourceKey.create(
-                                Registries.STRUCTURE, new ResourceLocation(id)
+                                Registries.STRUCTURE, ResourceLocation.parse(id)
                         )
                 );
     }
@@ -228,7 +228,7 @@ public class CtSTeleportToLocationPacket {
 
         BlockPos origin = player.blockPosition();
 
-        WarriorCatsEvents.teleportExecutor.execute(() -> {
+        WarriorCatsEvents.singleThreadExecutor.execute(() -> {
             Optional<BlockPos> optional = findStructure(level, origin, structure, 100);
             level.getServer().execute(() -> optional.ifPresentOrElse(
                     pos -> {
@@ -246,7 +246,7 @@ public class CtSTeleportToLocationPacket {
 
         player.sendSystemMessage(Component.literal("Teleporting...").withStyle(ChatFormatting.DARK_GRAY));
 
-        WarriorCatsEvents.teleportExecutor.execute(() -> {
+        WarriorCatsEvents.singleThreadExecutor.execute(() -> {
             Optional<BlockPos> optional = findBiome(level, origin, biome, 4000);
             level.getServer().execute(() -> optional.ifPresentOrElse(
                     pos -> {

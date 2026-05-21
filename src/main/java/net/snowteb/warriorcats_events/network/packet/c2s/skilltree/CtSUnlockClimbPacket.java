@@ -8,6 +8,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.NetworkEvent;
+import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.network.ModPackets;
 import net.snowteb.warriorcats_events.network.packet.s2c.skilltree.SyncSkillDataPacket;
 import net.snowteb.warriorcats_events.skills.ISkillData;
@@ -74,7 +75,7 @@ public class CtSUnlockClimbPacket {
                     if (server != null) {
 
                         Advancement adv = server.getAdvancements()
-                                .getAdvancement(new ResourceLocation("warriorcats_events:skill_climb_advancement"));
+                                .getAdvancement(ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID,"skill_climb_advancement"));
 
                         if (adv != null) {
                             player.getAdvancements().award(adv, "unlock_skill");

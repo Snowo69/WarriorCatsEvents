@@ -35,13 +35,13 @@
 //
 //        builder.pop();
 //
-//        SPEC = builder.build();
+//        SPEC = builder.run();
 //    }
 //
 //    public static void getItemListFromString() {
 //        PREY_ITEMS.clear();
 //        for (String id : STRING_ITEMS.get()) {
-//            ResourceLocation location = new ResourceLocation(id);
+//            ResourceLocation location = ResourceLocation.fromNamespaceAndPath(id);
 //
 //            Item item = ForgeRegistries.ITEMS.getValue(location);
 //            if (item != null) {

@@ -86,7 +86,7 @@ public class TerritoryMapScreen extends Screen {
                 Component.literal("Return"),
                 btn -> {
                     this.onClose();
-                }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                 80, 20, 0xFFFFFFFF, 0.83f
         );
 

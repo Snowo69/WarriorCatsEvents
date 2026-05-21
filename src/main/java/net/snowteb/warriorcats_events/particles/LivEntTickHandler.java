@@ -11,7 +11,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.snowteb.warriorcats_events.compat.Compatibilities;
+import net.snowteb.warriorcats_events.compat.CompatibilitiesClient;
 import net.snowteb.warriorcats_events.item.custom.CollarArmorItem;
 import net.snowteb.warriorcats_events.sound.ModSounds;
 import tocraft.walkers.api.PlayerShape;
@@ -37,7 +37,7 @@ public class LivEntTickHandler {
                 }
 
                 if (collarStack.isEmpty()) {
-                    ItemStack curiosStack = Compatibilities.getCuriosItem(entity.getUUID(), CollarArmorItem.class);
+                    ItemStack curiosStack = CompatibilitiesClient.getCuriosItem(entity.getUUID(), CollarArmorItem.class);
 
                     if (!curiosStack.isEmpty()) {
                         collarStack = curiosStack;

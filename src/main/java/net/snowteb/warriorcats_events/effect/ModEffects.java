@@ -2,6 +2,7 @@ package net.snowteb.warriorcats_events.effect;
 
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -30,6 +31,16 @@ public class ModEffects {
 
     public static final RegistryObject<MobEffect> THIRSTY = MOB_EFFECTS.register("thirsty",
             () -> new ThirstyEffect(MobEffectCategory.HARMFUL, 0xFFFFFF));
+
+    public static final RegistryObject<MobEffect> TIRED = MOB_EFFECTS.register("tired",
+            () -> new SimpleSlownessEffect(MobEffectCategory.HARMFUL, 0x000000, true, -0.35f).setFactorDataFactory(
+                    () -> new MobEffectInstance.FactorData(40)
+            ));
+
+    public static final RegistryObject<MobEffect> FEVER = MOB_EFFECTS.register("fever",
+            () -> new SimpleSlownessEffect(MobEffectCategory.HARMFUL, 0x000000, true, -0.1f).setFactorDataFactory(
+                    () -> new MobEffectInstance.FactorData(20)
+            ));
 
     public static void register(IEventBus eventBus) {
         MOB_EFFECTS.register(eventBus);

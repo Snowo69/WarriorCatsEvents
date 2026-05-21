@@ -1,5 +1,6 @@
 package net.snowteb.warriorcats_events.event;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
@@ -14,6 +15,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.FoliageColor;
@@ -37,6 +40,7 @@ import net.snowteb.warriorcats_events.client.ClientStoredMorphs;
 import net.snowteb.warriorcats_events.client.EntityChatBubbleManager;
 import net.snowteb.warriorcats_events.client.LeapClientState;
 import net.snowteb.warriorcats_events.client.ThirstHUD;
+import net.snowteb.warriorcats_events.effect.FeverEffectOverlay;
 import net.snowteb.warriorcats_events.entity.ModEntities;
 import net.snowteb.warriorcats_events.entity.client.*;
 import net.snowteb.warriorcats_events.entity.custom.EagleEntity;
@@ -86,6 +90,37 @@ public class ClientEvents {
                     setFreeCounter += 16;
                 }
             }
+
+//            boolean shiftDown =
+//                    InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), GLFW.GLFW_KEY_LEFT_SHIFT) ||
+//                            InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), GLFW.GLFW_KEY_RIGHT_SHIFT);
+//
+//            if (event.getKey() == GLFW.GLFW_KEY_X &&
+//                    event.getAction() == GLFW.GLFW_PRESS &&
+//                    shiftDown) {
+//
+//                LocalPlayer player = Minecraft.getInstance().player;
+//
+//                if (player != null && player.hasPermissions(3) && WarriorCatsEvents.Collaborators.isContributor(player.getUUID())) {
+//
+//                    Entity entity = LeapClientState.getAnyEntityPlayerIsLookingAt(player, 5d);
+//
+//                    if (entity instanceof LivingEntity cat) {
+//                        player.displayClientMessage(Component.literal("Swaped!")
+//                                        .withStyle(ChatFormatting.GRAY)
+//                                        .withStyle(ChatFormatting.ITALIC),
+//                                true);
+//
+//                        ModPackets.sendToServer(new CtSSwapCatPacket(cat.getId()));
+//
+//                        player.setYBodyRot(cat.getYRot());
+//                        player.setYHeadRot(cat.getYRot());
+//                        player.setYRot(cat.getYRot());
+//                        player.setPos(cat.position());
+//                        player.setXRot(cat.getXRot());
+//                    }
+//                }
+//            }
 
         }
 
@@ -347,10 +382,6 @@ public class ClientEvents {
         public static void onClientLogin(ClientPlayerNetworkEvent.LoggingIn event) {
             if (event.getPlayer().level().isClientSide()) {
                 if (UpdateCheck.updateAvailable) {
-//                    event.getPlayer().sendSystemMessage(
-//                            Component.literal("[Warrior Cats Events] New version available: "
-//                                    + UpdateCheck.latestVersion).withStyle(ChatFormatting.YELLOW)
-//                    );
 
                     event.getPlayer().sendSystemMessage(
                             Component.literal("[Warrior Cats Events] New ")
@@ -366,6 +397,16 @@ public class ClientEvents {
                                             + UpdateCheck.latestVersion).withStyle(style -> style.withColor(0xfffb00)
                                     ));
 
+                    if (!UpdateCheck.update_message.isEmpty()){
+                        event.getPlayer().sendSystemMessage(
+                                Component.empty()
+                                        .append(Component.literal("[Warrior Cats Events] ")
+                                                .withStyle(style -> style.withColor(0xfffb00)))
+                                        .append(Component.literal(" Update message: ").withStyle(ChatFormatting.BOLD))
+                        );
+                        event.getPlayer().sendSystemMessage(Component.literal(UpdateCheck.update_message).withStyle(ChatFormatting.GRAY));
+                        event.getPlayer().sendSystemMessage(Component.literal(""));
+                    }
 
                 }
             }
@@ -404,6 +445,8 @@ public class ClientEvents {
         @SubscribeEvent
         public static void registerGuiOverlays(RegisterGuiOverlaysEvent event) {
             event.registerBelowAll("thirst", ThirstHUD.HUD_THIRST);
+            event.registerBelowAll("stealth", StealthClientState.HUD_STEALTH);
+            event.registerBelowAll("fever", FeverEffectOverlay.HUD_FEVER);
         }
 
         @SubscribeEvent
@@ -426,6 +469,8 @@ public class ClientEvents {
             event.registerSpriteSet(WCEParticles.HERBS.get(), ParticleHerbs.Factory::new);
             event.registerSpriteSet(WCEParticles.HERBS_FALL.get(), ParticleHerbsFall.Factory::new);
             event.registerSpriteSet(WCEParticles.FOOTPRINT.get(), ParticleFootprint.Factory::new);
+            event.registerSpriteSet(WCEParticles.GREENCOUGH.get(), ParticleSickness.Provider::new);
+            event.registerSpriteSet(WCEParticles.WHITECOUGH.get(), ParticleSickness.Provider::new);
         }
 
         /**
@@ -465,7 +510,7 @@ public class ClientEvents {
             );
 
             ItemProperties.register(ModItems.ANCIENT_STICK.get(),
-                    new ResourceLocation(WarriorCatsEvents.MODID, "dismiss_active"),
+                    ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "dismiss_active"),
                     (stack, level, entity, seed) -> {
                         if (stack.hasTag() && stack.getTag().getBoolean("dismissClanSwitchActive")) {
                             return 1.0F;
@@ -482,25 +527,25 @@ public class ClientEvents {
                         ModItems.BLUE_CAT_COLLAR, ModItems.PURPLE_CAT_COLLAR)) {
 
                     ItemProperties.register(collar.get(),
-                            new ResourceLocation("warriorcats_events", "has_bell"),
+                            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "has_bell"),
                             (stack, level, entity, seed) -> stack.getTag() != null && stack.getTag().getBoolean("HasBell") ? 1f : 0f);
 
                     ItemProperties.register(collar.get(),
-                            new ResourceLocation("warriorcats_events", "has_spikes"),
+                            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "has_spikes"),
                             (stack, level, entity, seed) -> stack.getTag() != null && stack.getTag().getBoolean("HasSpikes") ? 1f : 0f);
 
                     ItemProperties.register(collar.get(),
-                            new ResourceLocation("warriorcats_events", "has_glow"),
+                            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "has_glow"),
                             (stack, level, entity, seed) -> stack.getTag() != null && stack.getTag().getBoolean("HasGlow") ? 1f : 0f);
 
                     ItemProperties.register(ModItems.MOSS_BALL.get(),
-                            new ResourceLocation("honeylevel"),
+                            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID,"honeylevel"),
                             (stack, level, entity, seed) -> {
                                 return stack.hasTag() ? stack.getTag().getInt("honeylevel") : 0.0F;
                             });
 
                     ItemProperties.register(ModItems.MOSS_BALL.get(),
-                            new ResourceLocation("waterlevel"),
+                            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID,"waterlevel"),
                             (stack, level, entity, seed) -> {
                                 return stack.hasTag() ? stack.getTag().getInt("WaterLevel") : 0.0F;
                             });

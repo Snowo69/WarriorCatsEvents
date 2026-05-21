@@ -16,7 +16,7 @@ public class MouseRenderer extends GeoEntityRenderer<MouseEntity> {
 
     @Override
     public ResourceLocation getTextureLocation(MouseEntity animatable) {
-        return new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/mouse.png");
+        return ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/mouse.png");
     }
 
     @Override

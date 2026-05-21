@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.CriteriaTriggers;
+import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
@@ -112,6 +113,25 @@ public class ClawsTooltip extends ShearsItem {
 
         for (String line : lines) {
             tooltip.add(Component.literal(line).withStyle(ChatFormatting.GRAY));
+        }
+
+        if (InventoryScreen.hasShiftDown()) {
+            Component shiftRightClick = Component.literal("[Shift + Right-Click] ");
+            Component rightClick = Component.literal("[Right-Click] ");
+
+            tooltip.add(Component.empty());
+            tooltip.add(shiftRightClick.copy().append(Component.literal("On a Crafting Rock to prepare a recipe.").withStyle(ChatFormatting.GRAY)));
+            tooltip.add(shiftRightClick.copy().append(Component.literal("On a Wild Cat to open their inventory.").withStyle(ChatFormatting.GRAY)));
+            tooltip.add(rightClick.copy().append(Component.literal("On a kit to carry them.").withStyle(ChatFormatting.GRAY)));
+            tooltip.add(shiftRightClick.copy().append(Component.literal("On a player to send a carry request.").withStyle(ChatFormatting.GRAY)));
+            tooltip.add(rightClick.copy().append(Component.literal("On the ground while being under leaves to make a Makeshift Nest.").withStyle(ChatFormatting.GRAY)));
+            tooltip.add(rightClick.copy().append(Component.literal("On mossy blocks to obtain Moss Blocks.").withStyle(ChatFormatting.GRAY)));
+            tooltip.add(rightClick.copy().append(Component.literal("On logs to repair your claws.").withStyle(ChatFormatting.GRAY)));
+            tooltip.add(shiftRightClick.copy().append(Component.literal("On water to start fishing.").withStyle(ChatFormatting.GRAY)));
+
+        } else {
+            tooltip.add(Component.empty());
+            tooltip.add((Component.literal("[Hold Shift to display all usages]").withStyle(ChatFormatting.DARK_PURPLE)));
         }
 
     }

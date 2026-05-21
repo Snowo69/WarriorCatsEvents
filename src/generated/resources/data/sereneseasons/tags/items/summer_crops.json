@@ -2,6 +2,9 @@
   "values": [
     "warriorcats_events:chamomile",
     "warriorcats_events:catmint_leaves",
-    "warriorcats_events:yarrow_leaves"
+    "warriorcats_events:yarrow_leaves",
+    "warriorcats_events:feverfew_leaves",
+    "warriorcats_events:comfrey_leaves",
+    "warriorcats_events:comfrey_root"
   ]
 }

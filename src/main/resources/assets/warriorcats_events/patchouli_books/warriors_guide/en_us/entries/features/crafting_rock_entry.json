@@ -37,6 +37,30 @@
     },
     {
       "type": "patchouli:spotlight",
+      "item": "warriorcats_events:yarrow_poultice",
+      "text": "$(8)- 1 Yarrow Leaves$(br)",
+      "title": "Yarrow Poultice"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "warriorcats_events:comfrey_poultice",
+      "text": "$(8)- 1 Comfrey Leaves / Comfrey root$(br)",
+      "title": "Comfrey Poultice"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "warriorcats_events:poppy_seeds",
+      "text": "$(8)- 1 Poppy$(br)",
+      "title": "Poppy Seeds"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "warriorcats_events:leg_wrap",
+      "text": "$(8)- 1 Stick$(br)- 1 Cobweb / Cobweb On A Stick$(br)- 1 Dock Leaves / Vine / Kelp",
+      "title": "Leg Wrap"
+    },
+    {
+      "type": "patchouli:spotlight",
       "item": "warriorcats_events:moss_ball",
       "text": "$(8)- 1 Moss Block$(br)",
       "title": "Moss Balls"

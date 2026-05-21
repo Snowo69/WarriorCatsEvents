@@ -26,7 +26,7 @@ import java.util.List;
 public class SkillScreen extends Screen {
 
     private static final ResourceLocation TEXTURE =
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/skilltree_gui.png");
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/gui/skilltree_gui.png");
 
     String nextSpeedLevelCost;
     String nextHPLevelCost;
@@ -385,7 +385,7 @@ public class SkillScreen extends Screen {
                     ModPackets.sendToServer(new CtSUnlockStealthPacket());
 
                 },
-                new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/modbutton.png"),
+                ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/gui/modbutton.png"),
                 80, 20
         ));
 
@@ -398,7 +398,7 @@ public class SkillScreen extends Screen {
                     ModPackets.sendToServer(new ResetSkillsPacket());
                     ModPackets.sendToServer(new ReqSkillDataPacket());
                 },
-                new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/modbutton.png"),
+                ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/gui/modbutton.png"),
                 80, 20
         ));
 
@@ -412,7 +412,7 @@ public class SkillScreen extends Screen {
                     ModPackets.sendToServer(new ReqSkillDataPacket());
 
                 },
-                new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/modbutton.png"),
+                ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/gui/modbutton.png"),
                 80, 20
         ));
 
@@ -426,7 +426,7 @@ public class SkillScreen extends Screen {
                     ModPackets.sendToServer(new ReqSkillDataPacket());
 
                 },
-                new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/modbutton.png"),
+                ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/gui/modbutton.png"),
                 80, 20
         ));
 
@@ -440,7 +440,7 @@ public class SkillScreen extends Screen {
                     ModPackets.sendToServer(new ReqSkillDataPacket());
 
                 },
-                new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/modbutton.png"),
+                ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/gui/modbutton.png"),
                 80, 20
         ));
         this.addRenderableWidget(new ModButton(
@@ -453,7 +453,7 @@ public class SkillScreen extends Screen {
                     ModPackets.sendToServer(new ReqSkillDataPacket());
 
                 },
-                new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/modbutton.png"),
+                ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/gui/modbutton.png"),
                 80, 20
         ));
         this.addRenderableWidget(new ModButton(
@@ -466,7 +466,7 @@ public class SkillScreen extends Screen {
                     ModPackets.sendToServer(new ReqSkillDataPacket());
 
                 },
-                new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/modbutton.png"),
+                ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/gui/modbutton.png"),
                 80, 20
         ));
         this.addRenderableWidget(new ModButton(
@@ -478,7 +478,7 @@ public class SkillScreen extends Screen {
                     ModPackets.sendToServer(new CtSSwitchStealthPacket());
 
                 },
-                new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/modbutton.png"),
+                ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/gui/modbutton.png"),
                 20, 20
         ));
 
@@ -490,7 +490,7 @@ public class SkillScreen extends Screen {
                 b -> {
                     ModPackets.sendToServer(new CtSUnlockClimbPacket());
                 },
-                new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/modbutton.png"),
+                ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/gui/modbutton.png"),
                 80, 20
         ));
 

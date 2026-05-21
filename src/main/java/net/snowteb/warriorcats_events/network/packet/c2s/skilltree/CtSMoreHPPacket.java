@@ -10,6 +10,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraftforge.network.NetworkEvent;
+import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.skills.ISkillData;
 import net.snowteb.warriorcats_events.skills.PlayerSkill;
 import net.snowteb.warriorcats_events.skills.PlayerSkillProvider;
@@ -63,7 +64,7 @@ public class CtSMoreHPPacket {
                 if (attribute == null) return;
 
                 attribute.removeModifier(HP_SKILL_UUID);
-                double bonus = (0.1* WCEServerConfig.SERVER.SKILL_HP_MULTIPLIER.get()) * (currentLevel + 1);
+                double bonus = (PlayerSkill.hpMultiplier* WCEServerConfig.SERVER.SKILL_HP_MULTIPLIER.get()) * (currentLevel + 1);
                 attribute.addPermanentModifier(new AttributeModifier(
                         HP_SKILL_UUID,
                         "skill_hp_bonus",
@@ -84,7 +85,7 @@ public class CtSMoreHPPacket {
                     if (server != null) {
 
                         Advancement adv = server.getAdvancements()
-                                .getAdvancement(new ResourceLocation("warriorcats_events:skill_hp_advancement"));
+                                .getAdvancement(ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID,"skill_hp_advancement"));
 
                         if (adv != null) {
                             player.getAdvancements().award(adv, "unlock_skill");

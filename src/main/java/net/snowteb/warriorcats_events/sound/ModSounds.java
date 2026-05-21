@@ -43,7 +43,8 @@ public class ModSounds {
 
     public static final RegistryObject<SoundEvent> WILDCAT_SCREAM =
             registerSoundEvents("entity.wildcat.scream");
-
+    public static final RegistryObject<SoundEvent> WILDCAT_COUGH =
+            registerSoundEvents("entity.cat_cough");
 
     public static final RegistryObject<SoundEvent> SCRAPING_WOOD =
             registerSoundEvents("ambient.scraping_wood");
@@ -90,7 +91,7 @@ public class ModSounds {
 
     private static RegistryObject<SoundEvent> registerSoundEvents(String name) {
         return SOUND_EVENTS.register(name,
-                () -> SoundEvent.createVariableRangeEvent(new ResourceLocation(WarriorCatsEvents.MODID, name)));
+                () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, name)));
     }
 
     public static void register(IEventBus bus) {SOUND_EVENTS.register(bus);}

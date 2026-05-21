@@ -6,6 +6,7 @@ import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -170,4 +171,18 @@ public class TreeStumpBlockEntity extends BlockEntity {
     public String getTerritoryName() {
         return territoryName;
     }
+
+    @Override
+    public void onLoad() {
+        super.onLoad();
+
+        if (this.level instanceof ServerLevel sLevel) {
+            ClanData data = ClanData.get(sLevel.getServer().overworld());
+            ClanData.Clan clan = data.getClan(this.getOwnerClanUUID());
+            if (clan != null) {
+                this.setOwnerClanName(clan.name);
+            }
+        }
+    }
+
 }

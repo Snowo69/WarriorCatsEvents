@@ -149,7 +149,7 @@ public class LayerTexture extends AbstractTexture {
 //        WarriorCatsEvents.LOGGER.debug("Attempting to load layer '{}'", layer);
 
         try {
-            Resource resource = manager.getResource(new ResourceLocation(layer)).orElseThrow();
+            Resource resource = manager.getResource(ResourceLocation.parse(layer)).orElseThrow();
             return NativeImage.read(resource.open());
         } catch (IOException exception) {
             throw new IllegalStateException("Couldn't load texture layers.", exception);

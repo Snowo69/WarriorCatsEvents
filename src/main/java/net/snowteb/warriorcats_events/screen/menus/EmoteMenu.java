@@ -11,7 +11,7 @@ import net.snowteb.warriorcats_events.WarriorCatsEvents;
 public class EmoteMenu {
 
     private static ResourceLocation currentMouseTexture =
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/hud/mouse_wheel_unclicked.png");
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/hud/mouse_wheel_unclicked.png");
 
     private static int lastToggleTick = 0;
 
@@ -22,9 +22,9 @@ public class EmoteMenu {
         if (!Minecraft.getInstance().options.hideGui && WCEClient.isRenderingEmoteMenu && Minecraft.getInstance().screen == null) {
             if (Minecraft.getInstance().level != null && Minecraft.getInstance().player != null) {
 
-                ResourceLocation mouseClick = new ResourceLocation(WarriorCatsEvents.MODID,
+                ResourceLocation mouseClick = ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID,
                         "textures/hud/mouse_wheel_clicked.png");
-                ResourceLocation mouseUnclick = new ResourceLocation(WarriorCatsEvents.MODID,
+                ResourceLocation mouseUnclick = ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID,
                         "textures/hud/mouse_wheel_unclicked.png");
 
                 int tick = Minecraft.getInstance().player.tickCount;

@@ -14,7 +14,9 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.saveddata.SavedData;
+import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.block.entity.TreeStumpBlockEntity;
 import net.snowteb.warriorcats_events.entity.custom.WCGenetics;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
@@ -25,11 +27,14 @@ import net.snowteb.warriorcats_events.zconfig.WCEServerConfig;
 
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class ClanData extends SavedData {
     public Map<UUID, Clan> clans = new HashMap<>();
     public Map<UUID, String> playerMorphNames = new HashMap<>();
-    public Map<UUID, Integer> playerMorphData = new HashMap<>();
+    public Map<UUID, WCGenetics.PackedGeneticData> playerMorphData = new HashMap<>();
+
+
 
     public static final UUID EMPTY_UUID = UUID.fromString("00000000-0000-0000-0000-000000000000");
 
@@ -726,6 +731,8 @@ public class ClanData extends SavedData {
         return clan;
     }
 
+    public static final Queue<Runnable> CHUNK_TASKS = new ConcurrentLinkedQueue<>();
+
     public boolean renameClan(Clan clan, String newName, ServerLevel sLevel) {
         if (clan == null) return false;
 
@@ -754,6 +761,19 @@ public class ClanData extends SavedData {
                     });
                 }
             }
+        }
+
+        for (ChunkPos chunkPos : clan.claimedTerritory.keySet()) {
+            CHUNK_TASKS.add(() -> {
+                LevelChunk chunk = sLevel.getChunk(chunkPos.x, chunkPos.z);
+                for (BlockEntity entity : chunk.getBlockEntities().values()) {
+                    if (entity instanceof TreeStumpBlockEntity stump) {
+                        stump.setOwnerClanName(clan.name);
+                        sLevel.sendBlockUpdated(stump.getBlockPos(), stump.getBlockState(),
+                                stump.getBlockState(), 3);
+                    }
+                }
+            });
         }
 
         setDirty();
@@ -1242,7 +1262,14 @@ public class ClanData extends SavedData {
         for (var entry : playerMorphData.entrySet()) {
             CompoundTag morphTag = new CompoundTag();
             morphTag.putUUID("UUID", entry.getKey());
-            morphTag.putInt("MorphData", entry.getValue());
+
+            CompoundTag morphData = new CompoundTag();
+            WCGenetics.writeGeneticsNBT(morphData, entry.getValue().genetics, entry.getValue().variants,
+                    entry.getValue().chimerasGenetics, entry.getValue().chimeraVariants,
+                    entry.getValue().onGeneticalSkin, entry.getValue().morphSkin);
+
+            morphTag.put("MorphData", morphData);
+
             morphDataList.add(morphTag);
         }
         tag.put("PlayerMorphData", morphDataList);
@@ -1346,9 +1373,17 @@ public class ClanData extends SavedData {
             ListTag morphList = tag.getList("PlayerMorphData", Tag.TAG_COMPOUND);
             for (Tag t : morphList) {
                 CompoundTag morphTag = (CompoundTag) t;
+
+                WCGenetics.PackedGeneticData morphData;
+                if (morphTag.contains("MorphData")) {
+                    morphData = WCGenetics.loadGeneticsNBT(morphTag.getCompound("MorphData"));
+                } else {
+                    morphData = WCGenetics.PackedGeneticData.empty();
+                }
+
                 data.playerMorphData.put(
                         morphTag.getUUID("UUID"),
-                        morphTag.getInt("MorphData")
+                        morphData
                 );
             }
         }

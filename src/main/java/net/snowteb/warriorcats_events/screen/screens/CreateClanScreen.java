@@ -57,9 +57,9 @@ public class CreateClanScreen extends Screen {
     private ImageScrollList symbolList;
 
     public static final ResourceLocation BG_TEXTURE =
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/background_scene.png");
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/gui/clan_setup/background_scene.png");
     public static final ResourceLocation BANNER =
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/banner.png");
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/gui/clan_setup/banner.png");
 
 
     private enum Colors {

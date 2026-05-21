@@ -16,6 +16,7 @@ import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.network.NetworkEvent;
+import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.clan.WCEPlayerData;
 import net.snowteb.warriorcats_events.entity.custom.WCGenetics;
 import net.snowteb.warriorcats_events.util.GeneticsForVariant;
@@ -203,7 +204,7 @@ public class CtSCreateAndSpawnKitPacket {
                         MinecraftServer mcServer = player.getServer();
                         if (mcServer != null) {
                             Advancement adv = mcServer.getAdvancements()
-                                    .getAdvancement(new ResourceLocation("warriorcats_events:kit_generated"));
+                                    .getAdvancement(ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID,"kit_generated"));
                             if (adv != null) {
                                 sPlayer.getAdvancements().award(adv, "kit_generated");
                             }

@@ -16,39 +16,39 @@ public class AccessoryModel extends GeoModel<WCatEntity> {
     public ResourceLocation texture;
 
     public static final ResourceLocation[] FEATHER_TEXTURES = {
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/red_parrot_feathers.png"),
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/gray_parrot_feathers.png"),
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/green_parrot_feathers.png"),
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/blue_parrot_feathers.png"),
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/light_blue_parrot_feathers.png"),
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/chicken_feathers.png"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/accessories/red_parrot_feathers.png"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/accessories/gray_parrot_feathers.png"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/accessories/green_parrot_feathers.png"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/accessories/blue_parrot_feathers.png"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/accessories/light_blue_parrot_feathers.png"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/accessories/chicken_feathers.png"),
 
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/pigeon_feathers.png"),
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/crow_feathers.png"),
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/american_goldfinch_feathers.png"),
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/red_cardinal_feathers.png"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/accessories/pigeon_feathers.png"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/accessories/crow_feathers.png"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/accessories/american_goldfinch_feathers.png"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/accessories/red_cardinal_feathers.png"),
     };
 
     public static final ResourceLocation[] COLLAR_TEXTURES = {
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/collar_black.png"),
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/collar_brown.png"),
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/collar_white.png"),
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/collar_pink.png"),
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/collar_orange.png"),
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/collar_red.png"),
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/collar_blue.png"),
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/collar_purple.png"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/accessories/collar_black.png"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/accessories/collar_brown.png"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/accessories/collar_white.png"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/accessories/collar_pink.png"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/accessories/collar_orange.png"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/accessories/collar_red.png"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/accessories/collar_blue.png"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/accessories/collar_purple.png"),
     };
 
     public static final ResourceLocation[] BERRY_TEXTURES = {
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/head_sweetberry.png"),
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/head_glowberry.png")
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/accessories/head_sweetberry.png"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/accessories/head_glowberry.png")
     };
 
     public static final ResourceLocation[] HEAD_BOW_TEXTURES = {
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/pink_bow.png"),
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/red_bow.png"),
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/accessories/cat_black_bow.png")
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/accessories/pink_bow.png"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/accessories/red_bow.png"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/accessories/cat_black_bow.png")
     };
 
     public AccessoryModel(ResourceLocation model,
@@ -69,7 +69,7 @@ public class AccessoryModel extends GeoModel<WCatEntity> {
 
     @Override
     public ResourceLocation getAnimationResource(WCatEntity squirrelEntity) {
-        return new ResourceLocation(WarriorCatsEvents.MODID, "animations/empty.animation.json");
+        return ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "animations/empty.animation.json");
     }
 
     @Override

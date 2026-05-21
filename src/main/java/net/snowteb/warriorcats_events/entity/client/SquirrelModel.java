@@ -14,17 +14,17 @@ import software.bernie.geckolib.model.data.EntityModelData;
 public class SquirrelModel extends GeoModel<SquirrelEntity> {
     @Override
     public ResourceLocation getModelResource(SquirrelEntity squirrelEntity) {
-        return new ResourceLocation(WarriorCatsEvents.MODID, "geo/squirrel.geo.json");
+        return ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "geo/squirrel.geo.json");
     }
 
     @Override
     public ResourceLocation getTextureResource(SquirrelEntity squirrelEntity) {
-        return new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/squirrel.png");
+        return ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/squirrel.png");
     }
 
     @Override
     public ResourceLocation getAnimationResource(SquirrelEntity squirrelEntity) {
-        return new ResourceLocation(WarriorCatsEvents.MODID, "animations/squirrel.animation.json");
+        return ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "animations/squirrel.animation.json");
     }
 
     @Override

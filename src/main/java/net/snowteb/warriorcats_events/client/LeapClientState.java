@@ -92,7 +92,6 @@ public class LeapClientState {
             if (shiftKeyDownCounter >= 20 && !attackWasDown) {
                 leapPowerCounter+=2;
                 leapPowerCounter = Math.min(leapPowerCounter, 100);
-                assert Minecraft.getInstance().player != null;
                 if (shiftKeyDownCounter <= 140 && Minecraft.getInstance().player.onGround()) {
                     Minecraft.getInstance().player.playSound(ModSounds.SHORT_WOOSH.get(), 0.3f, 0.7f);
                 } else {
@@ -298,5 +297,28 @@ public class LeapClientState {
 
     public static int getSprintCounterThreshold() {
         return sprintCounterThreshold;
+    }
+
+
+    @Nullable
+    public static Entity getAnyEntityPlayerIsLookingAt(LocalPlayer player, double range) {
+        Vec3 eyePos = player.getEyePosition();
+        Vec3 lookVec = player.getLookAngle();
+        Vec3 reachVec = eyePos.add(lookVec.scale(range));
+
+        AABB searchBox = player.getBoundingBox()
+                .expandTowards(lookVec.scale(range))
+                .inflate(2.0D);
+
+        EntityHitResult result = ProjectileUtil.getEntityHitResult(
+                player.level(),
+                player,
+                eyePos,
+                reachVec,
+                searchBox,
+                e -> e.isAlive() && e != player
+        );
+
+        return result != null ? result.getEntity() : null;
     }
 }

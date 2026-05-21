@@ -21,9 +21,9 @@ public class PigeonRenderer extends GeoEntityRenderer<PigeonEntity> {
     @Override
     public ResourceLocation getTextureLocation(PigeonEntity entity) {
         return switch (entity.getPigeonVariant()) {
-            case 1 -> new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/pigeon/pigeon_2.png");
-            case 2 -> new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/pigeon/pigeon_3.png");
-            default -> new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/pigeon/pigeon_1.png");
+            case 1 -> ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/pigeon/pigeon_2.png");
+            case 2 -> ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/pigeon/pigeon_3.png");
+            default -> ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/pigeon/pigeon_1.png");
         };
     }
 

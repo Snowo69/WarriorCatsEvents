@@ -129,6 +129,7 @@ public class CtSClaimTerritory {
                     handled = true;
                 } else {
                     player.sendSystemMessage(Component.literal("This chunk is claimed by another clan.").withStyle(ChatFormatting.RED));
+                    player.giveExperiencePoints(450);
                 }
 
             } else {
@@ -173,10 +174,12 @@ public class CtSClaimTerritory {
                         handled = true;
                     } else {
                         player.sendSystemMessage(Component.literal("This chunk is claimed by another clan.").withStyle(ChatFormatting.RED));
+                        player.giveExperiencePoints(850);
                     }
 
                 } else {
                     player.sendSystemMessage(Component.literal("You can't claim territory not connected to the core.").withStyle(ChatFormatting.RED));
+                    player.giveExperiencePoints(850);
                 }
             }
 

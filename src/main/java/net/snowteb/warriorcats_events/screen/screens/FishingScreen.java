@@ -19,31 +19,31 @@ import org.lwjgl.glfw.GLFW;
 
 public class FishingScreen extends Screen {
     private static final ResourceLocation TEXTUREBACKGROUND =
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/fishing/fishing_gui_1.png");
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/gui/fishing/fishing_gui_1.png");
     private static final ResourceLocation TEXTUREWAVES =
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/fishing/fishing_gui_2.png");
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/gui/fishing/fishing_gui_2.png");
 
     private static final ResourceLocation TEXTUREFISH_1 =
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/fishing/fish_1_gui.png");
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/gui/fishing/fish_1_gui.png");
     private static final ResourceLocation TEXTUREFISH_2 =
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/fishing/fish_2_gui.png");
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/gui/fishing/fish_2_gui.png");
     private static final ResourceLocation TEXTUREFISH_3 =
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/fishing/fish_3_gui.png");
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/gui/fishing/fish_3_gui.png");
     private static final ResourceLocation TEXTUREFISH_4 =
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/fishing/fish_4_gui.png");
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/gui/fishing/fish_4_gui.png");
     private static final ResourceLocation TEXTUREFISH_5 =
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/fishing/fish_5_gui.png");
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/gui/fishing/fish_5_gui.png");
     private static final ResourceLocation TEXTUREFISH_6 =
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/fishing/fish_6_gui.png");
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/gui/fishing/fish_6_gui.png");
     private static final ResourceLocation TEXTUREFISH_7 =
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/fishing/fish_7_gui.png");
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/gui/fishing/fish_7_gui.png");
     private static final ResourceLocation TEXTUREFISH_8 =
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/fishing/fish_8_gui.png");
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/gui/fishing/fish_8_gui.png");
 
 
 
     private static final ResourceLocation TEXTURECLAWOVERLAY =
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/fishing/fishing_gui_4.png");
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/gui/fishing/fishing_gui_4.png");
 
     private ResourceLocation currentFishTexture;
 

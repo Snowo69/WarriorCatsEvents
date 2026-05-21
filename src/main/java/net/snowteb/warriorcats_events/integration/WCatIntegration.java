@@ -2,14 +2,9 @@ package net.snowteb.warriorcats_events.integration;
 
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.monster.Phantom;
-import net.minecraft.world.entity.player.Player;
 import net.snowteb.warriorcats_events.entity.ModEntities;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import tocraft.walkers.ability.AbilityRegistry;
-import tocraft.walkers.api.WalkersTickHandler;
-import tocraft.walkers.api.WalkersTickHandlers;
-import tocraft.walkers.api.model.EntityUpdater;
-import tocraft.walkers.api.model.EntityUpdaters;
 import tocraft.walkers.api.variant.TypeProviderRegistry;
 import tocraft.walkers.integrations.AbstractIntegration;
 import tocraft.walkers.traits.TraitRegistry;
@@ -19,7 +14,6 @@ import tocraft.walkers.traits.impl.FearedTrait;
  * This class allows you to select different variants of Wild Cat to play as.
  */
 public class WCatIntegration extends AbstractIntegration {
-    public static final String MODID = "warriorcats_events";
 
     @Override
     public void initialize() {
@@ -49,7 +43,7 @@ public class WCatIntegration extends AbstractIntegration {
 
     @Override
     public void registerAbilities() {
-        AbilityRegistry.registerByClass(WCatEntity.class, new WCatNightVision<>());
+        AbilityRegistry.registerByClass(WCatEntity.class, new WCatAbility<>());
     }
 
     @Override

@@ -22,7 +22,7 @@ public class SetNewLeaderCommand {
         dispatcher.register(
                 Commands.literal("wce")
                         .then(Commands.literal("clan")
-                                .then(Commands.literal("setnewleader")
+                                .then(Commands.literal("setNewLeader")
                                         .then(Commands.argument("player", EntityArgument.player())
                                                         .executes(ctx ->
                                                                 method(

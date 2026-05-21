@@ -275,7 +275,7 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .requires(ModItems.WHITE_CAT_SOCKS.get())
                 .requires(Items.BLUE_DYE)
                 .unlockedBy("has_item", has(ModItems.WHITE_CAT_SOCKS.get()))
-                .save(pWriter, new ResourceLocation(WarriorCatsEvents.MODID, "blue_cat_socks_from_dye"));
+                .save(pWriter, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "blue_cat_socks_from_dye"));
 
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.ORANGE_CAT_SOCKS.get(), 1)
                 .pattern("A A")
@@ -287,7 +287,7 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .requires(ModItems.WHITE_CAT_SOCKS.get())
                 .requires(Items.ORANGE_DYE)
                 .unlockedBy("has_item", has(ModItems.WHITE_CAT_SOCKS.get()))
-                .save(pWriter, new ResourceLocation(WarriorCatsEvents.MODID, "orange_cat_socks_from_dye"));
+                .save(pWriter, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "orange_cat_socks_from_dye"));
 
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.PINK_CAT_SOCKS.get(), 1)
                 .pattern("A A")
@@ -299,7 +299,7 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .requires(ModItems.WHITE_CAT_SOCKS.get())
                 .requires(Items.PINK_DYE)
                 .unlockedBy("has_item", has(ModItems.WHITE_CAT_SOCKS.get()))
-                .save(pWriter, new ResourceLocation(WarriorCatsEvents.MODID, "pink_cat_socks_from_dye"));
+                .save(pWriter, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "pink_cat_socks_from_dye"));
 
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.WHITE_CAT_SOCKS.get(), 1)
                 .pattern("A A")
@@ -317,7 +317,7 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .requires(ModItems.WHITE_CAT_SOCKS.get())
                 .requires(Items.BLACK_DYE)
                 .unlockedBy("has_item", has(ModItems.WHITE_CAT_SOCKS.get()))
-                .save(pWriter, new ResourceLocation(WarriorCatsEvents.MODID, "black_cat_socks_from_dye"));
+                .save(pWriter, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "black_cat_socks_from_dye"));
 
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.GREEN_CAT_SOCKS.get(), 1)
                 .pattern("A A")
@@ -329,7 +329,7 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .requires(ModItems.WHITE_CAT_SOCKS.get())
                 .requires(Items.LIME_DYE)
                 .unlockedBy("has_item", has(ModItems.WHITE_CAT_SOCKS.get()))
-                .save(pWriter, new ResourceLocation(WarriorCatsEvents.MODID, "green_cat_socks_from_dye"));
+                .save(pWriter, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "green_cat_socks_from_dye"));
 
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.HEAD_LEAF.get(), 2)
                 .requires(ItemTags.LEAVES)
@@ -373,7 +373,7 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .pattern("AA")
                 .define('A', Items.MOSS_CARPET)
                 .unlockedBy("has_item", has(Items.MOSS_CARPET))
-                .save(pWriter, new ResourceLocation(WarriorCatsEvents.MODID, "moss_block_from_carpet"));
+                .save(pWriter, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "moss_block_from_carpet"));
 
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.BLUE_PARROT_BODY_FEATHERS.get(), 1)
                 .pattern("AAA")
@@ -502,7 +502,7 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Items.NAME_TAG, 1)
                 .requires(ModItems.WARRIOR_NAMETAG.get())
                 .unlockedBy("has_item", has(ModItems.WARRIOR_NAMETAG.get()))
-                .save(pWriter, new ResourceLocation(WarriorCatsEvents.MODID, "nametag_from_warriortag"));
+                .save(pWriter, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "nametag_from_warriortag"));
 
 
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModBlocks.LAVENDER_PETALS.get(), 3)
@@ -578,43 +578,43 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .requires(ModItems.BROWN_CAT_COLLAR.get())
                 .requires(Items.BLACK_DYE)
                 .unlockedBy("has_item", has(ModItems.BROWN_CAT_COLLAR.get()))
-                .save(pWriter, new ResourceLocation(WarriorCatsEvents.MODID, "black_collar_recolored"));
+                .save(pWriter, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "black_collar_recolored"));
 
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.WHITE_CAT_COLLAR.get(), 1)
                 .requires(ModItems.BROWN_CAT_COLLAR.get())
                 .requires(Items.WHITE_DYE)
                 .unlockedBy("has_item", has(ModItems.BROWN_CAT_COLLAR.get()))
-                .save(pWriter, new ResourceLocation(WarriorCatsEvents.MODID, "white_collar_recolored"));
+                .save(pWriter, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "white_collar_recolored"));
 
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.PINK_CAT_COLLAR.get(), 1)
                 .requires(ModItems.BROWN_CAT_COLLAR.get())
                 .requires(Items.PINK_DYE)
                 .unlockedBy("has_item", has(ModItems.BROWN_CAT_COLLAR.get()))
-                .save(pWriter, new ResourceLocation(WarriorCatsEvents.MODID, "pink_collar_recolored"));
+                .save(pWriter, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "pink_collar_recolored"));
 
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.ORANGE_CAT_COLLAR.get(), 1)
                 .requires(ModItems.BROWN_CAT_COLLAR.get())
                 .requires(Items.ORANGE_DYE)
                 .unlockedBy("has_item", has(ModItems.BROWN_CAT_COLLAR.get()))
-                .save(pWriter, new ResourceLocation(WarriorCatsEvents.MODID, "orange_collar_recolored"));
+                .save(pWriter, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "orange_collar_recolored"));
 
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.RED_CAT_COLLAR.get(), 1)
                 .requires(ModItems.BROWN_CAT_COLLAR.get())
                 .requires(Items.RED_DYE)
                 .unlockedBy("has_item", has(ModItems.BROWN_CAT_COLLAR.get()))
-                .save(pWriter, new ResourceLocation(WarriorCatsEvents.MODID, "red_collar_recolored"));
+                .save(pWriter, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "red_collar_recolored"));
 
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.BLUE_CAT_COLLAR.get(), 1)
                 .requires(ModItems.BROWN_CAT_COLLAR.get())
                 .requires(Items.BLUE_DYE)
                 .unlockedBy("has_item", has(ModItems.BROWN_CAT_COLLAR.get()))
-                .save(pWriter, new ResourceLocation(WarriorCatsEvents.MODID, "blue_collar_recolored"));
+                .save(pWriter, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "blue_collar_recolored"));
 
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.PURPLE_CAT_COLLAR.get(), 1)
                 .requires(ModItems.BROWN_CAT_COLLAR.get())
                 .requires(Items.PURPLE_DYE)
                 .unlockedBy("has_item", has(ModItems.BROWN_CAT_COLLAR.get()))
-                .save(pWriter, new ResourceLocation(WarriorCatsEvents.MODID, "purple_collar_recolored"));
+                .save(pWriter, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "purple_collar_recolored"));
 
 
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.COLLAR_BELL.get(), 1)
@@ -642,7 +642,7 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .requires(ModTags.Items.WCE_FEATHERS)
                 .requires(ModTags.Items.WCE_FEATHERS)
                 .unlockedBy("has_item", has(ModTags.Items.FEATHERS))
-                .save(pWriter, new ResourceLocation(WarriorCatsEvents.MODID, "feather_from_wce_feather"));
+                .save(pWriter, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "feather_from_wce_feather"));
 
 
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.SKULL_MASK.get())
@@ -728,6 +728,13 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .define('B', Items.RED_TERRACOTTA)
                 .unlockedBy("has_item", has(Items.IRON_INGOT))
                 .save(pWriter);
+
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.POPPY_SEEDS.get(), 1)
+                .requires(Items.POPPY)
+                .unlockedBy("has_item", has(Items.POPPY))
+                .save(pWriter);
+
+
 
 //
 //        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.MOSS_BALL.get(), 2)

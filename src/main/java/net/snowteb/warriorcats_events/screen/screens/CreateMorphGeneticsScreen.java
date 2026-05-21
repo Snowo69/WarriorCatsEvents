@@ -526,7 +526,7 @@ public class CreateMorphGeneticsScreen extends Screen {
                     selectMode(setOnGeneticalSkinButton);
                     mainSectionActiveMenu = "base";
                     if (!baseSection.isSelected()) selectMainSection(baseSection);
-                }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                 80, 20, 0.8f, 0xFFFFFFFF
         );
 
@@ -559,7 +559,7 @@ public class CreateMorphGeneticsScreen extends Screen {
                         scars = 0;
                         chimeraGene = setNotChimera;
 
-                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                     80, 20, 0.80f
             );
 
@@ -592,7 +592,7 @@ public class CreateMorphGeneticsScreen extends Screen {
                         size = variants.size;
                         chimeraGene = genetics.chimeraGene;
 
-                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                     80, 20, 0.80f
             );
         }
@@ -609,7 +609,7 @@ public class CreateMorphGeneticsScreen extends Screen {
                         this.removeWidget(saveMorphNameBox);
                         storedMorphsKey = "main";
 
-                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                     80, 20, 0.80f
             );
 
@@ -622,7 +622,7 @@ public class CreateMorphGeneticsScreen extends Screen {
                         this.removeWidget(saveMorphNameBox);
                         loadSaveMorph();
 
-                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                     80, 20, 0.80f
             );
             loadStoredMorph = new GradientButton(
@@ -633,7 +633,7 @@ public class CreateMorphGeneticsScreen extends Screen {
                         storedMorphsKey = "load";
                         loadStoredMorphsList();
 
-                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                     80, 20, 0.80f
             );
             backFromStoredMorphMenu = new GradientButton(
@@ -646,7 +646,7 @@ public class CreateMorphGeneticsScreen extends Screen {
                         this.removeWidget(savedMorphsScrollList);
                         this.removeWidget(saveMorphNameBox);
 
-                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                     80, 20, 0.80f
             );
 
@@ -662,7 +662,7 @@ public class CreateMorphGeneticsScreen extends Screen {
 
                         loadSelectedMorph();
 
-                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                     80, 20, 0.80f
             );
 
@@ -676,7 +676,7 @@ public class CreateMorphGeneticsScreen extends Screen {
                         this.removeWidget(savedMorphsScrollList);
                         this.removeWidget(saveMorphNameBox);
 
-                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                     80, 20, 0.80f
             );
 
@@ -699,7 +699,7 @@ public class CreateMorphGeneticsScreen extends Screen {
 
                         deleteSelectedMorph();
 
-                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                     80, 20, 0.80f
             );
 
@@ -722,7 +722,7 @@ public class CreateMorphGeneticsScreen extends Screen {
 
                         overwriteSelectedMorph();
 
-                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                     80, 20, 0.80f
             );
 
@@ -738,7 +738,7 @@ public class CreateMorphGeneticsScreen extends Screen {
 
                         sendMorphToChat();
 
-                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                     80, 20, 0.80f
             );
 
@@ -755,7 +755,7 @@ public class CreateMorphGeneticsScreen extends Screen {
 
                         saveSelectedMorph();
 
-                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                     80, 20, 0.80f
             );
 
@@ -769,7 +769,7 @@ public class CreateMorphGeneticsScreen extends Screen {
                         this.removeWidget(savedMorphsScrollList);
                         this.removeWidget(saveMorphNameBox);
 
-                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                     80, 20, 0.80f
             );
 
@@ -788,7 +788,7 @@ public class CreateMorphGeneticsScreen extends Screen {
                     selectMode(setOnPresetSkinButton);
                     mainSectionActiveMenu = "base";
                     selectMainSection(baseSection);
-                }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                 80, 20, 0.8f, 0xFFFFFFFF
         );
 
@@ -804,7 +804,7 @@ public class CreateMorphGeneticsScreen extends Screen {
                     animationTime = 0f;
                     WCEClient.nextMenuSound();
 
-                }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                 60, 20, 0.8f, 0xFFFFFFFF
         );
 
@@ -858,7 +858,7 @@ public class CreateMorphGeneticsScreen extends Screen {
                     btn -> {
                         selectMainSection(baseSection);
                         mainSectionActiveMenu = "base";
-                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                     80, 20, 0.8f, 0xFFFFFFFF
             );
 
@@ -871,7 +871,7 @@ public class CreateMorphGeneticsScreen extends Screen {
                         if (setTortieButton.isSelected()) this.addRenderableWidget(orangeVariantList);
 
 
-                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                     80, 20, 0.8f, 0xFFFFFFFF
             );
 
@@ -884,7 +884,7 @@ public class CreateMorphGeneticsScreen extends Screen {
                         if (setHighWhiteButton.isSelected() || setLowWhiteButton.isSelected()) this.addRenderableWidget(whiteVariantList);
 
 
-                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                     80, 20, 0.8f, 0xFFFFFFFF
             );
 
@@ -898,7 +898,7 @@ public class CreateMorphGeneticsScreen extends Screen {
                             this.addRenderableWidget(albinoVariantList);
 
 
-                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                     80, 20, 0.8f, 0xFFFFFFFF
             );
 
@@ -909,7 +909,7 @@ public class CreateMorphGeneticsScreen extends Screen {
                         selectMainSection(chimeraSection);
                         mainSectionActiveMenu = "chimera";
 
-                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                     80, 20, 0.8f, 0xFFFFFFFF
             );
 
@@ -924,7 +924,7 @@ public class CreateMorphGeneticsScreen extends Screen {
                         selectMainSection(diluteSection);
                         mainSectionActiveMenu = "dilute";
 
-                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                     80, 20, 0.8f, 0xFFFFFFFF
             );
 
@@ -938,7 +938,7 @@ public class CreateMorphGeneticsScreen extends Screen {
                             this.removeWidget(tabbyVariantList);
                             this.addRenderableWidget(tabbyVariantList);
                         }
-                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                     80, 20, 0.8f, 0xFFFFFFFF
             );
 
@@ -952,7 +952,7 @@ public class CreateMorphGeneticsScreen extends Screen {
                             this.removeWidget(silverVariantList);
                             this.addRenderableWidget(silverVariantList);
                         }
-                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                     80, 20, 0.8f, 0xFFFFFFFF
             );
 
@@ -966,7 +966,7 @@ public class CreateMorphGeneticsScreen extends Screen {
                         this.addRenderableWidget(leftEyeVariantList);
                         if (heterochromiaSwitch.getValue()) this.addRenderableWidget(rightEyeVariantList);
 
-                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                     80, 20, 0.8f, 0xFFFFFFFF
             );
 
@@ -980,7 +980,7 @@ public class CreateMorphGeneticsScreen extends Screen {
                         this.addRenderableWidget(noiseList);
                         this.removeWidget(sizeSlider);
                         this.addRenderableWidget(sizeSlider);
-                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                     80, 20, 0.8f, 0xFFFFFFFF
             );
 
@@ -996,7 +996,7 @@ public class CreateMorphGeneticsScreen extends Screen {
                         this.addRenderableWidget(blueRufousingSlider);
                         this.removeWidget(scarsList);
                         this.addRenderableWidget(scarsList);
-                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                     80, 20, 0.8f, 0xFFFFFFFF
             );
 
@@ -1012,7 +1012,7 @@ public class CreateMorphGeneticsScreen extends Screen {
                     btn -> {
                         selectBase(setBlackButton);
                         genetics.base = setBlack;
-                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                     80, 20, 0.8f, 0xFFFFFFFF
             );
 
@@ -1022,7 +1022,7 @@ public class CreateMorphGeneticsScreen extends Screen {
                     btn -> {
                         selectBase(setChocolateButton);
                         genetics.base = setChocolate;
-                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                     80, 20, 0.8f, 0xFFFFFFFF
             );
 
@@ -1032,7 +1032,7 @@ public class CreateMorphGeneticsScreen extends Screen {
                     btn -> {
                         selectBase(setCinnamonButton);
                         genetics.base = setCinnamon;
-                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                     80, 20, 0.8f, 0xFFFFFFFF
             );
         }
@@ -1046,7 +1046,7 @@ public class CreateMorphGeneticsScreen extends Screen {
                         selectOrange(setOrangeButton);
                         genetics.orangeBase = setOrange;
                         this.removeWidget(orangeVariantList);
-                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                     80, 20, 0.8f, 0xFFFFFFFF
             );
 
@@ -1058,7 +1058,7 @@ public class CreateMorphGeneticsScreen extends Screen {
                         genetics.orangeBase = setTortie;
                         this.addRenderableWidget(orangeVariantList);
 
-                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                     80, 20, 0.8f, 0xFFFFFFFF
             );
 
@@ -1069,7 +1069,7 @@ public class CreateMorphGeneticsScreen extends Screen {
                         selectOrange(setNotOrangeButton);
                         genetics.orangeBase = setNotOrange;
                         this.removeWidget(orangeVariantList);
-                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                     80, 20, 0.8f, 0xFFFFFFFF
             );
 
@@ -1101,7 +1101,7 @@ public class CreateMorphGeneticsScreen extends Screen {
                         selectWhite(setFullWhiteButton);
                         genetics.whiteRatio = setFullWhite;
                         this.removeWidget(whiteVariantList);
-                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                     80, 20, 0.8f, 0xFFFFFFFF
             );
 
@@ -1114,7 +1114,7 @@ public class CreateMorphGeneticsScreen extends Screen {
                         this.removeWidget(whiteVariantList);
                         this.addRenderableWidget(whiteVariantList);
 
-                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                     80, 20, 0.8f, 0xFFFFFFFF
             );
 
@@ -1126,7 +1126,7 @@ public class CreateMorphGeneticsScreen extends Screen {
                         genetics.whiteRatio = setLowWhite;
                         this.removeWidget(whiteVariantList);
                         this.addRenderableWidget(whiteVariantList);
-                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                     80, 20, 0.8f, 0xFFFFFFFF
             );
 
@@ -1137,7 +1137,7 @@ public class CreateMorphGeneticsScreen extends Screen {
                         selectWhite(setNoWhiteButton);
                         genetics.whiteRatio = setNotWhite;
                         this.removeWidget(whiteVariantList);
-                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                     80, 20, 0.8f, 0xFFFFFFFF
             );
 
@@ -1170,7 +1170,7 @@ public class CreateMorphGeneticsScreen extends Screen {
                         selectAlbino(setNotAlbinoButton);
                         genetics.albino = setNotAlbino;
                         this.removeWidget(albinoVariantList);
-                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                     80, 20, 0.8f, 0xFFFFFFFF
             );
 
@@ -1182,7 +1182,7 @@ public class CreateMorphGeneticsScreen extends Screen {
                         genetics.albino = setTrueAlbino;
                         this.removeWidget(albinoVariantList);
 
-                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                     80, 20, 0.8f, 0xFFFFFFFF
             );
 
@@ -1195,7 +1195,7 @@ public class CreateMorphGeneticsScreen extends Screen {
                         this.removeWidget(albinoVariantList);
                         this.addRenderableWidget(albinoVariantList);
 
-                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                     80, 20, 0.8f, 0xFFFFFFFF
             );
 
@@ -1207,7 +1207,7 @@ public class CreateMorphGeneticsScreen extends Screen {
                         genetics.albino = setMink;
                         this.removeWidget(albinoVariantList);
                         this.addRenderableWidget(albinoVariantList);
-                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                     80, 20, 0.8f, 0xFFFFFFFF
             );
 
@@ -1220,7 +1220,7 @@ public class CreateMorphGeneticsScreen extends Screen {
                         this.removeWidget(albinoVariantList);
                         this.addRenderableWidget(albinoVariantList);
 
-                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                     80, 20, 0.8f, 0xFFFFFFFF
             );
 
@@ -1319,7 +1319,7 @@ public class CreateMorphGeneticsScreen extends Screen {
                         this.removeWidget(tabbyVariantList);
                         this.addRenderableWidget(tabbyVariantList);
 
-                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                     80, 20, 0.8f, 0xFFFFFFFF
             );
 
@@ -1331,7 +1331,7 @@ public class CreateMorphGeneticsScreen extends Screen {
                         genetics.tabbyStripes = setTabbyStripesClassic;
                         this.removeWidget(tabbyVariantList);
                         this.addRenderableWidget(tabbyVariantList);
-                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                     80, 20, 0.8f, 0xFFFFFFFF
             );
 
@@ -1378,7 +1378,7 @@ public class CreateMorphGeneticsScreen extends Screen {
                         selectLeftEye(setLeftEyeBlueButton);
                         eyeColorRight = setEyeBlue;
 
-                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                     80, 20, 0.8f, 0xFFFFFFFF
             );
 
@@ -1389,7 +1389,7 @@ public class CreateMorphGeneticsScreen extends Screen {
                         selectLeftEye(setLeftEyeGreenButton);
                         eyeColorRight = setEyeGreen;
 
-                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                     80, 20, 0.8f, 0xFFFFFFFF
             );
             setLeftEyeYellowButton = new GradientToggleButton(
@@ -1399,7 +1399,7 @@ public class CreateMorphGeneticsScreen extends Screen {
                         selectLeftEye(setLeftEyeYellowButton);
                         eyeColorRight = setEyeYellow;
 
-                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                     80, 20, 0.8f, 0xFFFFFFFF
             );
             setLeftEyeRedButton = new GradientToggleButton(
@@ -1409,7 +1409,7 @@ public class CreateMorphGeneticsScreen extends Screen {
                         selectLeftEye(setLeftEyeRedButton);
                         eyeColorRight = setEyeRed;
 
-                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                     80, 20, 0.8f, 0xFFFFFFFF
             );
             setLeftEyeBlindButton = new GradientToggleButton(
@@ -1419,7 +1419,7 @@ public class CreateMorphGeneticsScreen extends Screen {
                         selectLeftEye(setLeftEyeBlindButton);
                         eyeColorRight = setEyeBlind;
 
-                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                     80, 20, 0.8f, 0xFFFFFFFF
             );
 
@@ -1431,7 +1431,7 @@ public class CreateMorphGeneticsScreen extends Screen {
                         selectRightEye(setRightEyeBlueButton);
                         eyeColorLeft = setEyeBlue;
 
-                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                     80, 20, 0.8f, 0xFFFFFFFF
             );
 
@@ -1442,7 +1442,7 @@ public class CreateMorphGeneticsScreen extends Screen {
                         selectRightEye(setRightEyeGreenButton);
                         eyeColorLeft = setEyeGreen;
 
-                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                     80, 20, 0.8f, 0xFFFFFFFF
             );
             setRightEyeYellowButton = new GradientToggleButton(
@@ -1452,7 +1452,7 @@ public class CreateMorphGeneticsScreen extends Screen {
                         selectRightEye(setRightEyeYellowButton);
                         eyeColorLeft = setEyeYellow;
 
-                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                     80, 20, 0.8f, 0xFFFFFFFF
             );
             setRightEyeRedButton = new GradientToggleButton(
@@ -1462,7 +1462,7 @@ public class CreateMorphGeneticsScreen extends Screen {
                         selectRightEye(setRightEyeRedButton);
                         eyeColorLeft = setEyeRed;
 
-                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                     80, 20, 0.8f, 0xFFFFFFFF
             );
             setRightEyeBlindButton = new GradientToggleButton(
@@ -1472,7 +1472,7 @@ public class CreateMorphGeneticsScreen extends Screen {
                         selectRightEye(setRightEyeBlindButton);
                         eyeColorLeft = setEyeBlind;
 
-                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                     80, 20, 0.8f, 0xFFFFFFFF
             );
 
@@ -1683,7 +1683,7 @@ public class CreateMorphGeneticsScreen extends Screen {
                         closing = true;
                         animationTime = 0f;
                         goingToChimeraMenu = true;
-                    }, new ResourceLocation(WarriorCatsEvents.MODID, "textures/empty.png"),
+                    }, ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/empty.png"),
                     60, 20, 0.8f, 0xFFFFFFFF
             );
 
@@ -2628,7 +2628,7 @@ public class CreateMorphGeneticsScreen extends Screen {
                     LocalPlayer player = Minecraft.getInstance().player;
 
                     Path path = Minecraft.getInstance().gameDirectory.toPath().resolve("config")
-                            .resolve("warriorcats_events");
+                            .resolve(WarriorCatsEvents.MODID);
 
                     Component filePath = Component.literal(" [File]")
                             .withStyle(style -> style.withClickEvent(

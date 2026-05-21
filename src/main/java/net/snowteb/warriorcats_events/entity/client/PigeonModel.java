@@ -15,7 +15,7 @@ public class PigeonModel extends GeoModel<PigeonEntity> {
 
     @Override
     public ResourceLocation getModelResource(PigeonEntity object) {
-        return new ResourceLocation(WarriorCatsEvents.MODID, "geo/pigeon.geo.json");
+        return ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "geo/pigeon.geo.json");
     }
 
     /**
@@ -24,15 +24,15 @@ public class PigeonModel extends GeoModel<PigeonEntity> {
     @Override
     public ResourceLocation getTextureResource(PigeonEntity entity) {
         return switch (entity.getPigeonVariant()) {
-            case 1 -> new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/pigeon/pigeon_2.png");
-            case 2 -> new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/pigeon/pigeon_3.png");
-            default -> new ResourceLocation(WarriorCatsEvents.MODID, "textures/entity/pigeon/pigeon_1.png");
+            case 1 -> ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/pigeon/pigeon_2.png");
+            case 2 -> ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/pigeon/pigeon_3.png");
+            default -> ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/pigeon/pigeon_1.png");
         };
     }
 
     @Override
     public ResourceLocation getAnimationResource(PigeonEntity animatable) {
-        return new ResourceLocation(WarriorCatsEvents.MODID, "animations/pigeon.animation.json");
+        return ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "animations/pigeon.animation.json");
     }
 
 

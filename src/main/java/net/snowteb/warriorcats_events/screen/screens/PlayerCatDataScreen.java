@@ -6,7 +6,6 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.Style;
@@ -18,6 +17,7 @@ import net.snowteb.warriorcats_events.WCEClient;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.clan.WCEPlayerData;
 import net.snowteb.warriorcats_events.client.ClientClanData;
+import net.snowteb.warriorcats_events.diseases.Diseaseable;
 import net.snowteb.warriorcats_events.network.ModPackets;
 import net.snowteb.warriorcats_events.network.packet.c2s.clan.EditProfilePacket;
 import net.snowteb.warriorcats_events.network.packet.c2s.others.PlayerKitPacket;
@@ -48,17 +48,17 @@ public class PlayerCatDataScreen extends Screen {
     private final boolean editingProfile;
 
     private static final ResourceLocation CAT_NAME_TOAST =
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/catname_toast.png");
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/gui/clan_setup/catname_toast.png");
 
     private static final ResourceLocation BIO_TOAST =
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/bio_toast.png");
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/gui/clan_setup/bio_toast.png");
 
 
     private static final ResourceLocation SOCIALHEARTS_EMPTY =
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/socialhearts_empty.png");
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/gui/clan_setup/socialhearts_empty.png");
 
     private static final ResourceLocation HEARTS_FILL =
-            new ResourceLocation(WarriorCatsEvents.MODID, "textures/gui/clan_setup/hearts_fill.png");
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/gui/clan_setup/hearts_fill.png");
 
 
     private Button setBioButton;
@@ -101,41 +101,6 @@ public class PlayerCatDataScreen extends Screen {
         }
 
         ageText = Component.nullToEmpty(data.age.name());
-
-//        talkInteractButton = Button.builder(
-//                Component.literal("Talk"),
-//                btn -> {
-//                    ModPackets.sendToServer(new PerformInteractionTalkPacket(wCatEntity.getId()));
-//                    this.onClose();
-//                    Minecraft.getInstance().setScreen(null);
-//                }
-//        ).bounds(this.width - 85, 10, 80, 20).build();
-//
-//        givePreyInteractButton = Button.builder(
-//                Component.literal("Give Prey"),
-//                btn -> {
-//                    ModPackets.sendToServer(new PerformInteractionGivePreyPacket(wCatEntity.getId()));
-//                    this.onClose();
-//                    Minecraft.getInstance().setScreen(null);
-//                }
-//        ).bounds(this.width - 85, 35, 80, 20).build();
-//
-//        showAffectionInteractButton = Button.builder(
-//                Component.literal("Show Affection"),
-//                btn -> {
-//                    ModPackets.sendToServer(new PerformInteractionShowAffectionPacket(wCatEntity.getId()));
-//                    this.onClose();
-//                    Minecraft.getInstance().setScreen(null);
-//                }
-//        ).bounds(this.width - 85, 60, 80, 20).build();
-//
-//        if (wCatEntity.isTame() && wCatEntity.getInteractionCooldown() <=0) {
-//            this.addRenderableWidget(givePreyInteractButton);
-//            this.addRenderableWidget(talkInteractButton);
-//            this.addRenderableWidget(showAffectionInteractButton);
-//        } else {
-//            interactionCooldownTooltip = true;
-//        }
 
         drawMainMenu();
 
@@ -271,6 +236,11 @@ public class PlayerCatDataScreen extends Screen {
         }
         pGuiGraphics.pose().popPose();
 
+
+        if (player instanceof Diseaseable<?> diseaseable) {
+            WCEClient.renderDiseaseTooltipsUtD(diseaseable, pGuiGraphics, 170, 16, pMouseX, pMouseY);
+        }
+
     }
 
     @Override
@@ -311,24 +281,6 @@ public class PlayerCatDataScreen extends Screen {
             }
         }
 
-//        if (editingProfile) {
-//            this.addRenderableWidget(Button.builder(
-//                    Component.literal("Setup Bio"),
-//                    btn -> {
-//                        this.onClose();
-//
-//
-//                    }
-//            ).bounds(this.width - 85, 40, 80, 20).build());
-//
-//            this.addRenderableWidget(Button.builder(
-//                    Component.literal("Change Gender"),
-//                    btn -> {
-//                        this.onClose();
-//
-//                    }
-//            ).bounds(this.width - 85, 40, 80, 20).build());
-//        }
 
         if (editingProfile) {
             setBioButton = Button.builder(

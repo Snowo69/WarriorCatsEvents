@@ -23,6 +23,7 @@ public class WCEClientConfig {
         public final ForgeConfigSpec.BooleanValue OWN_CHAT_BUBBLES;
         public final ForgeConfigSpec.BooleanValue DISPLAY_TERRITORY;
         public final ForgeConfigSpec.BooleanValue CUSTOM_PANORAMA;
+        public final ForgeConfigSpec.BooleanValue SERENE_SEASONS_OVERLAY;
 
         public Client(ForgeConfigSpec.Builder builder) {
             builder.push("wce_client");
@@ -58,6 +59,10 @@ public class WCEClientConfig {
             CUSTOM_PANORAMA = builder
                     .comment("Whether WCE panorama will show")
                     .define("wcePanorama", true);
+
+            SERENE_SEASONS_OVERLAY = builder
+                    .comment("Whether the current season should display on your screen when Serene Seasons is installed")
+                    .define("sereneSeasonsOverlay", true);
 
 
             builder.pop();

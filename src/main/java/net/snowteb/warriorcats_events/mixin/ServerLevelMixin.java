@@ -7,13 +7,9 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.NaturalSpawner;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.AABB;
-import net.snowteb.warriorcats_events.block.entity.TreeStumpBlockEntity;
 import net.snowteb.warriorcats_events.clan.ClanData;
 import net.snowteb.warriorcats_events.entity.ModEntities;
 import org.spongepowered.asm.mixin.Mixin;
@@ -22,7 +18,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
-import java.util.Map;
 
 @Mixin(ServerLevel.class)
 public class ServerLevelMixin {
@@ -35,7 +30,7 @@ public class ServerLevelMixin {
             ChunkPos pos = pChunk.getPos();
             RandomSource random = sLevel.getRandom();
 
-            if ((sLevel.getGameTime() + pos.x + pos.z) % 5400 == 0 && random.nextFloat() < 0.20) {
+            if ((sLevel.getGameTime() + pos.x + pos.z) % 7200 == 0 && random.nextFloat() < 0.15) {
                 ClanData data = ClanData.get(sLevel.getServer().overworld());
                 List<ClanData.Clan> clans = data.getAllClans();
 
@@ -86,13 +81,14 @@ public class ServerLevelMixin {
                             case 0 -> ModEntities.SQUIRREL.get();
                             case 1 -> ModEntities.MOUSE.get();
                             case 2 -> ModEntities.PIGEON.get();
+                            case 3 -> EntityType.RABBIT;
                             default -> ModEntities.SQUIRREL.get();
                         };
                     }
 
                     AABB box = new AABB(
-                            pos.getMinBlockX() - 8, sLevel.getMinBuildHeight(), pos.getMinBlockZ() - 8,
-                            pos.getMaxBlockX() + 8, sLevel.getMaxBuildHeight(), pos.getMaxBlockZ() + 8
+                            pos.getMinBlockX() - 12, sLevel.getMinBuildHeight(), pos.getMinBlockZ() - 12,
+                            pos.getMaxBlockX() + 12, sLevel.getMaxBuildHeight(), pos.getMaxBlockZ() + 12
                     );
 
                     List<LivingEntity> entities = sLevel.getEntitiesOfClass(
@@ -101,11 +97,11 @@ public class ServerLevelMixin {
                             ent -> ent.getType() == type && ent.isAlive()
                     );
 
-                    if (entities.size() < 3) {
+                    if (entities.size() < 2) {
 
-                        int ammount = type == ModEntities.EAGLE.get() ? 1 : 1 + random.nextInt(maxCount);
+                        int amount = type == ModEntities.EAGLE.get() ? 1 : 1 + random.nextInt(maxCount);
 
-                        for (int i = 0; i < ammount; i++) {
+                        for (int i = 0; i < amount; i++) {
 
                             int offsetX = x + random.nextInt(8) - 4;
                             int offsetZ = z + random.nextInt(8) - 4;
@@ -121,7 +117,7 @@ public class ServerLevelMixin {
 
                                 if (!NaturalSpawner.isSpawnPositionOk(SpawnPlacements.Type.ON_GROUND, sLevel, finalPos, newEntity.getType())) continue;
 
-                                if (newEntity.checkSpawnRules(sLevel, MobSpawnType.NATURAL) && newEntity.checkSpawnObstruction(sLevel)) {
+                                if (newEntity.checkSpawnRules(sLevel, MobSpawnType.MOB_SUMMONED) && newEntity.checkSpawnObstruction(sLevel)) {
                                     sLevel.addFreshEntity(newEntity);
                                     sLevel.sendParticles(
                                             ParticleTypes.CLOUD, offsetX + 0.5, offsetY + 0.2, offsetZ + 0.5,
