@@ -42,7 +42,7 @@ public class ModEntities {
     public static final RegistryObject<EntityType<BadgerEntity>> BADGER =
             ENTITY_TYPES.register("badger",
                     () -> EntityType.Builder.of(BadgerEntity::new, MobCategory.CREATURE)
-                            .sized(1f,1f)
+                            .sized(1.1f,1.1f)
                             .build(ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "badger").toString()));
 
     public static final RegistryObject<EntityType<EagleEntity>> EAGLE =

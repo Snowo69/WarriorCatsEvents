@@ -7,6 +7,9 @@
     "warriorcats_events:dock_leaves",
     "warriorcats_events:sorrel_leaves",
     "warriorcats_events:yarrow_leaves",
+    "warriorcats_events:comfrey_leaves",
+    "warriorcats_events:juniper_berries",
+    "warriorcats_events:feverfew_leaves",
     "warriorcats_events:traveling_herbs"
   ]
 }

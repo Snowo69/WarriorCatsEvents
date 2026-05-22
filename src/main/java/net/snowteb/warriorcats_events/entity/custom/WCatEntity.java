@@ -2702,6 +2702,20 @@ public class WCatEntity extends TamableAnimal implements GeoEntity, Diseaseable<
                         medicineCatScentsBlock(pPlayer, ModBlocks.GLOWSHROOM.get(), 40);
                         return InteractionResult.SUCCESS;
                     }
+                    if (pPlayer.getItemInHand(pHand).is(ModItems.JUNIPER_BERRIES.get())) {
+                        medicineCatScentsBlock(pPlayer, ModBlocks.JUNIPERPLANT.get(), 40);
+                        return InteractionResult.SUCCESS;
+                    }
+                    if (pPlayer.getItemInHand(pHand).is(ModItems.COMFREY_LEAVES.get())
+                    || pPlayer.getItemInHand(pHand).is(ModItems.COMFREY_ROOT.get())
+                    ) {
+                        medicineCatScentsBlock(pPlayer, ModBlocks.COMFREYPLANT.get(), 40);
+                        return InteractionResult.SUCCESS;
+                    }
+                    if (pPlayer.getItemInHand(pHand).is(ModItems.FEVERFEW.get())) {
+                        medicineCatScentsBlock(pPlayer, ModBlocks.FEVERFEWPLANT.get(), 40);
+                        return InteractionResult.SUCCESS;
+                    }
                 }
             }
         }

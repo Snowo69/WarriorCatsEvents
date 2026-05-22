@@ -10,12 +10,12 @@
     "warriorcats_events:moss_ball",
     "minecraft:honey_bottle",
     "minecraft:honey_block",
-    "minecraft:kelp",
-    "minecraft:dried_kelp",
+    "#warriorcats_events:leaf_wrappings",
     "minecraft:cobweb",
     "minecraft:stick",
-    "minecraft:vine",
-    "warriorcats_events:deathberries",
-    "warriorcats_events:shredded_meat"
+    "#warriorcats_events:deathberries",
+    "warriorcats_events:shredded_meat",
+    "warriorcats_events:cobweb_on_a_stick",
+    "#warriorcats_events:comfrey_ingredients"
   ]
 }
