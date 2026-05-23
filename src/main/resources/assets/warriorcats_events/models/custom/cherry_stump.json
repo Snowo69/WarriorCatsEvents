@@ -1,0 +1,7 @@
+{
+  "parent": "warriorcats_events:block/tree_stump",
+  "textures": {
+    "0": "warriorcats_events:block/cherry_stump",
+    "particle": "warriorcats_events:block/cherry_stump"
+  }
+}

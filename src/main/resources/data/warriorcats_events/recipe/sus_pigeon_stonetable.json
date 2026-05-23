@@ -1,0 +1,11 @@
+{
+  "type": "warriorcats_events:herbs",
+  "ingredients": [
+    { "item": "warriorcats_events:pigeon" },
+    { "item": "warriorcats_events:deathberries" }
+  ],
+  "result": {
+    "id": "warriorcats_events:suspicious_pigeon",
+    "count": 1
+  }
+}

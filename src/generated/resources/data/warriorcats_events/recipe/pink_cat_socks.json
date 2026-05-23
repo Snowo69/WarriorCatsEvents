@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "item": "minecraft:pink_wool"
+    }
+  },
+  "pattern": [
+    "A A"
+  ],
+  "result": {
+    "count": 1,
+    "id": "warriorcats_events:pink_cat_socks"
+  }
+}

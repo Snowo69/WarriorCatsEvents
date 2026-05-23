@@ -1,0 +1,10 @@
+
+{
+  "variants": {
+    "facing=north": { "model": "warriorcats_events:block/fresh_kill_pile" },
+    "facing=south": { "model": "warriorcats_events:block/fresh_kill_pile", "y": 180 },
+    "facing=west":  { "model": "warriorcats_events:block/fresh_kill_pile", "y": 270 },
+    "facing=east":  { "model": "warriorcats_events:block/fresh_kill_pile", "y": 90 }
+  }
+}
+

@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "warriorcats_events:animal_tooth"
+    },
+    {
+      "item": "warriorcats_events:animal_tooth"
+    },
+    {
+      "item": "warriorcats_events:animal_tooth"
+    },
+    {
+      "item": "warriorcats_events:animal_tooth"
+    },
+    {
+      "item": "minecraft:vine"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "warriorcats_events:animal_teeth"
+  }
+}

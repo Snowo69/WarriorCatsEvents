@@ -1,8 +1,9 @@
 plugins {
     id 'java-library'
     id 'maven-publish'
-    id 'net.neoforged.moddev' version '2.0.141'
+    id 'net.neoforged.moddev' version '2.0.78'
     id 'idea'
+
 }
 
 tasks.named('wrapper', Wrapper).configure {
@@ -27,7 +28,43 @@ sourceSets.main.resources {
 }
 
 repositories {
-    // Add here additional repositories if required by some of the dependencies below.
+
+    maven {
+        name = 'GeckoLib'
+        url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
+        content {
+            includeGroup("software.bernie.geckolib")
+        }
+    }
+
+    maven {
+        name "tocraftMavenPublic"
+        url "https://maven.tocraft.dev/public"
+    }
+
+    maven { url = "https://maven.shedaniel.me/" }
+
+    maven { url = 'https://maven.blamejared.com' }
+
+    maven {
+        name = "Illusive Soulworks maven"
+        url = "https://maven.theillusivec4.top/"
+    }
+
+    maven {
+        // location of the maven that hosts JEI files since January 2023
+        name = "Jared's maven"
+        url = "https://maven.blamejared.com/"
+    }
+
+    maven {
+        url = 'https://maven.minecraftforge.net/'
+    }
+
+    maven {
+        url "https://cursemaven.com"
+    }
+
 }
 
 base {
@@ -113,32 +150,39 @@ neoForge {
 // This configuration should be used instead of 'runtimeOnly' to declare
 // a dependency that will be present for runtime testing but that is
 // "optional", meaning it will not be pulled by dependents of this mod.
-configurations {
-    runtimeClasspath.extendsFrom localRuntime
-}
 
 dependencies {
-    // Example optional mod dependency with JEI
-    // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime
-    // compileOnly "mezz.jei:jei-${mc_version}-common-api:${jei_version}"
-    // compileOnly "mezz.jei:jei-${mc_version}-neoforge-api:${jei_version}"
-    // We add the full version to localRuntime, not runtimeOnly, so that we do not publish a dependency on it
-    // localRuntime "mezz.jei:jei-${mc_version}-neoforge:${jei_version}"
+//    implementation "dev.tocraft:walkers-neoforge:1.21-5.8.11"
+//    implementation "dev.tocraft:craftedcore-neoforge:1.21-5.8.2"
 
-    // Example mod dependency using a mod jar from ./libs with a flat dir repository
-    // This maps to ./libs/coolmod-${mc_version}-${coolmod_version}.jar
-    // The group id is ignored when searching -- in this case, it is "blank"
-    // implementation "blank:coolmod-${mc_version}:${coolmod_version}"
+    compileOnly ("curse.maven:woodwalkers-868922:7776214")
+    runtimeOnly ("curse.maven:woodwalkers-868922:7776214")
+    runtimeOnly ("curse.maven:craftedcore-923377:7575403")
 
-    // Example mod dependency using a file as dependency
-    // implementation files("libs/coolmod-${mc_version}-${coolmod_version}.jar")
 
-    // Example project dependency using a sister or child project:
-    // implementation project(":myproject")
+//    compileOnly ("vazkii.patchouli:Patchouli:1.21.1-93-NEOFORGE:api")
+//    runtimeOnly ("vazkii.patchouli:Patchouli:1.21.1-93-NEOFORGE")
 
-    // For more info:
-    // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
-    // http://www.gradle.org/docs/current/userguide/dependency_management.html
+    compileOnly ("curse.maven:patchouli-306770:7730942")
+    runtimeOnly ("curse.maven:patchouli-306770:7730942")
+
+
+//    compileOnly "top.theillusivec4.curios:curios-neoforge:${curios_version}:api"
+//    runtimeOnly "top.theillusivec4.curios:curios-neoforge:${curios_version}"
+
+    compileOnly ("curse.maven:curios-309927:6529130")
+    runtimeOnly ("curse.maven:curios-309927:6529130")
+
+
+    // compile against the JEI API but do not include it at runtime
+    compileOnly("mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}")
+    runtimeOnly("mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}")
+
+    implementation "software.bernie.geckolib:geckolib-neoforge-${minecraft_version}:${geckolib_version}"
+
+    compileOnly (("com.github.glitchfiend:SereneSeasons-neoforge:1.21.1-10.1.0.3"))
+    runtimeOnly (("com.github.glitchfiend:SereneSeasons-neoforge:1.21.1-10.1.0.3"))
+    runtimeOnly (("com.github.glitchfiend:GlitchCore-neoforge:1.21.1-2.1.0.2"))
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.

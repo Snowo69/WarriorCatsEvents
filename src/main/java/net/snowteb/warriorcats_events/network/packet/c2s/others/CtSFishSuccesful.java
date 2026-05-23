@@ -1,0 +1,124 @@
+package net.snowteb.warriorcats_events.network.packet.c2s.others;
+
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.ExperienceOrb;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+import net.snowteb.warriorcats_events.WarriorCatsEvents;
+
+public class CtSFishSuccesful implements CustomPacketPayload {
+
+    public CtSFishSuccesful() {}
+
+    public static void encode(CtSFishSuccesful msg, FriendlyByteBuf buf) {}
+
+    public static CtSFishSuccesful decode(FriendlyByteBuf buf) {
+        return new CtSFishSuccesful();
+    }
+
+    public static void handle(CtSFishSuccesful msg, IPayloadContext ctx) {
+
+        ctx.enqueueWork(() -> {
+            ServerPlayer player = (ServerPlayer) ctx.player();
+
+            InteractionHand pHand = InteractionHand.MAIN_HAND;
+            ItemStack itemstack = player.getItemInHand(pHand);
+            itemstack.hurtAndBreak(3, player.serverLevel(), player, (p) -> {});
+
+            ServerLevel level = player.serverLevel();
+            RandomSource random = level.getRandom();
+
+            int itemNumber = random.nextInt(8) + 1;
+            ItemStack itemEarned;
+
+
+            switch (itemNumber) {
+                case 1 -> itemEarned = new ItemStack(Items.COD);
+                case 2 -> itemEarned = new ItemStack(Items.SALMON);
+                case 3 -> itemEarned = new ItemStack(Items.COD);
+                case 4 -> itemEarned = new ItemStack(Items.SALMON);
+                case 5 -> itemEarned = new ItemStack(Items.COD);
+                case 6 -> itemEarned = new ItemStack(Items.SALMON);
+                case 7 -> itemEarned = new ItemStack(Items.PUFFERFISH);
+                case 8 -> itemEarned = new ItemStack(Items.TROPICAL_FISH);
+                default -> itemEarned = ItemStack.EMPTY;
+            }
+
+            if (itemEarned.isEmpty()) return;
+
+            ItemEntity drop = new ItemEntity(
+                    level,
+                    player.getX(),
+                    player.getY() + 0.5,
+                    player.getZ(),
+                    itemEarned
+            );
+
+            drop.setPickUpDelay(10);
+            drop.setDeltaMovement(
+                    random.nextGaussian() * 0.05,
+                    0.2,
+                    random.nextGaussian() * 0.05
+            );
+
+            ExperienceOrb.award(level, player.position(), random.nextInt(4) + 2);
+
+            level.addFreshEntity(drop);
+
+            level.playSound(
+                    null,
+                    player.blockPosition(),
+                    SoundEvents.AMBIENT_UNDERWATER_EXIT,
+                    SoundSource.PLAYERS,
+                    0.8F,
+                    1.0F
+            );
+            level.playSound(
+                    null,
+                    player.blockPosition(),
+                    SoundEvents.COD_DEATH,
+                    SoundSource.PLAYERS,
+                    0.8F,
+                    1.0F
+            );
+
+            level.sendParticles(
+                    ParticleTypes.SPLASH,
+                    player.getX(),
+                    player.getY() + 0.5,
+                    player.getZ(),
+                    30,
+                    0.4, 0.2, 0.4,
+                    0.02
+            );
+
+        });
+
+    }
+
+    public static final Type<CtSFishSuccesful> TYPE =
+            new Type<>(ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "fish_successful"));
+
+    public static final StreamCodec<FriendlyByteBuf, CtSFishSuccesful> CODEC =
+            StreamCodec.of(
+                    (buf, pkt) -> encode(pkt, buf),
+                    buf -> decode(buf)
+            );
+
+    @Override
+    public Type<? extends CustomPacketPayload> type() {
+        return TYPE;
+    }
+}
