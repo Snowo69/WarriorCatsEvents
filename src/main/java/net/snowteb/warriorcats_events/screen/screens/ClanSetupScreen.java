@@ -208,11 +208,10 @@ public class ClanSetupScreen extends Screen {
         super.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
 
 
-        int xPosition = 10;
+        int xPosition = centerx-90;
         int yPosition = 0;
 
         float scale = 0.8f;
-        pGuiGraphics.enableScissor((int) (xPosition * scale + menuX), yPosition, (int) ((int) (10 + 200 * scale + menuX)), (int) (yPosition + 56 * scale));
         pGuiGraphics.pose().pushPose();
         pGuiGraphics.pose().translate(xPosition, yPosition, 0);
         pGuiGraphics.pose().scale(scale, scale, scale);
@@ -220,19 +219,10 @@ public class ClanSetupScreen extends Screen {
                 BANNER,
                 0, 0,
                 0, 0,
-                800, 225,
+                200, 56,
                 200, 56
         );
-        pGuiGraphics.disableScissor();
         pGuiGraphics.pose().popPose();
-
-//        pGuiGraphics.blit(
-//                WCEClient.WCE_LOGO,
-//                0, 0,
-//                0, 0,
-//                50, 50,
-//                50, 50
-//        );
 
         pGuiGraphics.pose().popPose();
 

@@ -516,7 +516,7 @@ public class CreateMorphGeneticsScreen extends Screen {
         }
 
         setOnGeneticalSkinButton = new GradientToggleButton(
-                130, 10,
+                10, 10,
                 60, 15,
                 Component.literal("Custom morph"),
                 btn -> {
@@ -776,7 +776,7 @@ public class CreateMorphGeneticsScreen extends Screen {
         }
 
         setOnPresetSkinButton = new GradientToggleButton(
-                195, 10,
+                75, 10,
                 60, 15,
                 Component.literal("Preset morph"),
                 btn -> {
@@ -1828,15 +1828,15 @@ public class CreateMorphGeneticsScreen extends Screen {
         pGuiGraphics.pose().pushPose();
         pGuiGraphics.pose().translate(menuX, 0, 0);
 
-        pGuiGraphics.enableScissor((int) (10 + menuX), 5, (int) (124 + menuX), 5 + 34);
-        pGuiGraphics.blit(
-                BANNER,
-                10, 5,
-                0, 0,
-                800, 225,
-                114, 32
-        );
-        pGuiGraphics.disableScissor();
+//        pGuiGraphics.enableScissor((int) (10 + menuX), 5, (int) (124 + menuX), 5 + 34);
+//        pGuiGraphics.blit(
+//                BANNER,
+//                10, 5,
+//                0, 0,
+//                800, 225,
+//                114, 32
+//        );
+//        pGuiGraphics.disableScissor();
 
 
 

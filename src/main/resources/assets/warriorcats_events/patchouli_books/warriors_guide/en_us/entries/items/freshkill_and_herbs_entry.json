@@ -13,10 +13,9 @@
       "title": "Freshkill and Herbs"
     },
     {
-      "type": "patchouli:crafting",
+      "type": "patchouli:text",
       "text": "Back in the days we used to offer these to loner cats. They would always become our closest friends, and even join our clan and our cause. I'm sure no cat could decline this offer.",
-      "title": "Freshkill and Herbs",
-      "recipe": "warriorcats_events:freshkill_and_herbs"
+      "title": "Freshkill and Herbs"
     }
   ]
 

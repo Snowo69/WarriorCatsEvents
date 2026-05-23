@@ -115,19 +115,6 @@ public class SpawnLocationScreen extends Screen {
 
         super.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
 
-        int xPosition = -230;
-        int yPosition = -120;
-
-        pGuiGraphics.enableScissor((int) (centerX + xPosition + menuX), centerY + yPosition, (int) (centerX + xPosition + 200 + menuX), centerY + yPosition + 56);
-        pGuiGraphics.blit(
-                BANNER,
-                centerX - 230, centerY - 120,
-                0, 0,
-                800, 225,
-                200, 56
-        );
-        pGuiGraphics.disableScissor();
-
         pGuiGraphics.pose().popPose();
     }
 

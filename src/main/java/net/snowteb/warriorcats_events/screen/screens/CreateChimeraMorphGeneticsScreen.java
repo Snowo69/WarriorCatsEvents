@@ -813,15 +813,15 @@ public class CreateChimeraMorphGeneticsScreen extends Screen {
         pGuiGraphics.pose().pushPose();
         pGuiGraphics.pose().translate(menuX, 0, 0);
 
-        pGuiGraphics.enableScissor((int) (10 + menuX), 5, (int) (124 + menuX), 5 + 34);
-        pGuiGraphics.blit(
-                BANNER,
-                10, 5,
-                0, 0,
-                800, 225,
-                114, 32
-        );
-        pGuiGraphics.disableScissor();
+//        pGuiGraphics.enableScissor((int) (10 + menuX), 5, (int) (124 + menuX), 5 + 34);
+//        pGuiGraphics.blit(
+//                BANNER,
+//                10, 5,
+//                0, 0,
+//                800, 225,
+//                114, 32
+//        );
+//        pGuiGraphics.disableScissor();
 
         pGuiGraphics.blit(WCEClient.WCE_TITLE,
                 centerX - 200 - this.width,
