@@ -1,0 +1,24 @@
+{
+  "parent": "warriorcats_events:into_the_wild",
+  "display": {
+    "icon": {
+      "id": "minecraft:experience_bottle",
+      "count": 1
+    },
+    "title": "Skill Tree",
+    "description": "You have discovered you can improve your skills!",
+    "show_toast": false,
+    "announce_to_chat": false,
+    "hidden": false
+  },
+  "criteria": {
+    "tick": {
+      "trigger": "minecraft:tick"
+    }
+  },
+  "rewards": {
+    "loot": [],
+    "experience": 0
+  },
+  "sends_telemetry_event": false
+}

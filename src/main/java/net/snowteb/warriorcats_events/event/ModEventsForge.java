@@ -42,10 +42,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.living.LivingEntityUseItemEvent;
 import net.neoforged.neoforge.event.entity.living.LivingFallEvent;
-import net.neoforged.neoforge.event.entity.player.AttackEntityEvent;
-import net.neoforged.neoforge.event.entity.player.CanPlayerSleepEvent;
-import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
-import net.neoforged.neoforge.event.entity.player.PlayerWakeUpEvent;
+import net.neoforged.neoforge.event.entity.player.*;
 import net.neoforged.neoforge.event.level.SleepFinishedTimeEvent;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.attachments.CapabilityManager;
@@ -215,11 +212,20 @@ public class ModEventsForge {
 
 
     @SubscribeEvent
+    public static void onCanContinueSleeping(CanContinueSleepingEvent event) {
+        LivingEntity livingEntity = event.getEntity();
+        if (livingEntity instanceof ServerPlayer) {
+            if (event.getProblem() == Player.BedSleepingProblem.NOT_POSSIBLE_NOW) event.setContinueSleeping(true);
+        }
+    }
+
+
+    @SubscribeEvent
     public static void onSleepAttempt(CanPlayerSleepEvent event) {
         ServerPlayer player = event.getEntity();
         if (!player.level().isDay()) return;
 
-        if (event.getEntity().level().isDay()) {
+        if (player.level().isDay()) {
             event.setProblem(null);
         }
 
@@ -232,7 +238,6 @@ public class ModEventsForge {
                     true
             );
             event.setProblem(Player.BedSleepingProblem.OTHER_PROBLEM);
-
         }
     }
 

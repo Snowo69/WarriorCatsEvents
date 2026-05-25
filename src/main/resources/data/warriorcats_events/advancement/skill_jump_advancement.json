@@ -1,0 +1,24 @@
+{
+  "parent": "warriorcats_events:skill_hp_advancement",
+  "display": {
+    "icon": {
+      "id": "minecraft:slime_ball",
+      "count": 1
+    },
+    "title": "Look! I can fly!",
+    "description": "You have mastered your jump skill!",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "unlock_skill": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "rewards": {
+    "loot": [],
+    "experience": 100
+  },
+  "sends_telemetry_event": false
+}

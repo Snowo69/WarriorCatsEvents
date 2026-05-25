@@ -97,7 +97,10 @@ public class ChangelogScrollList extends AbstractSelectionList<ChangelogScrollLi
         public LogEntry(String log, Font font, int width, int index, boolean lastItem) {
             this.log = log;
             this.lastItem = lastItem;
-            if (index == 0 || index == 2 || lastItem) {
+
+            boolean formatted = log.startsWith("$");
+
+            if (formatted) {
                 itemHeight = 20;
             } else {
                 itemHeight = 7*font.split(FormattedText.of(log), (int) (((width*(1/0.7f)) - 14)) ).size() + 7;
@@ -111,19 +114,34 @@ public class ChangelogScrollList extends AbstractSelectionList<ChangelogScrollLi
 
             Minecraft mc = Minecraft.getInstance();
 
+            String text = this.log;
+
             guiGraphics.fill(left, top, left + width, top + height, 0x22000000);
 
             float scale = 0.7f;
-            if (index == 0) scale = 1.2f;
-            if (index == 2) scale = 1.1f;
-            if (lastItem) scale = 0.9f;
+            if (text.startsWith("$(#) ")) {
+                scale = 1.2f;
+            }
+            if (text.startsWith("$(##) ")) {
+                scale = 1.1f;
+            }
+            if (text.startsWith("$(/#) ")) {
+                scale = 0.9f;
+            }
 
             int color = 0xFFFFFF;
-            if (index == 0 || index == 2) color = ChatFormatting.GOLD.getColor();
-            if (lastItem) color = ChatFormatting.GRAY.getColor();
+            if (text.startsWith("$(#) ") || text.startsWith("$(##)")) {
+                color = ChatFormatting.GOLD.getColor();
+            }
+            if (text.startsWith("$(/#) ")) color = ChatFormatting.GRAY.getColor();
+
+
+            text = text.replace("$(/#) ", "");
+            text = text.replace("$(#) ", "");
+            text = text.replace("$(##) ", "");
 
             if (lines == null) {
-                lines = mc.font.split(FormattedText.of(log), (int) ((width*(1/scale)) - 14));
+                lines = mc.font.split(FormattedText.of(text), (int) ((width*(1/scale)) - 14));
             }
 
             int y = top + 4;

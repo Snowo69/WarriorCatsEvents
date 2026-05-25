@@ -44,7 +44,7 @@ import tocraft.walkers.api.PlayerShape;
 public class LivingEntityMixin implements ClimbDataAccessor {
 
     @ModifyArg(method = "hurt", at = @At(value = "INVOKE",
-            target = "Lnet/minecraft/world/entity/LivingEntity;actuallyHurt(Lnet/minecraft/world/damagesource/DamageSource;F)V"), index = 1, remap = false)
+            target = "Lnet/minecraft/world/entity/LivingEntity;actuallyHurt(Lnet/minecraft/world/damagesource/DamageSource;F)V"), index = 1)
     public float reduceFallDamageEffect(DamageSource source, float amount) {
         LivingEntity entity = (LivingEntity)(Object)this;
 
@@ -69,7 +69,7 @@ public class LivingEntityMixin implements ClimbDataAccessor {
         return amount;
     }
 
-    @Inject(method = "startSleeping", at = @At("TAIL"), remap = false)
+    @Inject(method = "startSleeping", at = @At("TAIL"))
     public void startSleep(BlockPos pPos, CallbackInfo ci) {
         LivingEntity entity =  (LivingEntity) (Object) this;
         if (entity instanceof ServerPlayer sPlayer) {
@@ -97,7 +97,7 @@ public class LivingEntityMixin implements ClimbDataAccessor {
     @Unique
     private static final int MAX_CLIMB_TIME = 800;
 
-    @Inject(method = "onClimbable", at = @At("HEAD"), cancellable = true, remap = false)
+    @Inject(method = "onClimbable", at = @At("HEAD"), cancellable = true)
     protected void allowPlayerClimb(CallbackInfoReturnable<Boolean> cir) {
         if ((LivingEntity) (Object) this instanceof Player player) {
             LivingEntity shape = PlayerShape.getCurrentShape(player);
@@ -108,7 +108,7 @@ public class LivingEntityMixin implements ClimbDataAccessor {
     }
 
 
-    @Inject(method = "handleOnClimbable", at = @At("HEAD"), cancellable = true, remap = false)
+    @Inject(method = "handleOnClimbable", at = @At("HEAD"), cancellable = true)
     protected void handleClimb(CallbackInfoReturnable<Vec3> cir) {
         if ((LivingEntity) (Object) this instanceof Player player) {
             LivingEntity shape = PlayerShape.getCurrentShape(player);
@@ -139,7 +139,7 @@ public class LivingEntityMixin implements ClimbDataAccessor {
         return -0.01D - (0.1D* wce$getClimbCoefficientToOne(climbTicks));
     }
 
-    @ModifyConstant(method = "handleRelativeFrictionAndCalculateMovement", constant = @Constant(doubleValue = 0.2D), remap = false)
+    @ModifyConstant(method = "handleRelativeFrictionAndCalculateMovement", constant = @Constant(doubleValue = 0.2D))
     private double modifyClimbSpeed(double original) {
         if ((LivingEntity) (Object) this instanceof Player player) {
             if (PlayerShape.getCurrentShape(player) instanceof WCatEntity) {
@@ -366,7 +366,7 @@ public class LivingEntityMixin implements ClimbDataAccessor {
 
     @Unique
     private int wce$sprintTime = 0;
-    @Inject(method = "tick", at = @At("HEAD"), remap = false)
+    @Inject(method = "tick", at = @At("HEAD"))
     public void tick(CallbackInfo ci) {
 
         LivingEntity self = (LivingEntity) (Object) this;
@@ -380,7 +380,7 @@ public class LivingEntityMixin implements ClimbDataAccessor {
         this.wce$exhaustionManager();
     }
 
-    @Inject(method = "aiStep", at = @At("TAIL"), remap = false)
+    @Inject(method = "aiStep", at = @At("TAIL"))
     public void aiStep(CallbackInfo ci) {
         LivingEntity self = (LivingEntity) (Object) this;
         if (self instanceof Player player && this.wce$isClimbing()) {
@@ -392,7 +392,7 @@ public class LivingEntityMixin implements ClimbDataAccessor {
         }
     }
 
-    @Inject(method = "defineSynchedData", at = @At("TAIL"), remap = false)
+    @Inject(method = "defineSynchedData", at = @At("TAIL"))
     public void defineClimbingData(SynchedEntityData.Builder builder, CallbackInfo ci) {
         LivingEntity self = (LivingEntity) (Object) this;
         builder.define(wce$CLIMBING, false);
@@ -401,7 +401,7 @@ public class LivingEntityMixin implements ClimbDataAccessor {
 
     }
 
-    @Inject(method = "tickHeadTurn", at = @At("HEAD"), cancellable = true, remap = false)
+    @Inject(method = "tickHeadTurn", at = @At("HEAD"), cancellable = true)
     public void cancelTurn(float pYRot, float pAnimStep, CallbackInfoReturnable<Float> cir) {
         if (this.wce$isClimbing()) {
             cir.cancel();

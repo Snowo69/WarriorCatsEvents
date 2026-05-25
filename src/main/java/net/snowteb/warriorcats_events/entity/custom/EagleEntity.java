@@ -129,7 +129,7 @@ public class EagleEntity extends FlyingMob implements GeoEntity, OwnableEntity {
             this.setControlMode(Control.WALK);
         }
 
-        if (this.getRandom().nextFloat() < 0.2) {
+        if (this.getRandom().nextFloat() < 0.15) {
             this.wasBornAgressive = false;
         }
 
@@ -1348,6 +1348,13 @@ public class EagleEntity extends FlyingMob implements GeoEntity, OwnableEntity {
         }
 
         if (pPassenger instanceof Player) pPassenger.stopRiding();
+    }
+
+    @Override
+    protected void positionRider(Entity passenger, MoveFunction callback) {
+        Vec3 pasPos = this.getPassengerRidingPosition(passenger);
+        Vec3 vehPos = passenger.getVehicleAttachmentPoint(this);
+        callback.accept(passenger, pasPos.x - vehPos.x, pasPos.y - vehPos.y - 1.5f, pasPos.z - vehPos.z);
     }
 
     @Override

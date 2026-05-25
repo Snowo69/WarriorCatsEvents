@@ -1,8 +1,6 @@
 package net.snowteb.warriorcats_events.network.packet.s2c.clan;
 
 import io.netty.buffer.Unpooled;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
@@ -156,16 +154,7 @@ public class S2CClanListPacket implements CustomPacketPayload {
 
     public static void handle(S2CClanListPacket msg, IPayloadContext ctx) {
         ctx.enqueueWork(() -> {
-            if (Minecraft.getInstance().player != null) {
-                LocalPlayer localPlayer = Minecraft.getInstance().player;
-                if (WarriorCatsEvents.Collaborators.isOwner(localPlayer.getUUID())) {
-                    if (localPlayer.isSpectator()) {
-                        int size = S2CClanListPacket.measure(msg);
-                        String text = "Size: " + size/1000 + " kb";
-                        localPlayer.sendSystemMessage(Component.literal(text));
-                    }
-                }
-            }
+            ClientPacketHandles.measurePacketSize(msg);
 
             ClientClanCache.setClans(msg.clans);
             WCEClient.playLocalSound(ModSounds.MENU_OPEN.get(), SoundSource.NEUTRAL, 0.8f,1.3f);
@@ -173,6 +162,8 @@ public class S2CClanListPacket implements CustomPacketPayload {
             ClientPacketHandles.openClanListScreen(msg.seeingMyClan, msg.territoryMap);
         });
     }
+
+
 
     public static final Type<S2CClanListPacket> TYPE =
             new Type<>(ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "clan_list"));

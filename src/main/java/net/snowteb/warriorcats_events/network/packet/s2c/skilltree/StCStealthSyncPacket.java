@@ -1,15 +1,12 @@
 package net.snowteb.warriorcats_events.network.packet.s2c.skilltree;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
-import net.snowteb.warriorcats_events.attachments.CapabilityManager;
-import net.snowteb.warriorcats_events.attachments.ModAttachments;
+import net.snowteb.warriorcats_events.client.ClientPacketHandles;
 
 public class StCStealthSyncPacket implements CustomPacketPayload {
 
@@ -42,18 +39,12 @@ public class StCStealthSyncPacket implements CustomPacketPayload {
     public boolean handle(IPayloadContext ctx) {
 
         ctx.enqueueWork(() -> {
-            Minecraft mc = Minecraft.getInstance();
-            LocalPlayer player = mc.player;
-            if (player == null) return;
-
-            CapabilityManager.attachmentProvider(player, ModAttachments.PLAYER_STEALTH, cap -> {
-                cap.setUnlocked(unlocked);
-                cap.setStealthOn(isStealthOn);
-                cap.setOn(isSwitchOn);
-            });
+            ClientPacketHandles.syncStealth(unlocked, isStealthOn, isSwitchOn);
         });
         return true;
     }
+
+
 
     public static final Type<StCStealthSyncPacket> TYPE =
             new Type<>(ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "stealth_sync"));

@@ -66,17 +66,12 @@ public class SpawnLocationScreen extends Screen {
             if (menuX < targetX) menuX = targetX;
         }
 
-        pGuiGraphics.blit(
-                BG_TEXTURE,
-                0,
-                0,
-                0,
-                0,
-                this.width, this.height,
-                this.width, this.height
-        );
+//        pGuiGraphics.blit(BG_TEXTURE, 0, 0, 0, 0, this.width, this.height, this.width, this.height);
 
-        this.renderBackground(pGuiGraphics,  pMouseX, pMouseY, pPartialTick);
+        this.renderPanorama(pGuiGraphics, pPartialTick);
+        this.renderMenuBackground(pGuiGraphics);
+
+        this.renderBackground(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
 
         pGuiGraphics.pose().pushPose();
         pGuiGraphics.pose().translate(menuX, 0, 0);
@@ -131,17 +126,8 @@ public class SpawnLocationScreen extends Screen {
             ModPackets.sendToServer(new CtSTeleportToLocationPacket(32));
 
             if (WCEClientConfig.CLIENT.AMBIENT_MUSIC.get()) {
-                Minecraft.getInstance().getSoundManager().play(
-                        new SimpleSoundInstance(
-                                ModSounds.GENERATIONS_BG.get().getLocation(),
-                                SoundSource.MUSIC, 0.3F, 1.0F,
-                                SoundInstance.createUnseededRandom(),
-                                false, 0,
-                                SoundInstance.Attenuation.NONE,
-                                0, 0, 0,
-                                true
-                        )
-                );
+                Minecraft mc = Minecraft.getInstance();
+                mc.getMusicManager().startPlaying(WCEClient.GENERATIONS_BG_MUSIC);
             }
         }
         return super.keyPressed(keyCode, scanCode, modifiers);
@@ -292,21 +278,9 @@ public class SpawnLocationScreen extends Screen {
 
         if (WCEClientConfig.CLIENT.AMBIENT_MUSIC.get()) {
             Minecraft mc = Minecraft.getInstance();
-            mc.getSoundManager().play(
-                    new SimpleSoundInstance(
-                            ModSounds.GENERATIONS_BG.get().getLocation(),
-                            SoundSource.MUSIC,
-                            0.3F,
-                            1.0F,
-                            SoundInstance.createUnseededRandom(),
-                            false,
-                            0,
-                            SoundInstance.Attenuation.NONE,
-                            0, 0, 0,
-                            true
-                    )
-            );
+            mc.getMusicManager().startPlaying(WCEClient.GENERATIONS_BG_MUSIC);
         }
+
         ModPackets.sendToServer(new CtSTeleportToLocationPacket(locationValue));
 
         LocalPlayer player = Minecraft.getInstance().player;

@@ -33,8 +33,8 @@ public class ThirstHUD {
         if (mc.screen != null) {
             if (!(mc.screen instanceof ChatScreen)) return;
         }
+        if (mc.options.hideGui) return;
 
-        ;
 
         int x = Minecraft.getInstance().getWindow().getGuiScaledWidth() / 2 + 7;
         int y = Minecraft.getInstance().getWindow().getGuiScaledHeight() - 51;

@@ -6,11 +6,7 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
-import net.snowteb.warriorcats_events.attachments.CapabilityManager;
-
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.LocalPlayer;
-import net.snowteb.warriorcats_events.attachments.ModAttachments;
+import net.snowteb.warriorcats_events.client.ClientPacketHandles;
 
 public class SyncSkillDataPacket implements CustomPacketPayload {
     private final int speedLevel;
@@ -49,21 +45,12 @@ public class SyncSkillDataPacket implements CustomPacketPayload {
 
     public boolean handle(IPayloadContext context) {
         context.enqueueWork(() -> {
-            LocalPlayer player = Minecraft.getInstance().player;
-            if (player == null) return;
-
-            CapabilityManager.attachmentProvider(player, ModAttachments.PLAYER_SKILL, data -> {
-                data.setSpeedLevel(speedLevel);
-                data.setHPLevel(hpLevel);
-                data.setDMGLevel(dmgLevel);
-                data.setJumpLevel(jumpLevel);
-                data.setArmorLevel(armorLevel);
-                data.setClimbUnlocked(climbUnlocked);
-            });
-
+            ClientPacketHandles.syncSkillData(speedLevel, hpLevel, dmgLevel, jumpLevel, armorLevel, climbUnlocked);
         });
         return true;
     }
+
+
 
     public static final Type<SyncSkillDataPacket> TYPE
             = new Type<>(ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "sync_skill_data"));

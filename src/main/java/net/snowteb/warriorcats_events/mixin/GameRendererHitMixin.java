@@ -28,7 +28,7 @@ public abstract class GameRendererHitMixin {
     @Shadow
     private Minecraft minecraft;
 
-    @Inject(method = "pick", at = @At("TAIL"), remap = false)
+    @Inject(method = "pick", at = @At("TAIL"))
     private void modifyPick(float partialTicks, CallbackInfo ci) {
 
         Player player = minecraft.player;
@@ -50,7 +50,7 @@ public abstract class GameRendererHitMixin {
 
                 Vec3 eyePos = player.getEyePosition(partialTicks);
                 Vec3 look = player.getLookAngle();
-                double reach = minecraft.player.getAttributeValue(Attributes.BLOCK_INTERACTION_RANGE);;
+                double reach = minecraft.player.blockInteractionRange();
 
                 Vec3 end = eyePos.add(look.scale(reach));
 

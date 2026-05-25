@@ -16,7 +16,7 @@ public class LightTextureMixin {
     @Shadow
     Minecraft minecraft;
 
-    @Inject(method = "getDarknessGamma", at = @At("HEAD"), cancellable = true, remap = false)
+    @Inject(method = "getDarknessGamma", at = @At("HEAD"), cancellable = true)
     public void redirectDarknessPulsation(float pPartialTicks, CallbackInfoReturnable<Float> cir) {
         if (this.minecraft.player.hasEffect(ModEffects.TIRED)) {
             MobEffectInstance mobeffectinstance = this.minecraft.player.getEffect(ModEffects.TIRED);

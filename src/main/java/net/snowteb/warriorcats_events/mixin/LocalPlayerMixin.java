@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(LocalPlayer.class)
 public class LocalPlayerMixin {
 
-    @Inject(method = "aiStep", at = @At("HEAD"), remap = false)
+    @Inject(method = "aiStep", at = @At("HEAD"))
     public void cancelJumpClient(CallbackInfo ci) {
         LocalPlayer localPlayer = (LocalPlayer)(Object)this;
         if (localPlayer == null) return;
@@ -19,7 +19,7 @@ public class LocalPlayerMixin {
         }
     }
 
-    @Inject(method = "serverAiStep", at = @At("HEAD"), remap = false)
+    @Inject(method = "serverAiStep", at = @At("HEAD"))
     public void cancelJumpServer(CallbackInfo ci) {
         LocalPlayer localPlayer = (LocalPlayer)(Object)this;
         if (localPlayer == null) return;

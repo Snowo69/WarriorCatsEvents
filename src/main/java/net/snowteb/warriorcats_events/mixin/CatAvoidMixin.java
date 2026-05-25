@@ -22,7 +22,7 @@ public abstract class CatAvoidMixin {
     @Shadow @Nullable
     protected LivingEntity toAvoid;
 
-    @Inject(method = "canUse", at = @At("HEAD"), cancellable = true, remap = false)
+    @Inject(method = "canUse", at = @At("HEAD"), cancellable = true)
     private void extraCanUse(CallbackInfoReturnable<Boolean> cir) {
 
         if (!(mob instanceof Cat)) return;

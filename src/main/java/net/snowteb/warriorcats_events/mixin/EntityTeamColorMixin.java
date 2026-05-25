@@ -22,7 +22,7 @@ import java.util.Objects;
 @Mixin(Entity.class)
 public class EntityTeamColorMixin {
 
-    @Inject(method = "getTeamColor", at = @At("HEAD"), cancellable = true, remap = false)
+    @Inject(method = "getTeamColor", at = @At("HEAD"), cancellable = true)
     public void getNewTeamColor(CallbackInfoReturnable<Integer> cir) {
         Entity entity =  (Entity)(Object)this;
         if (!entity.level().isClientSide) return;

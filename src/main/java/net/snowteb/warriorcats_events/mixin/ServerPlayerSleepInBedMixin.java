@@ -16,10 +16,13 @@ public class ServerPlayerSleepInBedMixin {
 
     @Inject(method = "setRespawnPosition", at = @At("HEAD"), cancellable = true, remap = false)
     public void cancelSleepIf(ResourceKey<Level> pDimension, BlockPos pPosition, float pAngle, boolean pForced, boolean pSendMessage, CallbackInfo ci) {
+        if (pPosition == null) return;
         ServerPlayer player = (ServerPlayer) (Object) this;
         ServerLevel level = player.serverLevel();
-        if (level.getBlockState(pPosition).is(ModBlocks.MAKESHIFT_BED.get())) {
-            ci.cancel();
+        if (level.getBlockState(pPosition) != null) {
+            if (level.getBlockState(pPosition).is(ModBlocks.MAKESHIFT_BED.get())) {
+                ci.cancel();
+            }
         }
     }
 

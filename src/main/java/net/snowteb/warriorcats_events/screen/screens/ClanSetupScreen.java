@@ -69,7 +69,10 @@ public class ClanSetupScreen extends Screen {
     @Override
     public void render(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
 
-        pGuiGraphics.blit(BG_TEXTURE, 0, 0, 0, 0, this.width, this.height, this.width, this.height);
+//        pGuiGraphics.blit(BG_TEXTURE, 0, 0, 0, 0, this.width, this.height, this.width, this.height);
+
+        this.renderPanorama(pGuiGraphics, pPartialTick);
+        this.renderMenuBackground(pGuiGraphics);
 
         this.renderBackground(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
 

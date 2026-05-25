@@ -3,7 +3,6 @@ plugins {
     id 'maven-publish'
     id 'net.neoforged.moddev' version '2.0.78'
     id 'idea'
-
 }
 
 tasks.named('wrapper', Wrapper).configure {
@@ -68,7 +67,7 @@ repositories {
 }
 
 base {
-    archivesName = mod_id
+    archivesName = mod_id + "-neoforge-1.21.1"
 }
 
 // Mojang ships Java 21 to end users in 1.21.1, so mods should target Java 21.

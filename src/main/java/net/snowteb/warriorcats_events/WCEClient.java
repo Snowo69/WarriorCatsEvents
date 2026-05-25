@@ -9,6 +9,7 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.Music;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.FormattedCharSequence;
@@ -56,6 +57,13 @@ public class WCEClient {
     public static final ResourceLocation WCE_TITLE = ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/gui/wce_title_hd.png");
 
     public static final ResourceLocation WCE_LOGO = ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/gui/wce_logo.png");
+
+    public static final Music GENERATIONS_BG_MUSIC = new Music(
+            ModSounds.GENERATIONS_BG,
+            0,
+            0,
+            true
+    );
 
     public static class EmoteIndexData {
 
@@ -184,6 +192,7 @@ public class WCEClient {
         WCEClient.exhaustionLevel = exhaustionLevel;
     }
 
+    @OnlyIn(Dist.CLIENT)
     public static void climbClientTick() {
 
         if (climbCooldown > 0) climbCooldown--;

@@ -28,7 +28,7 @@ import java.util.List;
 @Mixin(Player.class)
 public class PlayerEntityMixin implements Diseaseable<Player> {
 
-    @Inject(method = "rideTick", at = @At("TAIL"), remap = false)
+    @Inject(method = "rideTick", at = @At("TAIL"))
     public void redirectRidePosition(CallbackInfo ci) {
 
         Player self = (Player) (Object) this;
@@ -76,7 +76,7 @@ public class PlayerEntityMixin implements Diseaseable<Player> {
 
     }
 
-    @Inject(method = "isInvulnerableTo", at = @At("HEAD"), cancellable = true, remap = false)
+    @Inject(method = "isInvulnerableTo", at = @At("HEAD"), cancellable = true)
     public void negateWallDamage(DamageSource source, CallbackInfoReturnable<Boolean> ci) {
         if (source.is(DamageTypes.IN_WALL)) {
             Player self = (Player) (Object) this;
@@ -86,7 +86,7 @@ public class PlayerEntityMixin implements Diseaseable<Player> {
         }
     }
 
-    @Inject(method = "wantsToStopRiding", at = @At("HEAD"), cancellable = true, remap = false)
+    @Inject(method = "wantsToStopRiding", at = @At("HEAD"), cancellable = true)
     public void blockStopRiding(CallbackInfoReturnable<Boolean> cir) {
         Player player =  (Player) (Object) this;
         if (player.getVehicle() != null) {
@@ -103,17 +103,17 @@ public class PlayerEntityMixin implements Diseaseable<Player> {
         return wce$diseaseList;
     }
 
-    @Inject(method = "tick", at = @At("TAIL"), remap = false)
+    @Inject(method = "tick", at = @At("TAIL"))
     private void tick(CallbackInfo ci) {
         this.diseaseTick();
     }
 
-    @Inject(method = "addAdditionalSaveData", at = @At("TAIL"), remap = false)
+    @Inject(method = "addAdditionalSaveData", at = @At("TAIL"))
     private void saveData(CompoundTag pCompound, CallbackInfo ci) {
         this.writeDiseasesNBT(pCompound);
     }
 
-    @Inject(method = "readAdditionalSaveData", at = @At("TAIL"), remap = false)
+    @Inject(method = "readAdditionalSaveData", at = @At("TAIL"))
     private void readData(CompoundTag pCompound, CallbackInfo ci) {
         this.loadDiseasesNBT(pCompound);
     }

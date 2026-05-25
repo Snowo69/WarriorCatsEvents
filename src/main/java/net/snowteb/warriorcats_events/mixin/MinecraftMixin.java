@@ -17,7 +17,7 @@ import tocraft.walkers.api.PlayerShape;
 @Mixin(Minecraft.class)
 public class MinecraftMixin {
 
-    @Inject(method = "shouldEntityAppearGlowing", at = @At("HEAD"), cancellable = true, remap = false)
+    @Inject(method = "shouldEntityAppearGlowing", at = @At("HEAD"), cancellable = true)
     public void modifyGlowing(Entity pEntity, CallbackInfoReturnable<Boolean> cir) {
         Minecraft minecraft = (Minecraft)(Object)this;
         if (minecraft.player != null && minecraft.player.hasEffect(ModEffects.SHARP_SCENT)){

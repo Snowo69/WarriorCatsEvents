@@ -1,0 +1,24 @@
+{
+  "parent": "warriorcats_events:wce_advancements",
+  "display": {
+    "icon": {
+      "id": "minecraft:tall_grass",
+      "count": 1
+    },
+    "title": "Into the wild",
+    "description": "The journey has begun!",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "tick": {
+      "trigger": "minecraft:tick"
+    }
+  },
+  "rewards": {
+    "loot": [],
+    "experience": 0
+  },
+  "sends_telemetry_event": false
+}

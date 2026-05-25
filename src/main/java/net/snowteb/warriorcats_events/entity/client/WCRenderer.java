@@ -25,6 +25,7 @@ import net.snowteb.warriorcats_events.zconfig.WCEClientConfig;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
+import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
 import tocraft.walkers.api.PlayerShape;
 
@@ -84,7 +85,6 @@ public class WCRenderer extends GeoEntityRenderer<WCatEntity> {
 
     @Override
     public void preRender(PoseStack poseStack, WCatEntity animatable, BakedGeoModel model, @Nullable MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, int colour) {
-
 
         float scale = this.getVisualScale(animatable);
 
@@ -314,7 +314,7 @@ public class WCRenderer extends GeoEntityRenderer<WCatEntity> {
 
 
                                 int y = (int) (top + 12);
-                                poseStack.translate(0.0D, 0.0D, -0.02D);
+                                poseStack.translate(0.0D, 0.0D, 0.02D);
                                 for (FormattedCharSequence line : lines) {
 
                                     float x1 = -font.width(line) / 2f;

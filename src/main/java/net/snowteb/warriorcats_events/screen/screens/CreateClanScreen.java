@@ -5,6 +5,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
@@ -448,9 +449,14 @@ public class CreateClanScreen extends Screen {
         int centerx = width / 2;
         int centery = height / 2;
 
-        pGuiGraphics.blit(BG_TEXTURE, 0, 0, 0, 0, this.width, this.height, this.width, this.height);
+//        pGuiGraphics.blit(BG_TEXTURE, 0, 0, 0, 0, this.width, this.height, this.width, this.height);
 
-        super.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
+        this.renderPanorama(pGuiGraphics, pPartialTick);
+        this.renderMenuBackground(pGuiGraphics);
+
+        this.renderBackground(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
+
+
 
         int symbolToShow = 0;
         if (symbolList.getSelectedEntry() != null) {
@@ -519,6 +525,9 @@ public class CreateClanScreen extends Screen {
                     centerx - 55, centery + 75, 0xFFFF0000);
         }
 
+        for (Renderable renderable : this.renderables) {
+            renderable.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
+        }
     }
 
     private void saveAndSend(){

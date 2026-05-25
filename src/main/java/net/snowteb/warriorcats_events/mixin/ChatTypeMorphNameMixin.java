@@ -25,7 +25,7 @@ import java.util.UUID;
 public class ChatTypeMorphNameMixin {
 
     @Inject(method = "bind(Lnet/minecraft/resources/ResourceKey;Lnet/minecraft/world/entity/Entity;)Lnet/minecraft/network/chat/ChatType$Bound;"
-    , at = @At("HEAD"), cancellable = true, remap = false)
+    , at = @At("HEAD"), cancellable = true)
     private static void redirectChatMessage(ResourceKey<ChatType> pChatTypeKey, Entity pEntity, CallbackInfoReturnable<ChatType.Bound> cir) {
 
         if (pEntity instanceof ServerPlayer player) {

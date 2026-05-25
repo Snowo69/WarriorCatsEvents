@@ -15,7 +15,7 @@ import java.util.UUID;
 @Mixin(ClientPacketListener.class)
 public class ClientChatPacketMixin {
 
-    @Inject(method = "handlePlayerChat", at = @At("HEAD"), remap = false)
+    @Inject(method = "handlePlayerChat", at = @At("HEAD"))
     private void onChat(ClientboundPlayerChatPacket packet, CallbackInfo ci) {
 
         UUID sender = packet.sender();

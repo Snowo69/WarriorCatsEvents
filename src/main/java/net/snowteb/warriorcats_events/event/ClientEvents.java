@@ -112,16 +112,6 @@ public class ClientEvents {
 
         }
 
-
-        @SubscribeEvent
-        public static void onPlaySound(PlaySoundEvent event) {
-            SoundInstance sound = event.getSound();
-
-            if (sound != null && sound.getLocation().equals(ModSounds.GENERATIONS.getId())) {
-                Minecraft.getInstance().getSoundManager().stop(null, SoundSource.MUSIC);
-            }
-        }
-
         @SubscribeEvent
         public static void onScroll(InputEvent.MouseScrollingEvent event) {
             Minecraft mc = Minecraft.getInstance();

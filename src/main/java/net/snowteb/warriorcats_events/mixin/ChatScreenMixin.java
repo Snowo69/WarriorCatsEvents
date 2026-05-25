@@ -17,7 +17,7 @@ public class ChatScreenMixin {
 
     private String lastText = "";
 
-    @Inject(method = "keyPressed", at = @At("HEAD"), remap = false)
+    @Inject(method = "keyPressed", at = @At("HEAD"))
     public void handleChat(int keyCode, int scanCode, int modifiers, CallbackInfoReturnable<Boolean> cir) {
 
         if (input != null) {

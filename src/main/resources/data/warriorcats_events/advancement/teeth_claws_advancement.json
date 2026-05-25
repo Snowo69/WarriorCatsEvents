@@ -1,0 +1,27 @@
+{
+  "display": {
+    "icon": {
+      "id": "warriorcats_events:animal_tooth",
+      "count": 1
+    },
+    "title": "Scourge...?",
+    "description": "You have obtained teeth claws made from animal tooths!",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "warriorcats_events:into_the_wild",
+  "criteria": {
+    "has_teeth_claws": {
+      "trigger": "minecraft:recipe_crafted",
+      "conditions": {
+        "recipe_id": "warriorcats_events:teeth_claws"
+      }
+    }
+  },
+  "rewards": {
+    "loot": [],
+    "experience": 80
+  },
+  "sends_telemetry_event": false
+}

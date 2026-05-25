@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(Screen.class)
 public class ScreenClickedComponentMixin {
 
-    @Inject(method = "handleComponentClicked", at = @At("HEAD"), cancellable = true, remap = false)
+    @Inject(method = "handleComponentClicked", at = @At("HEAD"), cancellable = true)
     public void redirectClickEvent(Style pStyle, CallbackInfoReturnable<Boolean> cir) {
 
         if (pStyle != null) {

@@ -1,0 +1,24 @@
+{
+  "parent": "warriorcats_events:wildcat_recruit_advancement",
+  "display": {
+    "icon": {
+      "id": "warriorcats_events:wildcat_spawn_egg",
+      "count": 1
+    },
+    "title": "Our clan is growing!",
+    "description": "You used catmint to bring kits to your clan!",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "bred_wildcat": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "rewards": {
+    "loot": [],
+    "experience": 100
+  },
+  "sends_telemetry_event": false
+}

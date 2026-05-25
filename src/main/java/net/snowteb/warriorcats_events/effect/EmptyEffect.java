@@ -11,7 +11,7 @@ public class EmptyEffect extends MobEffect {
 
     @Override
     public boolean applyEffectTick(LivingEntity entity, int amplifier) {
-        return false;
+        return true;
     }
 
     @Override

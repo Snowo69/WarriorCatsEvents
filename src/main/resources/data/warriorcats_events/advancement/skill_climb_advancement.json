@@ -1,0 +1,25 @@
+{
+  "parent": "warriorcats_events:skill_jump_advancement",
+  "display": {
+    "icon": {
+      "id": "minecraft:string",
+      "count": 1
+    },
+    "title": "Spiderpaw",
+    "description": "You have unlocked the climbing skill!",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false,
+    "frame": "challenge"
+  },
+  "criteria": {
+    "unlock_skill": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "rewards": {
+    "loot": [],
+    "experience": 100
+  },
+  "sends_telemetry_event": false
+}

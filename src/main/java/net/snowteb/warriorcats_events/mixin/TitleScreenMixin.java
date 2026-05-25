@@ -16,6 +16,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.event.UpdateCheck;
+import net.snowteb.warriorcats_events.zconfig.WCEClientConfig;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -26,16 +27,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(TitleScreen.class)
 public class TitleScreenMixin {
 
-//    @Redirect(method = "<init>(ZLnet/minecraft/client/gui/components/LogoRenderer;)V",
-//            at = @At(value = "NEW", target = "net/minecraft/client/renderer/PanoramaRenderer"))
-//    private PanoramaRenderer redirectPanorama(CubeMap original) {
-//        if (WCEClientConfig.CLIENT.CUSTOM_PANORAMA.get()) {
-//            return
-//        } else {
-//            return new PanoramaRenderer(original);
-//        }
-//    }
-
     @Shadow
     private float panoramaFade;
 
@@ -44,8 +35,10 @@ public class TitleScreenMixin {
             new CubeMap(ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID,"textures/gui/title/background/panorama"))
     );
 
-    @Inject(method = "renderPanorama", at = @At("HEAD"), cancellable = true, remap = false)
+    @Inject(method = "renderPanorama", at = @At("HEAD"), cancellable = true)
     public void renderCustomPanorama(GuiGraphics guiGraphics, float partialTick, CallbackInfo ci) {
+        if (!WCEClientConfig.CLIENT.CUSTOM_PANORAMA.get()) return;
+
         Minecraft mc = Minecraft.getInstance();
 
         int width = mc.getWindow().getGuiScaledWidth();
@@ -61,7 +54,7 @@ public class TitleScreenMixin {
     long fadeInStart;
 
 
-    @Inject(method = "render", at = @At("TAIL"), remap = false)
+    @Inject(method = "render", at = @At("TAIL"))
     private void renderMainMenu(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick, CallbackInfo ci) {
 
         // Hawk tuah

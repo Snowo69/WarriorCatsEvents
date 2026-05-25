@@ -164,7 +164,23 @@ public class WCEChangelogScreen extends Screen {
     }
 
     private void defineChangelogLines() {
-        lines.add("1.9.0 | Diseases and more!");
+        lines.add("$(#) 1.9.3 | Support for Neoforge 1.21");
+        lines.add("From this version, WCE will now also be available for Neoforge 1.21.1. \n" +
+                "This is a quite important announcement since for so long WCE has stayed in Forge 1.20.1.\n" +
+                "\n" +
+                "Neoforge as a mod loader offers better support, faster loading times, and better mod loading in general, so your game might be more stable.\n" +
+                "\n" +
+                "And as for the version (1.21.1), this might help with availability for other mods and other mechanics Minecraft has implemented in newer versions.\n" +
+                "\n" +
+                "In the future, hopefully more versions will be supported.\n");
+        lines.add("$(##) Changelog");
+        lines.add("- Port to Neoforge 1.21.1");
+        lines.add("- Move the serene seasons season overlay");
+        lines.add("- Adjusted the territory overlay");
+        lines.add("- Other minor adjustements");
+        lines.add("");
+
+        lines.add("$(#) 1.9.0 | Diseases and more!");
         lines.add("It has been requested and asked for so much... It took a while and a hard work but it's finally here...\n" +
                 "\n" +
                 "Allow me to introduce the diseases system!\n" +
@@ -179,7 +195,7 @@ public class WCEChangelogScreen extends Screen {
                 "This update also adds a few more herbs and a few adjustements to the ones that were already in.\n" +
                 "\n" +
                 "You better start collecting herbs, because now those will be really needed.");
-        lines.add("Changelog");
+        lines.add("$(##) Changelog");
 
         lines.add("- Added the new Diseases system. Check the Warrior's Guide in game or the Wiki for more information.");
         lines.add("- Added Server config for Diseases system. You can also use `/gamerule wceDiseases`");
@@ -202,13 +218,13 @@ public class WCEChangelogScreen extends Screen {
         lines.add("- Improved Claws and Whiskers tooltips. You can now view all their usages in the item itself when holding shift while hovering it in your inventory.");
         lines.add("- Other minor adjustments");
 
-        lines.add("Thank you for reading 🐈");
+        lines.add("$(/#) Thank you for reading 🐈");
     }
 
 //    private void defineChangelogLines() {
+//        lines.add("$(#) ");
 //        lines.add("");
-//        lines.add("");
-//        lines.add("Changelog");
+//        lines.add("$(##) Changelog");
 
 //        lines.add("");
 //        lines.add("");
@@ -224,7 +240,7 @@ public class WCEChangelogScreen extends Screen {
 //        lines.add("");
 //        lines.add("");
 //
-//        lines.add("Thank you for reading 🐈");
+//        lines.add("$(/#) Thank you for reading 🐈");
 //    }
 
 

@@ -20,7 +20,7 @@ public class SplashMixin {
     List<String> splashes;
 
     @Inject(method = "apply(Ljava/util/List;Lnet/minecraft/server/packs/resources/ResourceManager;Lnet/minecraft/util/profiling/ProfilerFiller;)V"
-    , at = @At("TAIL"), remap = false)
+    , at = @At("TAIL"))
     public void addCustomSplashes(List<String> pObject, ResourceManager pResourceManager, ProfilerFiller pProfiler, CallbackInfo ci) {
 
         List<String> wceSplashes = new ArrayList<>();

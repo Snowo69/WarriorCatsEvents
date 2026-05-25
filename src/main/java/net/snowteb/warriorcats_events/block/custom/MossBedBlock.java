@@ -350,5 +350,4 @@ public class MossBedBlock extends BedBlock {
 
     }
 
-
 }

@@ -1,9 +1,11 @@
 package net.snowteb.warriorcats_events.screen.screens;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -75,7 +77,6 @@ public class CatDataScreen extends Screen {
 
     @Override
     public void render(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
-        super.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
 
         int centerX = this.width / 2;
         int centerY = this.height / 2;
@@ -91,6 +92,15 @@ public class CatDataScreen extends Screen {
                 0, 0
                 , 99, 9,
                 99, 9);
+
+        RenderSystem.enableBlend();
+        pGuiGraphics.setColor(1f,1f,1f,0.2f);
+        pGuiGraphics.blit(SOCIALHEARTS_FILL, 43, 28,
+                0, 0,
+                99, 9,
+                99, 9);
+        pGuiGraphics.setColor(1f,1f,1f,1f);
+        RenderSystem.disableBlend();
 
         pGuiGraphics.enableScissor( 43, 28, 43 + (friendshipLevel), 37);
         pGuiGraphics.blit(SOCIALHEARTS_FILL, 43, 28,
@@ -123,31 +133,12 @@ public class CatDataScreen extends Screen {
         }
 
 
-        if (activeMenu.equals("interact")) {
-            int textWidth = Math.max(Minecraft.getInstance().font.width(helloSentence), 70);
-            int boxTop = centerY - 50;
-            int boxBottom = boxTop + 110;
-            int boxLeft = centerX - (textWidth / 2) - 16;
-            int boxRight = centerX + (textWidth / 2) + 16;
+        {
 
-            pGuiGraphics.fill(boxLeft, boxTop, boxRight, boxBottom, 0x50000000);
-
-            pGuiGraphics.renderOutline(boxLeft, boxTop, boxRight - boxLeft, boxBottom - boxTop, 0xFFFFFFFF);
-
-            int textY = boxTop + 8;
-            if (helloSentence != null) {
-                pGuiGraphics.drawCenteredString(font, helloSentence, centerX, textY, 0xFFFFFFFF);
-            }
-            int lineY = textY + 14;
-            pGuiGraphics.hLine(boxLeft + 8, boxRight - 8, lineY, 0xFFFFFFFF);
-
-        }
-
-        if (activeMenu.equals("mode")) {
-            if (setModeSentence != null) {
-                int textWidth = Math.max(Minecraft.getInstance().font.width(setModeSentence), 85);
+            if (activeMenu.equals("interact")) {
+                int textWidth = Math.max(Minecraft.getInstance().font.width(helloSentence), 70);
                 int boxTop = centerY - 50;
-                int boxBottom = boxTop + 90;
+                int boxBottom = boxTop + 110;
                 int boxLeft = centerX - (textWidth / 2) - 16;
                 int boxRight = centerX + (textWidth / 2) + 16;
 
@@ -156,38 +147,58 @@ public class CatDataScreen extends Screen {
                 pGuiGraphics.renderOutline(boxLeft, boxTop, boxRight - boxLeft, boxBottom - boxTop, 0xFFFFFFFF);
 
                 int textY = boxTop + 8;
-                pGuiGraphics.drawCenteredString(font, setModeSentence, centerX, textY, 0xFFFFFFFF);
+                if (helloSentence != null) {
+                    pGuiGraphics.drawCenteredString(font, helloSentence, centerX, textY, 0xFFFFFFFF);
+                }
                 int lineY = textY + 14;
                 pGuiGraphics.hLine(boxLeft + 8, boxRight - 8, lineY, 0xFFFFFFFF);
+
+            }
+
+            if (activeMenu.equals("mode")) {
+                if (setModeSentence != null) {
+                    int textWidth = Math.max(Minecraft.getInstance().font.width(setModeSentence), 85);
+                    int boxTop = centerY - 50;
+                    int boxBottom = boxTop + 90;
+                    int boxLeft = centerX - (textWidth / 2) - 16;
+                    int boxRight = centerX + (textWidth / 2) + 16;
+
+                    pGuiGraphics.fill(boxLeft, boxTop, boxRight, boxBottom, 0x50000000);
+
+                    pGuiGraphics.renderOutline(boxLeft, boxTop, boxRight - boxLeft, boxBottom - boxTop, 0xFFFFFFFF);
+
+                    int textY = boxTop + 8;
+                    pGuiGraphics.drawCenteredString(font, setModeSentence, centerX, textY, 0xFFFFFFFF);
+                    int lineY = textY + 14;
+                    pGuiGraphics.hLine(boxLeft + 8, boxRight - 8, lineY, 0xFFFFFFFF);
+                }
+            }
+
+            if (activeMenu.equals("home")) {
+                if (setModeSentence != null) {
+                    int textWidth = Math.max(Minecraft.getInstance().font.width(setModeSentence), 85);
+                    int boxTop = centerY - 50;
+                    int boxBottom = boxTop + 90;
+                    int boxLeft = centerX - (textWidth / 2) - 16;
+                    int boxRight = centerX + (textWidth / 2) + 16;
+
+                    pGuiGraphics.fill(boxLeft, boxTop, boxRight, boxBottom, 0x50000000);
+
+                    pGuiGraphics.renderOutline(boxLeft, boxTop, boxRight - boxLeft, boxBottom - boxTop, 0xFFFFFFFF);
+
+                    int textY = boxTop + 8;
+                    pGuiGraphics.drawCenteredString(font, setModeSentence, centerX, textY, 0xFFFFFFFF);
+                    int lineY = textY + 14;
+                    pGuiGraphics.hLine(boxLeft + 8, boxRight - 8, lineY, 0xFFFFFFFF);
+                }
             }
         }
-
-        if (activeMenu.equals("home")) {
-            if (setModeSentence != null) {
-                int textWidth = Math.max(Minecraft.getInstance().font.width(setModeSentence), 85);
-                int boxTop = centerY - 50;
-                int boxBottom = boxTop + 90;
-                int boxLeft = centerX - (textWidth / 2) - 16;
-                int boxRight = centerX + (textWidth / 2) + 16;
-
-                pGuiGraphics.fill(boxLeft, boxTop, boxRight, boxBottom, 0x50000000);
-
-                pGuiGraphics.renderOutline(boxLeft, boxTop, boxRight - boxLeft, boxBottom - boxTop, 0xFFFFFFFF);
-
-                int textY = boxTop + 8;
-                pGuiGraphics.drawCenteredString(font, setModeSentence, centerX, textY, 0xFFFFFFFF);
-                int lineY = textY + 14;
-                pGuiGraphics.hLine(boxLeft + 8, boxRight - 8, lineY, 0xFFFFFFFF);
-            }
-        }
-
         float scale1 = 1.25f;
         pGuiGraphics.pose().pushPose();
         pGuiGraphics.pose().scale(scale1, scale1, 1f);
         pGuiGraphics.drawCenteredString(Minecraft.getInstance().font, name, 75, 11, 0xFFFFFF);
         pGuiGraphics.pose().popPose();
 
-        boolean renderFriendshipText = pMouseX >= 43 && pMouseX <= 142 && pMouseY >= 28 && pMouseY <= 37 && wCatEntity.isTame();
 
         {
             if (friendshipLevel >= 0 && wCatEntity.isTame()) {
@@ -228,6 +239,8 @@ public class CatDataScreen extends Screen {
         pGuiGraphics.pose().pushPose();
         pGuiGraphics.pose().scale(0.9f,0.9f,0.9f);
 
+        boolean renderFriendshipText = pMouseX >= 43 && pMouseX <= 142 && pMouseY >= 28 && pMouseY <= 37 && wCatEntity.isTame();
+
         if (renderFriendshipText) {
             pGuiGraphics.renderTooltip(Minecraft.getInstance().font, Component.empty().append(preText).append(friendshipLevelText) , pMouseX, pMouseY);
         }
@@ -254,9 +267,11 @@ public class CatDataScreen extends Screen {
             pGuiGraphics.pose().popPose();
         }
 
-
-
         pGuiGraphics.pose().popPose();
+
+        for (Renderable renderable : this.renderables) {
+            renderable.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
+        }
 
         WCEClient.renderDiseaseTooltipsUtD(wCatEntity, pGuiGraphics, 170, 16, pMouseX, pMouseY);
 

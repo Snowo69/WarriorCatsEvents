@@ -1,0 +1,24 @@
+{
+  "parent": "warriorcats_events:wildcat_recruit_advancement",
+  "display": {
+    "icon": {
+      "id": "warriorcats_events:kit",
+      "count": 1
+    },
+    "title": "Welcome, my child",
+    "description": "You have brought to life your first very own kit!",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "kit_generated": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "rewards": {
+    "loot": [],
+    "experience": 80
+  },
+  "sends_telemetry_event": false
+}

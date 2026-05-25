@@ -22,7 +22,7 @@ import java.util.List;
 @Mixin(ServerLevel.class)
 public class ServerLevelMixin {
 
-    @Inject(method = "tickChunk", at = @At("HEAD"), remap = false)
+    @Inject(method = "tickChunk", at = @At("HEAD"))
     public void spawnPreyTick(LevelChunk pChunk, int pRandomTickSpeed, CallbackInfo ci) {
 
         if (pChunk.getLevel() instanceof ServerLevel sLevel) {

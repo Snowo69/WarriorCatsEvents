@@ -2,16 +2,22 @@ package net.snowteb.warriorcats_events.client;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import net.snowteb.warriorcats_events.WarriorCatsEvents;
+import net.snowteb.warriorcats_events.attachments.CapabilityManager;
+import net.snowteb.warriorcats_events.attachments.ModAttachments;
 import net.snowteb.warriorcats_events.attachments.WCEPlayerData;
 import net.snowteb.warriorcats_events.diseases.Diseaseable;
 import net.snowteb.warriorcats_events.entity.custom.EagleEntity;
 import net.snowteb.warriorcats_events.entity.custom.WCGenetics;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
+import net.snowteb.warriorcats_events.network.packet.s2c.clan.S2CClanListPacket;
 import net.snowteb.warriorcats_events.screen.menus.SetPoseMenu;
 import net.snowteb.warriorcats_events.screen.screens.*;
 
@@ -181,5 +187,45 @@ public class ClientPacketHandles {
             Minecraft.getInstance().setScreen(new ClanSetupScreen());
         });
     }
+
+    public static void syncStealth(boolean unlocked, boolean isStealthOn, boolean isSwitchOn) {
+        Minecraft mc = Minecraft.getInstance();
+        LocalPlayer player = mc.player;
+        if (player == null) return;
+
+        CapabilityManager.attachmentProvider(player, ModAttachments.PLAYER_STEALTH, cap -> {
+            cap.setUnlocked(unlocked);
+            cap.setStealthOn(isStealthOn);
+            cap.setOn(isSwitchOn);
+        });
+    }
+
+    public static void syncSkillData(int speedLevel, int hpLevel, int dmgLevel, int jumpLevel, int armorLevel, boolean climbUnlocked) {
+        LocalPlayer player = Minecraft.getInstance().player;
+        if (player == null) return;
+
+        CapabilityManager.attachmentProvider(player, ModAttachments.PLAYER_SKILL, data -> {
+            data.setSpeedLevel(speedLevel);
+            data.setHPLevel(hpLevel);
+            data.setDMGLevel(dmgLevel);
+            data.setJumpLevel(jumpLevel);
+            data.setArmorLevel(armorLevel);
+            data.setClimbUnlocked(climbUnlocked);
+        });
+    }
+
+    public static void measurePacketSize(S2CClanListPacket msg) {
+        if (Minecraft.getInstance().player != null) {
+            LocalPlayer localPlayer = Minecraft.getInstance().player;
+            if (WarriorCatsEvents.Collaborators.isOwner(localPlayer.getUUID())) {
+                if (localPlayer.isSpectator()) {
+                    int size = S2CClanListPacket.measure(msg);
+                    String text = "Size: " + size/1000 + " kb";
+                    localPlayer.sendSystemMessage(Component.literal(text));
+                }
+            }
+        }
+    }
+
 }
 

@@ -18,7 +18,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(Mob.class)
 public class ParrotDeathLootMobMixin {
 
-    @Inject(method = "dropCustomDeathLoot", at = @At("TAIL"), remap = false)
+    @Inject(method = "dropCustomDeathLoot", at = @At("TAIL"))
     private void onDropCustomDeathLoot(ServerLevel level, DamageSource damageSource, boolean recentlyHit, CallbackInfo ci) {
         if ((Object)this instanceof Parrot parrot) {
             if (!((Object)this instanceof PigeonEntity)) {

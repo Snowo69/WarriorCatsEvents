@@ -1,0 +1,31 @@
+{
+  "parent": "warriorcats_events:into_the_wild",
+  "display": {
+    "icon": {
+      "id": "warriorcats_events:catmint_leaves",
+      "count": 1
+    },
+    "title": "Medicine",
+    "description": "You have discovered herbs!",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "has_herbs": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "#warriorcats_events:herbs"
+          }
+        ]
+      }
+    }
+  },
+  "rewards": {
+    "loot": [],
+    "experience": 100
+  },
+  "sends_telemetry_event": false
+}

@@ -1,0 +1,25 @@
+{
+  "parent": "warriorcats_events:skill_jump_advancement",
+  "display": {
+    "icon": {
+      "id": "minecraft:spruce_sapling",
+      "count": 1
+    },
+    "title": "Lurking in the Shadows",
+    "description": "You have unlocked the stealth skill!",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false,
+    "frame": "challenge"
+  },
+  "criteria": {
+    "unlock_skill": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "rewards": {
+    "loot": [],
+    "experience": 100
+  },
+  "sends_telemetry_event": false
+}

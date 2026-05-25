@@ -26,6 +26,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import net.snowteb.warriorcats_events.datacomponents.ModDataComponents;
 import net.snowteb.warriorcats_events.entity.custom.MossBallEntity;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
@@ -201,6 +203,7 @@ public class MossBallItem extends Item {
         }
     }
 
+    @OnlyIn(Dist.CLIENT)
     public void translateArm(PoseStack matrices, HumanoidArm arm, ItemStack stack, float tickDelta) {
         boolean rightArm = arm == HumanoidArm.RIGHT;
         int sideOffset = rightArm ? 1 : -1;

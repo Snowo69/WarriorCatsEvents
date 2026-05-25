@@ -3,6 +3,7 @@ package net.snowteb.warriorcats_events.event;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import org.apache.commons.io.IOUtils;
 
+import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 

@@ -790,7 +790,10 @@ public class CreateChimeraMorphGeneticsScreen extends Screen {
         int centerX = this.width / 2;
         int centerY = this.height / 2;
 
-        pGuiGraphics.blit(BG_TEXTURE, 0, 0, 0, 0, this.width, this.height, this.width, this.height);
+//        pGuiGraphics.blit(BG_TEXTURE, 0, 0, 0, 0, this.width, this.height, this.width, this.height);
+
+        this.renderPanorama(pGuiGraphics, pPartialTick);
+        this.renderMenuBackground(pGuiGraphics);
 
         this.renderBackground(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
 
@@ -1056,7 +1059,7 @@ public class CreateChimeraMorphGeneticsScreen extends Screen {
                     centerX + 90,
                     centerY + 115,
                     100,
-                    0,
+                    0.2f,
                     (float) (pMouseX),
                     (float) ((15) + pMouseY),
                     entityToRender

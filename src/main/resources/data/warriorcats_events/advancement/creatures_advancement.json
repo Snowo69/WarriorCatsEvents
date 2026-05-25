@@ -1,0 +1,24 @@
+{
+  "parent": "warriorcats_events:into_the_wild",
+  "display": {
+    "icon": {
+      "id": "warriorcats_events:wildcat_spawn_egg",
+      "count": 1
+    },
+    "title": "Creatures",
+    "description": "You have discovered you are not alone in the wild.",
+    "show_toast": false,
+    "announce_to_chat": false,
+    "hidden": false
+  },
+  "criteria": {
+    "tick": {
+      "trigger": "minecraft:tick"
+    }
+  },
+  "rewards": {
+    "loot": [],
+    "experience": 0
+  },
+  "sends_telemetry_event": false
+}

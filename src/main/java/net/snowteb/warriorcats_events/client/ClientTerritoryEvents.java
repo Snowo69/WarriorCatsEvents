@@ -9,6 +9,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.RenderGuiLayerEvent;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
+import net.snowteb.warriorcats_events.compat.CompatibilitiesClient;
 import net.snowteb.warriorcats_events.zconfig.WCEClientConfig;
 import net.snowteb.warriorcats_events.zconfig.WCEServerConfig;
 
@@ -16,11 +17,18 @@ import net.snowteb.warriorcats_events.zconfig.WCEServerConfig;
 public class ClientTerritoryEvents {
 
 
+    public static boolean isIsInATerritory() {
+        return isInATerritory;
+    }
+
     private static boolean isInATerritory = false;
     private static String clanName = "";
     private static int clanColor = 0;
     private static String territoryName = "";
     private static int territoryTime = 0;
+
+    public static int currentBarWidth = 0;
+    public static int currentBarStart;
 
     @SubscribeEvent
     public static void onClientTick(ClientTickEvent.Post event) {
@@ -58,11 +66,18 @@ public class ClientTerritoryEvents {
         if (!mcinstance.isWindowActive()) return;
         if (mcinstance.screen != null) return;
         if (mcinstance.level == null) return;
+        if (mcinstance.options.hideGui) return;
 
         if (!WCEClientConfig.CLIENT.DISPLAY_TERRITORY.get()) return;
 
+        GuiGraphics pGuiGraphics = event.getGuiGraphics();
+
+        pGuiGraphics.pose().pushPose();
+        if (CompatibilitiesClient.shouldRenderSereneSeasonsOverlay(mcinstance.level)) {
+            pGuiGraphics.pose().translate(0, 15, 0);
+        }
+
         if (isInATerritory) {
-            GuiGraphics pGuiGraphics = event.getGuiGraphics();
 
             int width = mcinstance.getWindow().getGuiScaledWidth();
             int height = mcinstance.getWindow().getGuiScaledHeight();
@@ -71,23 +86,28 @@ public class ClientTerritoryEvents {
 
             String text1 = clanName + " territory";
             String text2 = territoryName;
-            int extraY = text2.isEmpty() ? 7 : 0;
+            int extraY = text2.isEmpty() ? 0 : 7;
 
             pGuiGraphics.pose().pushPose();
-            pGuiGraphics.pose().translate(width - mcinstance.font.width(text1) - 20, 5 + extraY, 0);
+            pGuiGraphics.pose().translate(width - mcinstance.font.width(text1) - 20, 5, 0);
             float scale = 1.1f;
             pGuiGraphics.pose().scale(scale, scale, scale);
             pGuiGraphics.drawString(mcinstance.font, clanName + " territory", 0, 0, clanColor);
             pGuiGraphics.pose().popPose();
 
             int barStart = width - mcinstance.font.width(text1) - 20;
+            currentBarStart = barStart;
             int barEndMax = width - 5;
 
             float maxTime = Math.max(1, WCEServerConfig.SERVER.MAX_TERRITORY_TIME.get()*60*20);
 
             int barWidth = barEndMax - barStart;
+            currentBarWidth = barWidth;
             float progress = (float) territoryTime / maxTime;
             int barEnd = barStart + (int)(barWidth * progress);
+
+            pGuiGraphics.pose().pushPose();
+            pGuiGraphics.pose().translate(0, extraY - 5, 0);
 
             pGuiGraphics.fill(barStart, 26,  barEndMax, 30, 0xFF333333);
             pGuiGraphics.fill(barStart, 26, barEnd, 30, clanColor);
@@ -108,8 +128,9 @@ public class ClientTerritoryEvents {
             pGuiGraphics.drawString(mcinstance.font, territoryName, 0,0, 0xFFaaaaaa);
             pGuiGraphics.pose().popPose();
 
+            pGuiGraphics.pose().popPose();
+
         } else {
-            GuiGraphics pGuiGraphics = event.getGuiGraphics();
 
             int width = mcinstance.getWindow().getGuiScaledWidth();
             int height = mcinstance.getWindow().getGuiScaledHeight();
@@ -124,5 +145,7 @@ public class ClientTerritoryEvents {
             pGuiGraphics.drawString(mcinstance.font, text, 0, 0, 0xFFFFFF);
             pGuiGraphics.pose().popPose();
         }
+
+        pGuiGraphics.pose().popPose();
     }
 }

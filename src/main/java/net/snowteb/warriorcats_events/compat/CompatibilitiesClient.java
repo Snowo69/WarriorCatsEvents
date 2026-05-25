@@ -49,4 +49,11 @@ public class CompatibilitiesClient {
         net.snowteb.warriorcats_events.compat.sereneseasons.WCESereneSeasonsClient.seasonOverlay(guiGraphics, level);
     }
 
+    public static boolean shouldRenderSereneSeasonsOverlay(Level level) {
+        if (!level.isClientSide()) return false;
+        if (!SERENESEASONS_LOADED) return false;
+
+        return WCEClientConfig.CLIENT.SERENE_SEASONS_OVERLAY.get();
+    }
+
 }

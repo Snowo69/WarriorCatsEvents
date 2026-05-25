@@ -39,6 +39,8 @@ import net.snowteb.warriorcats_events.zconfig.WCEServerConfig;
 
 import java.util.Optional;
 
+import static net.minecraft.world.level.Level.OVERWORLD;
+
 public class CtSTeleportToLocationPacket implements CustomPacketPayload {
 
     private final int data;
@@ -209,6 +211,8 @@ public class CtSTeleportToLocationPacket implements CustomPacketPayload {
         level.getChunkAt(pos);
 
         pos = level.getHeightmapPos(Heightmap.Types.WORLD_SURFACE, pos);
+
+        player.setRespawnPosition(OVERWORLD, pos, player.getYRot(), true, false);
 
         ChunkPos chunkPos = new ChunkPos(pos);
 

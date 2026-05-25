@@ -2,6 +2,7 @@ package net.snowteb.warriorcats_events.mixin;
 
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
+import net.minecraft.world.effect.MobEffects;
 import net.snowteb.warriorcats_events.entity.custom.EagleEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -27,9 +28,9 @@ public class ServerGamePacketListenerMixin {
     @Shadow
     private int aboveGroundVehicleTickCount;
 
-    @Inject(method = "tick", at = @At("HEAD"), remap = false)
+    @Inject(method = "tick", at = @At("HEAD"))
     public void avoidKickFromFlyingEagle(CallbackInfo ci) {
-        if (this.player.getVehicle() instanceof EagleEntity) {
+        if (this.player.getVehicle() instanceof EagleEntity || this.player.hasEffect(MobEffects.SLOW_FALLING)) {
             this.clientIsFloating = false;
             this.clientVehicleIsFloating = false;
             this.aboveGroundTickCount = 0;

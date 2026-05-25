@@ -19,11 +19,9 @@ import net.snowteb.warriorcats_events.block.ModBlocks;
 import net.snowteb.warriorcats_events.block.custom.PreyBonesBlock;
 import net.snowteb.warriorcats_events.entity.ModEntities;
 import net.snowteb.warriorcats_events.item.custom.*;
-import net.snowteb.warriorcats_events.sound.ModSounds;
 import net.snowteb.warriorcats_events.util.ItemWithToolTip;
 import vazkii.patchouli.api.PatchouliAPI;
 
-import javax.annotation.Nullable;
 import java.util.List;
 
 
@@ -100,6 +98,12 @@ public class ModItems {
                         @Override
                         public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
                             tooltipComponents.add(Component.translatable("block.warriorcats_events.stone_crafting_table.tooltip").withStyle(ChatFormatting.GRAY));
+
+
+                            tooltipComponents.add(Component.empty());
+                            Component shiftRightClick = Component.literal("[Shift + Right-Click] ");
+                            tooltipComponents.add(shiftRightClick.copy().append(Component.literal("On the block with an ingredient to put it on the rock.").withStyle(ChatFormatting.GRAY)));
+                            tooltipComponents.add(shiftRightClick.copy().append(Component.literal("On the block with your claws to prepare a recipe.").withStyle(ChatFormatting.GRAY)));
                         }
                     });
 
