@@ -1,4 +1,4 @@
-package net.snowteb.warriorcats_events.integration;
+package net.snowteb.warriorcats_events.compat;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;

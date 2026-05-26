@@ -13,11 +13,13 @@ public class StCOpenPatrolScreenPacket {
     public final List<Integer> entityIds;
     public final UUID clanUUID;
     public final int deputyID;
+    public final boolean isPlayerValidDeputy;
 
-    public StCOpenPatrolScreenPacket(List<Integer> catIDs, UUID clanUUID, int deputyID) {
+    public StCOpenPatrolScreenPacket(List<Integer> catIDs, UUID clanUUID, int deputyID, boolean playerValidDeputy) {
         this.entityIds = catIDs;
         this.clanUUID = clanUUID;
         this.deputyID = deputyID;
+        this.isPlayerValidDeputy = playerValidDeputy;
     }
 
     public static void encode(StCOpenPatrolScreenPacket msg, FriendlyByteBuf buf) {
@@ -25,6 +27,7 @@ public class StCOpenPatrolScreenPacket {
         for (int id : msg.entityIds) buf.writeVarInt(id);
         buf.writeUUID(msg.clanUUID);
         buf.writeInt(msg.deputyID);
+        buf.writeBoolean(msg.isPlayerValidDeputy);
     }
 
     public static StCOpenPatrolScreenPacket decode(FriendlyByteBuf buf) {
@@ -33,14 +36,15 @@ public class StCOpenPatrolScreenPacket {
         for (int i = 0; i < size; i++) ids.add(buf.readVarInt());
         UUID clanUUID = buf.readUUID();
         int deputyID = buf.readInt();
+        boolean playerValidDeputy = buf.readBoolean();
 
-        return new StCOpenPatrolScreenPacket(ids, clanUUID, deputyID);
+        return new StCOpenPatrolScreenPacket(ids, clanUUID, deputyID, playerValidDeputy);
     }
 
     public static void handle(StCOpenPatrolScreenPacket msg, Supplier<NetworkEvent.Context> supplier) {
         NetworkEvent.Context ctx = supplier.get();
         ctx.enqueueWork(() -> {
-            ClientPacketHandles.openPatrolScreen(msg.entityIds, msg.clanUUID, msg.deputyID);
+            ClientPacketHandles.openPatrolScreen(msg.entityIds, msg.clanUUID, msg.deputyID, msg.isPlayerValidDeputy);
         });
         ctx.setPacketHandled(true);
     }

@@ -1,6 +1,7 @@
 package net.snowteb.warriorcats_events.sound;
 
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.Music;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
@@ -12,7 +13,6 @@ public class ModSounds {
     public static final DeferredRegister<SoundEvent> SOUND_EVENTS =
             DeferredRegister.create(ForgeRegistries.SOUND_EVENTS ,WarriorCatsEvents.MODID);
 
-//
 
     public static final RegistryObject<SoundEvent> GENERATIONS =
             registerSoundEvents("generations");

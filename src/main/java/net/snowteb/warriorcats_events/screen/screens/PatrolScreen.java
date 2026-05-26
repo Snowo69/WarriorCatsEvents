@@ -52,19 +52,21 @@ public class PatrolScreen extends Screen {
 
     private CatSelectionScrollList catSelection;
 
-    private final int deputyID;
+    private final int currentCatID;
 
     private int displayErrorTime = 0;
     private String displayErrorText = "";
     private boolean isAnError = false;
 
+    private final boolean isPlayerDeputy;
 
-    public PatrolScreen(List<WCatEntity> cats, UUID clanUUID, int deputyID) {
+    public PatrolScreen(List<WCatEntity> cats, UUID clanUUID, int deputyID, boolean deputy) {
         super(Component.empty());
         this.cats = cats;
         this.localPlayer = Minecraft.getInstance().player;
         this.clanUUID = clanUUID;
-        this.deputyID = deputyID;
+        this.currentCatID = deputyID;
+        this.isPlayerDeputy = deputy;
     }
 
     @Override
@@ -110,9 +112,9 @@ public class PatrolScreen extends Screen {
         backButton = Button.builder(
                 Component.literal("Close"),
                 btn -> {
-                    Entity ent = Minecraft.getInstance().level.getEntity(deputyID);
+                    Entity ent = Minecraft.getInstance().level.getEntity(currentCatID);
                     if (ent instanceof WCatEntity) {
-                        Minecraft.getInstance().setScreen(new CatDataScreen(Component.empty(), (WCatEntity) ent));
+                        Minecraft.getInstance().setScreen(new CatDataScreen(Component.empty(), (WCatEntity) ent, isPlayerDeputy));
                     }
                 }
         ).bounds(10, this.height - 30, 60, 20).build();
@@ -160,7 +162,7 @@ public class PatrolScreen extends Screen {
         this.addRenderableWidget(scaleSlider);
         this.addRenderableWidget(backButton);
         this.addRenderableWidget(selectedChunks);
-        this.addRenderableWidget(catSelection);
+        if (!isPlayerDeputy) this.addRenderableWidget(catSelection);
         this.addRenderableWidget(sendBorderPatrol);
         this.addRenderableWidget(sendHuntingPatrol);
     }
@@ -332,12 +334,14 @@ public class PatrolScreen extends Screen {
 
     @Override
     public void onClose() {
-        ModPackets.sendToServer(new RetrieveLastCatModePacket(this.deputyID));
+        ModPackets.sendToServer(new RetrieveLastCatModePacket(this.currentCatID));
         super.onClose();
     }
 
     private void sendPatrol(int patrolType) {
         List<Integer> entityIDs = new ArrayList<>(catSelection.getSelectedIDs());
+        if (this.isPlayerDeputy) entityIDs.add(this.currentCatID);
+
         if (entityIDs.isEmpty()) {
             displayError("No cats were selected.", true);
             return;
@@ -351,7 +355,7 @@ public class PatrolScreen extends Screen {
 
 //        ModPackets.sendToServer(new RetrieveLastCatModePacket(deputyID));
 
-        ModPackets.sendToServer(new CtSSendPatrol(deputyID, entityIDs, patrolType, territoryToPatrol));
+        ModPackets.sendToServer(new CtSSendPatrol(currentCatID, entityIDs, patrolType, territoryToPatrol, isPlayerDeputy));
 
         Minecraft.getInstance().setScreen(null);
     }

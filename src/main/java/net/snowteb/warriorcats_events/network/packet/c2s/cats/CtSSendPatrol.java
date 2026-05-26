@@ -29,11 +29,15 @@ public class CtSSendPatrol {
 
     private final List<ChunkPos> territoryToPatrol;
 
-    public CtSSendPatrol(int entityId, List<Integer> entityIds, int patrolType, List<ChunkPos> territoryToPatrol) {
+    private final boolean isCatSentByDeputy;
+
+    public CtSSendPatrol(int entityId, List<Integer> entityIds, int patrolType,
+                         List<ChunkPos> territoryToPatrol, boolean isCatSentByDeputy) {
         this.deputyID = entityId;
         this.entityIds = entityIds;
         this.patrolType = patrolType;
         this.territoryToPatrol = territoryToPatrol;
+        this.isCatSentByDeputy = isCatSentByDeputy;
     }
 
     public static void encode(CtSSendPatrol msg, FriendlyByteBuf buf) {
@@ -50,6 +54,8 @@ public class CtSSendPatrol {
             buf.writeInt(pos.x);
             buf.writeInt(pos.z);
         }
+
+        buf.writeBoolean(msg.isCatSentByDeputy);
 
     }
 
@@ -71,7 +77,9 @@ public class CtSSendPatrol {
             territoryToPatrol.add(new ChunkPos(buf.readInt(), buf.readInt()));
         }
 
-        return new CtSSendPatrol(entityId, entityIds, patrolType, territoryToPatrol);
+        boolean isCatSentByDeputy = buf.readBoolean();
+
+        return new CtSSendPatrol(entityId, entityIds, patrolType, territoryToPatrol, isCatSentByDeputy);
     }
 
     public static void handle(CtSSendPatrol msg, Supplier<NetworkEvent.Context> ctx) {
@@ -82,6 +90,13 @@ public class CtSSendPatrol {
             ServerLevel level = player.serverLevel();
             Entity e = level.getEntity(msg.deputyID);
 
+            if (msg.isCatSentByDeputy) {
+                if (!msg.entityIds.isEmpty()) {
+                    Entity entity = level.getEntity(msg.entityIds.get(0));
+                    sendCatByDeputy(entity, player, level, msg);
+                }
+                return;
+            }
 
             if (e instanceof WCatEntity deputy) {
                 String catName = deputy.hasCustomName() ? "<" + deputy.getCustomName().getString() + "> " : "<???> ";
@@ -167,6 +182,85 @@ public class CtSSendPatrol {
 
         });
         ctx.get().setPacketHandled(true);
+    }
+
+    private static void sendCatByDeputy(Entity e, ServerPlayer player, ServerLevel level, CtSSendPatrol msg) {
+        if (e instanceof WCatEntity catSent) {
+            String catName = catSent.hasCustomName() ? "<" + catSent.getCustomName().getString() + "> " : "<???> ";
+
+            BlockPos homePos = catSent.getHomePosition();
+
+            if (homePos == null || homePos.equals(BlockPos.ZERO)) {
+                player.sendSystemMessage(Component.literal("This cat doesn't have a home to return to.").withStyle(ChatFormatting.RED));
+
+                catSent.mode = catSent.lastMode;
+                if (catSent.lastMode != WCatEntity.CatMode.SIT) {
+                    catSent.setInSittingPose(false);
+                }
+                catSent.lastMode = catSent.mode;
+
+                return;
+            }
+
+            List<BlockPos> toPatrol = new ArrayList<>();
+
+            for (int i = 0; i < 4; i++) {
+                ChunkPos chunk = new ChunkPos(player.chunkPosition().x + i + 1, player.chunkPosition().z + i + 1);
+                BlockPos testHeightMap = new BlockPos(chunk.getMinBlockX() + 8, 0, chunk.getMinBlockZ() + 8);
+                BlockPos center = level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, testHeightMap);
+                toPatrol.add(center);
+            }
+
+            String message = switch (catSent.getPersonality()) {
+                case INDEPENDENT -> "I will get it done.";
+                case SHY -> "S-sure! On the way.";
+                case FRIENDLY -> "Of course! On my way.";
+                case HUMBLE -> "You can count on me.";
+                case GRUMPY -> "Fine.";
+                case RECKLESS -> "I'll go right now.";
+                case CALM -> "As you wish.";
+                case AMBITIOUS -> "Sure, leave it to me.";
+                case CAUTIOUS -> "I'll see what I can do.";
+                case NONE -> "";
+            };
+            player.sendSystemMessage(Component.literal(catName + message));
+
+
+            Map<Integer, BlockPos> finalMap = new HashMap<>();
+
+            int i=0;
+            for (ChunkPos chunkPos : msg.territoryToPatrol) {
+                LevelChunk chunk = level.getChunk(chunkPos.x, chunkPos.z);
+                BlockPos toGo = null;
+                for (BlockEntity blockEntity : chunk.getBlockEntities().values()) {
+                    if (blockEntity instanceof TreeStumpBlockEntity) {
+                        toGo = blockEntity.getBlockPos();
+                    }
+                }
+
+                if (toGo == null) {
+                    BlockPos testHeightMap = new BlockPos(chunkPos.getMinBlockX() + 8, 0, chunkPos.getMinBlockZ() + 8);
+                    toGo = level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, testHeightMap);
+                }
+
+                finalMap.put(i, toGo);
+                i++;
+            }
+
+            if (msg.patrolType == 0) {
+                catSent.setOnBorderPatrol(finalMap);
+            } else {
+                catSent.setOnHuntingPatrol(finalMap);
+            }
+
+            int chunks = finalMap.size();
+
+            Component playerMessage = Component.literal(catName + " sent to patrol " + chunks + " chunks")
+                    .withStyle(ChatFormatting.GREEN);
+
+            player.displayClientMessage(playerMessage,true);
+
+        }
     }
 
 

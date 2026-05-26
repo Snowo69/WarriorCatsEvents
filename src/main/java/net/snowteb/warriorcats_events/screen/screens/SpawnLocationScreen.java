@@ -124,17 +124,8 @@ public class SpawnLocationScreen extends Screen {
             ModPackets.sendToServer(new CtSTeleportToLocationPacket(32));
 
             if (WCEClientConfig.CLIENT.AMBIENT_MUSIC.get()) {
-                Minecraft.getInstance().getSoundManager().play(
-                        new SimpleSoundInstance(
-                                ModSounds.GENERATIONS_BG.get().getLocation(),
-                                SoundSource.MUSIC, 0.3F, 1.0F,
-                                SoundInstance.createUnseededRandom(),
-                                false, 0,
-                                SoundInstance.Attenuation.NONE,
-                                0, 0, 0,
-                                true
-                        )
-                );
+                Minecraft mc = Minecraft.getInstance();
+                mc.getMusicManager().startPlaying(WCEClient.GENERATIONS_BG_MUSIC);
             }
         }
         return super.keyPressed(keyCode, scanCode, modifiers);
@@ -285,21 +276,9 @@ public class SpawnLocationScreen extends Screen {
 
         if (WCEClientConfig.CLIENT.AMBIENT_MUSIC.get()) {
             Minecraft mc = Minecraft.getInstance();
-            mc.getSoundManager().play(
-                    new SimpleSoundInstance(
-                            ModSounds.GENERATIONS_BG.get().getLocation(),
-                            SoundSource.MUSIC,
-                            0.3F,
-                            1.0F,
-                            SoundInstance.createUnseededRandom(),
-                            false,
-                            0,
-                            SoundInstance.Attenuation.NONE,
-                            0, 0, 0,
-                            true
-                    )
-            );
+            mc.getMusicManager().startPlaying(WCEClient.GENERATIONS_BG_MUSIC);
         }
+
         ModPackets.sendToServer(new CtSTeleportToLocationPacket(locationValue));
 
         LocalPlayer player = Minecraft.getInstance().player;

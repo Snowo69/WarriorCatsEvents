@@ -5,6 +5,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.world.level.Level;
+import net.snowteb.warriorcats_events.client.ClientTerritoryEvents;
 import sereneseasons.api.season.ISeasonState;
 import sereneseasons.api.season.SeasonHelper;
 
@@ -12,6 +13,7 @@ public class WCESereneSeasonsClient {
 
     public static void seasonOverlay(GuiGraphics pGuiGraphics, Level level) {
         Minecraft mc = Minecraft.getInstance();
+        if (mc.screen != null) return;
 
         int width = mc.getWindow().getGuiScaledWidth();
         int height = mc.getWindow().getGuiScaledHeight();
@@ -32,18 +34,22 @@ public class WCESereneSeasonsClient {
             case LATE_WINTER -> Component.literal("─ Late Leaf-bare ❄").withStyle(Style.EMPTY.withColor(0xff5dadc1));
         };
 
-        pGuiGraphics.pose().pushPose();
-        pGuiGraphics.pose().translate(6,6,0);
-        float scale = 0.9f;
-        pGuiGraphics.pose().scale(scale, scale, scale);
-        pGuiGraphics.drawString(mc.font, text, 0, 0, 0xFFFFFFFF);
-        int color = text.getStyle().getColor() != null ? text.getStyle().getColor().getValue() : 0xFFFFFF;
-        pGuiGraphics.fill(-2, 10, mc.font.width(text.getString()) + 5, 12, color);
+        {
+            int lineLenght = mc.font.width(text.getString()) + 5;
 
-        pGuiGraphics.pose().popPose();
+            float scale = 0.9f;
 
+            int xPosition = (int) (mc.getWindow().getGuiScaledWidth() - (lineLenght*scale) - 10);
 
+            pGuiGraphics.pose().pushPose();
+            pGuiGraphics.pose().translate(xPosition, 5, 0);
+            pGuiGraphics.pose().scale(scale, scale, scale);
+            pGuiGraphics.drawString(mc.font, text, 0, 0, 0xFFFFFFFF);
 
+            int color = text.getStyle().getColor() != null ? text.getStyle().getColor().getValue() : 0xFFFFFF;
+            pGuiGraphics.fill(-2, 10, mc.font.width(text.getString()) + 5, 12, color);
+            pGuiGraphics.pose().popPose();
+        }
     }
 
 }

@@ -53,7 +53,9 @@ public class Chills extends Disease<Chills> {
 
     public void healingTick(Diseaseable<?> diseaseable) {
         LivingEntity ent = diseaseable.getEntity();
-        if (maxFreeze > 10) ent.setTicksFrozen(141);
+        if (!ent.level().isClientSide()){
+            if (maxFreeze > 10) ent.setTicksFrozen(141);
+        }
 
         if (shouldHeal && ent.tickCount % 10 == 0) {
             maxFreeze--;

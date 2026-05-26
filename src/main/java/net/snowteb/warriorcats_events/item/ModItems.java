@@ -99,6 +99,11 @@ public class ModItems {
                         @Override
                         public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
                             tooltip.add(Component.translatable("block.warriorcats_events.stone_crafting_table.tooltip").withStyle(ChatFormatting.GRAY));
+
+                            tooltip.add(Component.empty());
+                            Component shiftRightClick = Component.literal("[Shift + Right-Click] ");
+                            tooltip.add(shiftRightClick.copy().append(Component.literal("On the block with an ingredient to put it on the rock.").withStyle(ChatFormatting.GRAY)));
+                            tooltip.add(shiftRightClick.copy().append(Component.literal("On the block with your claws to prepare a recipe.").withStyle(ChatFormatting.GRAY)));
                         }
                     });
 

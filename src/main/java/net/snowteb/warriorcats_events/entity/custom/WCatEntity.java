@@ -3294,6 +3294,31 @@ public class WCatEntity extends TamableAnimal implements GeoEntity, Diseaseable<
                     ModPackets.sendToPlayer(new SyncDiseasesPacket(this.getId(), this.diseaseData()), sPlayer);
                 }
 
+                boolean isValidDeputy;
+                if (this.level() instanceof  ServerLevel sLevel) {
+                    ClanData data = ClanData.get(sLevel.getServer().overworld());
+
+                    UUID clanUUID = pPlayer.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+                            .map(WCEPlayerData::getCurrentClanUUID).orElse(ClanData.EMPTY_UUID);
+
+                    ClanData.Clan clan = data.getClan(clanUUID);
+                    if (clan != null) {
+                        isValidDeputy = clan.members.get(pPlayer.getUUID()) == ClanData.ClanPlayerRank.DEPUTY
+                                && data.canCommandWarriors(clan, pPlayer.getUUID())
+                                && (this.getHealth() > this.getMaxHealth() / 2)
+                                && !(this.onBorderPatrolFlag || this.onHuntingPatrolFlag || this.returnHomeFlag || this.tellingCatsToPatrol)
+                                && this.getClanUUID().equals(clanUUID)
+                                && !this.getClanUUID().equals(ClanData.EMPTY_UUID)
+                                && (this.getRank() == WARRIOR || this.getRank() == APPRENTICE)
+                                && this.getOwnerUUID() != null
+                                && this.hasHomePosition();
+                    } else {
+                        isValidDeputy = false;
+                    }
+                } else {
+                    isValidDeputy = false;
+                }
+
                 if (this.isTame() && this.getOwner() == pPlayer) {
                     if (this.getPersonality() == Personality.NONE || this.getPersonality() == null) {
                         this.assignRandomPersonality(this.random);
@@ -3394,7 +3419,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity, Diseaseable<
                         ModEvents2.schedule(1, () -> {
                             ModPackets.INSTANCE.send(
                                     PacketDistributor.PLAYER.with(() -> sPlayer),
-                                    new OpenCatDataScreenPacket(this.getId())
+                                    new OpenCatDataScreenPacket(this.getId(), isValidDeputy)
                             );
                         });
                     }
@@ -3403,7 +3428,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity, Diseaseable<
                     if (!pPlayer.level().isClientSide && pPlayer instanceof ServerPlayer sPlayer) {
                         ModPackets.INSTANCE.send(
                                 PacketDistributor.PLAYER.with(() -> sPlayer),
-                                new OpenCatDataScreenPacket(this.getId())
+                                new OpenCatDataScreenPacket(this.getId(), isValidDeputy)
                         );
                     }
                 }

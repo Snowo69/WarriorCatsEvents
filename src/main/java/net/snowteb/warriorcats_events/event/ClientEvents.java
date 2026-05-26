@@ -91,6 +91,10 @@ public class ClientEvents {
                 }
             }
 
+            if (ModKeybinds.OPTIONS_KEY.isDown() && event.getAction() == GLFW.GLFW_PRESS) {
+                Minecraft.getInstance().setScreen(new WCEOptionsScreen());
+            }
+
 //            boolean shiftDown =
 //                    InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), GLFW.GLFW_KEY_LEFT_SHIFT) ||
 //                            InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), GLFW.GLFW_KEY_RIGHT_SHIFT);
@@ -124,15 +128,6 @@ public class ClientEvents {
 
         }
 
-
-        @SubscribeEvent
-        public static void onPlaySound(PlaySoundEvent event) {
-            SoundInstance sound = event.getSound();
-
-            if (sound != null && sound.getLocation().equals(ModSounds.GENERATIONS.getId())) {
-                Minecraft.getInstance().getSoundManager().stop(null, SoundSource.MUSIC);
-            }
-        }
 
         @SubscribeEvent
         public static void onScroll(InputEvent.MouseScrollingEvent event) {
@@ -439,6 +434,7 @@ public class ClientEvents {
             event.register(ModKeybinds.WATERDRINK_KEY);
             event.register(ModKeybinds.CLIMB_KEY);
             event.register(WCEClient.EMOTES_HUD_MENU_KEY);
+            event.register(ModKeybinds.OPTIONS_KEY);
 //            event.register(ModKeybinds.SKILLMENU_KEY);
         }
 
@@ -591,7 +587,7 @@ public class ClientEvents {
 
                             var entity = mc.level.getEntity(pkt.catId);
                             if (entity instanceof WCatEntity cat) {
-                                mc.setScreen(new CatDataScreen(cat.getDisplayName(), cat));
+                                mc.setScreen(new CatDataScreen(cat.getDisplayName(), cat, pkt.isDeputy));
                             }
                         });
 

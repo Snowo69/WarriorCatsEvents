@@ -22,7 +22,7 @@ import java.util.UUID;
 @OnlyIn(Dist.CLIENT)
 public class ClientPacketHandles {
 
-    public static void openCatScreen(int catId) {
+    public static void openCatScreen(int catId, boolean isDeputy) {
 
         Minecraft mc = Minecraft.getInstance();
         if (mc.level == null) return;
@@ -30,7 +30,7 @@ public class ClientPacketHandles {
         var entity = mc.level.getEntity(catId);
 
         if (entity instanceof WCatEntity cat) {
-            mc.setScreen(new CatDataScreen(cat.getDisplayName(), cat));
+            mc.setScreen(new CatDataScreen(cat.getDisplayName(), cat, isDeputy));
         }
     }
 
@@ -123,7 +123,7 @@ public class ClientPacketHandles {
 
     }
 
-    public static void openPatrolScreen(List<Integer> entityIds, UUID clanUUID, int deputyID) {
+    public static void openPatrolScreen(List<Integer> entityIds, UUID clanUUID, int deputyID, boolean deputy) {
         Minecraft.getInstance().execute(() -> {
             Minecraft mc = Minecraft.getInstance();
             if (mc.level == null) return;
@@ -134,7 +134,7 @@ public class ClientPacketHandles {
                     .map(e -> (WCatEntity) e)
                     .toList();
 
-            mc.setScreen(new PatrolScreen(cats, clanUUID,  deputyID));
+            mc.setScreen(new PatrolScreen(cats, clanUUID,  deputyID, deputy));
         });
 
     }

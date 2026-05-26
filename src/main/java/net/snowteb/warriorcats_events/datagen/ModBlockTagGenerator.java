@@ -3,14 +3,11 @@ package net.snowteb.warriorcats_events.datagen;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.world.level.block.Block;
-import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.data.BlockTagsProvider;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.block.ModBlocks;
-import net.snowteb.warriorcats_events.integration.CompatibilityTags;
-import net.snowteb.warriorcats_events.item.ModItems;
+import net.snowteb.warriorcats_events.compat.CompatibilityTags;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.CompletableFuture;

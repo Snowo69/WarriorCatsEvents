@@ -20,17 +20,21 @@ import java.util.function.Supplier;
 
 public class CtSRequestPatrolData {
     private final int deputyID;
-    public CtSRequestPatrolData(int deputyID) {
+    private final boolean isValidDeputy;
+    public CtSRequestPatrolData(int deputyID, boolean isValidDeputy) {
         this.deputyID = deputyID;
+        this.isValidDeputy = isValidDeputy;
     }
 
     public static CtSRequestPatrolData decode(FriendlyByteBuf buf) {
         int deputyID = buf.readInt();
-        return new CtSRequestPatrolData(deputyID);
+        boolean isDeputy = buf.readBoolean();
+        return new CtSRequestPatrolData(deputyID, isDeputy);
     }
 
     public static void encode(CtSRequestPatrolData packet, FriendlyByteBuf buf) {
         buf.writeInt(packet.deputyID);
+        buf.writeBoolean(packet.isValidDeputy);
     }
 
     public static void handle(CtSRequestPatrolData msg, Supplier<NetworkEvent.Context> ctx) {
@@ -59,7 +63,7 @@ public class CtSRequestPatrolData {
                     return (found.getRank() == WCatEntity.Rank.WARRIOR || found.getRank() == WCatEntity.Rank.DEPUTY || found.getRank() == WCatEntity.Rank.APPRENTICE) &&
                             (found.getHealth() > found.getMaxHealth() / 2) &&
                             !(found.onBorderPatrolFlag || found.onHuntingPatrolFlag || found.returnHomeFlag || found.tellingCatsToPatrol)
-                            && found.isOwnedBy(player)
+                            && (found.isOwnedBy(player) || data.canCommandWarriors(clan, player.getUUID()))
                             && found.getClanUUID().equals(clanUUID)
                             && !found.getClanUUID().equals(ClanData.EMPTY_UUID)
                             && found.getOwnerUUID() != null
@@ -71,7 +75,7 @@ public class CtSRequestPatrolData {
                 idList.add(cat.getId());
             }
 
-            ModPackets.sendToPlayer(new StCOpenPatrolScreenPacket(idList, clanUUID, msg.deputyID), player);
+            ModPackets.sendToPlayer(new StCOpenPatrolScreenPacket(idList, clanUUID, msg.deputyID, msg.isValidDeputy), player);
 
         });
         ctx.get().setPacketHandled(true);

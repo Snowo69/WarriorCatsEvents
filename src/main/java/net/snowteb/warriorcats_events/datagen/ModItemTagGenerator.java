@@ -7,7 +7,7 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
-import net.snowteb.warriorcats_events.integration.CompatibilityTags;
+import net.snowteb.warriorcats_events.compat.CompatibilityTags;
 import net.snowteb.warriorcats_events.item.ModItems;
 import org.jetbrains.annotations.Nullable;
 
