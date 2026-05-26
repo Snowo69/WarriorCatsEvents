@@ -69,10 +69,12 @@ public class CatDataScreen extends Screen {
     private static final ResourceLocation HEARTS_FILL =
             ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/gui/clan_setup/hearts_fill.png");
 
+    private final boolean isPlayerValidDeputy;
 
-    public CatDataScreen(Component pTitle, WCatEntity cat) {
+    public CatDataScreen(Component pTitle, WCatEntity cat, boolean isDeputy) {
         super(pTitle);
         this.wCatEntity = cat;
+        this.isPlayerValidDeputy = isDeputy;
     }
 
     @Override
@@ -273,8 +275,10 @@ public class CatDataScreen extends Screen {
             renderable.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
         }
 
+        pGuiGraphics.pose().pushPose();
+        pGuiGraphics.pose().translate(0,0,300);
         WCEClient.renderDiseaseTooltipsUtD(wCatEntity, pGuiGraphics, 170, 16, pMouseX, pMouseY);
-
+        pGuiGraphics.pose().popPose();
 
     }
 
@@ -539,11 +543,11 @@ public class CatDataScreen extends Screen {
                 }
         ).bounds(this.width - 85, this.height - 30, 80, 20).build());
 
-        if (wCatEntity.isTame() && wCatEntity.getOwner() == Minecraft.getInstance().player && wCatEntity.getRank() == WCatEntity.Rank.DEPUTY){
+        if ((wCatEntity.isTame() && wCatEntity.getOwner() == Minecraft.getInstance().player && wCatEntity.getRank() == WCatEntity.Rank.DEPUTY) || isPlayerValidDeputy){
             this.addRenderableWidget(Button.builder(
                     Component.literal("Patrol"),
                     btn -> {
-                        ModPackets.sendToServer(new CtSRequestPatrolData(wCatEntity.getId()));
+                        ModPackets.sendToServer(new CtSRequestPatrolData(wCatEntity.getId(), isPlayerValidDeputy));
                         Minecraft.getInstance().setScreen(null);
                     }
             ).bounds(this.width - 85, 85, 80, 20).build());

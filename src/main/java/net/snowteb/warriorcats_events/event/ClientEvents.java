@@ -79,6 +79,10 @@ public class ClientEvents {
                 }
             }
 
+            if (ModKeybinds.OPTIONS_KEY.isDown() && event.getAction() == GLFW.GLFW_PRESS) {
+                Minecraft.getInstance().setScreen(new WCEOptionsScreen());
+            }
+
 //            boolean shiftDown =
 //                    InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), GLFW.GLFW_KEY_LEFT_SHIFT) ||
 //                            InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), GLFW.GLFW_KEY_RIGHT_SHIFT);

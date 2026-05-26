@@ -12,6 +12,8 @@ public class ModKeybinds {
     public static final String KEY_SKILLMENU = "key.warriorcats_events.skillmenu";
     public static final String KEY_EMOTES = "key.warriorcats_events.emotes";
     public static final String KEY_CLIMB = "key.warriorcats_events.climb";
+    public static final String KEY_OPTIONS = "key.warriorcats_events.options";
+
 
     public static final KeyMapping HISSING_KEY = new KeyMapping(KEY_HISS, KeyConflictContext.IN_GAME,
             InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_H, KEY_CATEGORY_WARRIORCATSEVENTS);
@@ -22,5 +24,7 @@ public class ModKeybinds {
     public static final KeyMapping CLIMB_KEY = new KeyMapping(KEY_CLIMB, KeyConflictContext.IN_GAME,
             InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_C, KEY_CATEGORY_WARRIORCATSEVENTS);
 
+    public static final KeyMapping OPTIONS_KEY = new KeyMapping(KEY_OPTIONS, KeyConflictContext.IN_GAME,
+            InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_K, KEY_CATEGORY_WARRIORCATSEVENTS);
 
 }

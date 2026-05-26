@@ -22,17 +22,22 @@ import java.util.UUID;
 
 public class CtSRequestPatrolData implements CustomPacketPayload {
     private final int deputyID;
-    public CtSRequestPatrolData(int deputyID) {
+    private final boolean isValidDeputy;
+
+    public CtSRequestPatrolData(int deputyID, boolean isValidDeputy) {
         this.deputyID = deputyID;
+        this.isValidDeputy = isValidDeputy;
     }
 
     public static CtSRequestPatrolData decode(FriendlyByteBuf buf) {
         int deputyID = buf.readInt();
-        return new CtSRequestPatrolData(deputyID);
+        boolean isValidDeputy = buf.readBoolean();
+        return new CtSRequestPatrolData(deputyID, isValidDeputy);
     }
 
     public static void encode(CtSRequestPatrolData packet, FriendlyByteBuf buf) {
         buf.writeInt(packet.deputyID);
+        buf.writeBoolean(packet.isValidDeputy);
     }
 
     public static void handle(CtSRequestPatrolData msg, IPayloadContext ctx) {
@@ -59,7 +64,7 @@ public class CtSRequestPatrolData implements CustomPacketPayload {
                     return (found.getRank() == WCatEntity.Rank.WARRIOR || found.getRank() == WCatEntity.Rank.DEPUTY || found.getRank() == WCatEntity.Rank.APPRENTICE) &&
                             (found.getHealth() > found.getMaxHealth() / 2) &&
                             !(found.onBorderPatrolFlag || found.onHuntingPatrolFlag || found.returnHomeFlag || found.tellingCatsToPatrol)
-                            && found.isOwnedBy(player)
+                            && (found.isOwnedBy(player) || data.canCommandWarriors(clan, player.getUUID()))
                             && found.getClanUUID().equals(clanUUID)
                             && !found.getClanUUID().equals(ClanData.EMPTY_UUID)
                             && found.getOwnerUUID() != null
@@ -71,7 +76,7 @@ public class CtSRequestPatrolData implements CustomPacketPayload {
                 idList.add(cat.getId());
             }
 
-            ModPackets.sendToPlayer(new StCOpenPatrolScreenPacket(idList, clanUUID, msg.deputyID), player);
+            ModPackets.sendToPlayer(new StCOpenPatrolScreenPacket(idList, clanUUID, msg.deputyID, msg.isValidDeputy), player);
 
         });
     }

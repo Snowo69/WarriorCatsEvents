@@ -3192,6 +3192,30 @@ public class WCatEntity extends TamableAnimal implements GeoEntity, Diseaseable<
                     ModPackets.sendToPlayer(new SyncDiseasesPacket(this.getId(), this.diseaseData()), sPlayer);
                 }
 
+                boolean isValidDeputy;
+                if (this.level() instanceof  ServerLevel sLevel) {
+                    ClanData data = ClanData.get(sLevel.getServer().overworld());
+
+                    UUID clanUUID = pPlayer.getData(ModAttachments.PLAYER_WCE_DATA).getCurrentClanUUID();
+
+                    ClanData.Clan clan = data.getClan(clanUUID);
+                    if (clan != null) {
+                        isValidDeputy = clan.members.get(pPlayer.getUUID()) == ClanData.ClanPlayerRank.DEPUTY
+                                && data.canCommandWarriors(clan, pPlayer.getUUID())
+                                && (this.getHealth() > this.getMaxHealth() / 2)
+                                && !(this.onBorderPatrolFlag || this.onHuntingPatrolFlag || this.returnHomeFlag || this.tellingCatsToPatrol)
+                                && this.getClanUUID().equals(clanUUID)
+                                && !this.getClanUUID().equals(ClanData.EMPTY_UUID)
+                                && (this.getRank() == WARRIOR || this.getRank() == APPRENTICE)
+                                && this.getOwnerUUID() != null
+                                && this.hasHomePosition();
+                    } else {
+                        isValidDeputy = false;
+                    }
+                } else {
+                    isValidDeputy = false;
+                }
+
                 if (this.isTame() && this.getOwner() == pPlayer) {
                     if (this.getPersonality() == Personality.NONE || this.getPersonality() == null) {
                         this.assignRandomPersonality(this.random);
@@ -3288,13 +3312,13 @@ public class WCatEntity extends TamableAnimal implements GeoEntity, Diseaseable<
 
                     if (!pPlayer.level().isClientSide && pPlayer instanceof ServerPlayer sPlayer) {
                         ModEvents2.schedule(1, () -> {
-                            ModPackets.sendToPlayer(new OpenCatDataScreenPacket(this.getId()), sPlayer);
+                            ModPackets.sendToPlayer(new OpenCatDataScreenPacket(this.getId(), isValidDeputy), sPlayer);
                         });
                     }
 
                 } else {
                     if (!pPlayer.level().isClientSide && pPlayer instanceof ServerPlayer sPlayer) {
-                        ModPackets.sendToPlayer(new OpenCatDataScreenPacket(this.getId()), sPlayer);
+                        ModPackets.sendToPlayer(new OpenCatDataScreenPacket(this.getId(), isValidDeputy), sPlayer);
                     }
                 }
             }

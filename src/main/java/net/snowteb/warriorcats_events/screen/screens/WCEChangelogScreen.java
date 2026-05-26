@@ -177,6 +177,8 @@ public class WCEChangelogScreen extends Screen {
         lines.add("- Port to Neoforge 1.21.1");
         lines.add("- Move the serene seasons season overlay");
         lines.add("- Adjusted the territory overlay");
+        lines.add("- Player deputies can now send cats on patrol");
+        lines.add("- Added an options screen, displayed by pressing \"K\" by default. This will offer easy access to almost all GUIs and options from WCE.");
         lines.add("- Other minor adjustements");
         lines.add("");
 
