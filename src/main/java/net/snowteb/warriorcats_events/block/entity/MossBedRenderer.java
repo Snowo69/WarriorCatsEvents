@@ -7,11 +7,7 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.FormattedCharSequence;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -19,13 +15,13 @@ import net.minecraft.world.phys.Vec3;
 import net.snowteb.warriorcats_events.clan.ClanData;
 import org.joml.Matrix4f;
 
-public class MossBedRenderer implements BlockEntityRenderer<MossBedBlockEntity> {
+public class MossBedRenderer implements BlockEntityRenderer<NestBlockEntity> {
 
     public MossBedRenderer(BlockEntityRendererProvider.Context context) {
     }
 
     @Override
-    public void render(MossBedBlockEntity pBlockEntity, float pPartialTick, PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight, int pPackedOverlay) {
+    public void render(NestBlockEntity pBlockEntity, float pPartialTick, PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight, int pPackedOverlay) {
 
         Minecraft mc = Minecraft.getInstance();
         Font font = mc.font;

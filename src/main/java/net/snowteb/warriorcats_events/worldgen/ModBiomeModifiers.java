@@ -33,11 +33,27 @@ public class ModBiomeModifiers {
 
     public static final ResourceKey<BiomeModifier> ADD_PEBBLES = registerKey("add_pebbles");
 
-
+    public static final ResourceKey<BiomeModifier> ADD_GLOWROCKS =
+            ResourceKey.create(
+                    ForgeRegistries.Keys.BIOME_MODIFIERS,
+                    ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "add_glowrocks")
+            );
 
     public static void bootstrap(BootstapContext<BiomeModifier> context) {
         var placedFeatures = context.lookup(Registries.PLACED_FEATURE);
         var biomes = context.lookup(Registries.BIOME);
+
+        context.register(
+                ADD_GLOWROCKS,
+                new ForgeBiomeModifiers.AddFeaturesBiomeModifier(
+                        biomes.getOrThrow(BiomeTags.IS_OVERWORLD),
+
+                        HolderSet.direct(
+                                placedFeatures.getOrThrow(ModPlacedFeatures.WALL_GLOWROCK_PLACED)
+                        ),
+                        GenerationStep.Decoration.UNDERGROUND_ORES
+                )
+        );
 
         context.register(ADD_SORREL, new ForgeBiomeModifiers.AddFeaturesBiomeModifier(
                 biomes.getOrThrow(BiomeTags.IS_OVERWORLD),

@@ -1,5 +1,6 @@
 package net.snowteb.warriorcats_events.block.entity;
 
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
@@ -23,14 +24,24 @@ public class ModBlockEntities {
                     BlockEntityType.Builder.of(FreshkillPileBlockEntity::new,
                             ModBlocks.FRESHKILL_PILE.get()).build(null));
 
-    public static final RegistryObject<BlockEntityType<MossBedBlockEntity>> MOSS_BED =
+    public static final RegistryObject<BlockEntityType<NestBlockEntity>> MOSS_BED =
             BLOCK_ENTITIES.register("moss_bed", () ->
-                    BlockEntityType.Builder.of(MossBedBlockEntity::new,
+                    BlockEntityType.Builder.of(NestBlockEntity::new,
                             ModBlocks.MOSS_BED.get(),
                             ModBlocks.HAY_BED.get(),
                             ModBlocks.KELP_BED.get(),
                             ModBlocks.STONE_BED.get(),
-                            ModBlocks.LAVENDER_BED.get()
+                            ModBlocks.LAVENDER_BED.get(),
+                            ModBlocks.DRIFTWOOD_BED.get(),
+                            ModBlocks.DAISY_BED.get(),
+                            ModBlocks.ACACIA_BED.get(),
+                            ModBlocks.TERRACOTTA_BED.get(),
+                            ModBlocks.BAMBOO_BED.get(),
+                            ModBlocks.BERRY_BED.get(),
+                            ModBlocks.CORAL_BED.get(),
+                            ModBlocks.GLOWBERRY_BED.get(),
+                            ModBlocks.MUDDY_BED.get(),
+                            ModBlocks.CHERRY_BLOSSOM_BED.get()
                             )
                             .build(null)
             );
@@ -68,6 +79,17 @@ public class ModBlockEntities {
                             ModBlocks.RED_KITTYPET_BOWL.get()
                     ).build(null));
 
+    public static final RegistryObject<BlockEntityType<MoonstoneBlockEntity>> MOONSTONE =
+            BLOCK_ENTITIES.register("moonstone", () ->
+                    BlockEntityType.Builder.of(MoonstoneBlockEntity::new,
+                            ModBlocks.MOONSTONE_BLOCK.get()).build(null)
+            );
+
+    public static final RegistryObject<BlockEntityType<StickfireBlockEntity>> STICKFIRE =
+            BLOCK_ENTITIES.register("stickfire", () ->
+                    BlockEntityType.Builder.of(StickfireBlockEntity::new,
+                            ModBlocks.STICKFIRE.get()).build(null)
+            );
 
     public static void register(IEventBus eventBus) {
         BLOCK_ENTITIES.register(eventBus);

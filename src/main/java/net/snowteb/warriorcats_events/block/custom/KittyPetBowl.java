@@ -41,6 +41,7 @@ import net.snowteb.warriorcats_events.network.packet.s2c.others.ThirstDataSyncSt
 import net.snowteb.warriorcats_events.thirst.PlayerThirst;
 import net.snowteb.warriorcats_events.thirst.PlayerThirstProvider;
 import net.snowteb.warriorcats_events.util.ModTags;
+import net.snowteb.warriorcats_events.zconfig.WCEPreyItemsConfig;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -179,6 +180,7 @@ public class KittyPetBowl extends BaseEntityBlock implements SimpleWaterloggedBl
 
                 boolean interactItemInHand = pPlayer.getItemInHand(pHand).is(ModTags.Items.FILL_BOWL)
                         || pPlayer.getItemInHand(pHand).is(ModTags.Items.ADDITIONAL_PREY)
+                        || WCEPreyItemsConfig.PREY_ITEMS.contains(pPlayer.getItemInHand(pHand).getItem())
                         || pPlayer.getItemInHand(pHand).is(Items.WATER_BUCKET)
                         || pPlayer.getItemInHand(pHand).is(Items.POTION);
 
@@ -187,7 +189,8 @@ public class KittyPetBowl extends BaseEntityBlock implements SimpleWaterloggedBl
                 if (interactItemInHand && (bowlEntity.canRefillFood() || bowlEntity.canRefillWater())) {
 
                     if (bowlEntity.canRefillFood() && (pPlayer.getItemInHand(pHand).is(ModTags.Items.FILL_BOWL) ||
-                            pPlayer.getItemInHand(pHand).is(ModTags.Items.ADDITIONAL_PREY))) {
+                            pPlayer.getItemInHand(pHand).is(ModTags.Items.ADDITIONAL_PREY)
+                            || WCEPreyItemsConfig.PREY_ITEMS.contains(pPlayer.getItemInHand(pHand).getItem()))) {
 
                         bowlEntity.performFillFood(serverLevel, getCenterOfBowl(pPos, pState));
 

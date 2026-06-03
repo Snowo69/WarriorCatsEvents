@@ -294,11 +294,9 @@ public class ModEvents2 {
         });
 
 
-        /**
-         * If the player dies, keep the stealth data as it was. Unlocked if it was unlocked, on if it was on, etc.
-         */
-        if (event.isWasDeath()) {
+        {
             event.getOriginal().reviveCaps();
+
             event.getEntity().getCapability(PlayerStealthProvider.STEALTH_MODE).ifPresent(newStore -> {
                 event.getOriginal().getCapability(PlayerStealthProvider.STEALTH_MODE).ifPresent(oldStore -> {
                     newStore.copyFrom(oldStore);
@@ -308,10 +306,7 @@ public class ModEvents2 {
                     }
                 });
             });
-        }
 
-        if (event.isWasDeath()) {
-            event.getOriginal().reviveCaps();
             event.getEntity().getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA).ifPresent(newStore -> {
                 event.getOriginal().getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA).ifPresent(oldStore -> {
                     newStore.copyFrom(oldStore);
@@ -321,95 +316,12 @@ public class ModEvents2 {
                     }
                 });
             });
-        }
 
-        /**
-         * If the player dies, keep the skill data as it was.
-         * Then manually apply every attribute again. 1 by 1.
-         * Then sync it.
-         */
-        if (event.isWasDeath()) {
-            event.getOriginal().reviveCaps();
             event.getEntity().getCapability(PlayerSkillProvider.SKILL_DATA).ifPresent(newStore -> {
                 event.getOriginal().getCapability(PlayerSkillProvider.SKILL_DATA).ifPresent(oldStore -> {
                     newStore.copyFrom(oldStore);
 
                     if (event.getEntity() instanceof ServerPlayer player) {
-//                        var speedAttr = player.getAttribute(Attributes.MOVEMENT_SPEED);
-//                        if (speedAttr != null) {
-//                            speedAttr.removeModifier(PlayerSkill.SPEED_SKILL_UUID);
-//                            double bonus = (0.025* WCEServerConfig.SERVER.SKILL_SPEED_MULTIPLIER.get()) * newStore.getSpeedLevel();
-//                            if (bonus > 0) {
-//                                speedAttr.addPermanentModifier(
-//                                        new AttributeModifier(
-//                                                PlayerSkill.SPEED_SKILL_UUID,
-//                                                "skill_speed_bonus",
-//                                                bonus,
-//                                                AttributeModifier.Operation.MULTIPLY_TOTAL
-//                                        )
-//                                );
-//                            }
-//                        }
-//                        var hpAttr = player.getAttribute(Attributes.MAX_HEALTH);
-//                        if (hpAttr != null) {
-//                            hpAttr.removeModifier(PlayerSkill.HP_SKILL_UUID);
-//                            double bonus = (0.1*WCEServerConfig.SERVER.SKILL_HP_MULTIPLIER.get()) * newStore.getHPLevel();
-//                            if (bonus > 0) {
-//                                hpAttr.addPermanentModifier(
-//                                        new AttributeModifier(
-//                                                PlayerSkill.HP_SKILL_UUID,
-//                                                "skill_hp_bonus",
-//                                                bonus,
-//                                                AttributeModifier.Operation.MULTIPLY_TOTAL
-//                                        )
-//                                );
-//                            }
-//                        }
-//                        var dmgAttr = player.getAttribute(Attributes.ATTACK_DAMAGE);
-//                        if (dmgAttr != null) {
-//                            dmgAttr.removeModifier(PlayerSkill.DMG_SKILL_UUID);
-//                            double bonus = (0.12*WCEServerConfig.SERVER.SKILL_DMG_MULTIPLIER.get()) * newStore.getDMGLevel();
-//                            if (bonus > 0) {
-//                                dmgAttr.addPermanentModifier(
-//                                        new AttributeModifier(
-//                                                PlayerSkill.DMG_SKILL_UUID,
-//                                                "skill_dmg_bonus",
-//                                                bonus,
-//                                                AttributeModifier.Operation.ADDITION
-//                                        )
-//                                );
-//                            }
-//                        }
-//                        var jumpAttr = player.getAttribute(ModAttributes.PLAYER_JUMP.get());
-//                        if (jumpAttr != null) {
-//                            jumpAttr.removeModifier(PlayerSkill.JUMP_SKILL_UUID);
-//                            double bonus = (0.093*WCEServerConfig.SERVER.SKILL_JUMP_MULTIPLIER.get()) * newStore.getJumpLevel();
-//                            if (bonus > 0) {
-//                                jumpAttr.addPermanentModifier(
-//                                        new AttributeModifier(
-//                                                PlayerSkill.JUMP_SKILL_UUID,
-//                                                "skill_jump_bonus",
-//                                                bonus,
-//                                                AttributeModifier.Operation.ADDITION
-//                                        )
-//                                );
-//                            }
-//                        }
-//                        var armorAttr = player.getAttribute(Attributes.ARMOR);
-//                        if (armorAttr != null) {
-//                            armorAttr.removeModifier(PlayerSkill.ARMOR_SKILL_UUID);
-//                            double bonus = (3.5*WCEServerConfig.SERVER.SKILL_ARMOR_MULTIPLIER.get()) * newStore.getArmorLevel();
-//                            if (bonus > 0) {
-//                                armorAttr.addPermanentModifier(
-//                                        new AttributeModifier(
-//                                                PlayerSkill.ARMOR_SKILL_UUID,
-//                                                "skill_armor_bonus",
-//                                                bonus,
-//                                                AttributeModifier.Operation.ADDITION
-//                                        )
-//                                );
-//                            }
-//                        }
 
                         PlayerSkill.reviveAttributes(player, newStore);
 
@@ -426,6 +338,8 @@ public class ModEvents2 {
 
 
             });
+
+            event.getOriginal().invalidateCaps();
         }
 
 

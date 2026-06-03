@@ -7,7 +7,6 @@ import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -15,7 +14,6 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -33,7 +31,6 @@ import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -54,10 +51,7 @@ import net.snowteb.warriorcats_events.block.entity.KittypetBowlBlockEntity;
 import net.snowteb.warriorcats_events.clan.ClanData;
 import net.snowteb.warriorcats_events.clan.WCEPlayerData;
 import net.snowteb.warriorcats_events.clan.WCEPlayerDataProvider;
-import net.snowteb.warriorcats_events.client.LeapClientState;
 import net.snowteb.warriorcats_events.diseases.*;
-import net.snowteb.warriorcats_events.diseases.kinds.BrokenPaw;
-import net.snowteb.warriorcats_events.effect.ModEffects;
 import net.snowteb.warriorcats_events.entity.custom.EagleEntity;
 import net.snowteb.warriorcats_events.entity.custom.MossBallEntity;
 import net.snowteb.warriorcats_events.entity.custom.WCatAvoidGoal;
@@ -71,6 +65,7 @@ import net.snowteb.warriorcats_events.particles.WCEParticles;
 import net.snowteb.warriorcats_events.skills.PlayerSkillProvider;
 import net.snowteb.warriorcats_events.thirst.PlayerThirstProvider;
 import net.snowteb.warriorcats_events.util.ModTags;
+import net.snowteb.warriorcats_events.zconfig.WCEPreyItemsConfig;
 import net.snowteb.warriorcats_events.zconfig.WCEServerConfig;
 import tocraft.walkers.api.PlayerShape;
 
@@ -276,10 +271,10 @@ public class ModEventsForge {
         Level level = player.level();
         BlockState state = level.getBlockState(sleepingPos);
 
-        if ((state.getBlock() instanceof MossBedBlock)) {
+        if ((state.getBlock() instanceof NestBlock)) {
             level.setBlock(
                     sleepingPos,
-                    state.setValue(MossBedBlock.OCCUPIED, false),
+                    state.setValue(NestBlock.OCCUPIED, false),
                     3
             );
 
@@ -369,7 +364,7 @@ public class ModEventsForge {
                     }
                 }
 
-                if (stack.is(ModTags.Items.ADDITIONAL_PREY)) {
+                if (stack.is(ModTags.Items.ADDITIONAL_PREY) || WCEPreyItemsConfig.PREY_ITEMS.contains(stack.getItem())) {
                     int randomThirst = 1 + player.getRandom().nextInt(2);
                     thirst.addThirst(randomThirst);
                     player.getFoodData().eat(4, 0.84f);

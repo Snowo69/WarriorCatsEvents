@@ -14,8 +14,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.network.NetworkEvent;
-import net.snowteb.warriorcats_events.block.custom.MossBedBlock;
-import net.snowteb.warriorcats_events.block.entity.MossBedBlockEntity;
+import net.snowteb.warriorcats_events.block.custom.NestBlock;
+import net.snowteb.warriorcats_events.block.entity.NestBlockEntity;
 import net.snowteb.warriorcats_events.clan.ClanData;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 
@@ -173,7 +173,7 @@ public class CatHomeActionsPacket {
         int area = 3;
 
         BlockPos closestPos = null;
-        MossBedBlockEntity closestBed = null;
+        NestBlockEntity closestBed = null;
         double closestDistance = Double.MAX_VALUE;
 
         for (BlockPos pos : BlockPos.betweenClosed(
@@ -182,11 +182,11 @@ public class CatHomeActionsPacket {
 
             BlockState state = level.getBlockState(pos);
 
-            if (state.getBlock() instanceof MossBedBlock) {
+            if (state.getBlock() instanceof NestBlock) {
 
                 BlockEntity be = level.getBlockEntity(pos);
 
-                if (be instanceof MossBedBlockEntity mossBed) {
+                if (be instanceof NestBlockEntity mossBed) {
 
                     double distance = pos.getCenter().distanceToSqr(cat.position());
 
@@ -240,7 +240,7 @@ public class CatHomeActionsPacket {
                             if (chunk == null) continue;
 
                             for (BlockEntity be : chunk.getBlockEntities().values()) {
-                                if (be instanceof MossBedBlockEntity mossBed) {
+                                if (be instanceof NestBlockEntity mossBed) {
 
                                     if (be.getBlockPos().distSqr(catPos) <= (200 * 200)) {
 

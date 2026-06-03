@@ -115,6 +115,15 @@ public class ModItemModelProvider extends ItemModelProvider {
         simpleItem(ModItems.COMFREY_POULTICE);
         simpleItem(ModItems.COBWEB_WITH_A_STICK);
 
+        simpleItem(ModItems.ACORN_LANTERN_ITEM);
+        simpleItem(ModItems.DAISY_CHAIN_ITEM);
+        simpleItem(ModItems.LAVENDER_CHAIN_ITEM);
+
+        simpleItem(ModItems.BLUE_MORPHO_WING);
+        simpleItem(ModItems.GOLIATH_BIRDWING_WING);
+        simpleItem(ModItems.TIGER_SWALLOWTAIL_WING);
+        simpleItem(ModItems.MONARCH_WING);
+
 //        simpleItem(ModItems.MOSS_BALL);
 
 

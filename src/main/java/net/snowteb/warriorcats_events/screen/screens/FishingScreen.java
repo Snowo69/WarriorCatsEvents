@@ -4,6 +4,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
@@ -60,8 +61,11 @@ public class FishingScreen extends Screen {
     private int offsetWaves2 = 0;
     boolean clicked = false;
 
-    public FishingScreen() {
+    private final BlockPos clickedPos;
+
+    public FishingScreen(BlockPos clickedPos) {
         super(Component.literal("Fishing"));
+        this.clickedPos = clickedPos;
     }
 
     @Override
@@ -204,7 +208,7 @@ public class FishingScreen extends Screen {
                         Component.literal("¡Perfect catch!").withStyle(ChatFormatting.DARK_AQUA),
                         true
                 );
-                ModPackets.sendToServer(new CtSFishSuccesful());
+                ModPackets.sendToServer(new CtSFishSuccesful(this.clickedPos));
 
             }
 

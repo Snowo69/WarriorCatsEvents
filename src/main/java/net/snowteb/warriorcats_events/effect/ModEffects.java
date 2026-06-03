@@ -42,6 +42,9 @@ public class ModEffects {
                     () -> new MobEffectInstance.FactorData(20)
             ));
 
+    public static final RegistryObject<MobEffect> WEAK_PAWS = MOB_EFFECTS.register("weak_paws",
+            () -> new WeakPawsEffect(MobEffectCategory.HARMFUL, 0x555555));
+
     public static void register(IEventBus eventBus) {
         MOB_EFFECTS.register(eventBus);
     }

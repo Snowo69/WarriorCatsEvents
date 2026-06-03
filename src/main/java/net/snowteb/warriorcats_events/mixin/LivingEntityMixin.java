@@ -50,15 +50,15 @@ public class LivingEntityMixin implements ClimbDataAccessor {
 
         if (source.is(DamageTypes.FALL)) {
             if (entity.hasEffect(ModEffects.EAGLE_ESCAPIST.get())) {
-                amount = 0.4f*amount;
+                amount = 0.25f*amount;
             }
         }
 
         if (source.is(DamageTypes.FALL)) {
             if (entity instanceof Diseaseable<?> diseaseable) {
                 boolean isAShape = entity instanceof WCatEntity cat && !(cat.getPlayerBoundUuid().equals(ClanData.EMPTY_UUID));
-                if (amount > 12f && !isAShape) {
-                    if (diseaseable.getEntity().getRandom().nextFloat() < 0.75f) {
+                if (amount > 15f && !isAShape) {
+                    if (diseaseable.getEntity().getRandom().nextFloat() < 0.65f) {
                         diseaseable.addDisease(DiseaseTypes.BROKEN_PAW, true);
                     }
                 }
@@ -371,8 +371,8 @@ public class LivingEntityMixin implements ClimbDataAccessor {
 
         LivingEntity self = (LivingEntity) (Object) this;
         if (!self.level().isClientSide()) {
-            if (self.isSprinting()) wce$sprintTime++;
-            else if (wce$sprintTime > 0) wce$sprintTime--;
+            if (self.isSprinting() && self.onGround()) wce$sprintTime++;
+            else if (wce$sprintTime > 1) wce$sprintTime -= 2;
         }
 
 

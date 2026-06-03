@@ -235,6 +235,184 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .unlockedBy("has_item", has(ModBlocks.LAVENDER.get()))
                 .save(pWriter);
 
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.CHERRY_BLOSSOM_BED.get(), 2)
+                .pattern("   ")
+                .pattern("BCB")
+                .pattern("DBD")
+                .define('B', Items.CHERRY_LEAVES)
+                .define('D', Items.CHERRY_SAPLING)
+                .define('C', Items.MOSS_BLOCK)
+                .unlockedBy("has_item", has(Items.CHERRY_LEAVES))
+                .save(pWriter);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.DRIFTWOOD_BED.get(), 2)
+                .pattern("   ")
+                .pattern("BCB")
+                .pattern("DBD")
+                .define('B', Items.STICK)
+                .define('D', Items.MANGROVE_ROOTS)
+                .define('C', Items.SAND)
+                .unlockedBy("has_item", has(Items.MANGROVE_ROOTS))
+                .save(pWriter);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.DAISY_BED.get(), 2)
+                .pattern("   ")
+                .pattern("BCB")
+                .pattern("DBD")
+                .define('B', ModItems.DAISY.get())
+                .define('D', Items.OXEYE_DAISY)
+                .define('C', ModBlocks.DAISYPLANT.get())
+                .unlockedBy("has_item", has(ModItems.DAISY.get()))
+                .save(pWriter);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.ACACIA_BED.get(), 2)
+                .pattern("   ")
+                .pattern("BCB")
+                .pattern("DBD")
+                .define('B', Items.ACACIA_LEAVES)
+                .define('D', ModItems.CHAMOMILE.get())
+                .define('C', ModBlocks.CHAMOMILEPLANT.get())
+                .unlockedBy("has_item", has(ModItems.CHAMOMILE.get()))
+                .save(pWriter);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.TERRACOTTA_BED.get(), 2)
+                .pattern("   ")
+                .pattern("BCB")
+                .pattern("DBD")
+                .define('B', ItemTags.TERRACOTTA)
+                .define('D', Items.STICK)
+                .define('C', ItemTags.LEAVES)
+                .unlockedBy("has_item", has(ItemTags.TERRACOTTA))
+                .save(pWriter);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.BAMBOO_BED.get(), 2)
+                .pattern("   ")
+                .pattern("BCB")
+                .pattern("DBD")
+                .define('B', Items.BAMBOO)
+                .define('D', ItemTags.LEAVES)
+                .define('C', Items.BAMBOO)
+                .unlockedBy("has_item", has(ItemTags.TERRACOTTA))
+                .save(pWriter);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.BERRY_BED.get(), 2)
+                .pattern("   ")
+                .pattern("BCB")
+                .pattern("DBD")
+                .define('B', Items.SWEET_BERRIES)
+                .define('D', ItemTags.LEAVES)
+                .define('C', ItemTags.LEAVES)
+                .unlockedBy("has_item", has(Items.SWEET_BERRIES))
+                .save(pWriter);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.CORAL_BED.get(), 2)
+                .pattern("   ")
+                .pattern("B D")
+                .pattern("ECE")
+                .define('B', Items.BRAIN_CORAL)
+                .define('C', Items.TUBE_CORAL)
+                .define('D', Items.FIRE_CORAL)
+                .define('E', Items.SAND)
+                .unlockedBy("has_item", has(Items.BRAIN_CORAL))
+                .save(pWriter);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.GLOWBERRY_BED.get(), 2)
+                .pattern("   ")
+                .pattern("BCB")
+                .pattern("DBD")
+                .define('B', Items.GLOW_BERRIES)
+                .define('D', ItemTags.LEAVES)
+                .define('C', ItemTags.LEAVES)
+                .unlockedBy("has_item", has(Items.GLOW_BERRIES))
+                .save(pWriter);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.MUDDY_BED.get(), 2)
+                .pattern("   ")
+                .pattern("BCB")
+                .pattern("DBD")
+                .define('B', Items.MUD)
+                .define('D', ItemTags.LEAVES)
+                .define('C', ItemTags.LEAVES)
+                .unlockedBy("has_item", has(Items.MUD))
+                .save(pWriter);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.MOONSTONE_BLOCK.get(), 1)
+                .pattern("   ")
+                .pattern("ACA")
+                .pattern("BCB")
+                .define('A', ModItems.STRANGE_SHINY_STONE.get())
+                .define('B', Items.DEEPSLATE)
+                .define('C', ModBlocks.GLOWROCKS.get())
+                .unlockedBy("has_item", has(ModItems.STRANGE_SHINY_STONE.get()))
+                .save(pWriter);
+
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.GREEN_GLOWROCKS_ITEM.get(), 4)
+                .requires(ModItems.GLOWROCKS_ITEM.get())
+                .requires(ModItems.GLOWROCKS_ITEM.get())
+                .requires(ModItems.GLOWROCKS_ITEM.get())
+                .requires(ModItems.GLOWROCKS_ITEM.get())
+                .requires(Items.LIME_DYE)
+                .unlockedBy("has_item", has(ModItems.GLOWROCKS_ITEM.get()))
+                .save(pWriter);
+
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.PINK_GLOWROCKS_ITEM.get(), 4)
+                .requires(ModItems.GLOWROCKS_ITEM.get())
+                .requires(ModItems.GLOWROCKS_ITEM.get())
+                .requires(ModItems.GLOWROCKS_ITEM.get())
+                .requires(ModItems.GLOWROCKS_ITEM.get())
+                .requires(Items.PINK_DYE)
+                .unlockedBy("has_item", has(ModItems.GLOWROCKS_ITEM.get()))
+                .save(pWriter);
+
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.RED_GLOWROCKS_ITEM.get(), 4)
+                .requires(ModItems.GLOWROCKS_ITEM.get())
+                .requires(ModItems.GLOWROCKS_ITEM.get())
+                .requires(ModItems.GLOWROCKS_ITEM.get())
+                .requires(ModItems.GLOWROCKS_ITEM.get())
+                .requires(Items.RED_DYE)
+                .unlockedBy("has_item", has(ModItems.GLOWROCKS_ITEM.get()))
+                .save(pWriter);
+
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.YELLOW_GLOWROCKS_ITEM.get(), 4)
+                .requires(ModItems.GLOWROCKS_ITEM.get())
+                .requires(ModItems.GLOWROCKS_ITEM.get())
+                .requires(ModItems.GLOWROCKS_ITEM.get())
+                .requires(ModItems.GLOWROCKS_ITEM.get())
+                .requires(Items.YELLOW_DYE)
+                .unlockedBy("has_item", has(ModItems.GLOWROCKS_ITEM.get()))
+                .save(pWriter);
+
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModBlocks.ACORN_LANTERN.get(), 1)
+                .requires(Items.LANTERN)
+                .requires(Items.MOSS_CARPET)
+                .unlockedBy("has_item", has(Items.LANTERN))
+                .save(pWriter);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.DAISY_CHAIN.get(), 3)
+                .pattern("B B")
+                .pattern("AAA")
+                .define('A', ModItems.DAISY.get())
+                .define('B', Items.STRING)
+                .unlockedBy("has_item", has(ModItems.DAISY.get()))
+                .save(pWriter);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.LAVENDER_CHAIN.get(), 3)
+                .pattern("B B")
+                .pattern("AAA")
+                .define('A', ModBlocks.LAVENDER.get())
+                .define('B', Items.STRING)
+                .unlockedBy("has_item", has(ModBlocks.LAVENDER.get()))
+                .save(pWriter);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.STICKFIRE.get(), 1)
+                .pattern("CCC")
+                .pattern("BCB")
+                .pattern("AAA")
+                .define('A', ItemTags.COALS)
+                .define('B', Items.COBBLESTONE)
+                .define('C', Items.STICK)
+                .unlockedBy("has_item", has(ItemTags.COALS))
+                .save(pWriter);
 
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.FRESHKILL_PILE.get(), 1)
                 .pattern("BAB")

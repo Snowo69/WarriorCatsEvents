@@ -7,11 +7,13 @@ import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.config.ModConfigEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.entity.ModEntities;
 import net.snowteb.warriorcats_events.entity.custom.*;
 import net.snowteb.warriorcats_events.util.ModAttributes;
+import net.snowteb.warriorcats_events.zconfig.WCEPreyItemsConfig;
 
 @Mod.EventBusSubscriber(modid = WarriorCatsEvents.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ModEvents {
@@ -108,19 +110,19 @@ public class ModEvents {
     }
 
 
-//    @SubscribeEvent
-//    public static void onConfigLoad(ModConfigEvent.Loading event) {
-////        if (event.getConfig().getSpec() == WCEPreyItemsConfig.SPEC) {
-////            WCEPreyItemsConfig.getItemListFromString();
-////        }
-//    }
-//
-//    @SubscribeEvent
-//    public static void onConfigReload(ModConfigEvent.Reloading event) {
-////        if (event.getConfig().getSpec() == WCEPreyItemsConfig.SPEC) {
-////            WCEPreyItemsConfig.getItemListFromString();
-////        }
-//    }
+    @SubscribeEvent
+    public static void onConfigLoad(ModConfigEvent.Loading event) {
+        if (event.getConfig().getSpec() == WCEPreyItemsConfig.SPEC) {
+            WCEPreyItemsConfig.getItemListFromString();
+        }
+    }
+
+    @SubscribeEvent
+    public static void onConfigReload(ModConfigEvent.Reloading event) {
+        if (event.getConfig().getSpec() == WCEPreyItemsConfig.SPEC) {
+            WCEPreyItemsConfig.getItemListFromString();
+        }
+    }
 
 
 }

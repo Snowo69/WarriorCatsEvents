@@ -60,7 +60,22 @@ public class ModConfiguredFeatures {
 
     public static final ResourceKey<ConfiguredFeature<?,?>> PEBBLES_KEY = registerKey("pebbles");
 
+    public static final ResourceKey<ConfiguredFeature<?, ?>>
+            WALL_GLOWROCK =
+            ResourceKey.create(
+                    Registries.CONFIGURED_FEATURE,
+                    ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "glowrocks_config_feature")
+            );
+
     public static void bootstrap(BootstapContext<ConfiguredFeature<?, ?>> context) {
+
+        context.register(
+                WALL_GLOWROCK,
+                new ConfiguredFeature<>(
+                        ModFeatures.GLOWROCKS_FEATURE.get(),
+                        NoneFeatureConfiguration.INSTANCE
+                )
+        );
 
         register(context, DOCK_KEY, Feature.RANDOM_PATCH,
                 new RandomPatchConfiguration(

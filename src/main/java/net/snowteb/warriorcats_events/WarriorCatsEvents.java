@@ -24,7 +24,9 @@ import net.snowteb.warriorcats_events.recipes.WCERecipes;
 import net.snowteb.warriorcats_events.screen.menus.ModMenuTypes;
 import net.snowteb.warriorcats_events.sound.ModSounds;
 import net.snowteb.warriorcats_events.util.ModAttributes;
+import net.snowteb.warriorcats_events.worldgen.ModFeatures;
 import net.snowteb.warriorcats_events.zconfig.WCEClientConfig;
+import net.snowteb.warriorcats_events.zconfig.WCEPreyItemsConfig;
 import net.snowteb.warriorcats_events.zconfig.WCEServerConfig;
 import org.slf4j.Logger;
 import software.bernie.geckolib.GeckoLib;
@@ -56,6 +58,7 @@ public class WarriorCatsEvents {
 
                 UUID.fromString("714870da-15d4-47f1-8a53-05015326a09d"),
                 UUID.fromString("9289ae40-9cae-419b-b4c1-3109eca4b15d"),
+                UUID.fromString("cf7dda00-f2fe-4cb5-99f7-251cbebc7e0c"),
 
                 UUID.fromString("bc526ba0-c886-4241-8df0-85702f2250e5")
         );
@@ -82,6 +85,10 @@ public class WarriorCatsEvents {
                 ModConfig.Type.CLIENT, WCEClientConfig.SPEC,
                 MODID + "-client.toml");
 
+        ModLoadingContext.get().registerConfig(
+                ModConfig.Type.COMMON, WCEPreyItemsConfig.SPEC,
+                MODID + "-prey_items.toml");
+
         ModSounds.register(modEventBus);
         ModItems.register(modEventBus);
         ModBlocks.register(modEventBus);
@@ -95,6 +102,7 @@ public class WarriorCatsEvents {
         WCEParticles.register(modEventBus);
         WCERecipes.register(modEventBus);
         DiseaseRegistry.init();
+        ModFeatures.register(modEventBus);
 
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(this::addCreative);
@@ -192,6 +200,16 @@ public class WarriorCatsEvents {
             event.accept(ModBlocks.KELP_BED);
             event.accept(ModBlocks.STONE_BED);
             event.accept(ModBlocks.LAVENDER_BED);
+            event.accept(ModBlocks.CHERRY_BLOSSOM_BED);
+            event.accept(ModBlocks.DRIFTWOOD_BED);
+            event.accept(ModBlocks.DAISY_BED);
+            event.accept(ModBlocks.ACACIA_BED);
+            event.accept(ModBlocks.TERRACOTTA_BED);
+            event.accept(ModBlocks.BAMBOO_BED);
+            event.accept(ModBlocks.BERRY_BED);
+            event.accept(ModBlocks.CORAL_BED);
+            event.accept(ModBlocks.GLOWBERRY_BED);
+            event.accept(ModBlocks.MUDDY_BED);
 
         }
 

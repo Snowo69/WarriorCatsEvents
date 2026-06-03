@@ -69,7 +69,7 @@ public class LeapClientState {
             if (shiftKeyDownCounter > 142 || !Minecraft.getInstance().player.onGround()) return;
 
             boolean lookKeyDown = Minecraft.getInstance().options.keyUse.isDown();
-            if (lookKeyDown && !wasLookKeyDown && Minecraft.getInstance().player.getItemInHand(InteractionHand.MAIN_HAND).isEmpty()) {
+            if (lookKeyDown && !wasLookKeyDown) {
                 lockedLookEntity = getEntityPlayerIsLookingAtClient(Minecraft.getInstance().player, 15.0D);
             }
 

@@ -71,9 +71,9 @@ import net.minecraftforge.network.PacketDistributor;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.block.ModBlocks;
 import net.snowteb.warriorcats_events.block.custom.LavenderPetalsBlock;
-import net.snowteb.warriorcats_events.block.custom.MossBedBlock;
+import net.snowteb.warriorcats_events.block.custom.NestBlock;
 import net.snowteb.warriorcats_events.block.entity.FreshkillPileBlockEntity;
-import net.snowteb.warriorcats_events.block.entity.MossBedBlockEntity;
+import net.snowteb.warriorcats_events.block.entity.NestBlockEntity;
 import net.snowteb.warriorcats_events.block.entity.TreeStumpBlockEntity;
 import net.snowteb.warriorcats_events.clan.ClanData;
 import net.snowteb.warriorcats_events.clan.WCEPlayerData;
@@ -7321,10 +7321,10 @@ public class WCatEntity extends TamableAnimal implements GeoEntity, Diseaseable<
     public void updateNest() {
         if (this.hasHomePosition()) {
             BlockState state = this.level().getBlockState(this.getHomePosition());
-            if (state.getBlock() instanceof MossBedBlock) {
+            if (state.getBlock() instanceof NestBlock) {
                 BlockEntity blockEntity = this.level().getBlockEntity(this.getHomePosition());
 
-                if (blockEntity instanceof MossBedBlockEntity mossBed) {
+                if (blockEntity instanceof NestBlockEntity mossBed) {
                     if (mossBed.isOwnedBy(this.getUUID())) {
                         if (this.hasCustomName()) {
                             if (!mossBed.getCatName().equals(this.getCustomName().getString())) {
@@ -7452,9 +7452,9 @@ public class WCatEntity extends TamableAnimal implements GeoEntity, Diseaseable<
 
             BlockPos homepos = this.getHomePosition();
             if (homepos != null) {
-                if (sLevel.getBlockState(homepos).getBlock() instanceof MossBedBlock) {
+                if (sLevel.getBlockState(homepos).getBlock() instanceof NestBlock) {
                     BlockEntity bEntity = sLevel.getBlockEntity(homepos);
-                    if (bEntity instanceof MossBedBlockEntity mbEntity) {
+                    if (bEntity instanceof NestBlockEntity mbEntity) {
                         mbEntity.resetAssigned();
                         mbEntity.setChanged();
                         if (!sLevel.isClientSide()) {
@@ -7793,7 +7793,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity, Diseaseable<
 
                 return switch (cat.getRank()) {
                     case MEDICINE -> state -> state.is(ModBlocks.STONECLEFT.get());
-                    default -> state -> state.getBlock() instanceof MossBedBlock;
+                    default -> state -> state.getBlock() instanceof NestBlock;
                 };
             }
 
@@ -8894,37 +8894,6 @@ public class WCatEntity extends TamableAnimal implements GeoEntity, Diseaseable<
                 }
             }
 
-
-            /**
-             * In certain are, make a list of droped items.
-             * Then for every item in the list, verify if the cat can accept it.
-             * If the distance to the item is less than the one from the last item, then set that item as the closest.
-             */
-//        private WCatEntity findNearestInjuredClanmate() {
-//            AABB box = cat.getBoundingBox().inflate(16);
-//
-//            List<WCatEntity> cats = cat.level().getEntitiesOfClass(
-//                    WCatEntity.class,
-//                    box
-//            );
-//
-//            double closestDist = Double.MAX_VALUE;
-//            WCatEntity closest = null;
-//
-//            for (WCatEntity catToHeal : cats) {
-//                if (catToHeal.getHealth() >= catToHeal.getMaxHealth() - 4) continue;
-//                if (catToHeal == cat) continue;
-//                if (catToHeal.getOwner() != cat.getOwner()) continue;
-//
-//                double dist = cat.distanceToSqr(catToHeal);
-//                if (dist < closestDist) {
-//                    closestDist = dist;
-//                    closest = catToHeal;
-//                }
-//            }
-//
-//            return closest;
-//        }
             private LivingEntity findNearestInjuredClanmate() {
                 AABB box = cat.getBoundingBox().inflate(28);
 
@@ -8944,7 +8913,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity, Diseaseable<
                         if (kitty.getOwner() != cat.getOwner()) continue;
                     }
                     if (catToHeal instanceof Player playerKitty) {
-                        if (cat.getFriendshipLevel(playerKitty.getUUID()) < 30) continue;
+                        if (cat.getFriendshipLevel(playerKitty.getUUID()) < 10) continue;
                     }
 
                     double dist = cat.distanceToSqr(catToHeal);

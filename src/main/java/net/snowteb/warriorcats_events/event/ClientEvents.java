@@ -505,17 +505,6 @@ public class ClientEvents {
                     )
             );
 
-            ItemProperties.register(ModItems.ANCIENT_STICK.get(),
-                    ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "dismiss_active"),
-                    (stack, level, entity, seed) -> {
-                        if (stack.hasTag() && stack.getTag().getBoolean("dismissClanSwitchActive")) {
-                            return 1.0F;
-                        }
-                        return 0.0F;
-                    }
-            );
-
-
             {
                 for (RegistryObject<Item> collar : Arrays.asList(
                         ModItems.BLACK_CAT_COLLAR, ModItems.BROWN_CAT_COLLAR, ModItems.WHITE_CAT_COLLAR,
@@ -533,19 +522,19 @@ public class ClientEvents {
                     ItemProperties.register(collar.get(),
                             ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "has_glow"),
                             (stack, level, entity, seed) -> stack.getTag() != null && stack.getTag().getBoolean("HasGlow") ? 1f : 0f);
-
-                    ItemProperties.register(ModItems.MOSS_BALL.get(),
-                            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID,"honeylevel"),
-                            (stack, level, entity, seed) -> {
-                                return stack.hasTag() ? stack.getTag().getInt("honeylevel") : 0.0F;
-                            });
-
-                    ItemProperties.register(ModItems.MOSS_BALL.get(),
-                            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID,"waterlevel"),
-                            (stack, level, entity, seed) -> {
-                                return stack.hasTag() ? stack.getTag().getInt("WaterLevel") : 0.0F;
-                            });
                 }
+
+                ItemProperties.register(ModItems.MOSS_BALL.get(),
+                        ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID,"honeylevel"),
+                        (stack, level, entity, seed) -> {
+                            return stack.hasTag() ? stack.getTag().getInt("honeylevel") : 0.0F;
+                        });
+
+                ItemProperties.register(ModItems.MOSS_BALL.get(),
+                        ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID,"waterlevel"),
+                        (stack, level, entity, seed) -> {
+                            return stack.hasTag() ? stack.getTag().getInt("WaterLevel") : 0.0F;
+                        });
             }
 
 
@@ -556,7 +545,7 @@ public class ClientEvents {
                     StCFishingScreenPacket::new,
                     (pkt, ctxSupplier) -> {
                         ctxSupplier.get().enqueueWork(() -> {
-                            Minecraft.getInstance().setScreen(new FishingScreen());
+                            Minecraft.getInstance().setScreen(new FishingScreen(pkt.clickedPos));
                         });
                         ctxSupplier.get().setPacketHandled(true);
                     }

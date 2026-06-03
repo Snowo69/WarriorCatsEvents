@@ -36,10 +36,32 @@ public class ModPlacedFeatures {
 
     public static final ResourceKey<PlacedFeature> PEBBLES_PLACED_KEY = registerKey("pebbles_placed");
 
-
+    public static final ResourceKey<PlacedFeature>
+            WALL_GLOWROCK_PLACED =
+            ResourceKey.create(
+                    Registries.PLACED_FEATURE,
+                    ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "wall_glowrock_placed")
+            );
 
     public static void bootstrap(BootstapContext<PlacedFeature> context) {
         HolderGetter<ConfiguredFeature<?, ?>> configuredFeatures = context.lookup(Registries.CONFIGURED_FEATURE);
+
+
+        context.register(
+                WALL_GLOWROCK_PLACED,
+                new PlacedFeature(
+                        configuredFeatures.getOrThrow(ModConfiguredFeatures.WALL_GLOWROCK),
+                        List.of(
+                                CountPlacement.of(3),
+                                InSquarePlacement.spread(),
+                                HeightRangePlacement.triangle(
+                                        VerticalAnchor.absolute(-64),
+                                        VerticalAnchor.absolute(64)
+                                ),
+                                BiomeFilter.biome()
+                        )
+                )
+        );
 
         register(context, DOCK_PLACED_KEY, configuredFeatures.getOrThrow(ModConfiguredFeatures.DOCK_KEY),
                 List.of(RarityFilter.onAverageOnceEvery(65), InSquarePlacement.spread(),
