@@ -39,6 +39,9 @@ public class ModEffects {
     public static final DeferredHolder<MobEffect, MobEffect> FEVER = MOB_EFFECTS.register("fever",
             () -> new SimpleSlownessEffect(MobEffectCategory.HARMFUL, 0x000000, true, -0.1f));
 
+    public static final DeferredHolder<MobEffect, MobEffect> WEAK_PAWS = MOB_EFFECTS.register("weak_paws",
+            () -> new WeakPawsEffect(MobEffectCategory.HARMFUL, 0x555555));
+
     public static void register(IEventBus eventBus) {
         MOB_EFFECTS.register(eventBus);
     }

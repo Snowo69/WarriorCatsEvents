@@ -24,7 +24,9 @@ import net.snowteb.warriorcats_events.recipes.WCERecipes;
 import net.snowteb.warriorcats_events.screen.menus.ModMenuTypes;
 import net.snowteb.warriorcats_events.sound.ModSounds;
 import net.snowteb.warriorcats_events.util.ModAttributes;
+import net.snowteb.warriorcats_events.worldgen.ModFeatures;
 import net.snowteb.warriorcats_events.zconfig.WCEClientConfig;
+import net.snowteb.warriorcats_events.zconfig.WCEPreyItemsConfig;
 import net.snowteb.warriorcats_events.zconfig.WCEServerConfig;
 import org.slf4j.Logger;
 import tocraft.walkers.integrations.Integrations;
@@ -55,6 +57,7 @@ public class WarriorCatsEvents {
 
                 UUID.fromString("714870da-15d4-47f1-8a53-05015326a09d"),
                 UUID.fromString("9289ae40-9cae-419b-b4c1-3109eca4b15d"),
+                UUID.fromString("cf7dda00-f2fe-4cb5-99f7-251cbebc7e0c"),
 
                 UUID.fromString("bc526ba0-c886-4241-8df0-85702f2250e5")
         );
@@ -73,6 +76,7 @@ public class WarriorCatsEvents {
 
         modContainer.registerConfig(ModConfig.Type.SERVER, WCEServerConfig.SPEC);
         modContainer.registerConfig(ModConfig.Type.CLIENT, WCEClientConfig.SPEC);
+        modContainer.registerConfig(ModConfig.Type.COMMON, WCEPreyItemsConfig.SPEC, MODID + "-prey_items.toml");
 
         ModSounds.register(modEventBus);
         ModItems.register(modEventBus);
@@ -89,6 +93,7 @@ public class WarriorCatsEvents {
         WCERecipes.register(modEventBus);
         ModDataComponents.register(modEventBus);
         DiseaseRegistry.init();
+        ModFeatures.register(modEventBus);
 
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(this::addCreative);

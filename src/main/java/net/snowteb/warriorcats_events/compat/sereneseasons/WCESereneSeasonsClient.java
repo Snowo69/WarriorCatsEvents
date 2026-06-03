@@ -56,27 +56,6 @@ public class WCESereneSeasonsClient {
             pGuiGraphics.pose().popPose();
         }
 
-        //        {
-//            int lineLenght = mc.font.width(text.getString()) + 5;
-//
-//            float scale = 0.9f;
-//
-//
-//
-//            pGuiGraphics.pose().pushPose();
-//            pGuiGraphics.pose().translate(6, 6, 0);
-//            pGuiGraphics.pose().scale(scale, scale, scale);
-//            pGuiGraphics.drawString(mc.font, text, 0, 0, 0xFFFFFFFF);
-//
-//            int color = text.getStyle().getColor() != null
-//                    ? (0xFF000000 | text.getStyle().getColor().getValue())
-//                    : 0xFFFFFFFF;
-//
-//            pGuiGraphics.fill(-2, 10, lineLenght, 12, color);
-//
-//            pGuiGraphics.pose().popPose();
-//        }
-
     }
 
 }

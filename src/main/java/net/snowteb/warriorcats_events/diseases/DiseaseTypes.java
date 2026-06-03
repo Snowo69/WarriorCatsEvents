@@ -36,8 +36,8 @@ public class DiseaseTypes {
                                                 2 + disease.getLevel(), 0.1, 0.1, 0.1, 0.01
                                         );
 
-                                        entity.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 100,
-                                                disease.getLevel(), false, false));
+                                        entity.addEffect(new MobEffectInstance(ModEffects.WEAK_PAWS, 100,
+                                                Math.max(0, disease.getLevel() - 1), false, false));
                                         if (disease.getLevel() >= 3) {
                                             entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 100,
                                                     disease.getLevel() - 1, false, false));
@@ -121,7 +121,7 @@ public class DiseaseTypes {
 
                                         entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 31,
                                                 disease.getPainLevel(), false, false));
-                                        entity.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 31,
+                                        entity.addEffect(new MobEffectInstance(ModEffects.WEAK_PAWS, 31,
                                                 Mth.clamp(disease.getPainLevel(), 0, 2), false, false));
 
                                         if (disease.getPainLevel() > 3) {
@@ -237,7 +237,7 @@ public class DiseaseTypes {
                                         entity.addEffect(new MobEffectInstance(ModEffects.FEVER, 80,
                                                 0, false, false));
 
-                                        entity.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 160,
+                                        entity.addEffect(new MobEffectInstance(ModEffects.WEAK_PAWS, 160,
                                                 0, false, false));
 
                                         if (entity.getRandom().nextFloat() < 0.01) {

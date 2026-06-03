@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "item": "warriorcats_events:strange_shiny_stone"
+    },
+    "B": {
+      "item": "minecraft:deepslate"
+    },
+    "C": {
+      "item": "warriorcats_events:glowrocks"
+    }
+  },
+  "pattern": [
+    "   ",
+    "ACA",
+    "BCB"
+  ],
+  "result": {
+    "count": 1,
+    "id": "warriorcats_events:moonstone"
+  }
+}

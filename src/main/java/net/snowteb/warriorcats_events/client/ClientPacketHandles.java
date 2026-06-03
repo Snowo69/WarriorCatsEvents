@@ -3,6 +3,7 @@ package net.snowteb.warriorcats_events.client;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
@@ -176,9 +177,9 @@ public class ClientPacketHandles {
         });
     }
 
-    public static void openFishingScreen() {
+    public static void openFishingScreen(BlockPos pos) {
         Minecraft.getInstance().execute(() -> {
-            Minecraft.getInstance().setScreen(new FishingScreen());
+            Minecraft.getInstance().setScreen(new FishingScreen(pos));
         });
     }
 

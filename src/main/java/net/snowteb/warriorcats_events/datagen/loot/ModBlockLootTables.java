@@ -21,13 +21,16 @@ import net.minecraft.world.level.storage.loot.entries.AlternativesEntry;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.functions.ApplyBonusCount;
 import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
+import net.minecraft.world.level.storage.loot.predicates.ExplosionCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePropertyCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemRandomChanceCondition;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import net.snowteb.warriorcats_events.block.ModBlocks;
+import net.snowteb.warriorcats_events.block.custom.GlowrocksBlock;
 import net.snowteb.warriorcats_events.block.custom.LavenderPetalsBlock;
 import net.snowteb.warriorcats_events.block.custom.PreyBonesBlock;
+import net.snowteb.warriorcats_events.block.custom.WallGlowrocksBlock;
 import net.snowteb.warriorcats_events.item.ModItems;
 
 import java.util.Set;
@@ -338,6 +341,123 @@ public class ModBlockLootTables extends BlockLootSubProvider {
                 )
         );
 
+        this.add(ModBlocks.CHERRY_BLOSSOM_BED.get(),
+                block -> createSingleItemTableWithSilkTouch(
+                        block,
+                        Items.CHERRY_LEAVES,
+                        UniformGenerator.between(2.0F, 4.0F)
+                )
+        );
+
+        this.add(ModBlocks.DRIFTWOOD_BED.get(),
+                block -> createSingleItemTableWithSilkTouch(
+                        block,
+                        Items.STICK,
+                        UniformGenerator.between(3.0F, 5.0F)
+                )
+        );
+
+        this.add(ModBlocks.DAISY_BED.get(),
+                block -> createSingleItemTableWithSilkTouch(
+                        block,
+                        ModItems.DAISY.get(),
+                        UniformGenerator.between(3.0F, 6.0F)
+                )
+        );
+
+        this.add(ModBlocks.ACACIA_BED.get(),
+                block -> createSingleItemTableWithSilkTouch(
+                        block,
+                        ModItems.CHAMOMILE.get(),
+                        UniformGenerator.between(2.0F, 4.0F)
+                )
+        );
+
+        this.add(ModBlocks.TERRACOTTA_BED.get(),
+                block -> createSingleItemTableWithSilkTouch(
+                        block,
+                        Items.TERRACOTTA,
+                        UniformGenerator.between(3.0F, 5.0F)
+                )
+        );
+
+        this.add(ModBlocks.BAMBOO_BED.get(),
+                block -> createSingleItemTableWithSilkTouch(
+                        block,
+                        Items.BAMBOO,
+                        UniformGenerator.between(2.0F, 4.0F)
+                )
+        );
+
+        this.add(ModBlocks.BERRY_BED.get(),
+                block -> createSingleItemTableWithSilkTouch(
+                        block,
+                        Items.SWEET_BERRIES,
+                        UniformGenerator.between(2.0F, 4.0F)
+                )
+        );
+
+        this.add(ModBlocks.CORAL_BED.get(),
+                block -> createSingleItemTableWithSilkTouch(
+                        block,
+                        Items.HORN_CORAL,
+                        UniformGenerator.between(2.0F, 4.0F)
+                )
+        );
+
+        this.add(ModBlocks.GLOWBERRY_BED.get(),
+                block -> createSingleItemTableWithSilkTouch(
+                        block,
+                        Items.GLOW_BERRIES,
+                        UniformGenerator.between(1.0F, 3.0F)
+                )
+        );
+
+        this.add(ModBlocks.MUDDY_BED.get(),
+                block -> createSingleItemTableWithSilkTouch(
+                        block,
+                        Items.MUD,
+                        UniformGenerator.between(1.0F, 3.0F)
+                )
+        );
+
+
+
+        this.add(ModBlocks.STICKFIRE.get(),
+                block -> createSingleItemTableWithSilkTouch(
+                        block,
+                        Items.CHARCOAL,
+                        UniformGenerator.between(1.0F, 3.0F)
+                )
+        );
+
+
+
+        this.add(ModBlocks.GLOWROCKS.get(), createGlowrocksTable(ModBlocks.GLOWROCKS.get(), ModItems.GLOWROCKS_ITEM.get()));
+        this.add(ModBlocks.WALL_GLOWROCKS.get(), createWallGlowrocksTable(ModBlocks.WALL_GLOWROCKS.get(), ModItems.GLOWROCKS_ITEM.get()));
+
+        this.add(ModBlocks.GREEN_GLOWROCKS.get(), createGlowrocksTable(ModBlocks.GREEN_GLOWROCKS.get(), ModItems.GREEN_GLOWROCKS_ITEM.get()));
+        this.add(ModBlocks.GREEN_WALL_GLOWROCKS.get(), createWallGlowrocksTable(ModBlocks.GREEN_WALL_GLOWROCKS.get(), ModItems.GREEN_GLOWROCKS_ITEM.get()));
+
+        this.add(ModBlocks.PINK_GLOWROCKS.get(), createGlowrocksTable(ModBlocks.PINK_GLOWROCKS.get(), ModItems.PINK_GLOWROCKS_ITEM.get()));
+        this.add(ModBlocks.PINK_WALL_GLOWROCKS.get(), createWallGlowrocksTable(ModBlocks.PINK_WALL_GLOWROCKS.get(), ModItems.PINK_GLOWROCKS_ITEM.get()));
+
+        this.add(ModBlocks.RED_GLOWROCKS.get(), createGlowrocksTable(ModBlocks.RED_GLOWROCKS.get(), ModItems.RED_GLOWROCKS_ITEM.get()));
+        this.add(ModBlocks.RED_WALL_GLOWROCKS.get(), createWallGlowrocksTable(ModBlocks.RED_WALL_GLOWROCKS.get(), ModItems.RED_GLOWROCKS_ITEM.get()));
+
+        this.add(ModBlocks.YELLOW_GLOWROCKS.get(), createGlowrocksTable(ModBlocks.YELLOW_GLOWROCKS.get(), ModItems.YELLOW_GLOWROCKS_ITEM.get()));
+        this.add(ModBlocks.YELLOW_WALL_GLOWROCKS.get(), createWallGlowrocksTable(ModBlocks.YELLOW_WALL_GLOWROCKS.get(), ModItems.YELLOW_GLOWROCKS_ITEM.get()));
+
+
+        this.dropSelf(ModBlocks.ACORN_LANTERN.get());
+
+        this.dropSelf(ModBlocks.DAISY_CHAIN.get());
+        this.dropSelf(ModBlocks.LAVENDER_CHAIN.get());
+
+        this.dropSelf(ModBlocks.MOONSTONE_BLOCK.get());
+
+
+
 
         this.add(ModBlocks.MAKESHIFT_BED.get(), noDrop());
         this.add(ModBlocks.TREE_STUMP.get(), noDrop());
@@ -495,5 +615,45 @@ public class ModBlockLootTables extends BlockLootSubProvider {
     @Override
     protected Iterable<Block> getKnownBlocks() {
         return ModBlocks.BLOCKS.getEntries().stream().map(Holder::value)::iterator;
+    }
+
+    private LootTable.Builder createGlowrocksTable(Block sourceBlock, Item item) {
+        LootPool.Builder pool = LootPool.lootPool()
+                .setRolls(ConstantValue.exactly(1))
+                .when(ExplosionCondition.survivesExplosion());
+
+        int minAmount = 1;
+        int maxAmount = 6;
+
+        for (int i = minAmount; i <= maxAmount; i++) {
+            pool.add(LootItem.lootTableItem(item)
+                    .when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(sourceBlock)
+                            .setProperties(StatePropertiesPredicate.Builder.properties()
+                                    .hasProperty(GlowrocksBlock.AMOUNT_G, i)))
+                    .apply(SetItemCountFunction.setCount(ConstantValue.exactly(i)))
+            );
+        }
+
+        return LootTable.lootTable().withPool(pool);
+    }
+
+    private LootTable.Builder createWallGlowrocksTable(Block sourceBlock, Item item) {
+        LootPool.Builder pool = LootPool.lootPool()
+                .setRolls(ConstantValue.exactly(1))
+                .when(ExplosionCondition.survivesExplosion());
+
+        int minAmount = 1;
+        int maxAmount = 4;
+
+        for (int i = minAmount; i <= maxAmount; i++) {
+            pool.add(LootItem.lootTableItem(item)
+                    .when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(sourceBlock)
+                            .setProperties(StatePropertiesPredicate.Builder.properties()
+                                    .hasProperty(WallGlowrocksBlock.AMOUNT_WG, i)))
+                    .apply(SetItemCountFunction.setCount(ConstantValue.exactly(i)))
+            );
+        }
+
+        return LootTable.lootTable().withPool(pool);
     }
 }

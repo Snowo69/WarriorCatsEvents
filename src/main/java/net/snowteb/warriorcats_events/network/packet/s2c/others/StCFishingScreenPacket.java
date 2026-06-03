@@ -1,5 +1,6 @@
 package net.snowteb.warriorcats_events.network.packet.s2c.others;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -10,21 +11,25 @@ import net.snowteb.warriorcats_events.client.ClientPacketHandles;
 
 public class StCFishingScreenPacket implements CustomPacketPayload {
 
-    public StCFishingScreenPacket() {
+    private final BlockPos clickedPos;
+    public StCFishingScreenPacket(BlockPos pos) {
+        this.clickedPos = pos;
     }
 
 
     public StCFishingScreenPacket(FriendlyByteBuf buf) {
+        this.clickedPos = buf.readBlockPos();
     }
 
 
     public void toBytes(FriendlyByteBuf buf) {
+        buf.writeBlockPos(this.clickedPos);
     }
 
 
     public void handle(IPayloadContext context) {
         context.enqueueWork(() -> {
-            ClientPacketHandles.openFishingScreen();
+            ClientPacketHandles.openFishingScreen(this.clickedPos);
         });
     }
 

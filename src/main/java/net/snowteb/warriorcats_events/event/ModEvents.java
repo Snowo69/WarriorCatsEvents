@@ -6,6 +6,7 @@ import net.minecraft.world.entity.SpawnPlacements;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
 import net.neoforged.neoforge.event.entity.EntityAttributeModificationEvent;
@@ -14,6 +15,7 @@ import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.entity.ModEntities;
 import net.snowteb.warriorcats_events.entity.custom.*;
 import net.snowteb.warriorcats_events.util.ModAttributes;
+import net.snowteb.warriorcats_events.zconfig.WCEPreyItemsConfig;
 
 @EventBusSubscriber(modid = WarriorCatsEvents.MODID)
 public class ModEvents {
@@ -106,19 +108,19 @@ public class ModEvents {
     }
 
 
-//    @SubscribeEvent
-//    public static void onConfigLoad(ModConfigEvent.Loading event) {
-////        if (event.getConfig().getSpec() == WCEPreyItemsConfig.SPEC) {
-////            WCEPreyItemsConfig.getItemListFromString();
-////        }
-//    }
-//
-//    @SubscribeEvent
-//    public static void onConfigReload(ModConfigEvent.Reloading event) {
-////        if (event.getConfig().getSpec() == WCEPreyItemsConfig.SPEC) {
-////            WCEPreyItemsConfig.getItemListFromString();
-////        }
-//    }
+    @SubscribeEvent
+    public static void onConfigLoad(ModConfigEvent.Loading event) {
+        if (event.getConfig().getSpec() == WCEPreyItemsConfig.SPEC) {
+            WCEPreyItemsConfig.getItemListFromString();
+        }
+    }
+
+    @SubscribeEvent
+    public static void onConfigReload(ModConfigEvent.Reloading event) {
+        if (event.getConfig().getSpec() == WCEPreyItemsConfig.SPEC) {
+            WCEPreyItemsConfig.getItemListFromString();
+        }
+    }
 
 
 }

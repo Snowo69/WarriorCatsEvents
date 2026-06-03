@@ -55,12 +55,20 @@ public class GenericBushBlock extends SweetBerryBushBlock {
         return new ItemStack(dropItems.get(0).item().get());
     }
 
+    @Override
+    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
+        return InteractionResult.PASS;
+    }
+
     /**
      * If the block age is not 3 and the item in hand is Bone Meal, Interaction result is PASS,
      * Another method will handle it, the super in this case.
      *
      * If the age is bigger than stage 1, harvest the items, and replace the block.
      */
+
+
+
 
     @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
@@ -145,7 +153,8 @@ public class GenericBushBlock extends SweetBerryBushBlock {
                     pLevel.sendParticles(
                             ParticleTypes.HAPPY_VILLAGER,
                             position.x, target.getY() + 0.2, position.z,
-                            15, 0.4, 0.0, 0.4,0.005);                }
+                            15, 0.4, 0.0, 0.4,0.005);
+                }
             }
             return;
         }

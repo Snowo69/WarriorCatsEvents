@@ -143,7 +143,7 @@ public class DiseaseManager {
 
         if (under.is(BlockTags.BASE_STONE_OVERWORLD)
                 || under.is(BlockTags.BASE_STONE_NETHER)
-        ) overusedHardSurface = climber.wce$getSprintTime() > 400;
+        ) overusedHardSurface = climber.wce$getSprintTime() > 600;
 
 
         return climbingExhausted || soringSurface || sprintTooLong || overusedHardSurface;

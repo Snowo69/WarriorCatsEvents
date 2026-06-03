@@ -1,6 +1,7 @@
 package net.snowteb.warriorcats_events.item;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -22,6 +23,7 @@ import net.snowteb.warriorcats_events.item.custom.*;
 import net.snowteb.warriorcats_events.util.ItemWithToolTip;
 import vazkii.patchouli.api.PatchouliAPI;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 
@@ -75,6 +77,101 @@ public class ModItems {
                         }
                     });
 
+    public static final DeferredHolder<Item, Item> CHERRY_BLOSSOM_BED_ITEM =
+            ITEMS.register("cherry_blossom_bed",
+                    () -> new BlockItem(ModBlocks.CHERRY_BLOSSOM_BED.get(), new Item.Properties()) {
+                        @Override
+                        public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+                            tooltipComponents.add(Component.translatable("block.warriorcats_events.cherry_blossom_bed.tooltip").withStyle(ChatFormatting.GRAY));
+                        }
+                    });
+
+    public static final DeferredHolder<Item, Item> DRIFTWOOD_BED_ITEM =
+            ITEMS.register("driftwood_bed",
+                    () -> new BlockItem(ModBlocks.DRIFTWOOD_BED.get(), new Item.Properties()) {
+                        @Override
+                        public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+                            tooltipComponents.add(Component.translatable("block.warriorcats_events.driftwood_bed.tooltip").withStyle(ChatFormatting.GRAY));
+                        }
+                    });
+
+    public static final DeferredHolder<Item, Item> DAISY_BED_ITEM =
+            ITEMS.register("daisy_bed",
+                    () -> new BlockItem(ModBlocks.DAISY_BED.get(), new Item.Properties()) {
+                        @Override
+                        public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+                            tooltipComponents.add(Component.translatable("block.warriorcats_events.daisy_bed.tooltip").withStyle(ChatFormatting.GRAY));
+                        }
+                    });
+
+    public static final DeferredHolder<Item, Item> ACACIA_BED_ITEM =
+            ITEMS.register("acacia_bed",
+                    () -> new BlockItem(ModBlocks.ACACIA_BED.get(), new Item.Properties()) {
+                        @Override
+                        public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+                            tooltipComponents.add(Component.translatable("block.warriorcats_events.acacia_bed.tooltip").withStyle(ChatFormatting.GRAY));
+                        }
+                    });
+
+    public static final DeferredHolder<Item, Item> TERRACOTTA_BED_ITEM =
+            ITEMS.register("terracotta_bed",
+                    () -> new BlockItem(ModBlocks.TERRACOTTA_BED.get(), new Item.Properties()) {
+                        @Override
+                        public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+                            tooltipComponents.add(Component.translatable("block.warriorcats_events.terracotta_bed.tooltip").withStyle(ChatFormatting.GRAY));
+                        }
+                    });
+
+    public static final DeferredHolder<Item, Item> BAMBOO_BED_ITEM =
+            ITEMS.register("bamboo_bed",
+                    () -> new BlockItem(ModBlocks.BAMBOO_BED.get(), new Item.Properties()) {
+                        @Override
+                        public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+                            tooltipComponents.add(Component.translatable("block.warriorcats_events.bamboo_bed.tooltip").withStyle(ChatFormatting.GRAY));
+                        }
+                    });
+
+    public static final DeferredHolder<Item, Item> BERRY_BED_ITEM =
+            ITEMS.register("berry_bed",
+                    () -> new BlockItem(ModBlocks.BERRY_BED.get(), new Item.Properties()) {
+                        @Override
+                        public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+                            tooltipComponents.add(Component.translatable("block.warriorcats_events.berry_bed.tooltip").withStyle(ChatFormatting.GRAY));
+                        }
+                    });
+
+    public static final DeferredHolder<Item, Item> CORAL_BED_ITEM =
+            ITEMS.register("coral_bed",
+                    () -> new BlockItem(ModBlocks.CORAL_BED.get(), new Item.Properties()) {
+                        @Override
+                        public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+                            tooltipComponents.add(Component.translatable("block.warriorcats_events.coral_bed.tooltip").withStyle(ChatFormatting.GRAY));
+                        }
+                    });
+
+    public static final DeferredHolder<Item, Item> GLOWBERRY_BED_ITEM =
+            ITEMS.register("glowberry_bed",
+                    () -> new BlockItem(ModBlocks.GLOWBERRY_BED.get(), new Item.Properties()) {
+                        @Override
+                        public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+                            tooltipComponents.add(Component.translatable("block.warriorcats_events.glowberry_bed.tooltip").withStyle(ChatFormatting.GRAY));
+                        }
+                    });
+
+    public static final DeferredHolder<Item, Item> MUDDY_BED_ITEM =
+            ITEMS.register("muddy_bed",
+                    () -> new BlockItem(ModBlocks.MUDDY_BED.get(), new Item.Properties()) {
+                        @Override
+                        public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+                            tooltipComponents.add(Component.translatable("block.warriorcats_events.muddy_bed.tooltip").withStyle(ChatFormatting.GRAY));
+                        }
+                    });
+    
+    
+    
+    
+    
+
     public static final DeferredHolder<Item, Item> MAKESHIFT_BED_ITEM =
             ITEMS.register("makeshift_bed",
                     () -> new BlockItem(ModBlocks.MAKESHIFT_BED.get(), new Item.Properties()));
@@ -106,6 +203,73 @@ public class ModItems {
                             tooltipComponents.add(shiftRightClick.copy().append(Component.literal("On the block with your claws to prepare a recipe.").withStyle(ChatFormatting.GRAY)));
                         }
                     });
+
+
+
+    public static final DeferredHolder<Item, Item> MOONSTONE_BLOCK_ITEM =
+            ITEMS.register("moonstone",
+                    () -> new BlockItem(ModBlocks.MOONSTONE_BLOCK.get(), new Item.Properties()) {
+                        @Override
+                        public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+                            tooltipComponents.add(Component.translatable("block.warriorcats_events.moonstone.tooltip").withStyle(ChatFormatting.GRAY));
+                        }
+                    });
+
+
+    public static final DeferredHolder<Item, Item> GLOWROCKS_ITEM =
+            ITEMS.register("glowrocks",
+                    () -> new StandingAndWallBlockItem(ModBlocks.GLOWROCKS.get(), ModBlocks.WALL_GLOWROCKS.get(), new Item.Properties(), Direction.DOWN));
+
+
+    public static final DeferredHolder<Item, Item> GREEN_GLOWROCKS_ITEM =
+            ITEMS.register("green_glowrocks",
+                    () -> new StandingAndWallBlockItem(ModBlocks.GREEN_GLOWROCKS.get(), ModBlocks.GREEN_WALL_GLOWROCKS.get(), new Item.Properties(), Direction.DOWN));
+
+    public static final DeferredHolder<Item, Item> PINK_GLOWROCKS_ITEM =
+            ITEMS.register("pink_glowrocks",
+                    () -> new StandingAndWallBlockItem(ModBlocks.PINK_GLOWROCKS.get(), ModBlocks.PINK_WALL_GLOWROCKS.get(), new Item.Properties(), Direction.DOWN));
+
+    public static final DeferredHolder<Item, Item> RED_GLOWROCKS_ITEM =
+            ITEMS.register("red_glowrocks",
+                    () -> new StandingAndWallBlockItem(ModBlocks.RED_GLOWROCKS.get(), ModBlocks.RED_WALL_GLOWROCKS.get(), new Item.Properties(), Direction.DOWN));
+
+    public static final DeferredHolder<Item, Item> YELLOW_GLOWROCKS_ITEM =
+            ITEMS.register("yellow_glowrocks",
+                    () -> new StandingAndWallBlockItem(ModBlocks.YELLOW_GLOWROCKS.get(), ModBlocks.YELLOW_WALL_GLOWROCKS.get(), new Item.Properties(), Direction.DOWN));
+
+
+    public static final DeferredHolder<Item, Item> ACORN_LANTERN_ITEM =
+            ITEMS.register("acorn_lantern",
+                    () -> new BlockItem(ModBlocks.ACORN_LANTERN.get(), new Item.Properties()));
+
+    public static final DeferredHolder<Item, Item> DAISY_CHAIN_ITEM =
+            ITEMS.register("daisy_chain",
+                    () -> new BlockItem(ModBlocks.DAISY_CHAIN.get(), new Item.Properties()));
+
+    public static final DeferredHolder<Item, Item> LAVENDER_CHAIN_ITEM =
+            ITEMS.register("lavender_chain",
+                    () -> new BlockItem(ModBlocks.LAVENDER_CHAIN.get(), new Item.Properties()));
+
+
+    public static final DeferredHolder<Item, Item> STICKFIRE_ITEM =
+            ITEMS.register("stickfire",
+                    () -> new BlockItem(ModBlocks.STICKFIRE.get(), new Item.Properties()));
+
+
+    public static final DeferredHolder<Item, Item> BLUE_MORPHO_WING = ITEMS.register("blue_morpho_wing",
+            () -> new ButterflyWingArmorItem());
+    public static final DeferredHolder<Item, Item> GOLIATH_BIRDWING_WING = ITEMS.register("goliath_birdwing_wing",
+            () -> new ButterflyWingArmorItem());
+    public static final DeferredHolder<Item, Item> MONARCH_WING = ITEMS.register("monarch_wing",
+            () -> new ButterflyWingArmorItem());
+    public static final DeferredHolder<Item, Item> TIGER_SWALLOWTAIL_WING = ITEMS.register("tiger_swallowtail_wing",
+            () -> new ButterflyWingArmorItem());
+
+
+
+
+
+
 
     public static final DeferredHolder<Item, Item> MOUSE_SPAWN_EGG = ITEMS.register("mouse_spawn_egg",
             () -> new DeferredSpawnEggItem(ModEntities.MOUSE,0xAD8A6C, 0xE3AD7D,

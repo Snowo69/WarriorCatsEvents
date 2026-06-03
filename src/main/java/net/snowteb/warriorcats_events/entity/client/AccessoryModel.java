@@ -46,6 +46,14 @@ public class AccessoryModel extends GeoModel<WCatEntity> {
             ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/accessories/cat_black_bow.png")
     };
 
+    public static final ResourceLocation[] BUTTERFLYWING_TEXTURES = {
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/accessories/bluemorphowing.png"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/accessories/goliathbirdwingwing.png"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/accessories/monarchwing.png"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/accessories/tigerswallowwing.png")
+    };
+
+
     public AccessoryModel(ResourceLocation model,
                           ResourceLocation texture) {
         this.model = model;

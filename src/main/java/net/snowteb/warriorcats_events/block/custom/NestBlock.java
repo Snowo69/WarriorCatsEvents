@@ -39,21 +39,20 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.snowteb.warriorcats_events.attachments.ModAttachments;
 import net.snowteb.warriorcats_events.block.ModBlocks;
-import net.snowteb.warriorcats_events.block.entity.MossBedBlockEntity;
+import net.snowteb.warriorcats_events.block.entity.NestBlockEntity;
 import net.snowteb.warriorcats_events.clan.ClanData;
 import net.snowteb.warriorcats_events.attachments.WCEPlayerData;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.item.ModItems;
 import net.snowteb.warriorcats_events.particles.WCEParticles;
 import net.snowteb.warriorcats_events.sound.ModSounds;
-import tocraft.walkers.api.PlayerShape;
 
-public class MossBedBlock extends BedBlock {
+public class NestBlock extends BedBlock {
     protected static final VoxelShape BASE = Block.box(2.0D, 0.0D, 2.0D, 14.0D, 1.0D, 14.0D);
 
     protected static final VoxelShape SHAPE = Shapes.or(BASE);
 
-    public MossBedBlock(BlockBehaviour.Properties properties) {
+    public NestBlock(BlockBehaviour.Properties properties) {
         super(DyeColor.RED, properties);
 
         this.registerDefaultState(
@@ -69,8 +68,8 @@ public class MossBedBlock extends BedBlock {
         if (!level.isClientSide()) {
             if (player.getItemInHand(InteractionHand.MAIN_HAND).is(ModBlocks.LAVENDER_PETALS.get().asItem())) {
                 BlockEntity blockEntity = level.getBlockEntity(pos);
-                if (blockEntity instanceof MossBedBlockEntity mossBedBlockEntity && !mossBedBlockEntity.getAssignedUUID().equals(ClanData.EMPTY_UUID)) {
-                    LivingEntity entity = mossBedBlockEntity.getAssignedEntity(level);
+                if (blockEntity instanceof NestBlockEntity nestBlockEntity && !nestBlockEntity.getAssignedUUID().equals(ClanData.EMPTY_UUID)) {
+                    LivingEntity entity = nestBlockEntity.getAssignedEntity(level);
                     if (entity != null) {
                         if (entity instanceof WCatEntity cat) {
                             cat.setHomePosition(BlockPos.ZERO);
@@ -81,7 +80,7 @@ public class MossBedBlock extends BedBlock {
                                                 .append(Component.literal("'s nest was cleaned").withStyle(ChatFormatting.YELLOW)), true
                                 );
                             }
-                            mossBedBlockEntity.resetAssigned();
+                            nestBlockEntity.resetAssigned();
                             if (!player.getAbilities().instabuild) player.getItemInHand(InteractionHand.MAIN_HAND).shrink(1);
                             level.sendBlockUpdated(pos, state, state, 3);
 
@@ -101,7 +100,7 @@ public class MossBedBlock extends BedBlock {
                         if (entity instanceof Player other && other != player) {
                             player.displayClientMessage(Component.literal("You can't reset another player's nest.").withStyle(ChatFormatting.GRAY), true);
                         } else {
-                            mossBedBlockEntity.resetAssigned();
+                            nestBlockEntity.resetAssigned();
                             if (!player.getAbilities().instabuild) player.getItemInHand(InteractionHand.MAIN_HAND).shrink(1);
                             level.sendBlockUpdated(pos, state, state, 3);
 
@@ -119,7 +118,7 @@ public class MossBedBlock extends BedBlock {
                             }
                         }
                     } else {
-                        mossBedBlockEntity.resetAssigned();
+                        nestBlockEntity.resetAssigned();
                         level.sendBlockUpdated(pos, state, state, 3);
 
 
@@ -143,8 +142,8 @@ public class MossBedBlock extends BedBlock {
 
             if (player.getItemInHand(InteractionHand.MAIN_HAND).is(ModItems.ANCIENT_STICK.get())) {
                 BlockEntity blockEntity = level.getBlockEntity(pos);
-                if (blockEntity instanceof MossBedBlockEntity mossBedBlockEntity && !mossBedBlockEntity.getAssignedUUID().equals(ClanData.EMPTY_UUID)) {
-                    LivingEntity entity = mossBedBlockEntity.getAssignedEntity(level);
+                if (blockEntity instanceof NestBlockEntity nestBlockEntity && !nestBlockEntity.getAssignedUUID().equals(ClanData.EMPTY_UUID)) {
+                    LivingEntity entity = nestBlockEntity.getAssignedEntity(level);
                     if (entity != null) {
                         if (entity instanceof WCatEntity cat) {
                             if (level instanceof ServerLevel sLevel) {
@@ -164,7 +163,7 @@ public class MossBedBlock extends BedBlock {
             }
         }
 
-        if (level.getBlockEntity(pos) instanceof MossBedBlockEntity mbEntity) {
+        if (level.getBlockEntity(pos) instanceof NestBlockEntity mbEntity) {
 
             if (!mbEntity.getAssignedUUID().equals(ClanData.EMPTY_UUID)) {
                 if (!level.isClientSide) {
@@ -192,7 +191,7 @@ public class MossBedBlock extends BedBlock {
                                 if (chunk == null) continue;
 
                                 for (BlockEntity be : chunk.getBlockEntities().values()) {
-                                    if (be instanceof MossBedBlockEntity mossBed) {
+                                    if (be instanceof NestBlockEntity mossBed) {
 
                                         if (be.getBlockPos().distSqr(player.blockPosition()) <= (200 * 200)) {
 
@@ -266,7 +265,7 @@ public class MossBedBlock extends BedBlock {
 
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return new MossBedBlockEntity(pos, state);
+        return new NestBlockEntity(pos, state);
     }
 
     @Override
@@ -291,8 +290,8 @@ public class MossBedBlock extends BedBlock {
     @Override
     public void onRemove(BlockState pState, Level pLevel, BlockPos pPos, BlockState pNewState, boolean pMovedByPiston) {
         BlockEntity blockEntity = pLevel.getBlockEntity(pPos);
-        if (blockEntity instanceof MossBedBlockEntity mossBedBlockEntity) {
-            LivingEntity entity = mossBedBlockEntity.getAssignedEntity(pLevel);
+        if (blockEntity instanceof NestBlockEntity nestBlockEntity) {
+            LivingEntity entity = nestBlockEntity.getAssignedEntity(pLevel);
             if (entity != null && pState.getBlock() != pNewState.getBlock()) {
                 if (entity instanceof WCatEntity cat) {
                     cat.setHomePosition(BlockPos.ZERO);

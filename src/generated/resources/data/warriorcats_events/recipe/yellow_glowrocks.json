@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "warriorcats_events:glowrocks"
+    },
+    {
+      "item": "warriorcats_events:glowrocks"
+    },
+    {
+      "item": "warriorcats_events:glowrocks"
+    },
+    {
+      "item": "warriorcats_events:glowrocks"
+    },
+    {
+      "item": "minecraft:yellow_dye"
+    }
+  ],
+  "result": {
+    "count": 4,
+    "id": "warriorcats_events:yellow_glowrocks"
+  }
+}

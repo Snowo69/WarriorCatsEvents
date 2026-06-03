@@ -10,7 +10,7 @@ Turn your world into Warrior Cats!
 '''
 authors="Klyonstar / Snowstar"
 credits=""
-logoFile= "../../resources/banner.png"
+logoFile="banner.png"
 logoBlur = false
 updateJSONURL=""
 displayURL="https://modrinth.com/mod/warrior-cats-events"
@@ -23,14 +23,14 @@ config = "mixins.warriorcats_events.json"
 [[dependencies.${mod_id}]]
     modId="minecraft"
     type="required"
-    versionRange="[1.20.1,)"
+    versionRange="[1.21.1,)"
     ordering="NONE"
     side="BOTH"
 
 [[dependencies.${mod_id}]]
     modId="geckolib"
     type="required"
-    versionRange="[4.8.2,)"
+    versionRange="[4.8.4,)"
     ordering="NONE"
     side="BOTH"
 
@@ -51,7 +51,7 @@ config = "mixins.warriorcats_events.json"
 [[dependencies.${mod_id}]]
     modId="patchouli"
     type="required"
-    versionRange="[1.20.1-84,)"
+    versionRange="[1.21.1-92,)"
     ordering="NONE"
     side="BOTH"
 

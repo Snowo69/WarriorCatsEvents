@@ -18,6 +18,62 @@
   "block.warriorcats_events.lavender_bed": "Lavender Nest",
   "block.warriorcats_events.lavender_bed.tooltip": "A very comfortable nest with a strong relaxing scent.",
 
+  "block.warriorcats_events.cherry_blossom_bed": "Cherry Blossom Nest",
+  "block.warriorcats_events.cherry_blossom_bed.tooltip": "A very comfortable, pretty, and colorful nest.",
+
+  "block.warriorcats_events.driftwood_bed": "Driftwood Nest",
+  "block.warriorcats_events.driftwood_bed.tooltip": "A nest made of driftwood, decorated with pretty seashells.",
+
+  "block.warriorcats_events.daisy_bed": "Daisy Nest",
+  "block.warriorcats_events.daisy_bed.tooltip": "A fragrant nest made of Daisy flowers.",
+
+  "block.warriorcats_events.acacia_bed": "Acacia Nest",
+  "block.warriorcats_events.acacia_bed.tooltip": "A nest made of Acacia leaves, decorated with Chamomile.",
+
+  "block.warriorcats_events.terracotta_bed": "Terracotta Nest",
+  "block.warriorcats_events.terracotta_bed.tooltip": "A nest made of leaves and sticks, and decorated with Terracotta.",
+
+  "block.warriorcats_events.bamboo_bed": "Bamboo Nest",
+  "block.warriorcats_events.bamboo_bed.tooltip": "A comfortable nest made of Bamboo and its leaves.",
+
+  "block.warriorcats_events.berry_bed": "Berry Nest",
+  "block.warriorcats_events.berry_bed.tooltip": "A comfortable and sweet nest made of Sweet Berries and leaves.",
+
+  "block.warriorcats_events.coral_bed": "Coral Nest",
+  "block.warriorcats_events.coral_bed.tooltip": "A very colorful nest made of coral. Still smells like sea salt.",
+
+  "block.warriorcats_events.glowberry_bed": "Glowberry Nest",
+  "block.warriorcats_events.glowberry_bed.tooltip": "A pretty glowy nest made of Glowberries and leaves.",
+
+  "block.warriorcats_events.muddy_bed": "Muddy Nest",
+  "block.warriorcats_events.muddy_bed.tooltip": "A nest made of mud and leaves packed together.",
+
+
+
+
+
+  "block.warriorcats_events.moonstone": "Moonstone",
+  "block.warriorcats_events.moonstone.tooltip": "A strange shiny rock that seems to have unusual properties.",
+
+  "block.warriorcats_events.glowrocks": "Glowrocks",
+  "block.warriorcats_events.green_glowrocks": "Green Glowrocks",
+  "block.warriorcats_events.pink_glowrocks": "Pink Glowrocks",
+  "block.warriorcats_events.red_glowrocks": "Red Glowrocks",
+  "block.warriorcats_events.yellow_glowrocks": "Yellow Glowrocks",
+
+  "block.warriorcats_events.acorn_lantern": "Acorn Lantern",
+  "block.warriorcats_events.daisy_chain": "Daisy Chain",
+  "block.warriorcats_events.lavender_chain": "Lavender Chain",
+  "block.warriorcats_events.stickfire": "Stickfire",
+
+  "item.warriorcats_events.blue_morpho_wing": "Blue Morpho Wing",
+  "item.warriorcats_events.goliath_birdwing_wing": "Goliath Birdwing Wing",
+  "item.warriorcats_events.monarch_wing": "Monarch Wing",
+  "item.warriorcats_events.tiger_swallowtail_wing": "Tiger Swallowtail Wing",
+
+
+
+
   "item.warriorcats_events.dock_leaves": "Dock Leaves",
   "item.warriorcats_events.dock_leaves.tooltip": "Good for making poultices and wraping herbs",
 
@@ -130,6 +186,7 @@
   "effect.warriorcats_events.thirsty": "Thirsty",
   "effect.warriorcats_events.tired": "Tired",
   "effect.warriorcats_events.fever": "Fever",
+  "effect.warriorcats_events.weak_paws": "Weak Paws",
 
   "entity.warriorcats_events.warrior_cat": "Wild Cat",
   "entity.warriorcats_events.mouse": "Mouse",

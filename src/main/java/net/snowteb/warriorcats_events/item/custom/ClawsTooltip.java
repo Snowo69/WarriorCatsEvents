@@ -470,7 +470,7 @@ public class ClawsTooltip extends ShearsItem {
 
         float ratio = (float) waterCount / total;
 
-        return ratio > 0.356f;
+        return ratio > 0.306f;
     }
 
 
@@ -504,7 +504,7 @@ public class ClawsTooltip extends ShearsItem {
                         if (canFish) {
                             pPlayer.getCooldowns().addCooldown(this, 20 * 8);
                             if (!pLevel.isClientSide && pPlayer instanceof ServerPlayer sPlayer) {
-                                ModPackets.sendToPlayer(new StCFishingScreenPacket(), sPlayer);
+                                ModPackets.sendToPlayer(new StCFishingScreenPacket(pos), sPlayer);
                                 pLevel.playSound(
                                         null,
                                         sPlayer.blockPosition(),
@@ -536,7 +536,7 @@ public class ClawsTooltip extends ShearsItem {
 
                         } else {
                             pPlayer.displayClientMessage(
-                                    Component.literal("There is no fish here...")
+                                    Component.literal("There is no fish here. Try in a bigger pond.")
                                             .withStyle(ChatFormatting.YELLOW),
                                     true
                             );

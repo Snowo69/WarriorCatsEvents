@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "B": {
+      "tag": "minecraft:terracotta"
+    },
+    "C": {
+      "tag": "minecraft:leaves"
+    },
+    "D": {
+      "item": "minecraft:stick"
+    }
+  },
+  "pattern": [
+    "   ",
+    "BCB",
+    "DBD"
+  ],
+  "result": {
+    "count": 2,
+    "id": "warriorcats_events:terracotta_bed"
+  }
+}

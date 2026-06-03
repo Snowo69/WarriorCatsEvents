@@ -1,11 +1,13 @@
 package net.snowteb.warriorcats_events.block;
 
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.level.material.PushReaction;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -19,33 +21,168 @@ import net.snowteb.warriorcats_events.util.ModSoundTypes;
 import java.util.List;
 import java.util.function.Supplier;
 
+import static net.snowteb.warriorcats_events.block.custom.GlowrocksBlock.lightLevel;
+
 public class ModBlocks {
 
     public static final DeferredRegister.Blocks BLOCKS =
             DeferredRegister.createBlocks(WarriorCatsEvents.MODID);
 
     public static final DeferredHolder<Block, Block> MOSS_BED = BLOCKS.register("moss_bed",
-                    () -> new MossBedBlock(
+                    () -> new NestBlock(
                             BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.MOSS).strength(0.2F).noOcclusion()
                     ));
     public static final DeferredHolder<Block, Block> HAY_BED = BLOCKS.register("hay_bed",
-            () -> new MossBedBlock(
+            () -> new NestBlock(
                     BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.MOSS).strength(0.2F).noOcclusion()
             ));
     public static final DeferredHolder<Block, Block> KELP_BED = BLOCKS.register("kelp_bed",
-            () -> new MossBedBlock(
+            () -> new NestBlock(
                     BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.MOSS).strength(0.2F).noOcclusion()
             ));
 
     public static final DeferredHolder<Block, Block> STONE_BED = BLOCKS.register("stone_bed",
-            () -> new MossBedBlock(
+            () -> new NestBlock(
                     BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.STONE).strength(0.4F).noOcclusion()
             ));
 
     public static final DeferredHolder<Block, Block> LAVENDER_BED = BLOCKS.register("lavender_bed",
-            () -> new MossBedBlock(
+            () -> new NestBlock(
                     BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.MOSS).strength(0.2F).noOcclusion()
             ));
+
+    public static final DeferredHolder<Block, Block> CHERRY_BLOSSOM_BED = BLOCKS.register("cherry_blossom_bed",
+            () -> new NestBlock(
+                    BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.MOSS).strength(0.2F).noOcclusion()
+            ));
+
+    public static final DeferredHolder<Block, Block> DRIFTWOOD_BED = BLOCKS.register("driftwood_bed",
+            () -> new NestBlock(
+                    BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.BAMBOO_WOOD).strength(0.2F).noOcclusion()
+            ));
+
+    public static final DeferredHolder<Block, Block> DAISY_BED = BLOCKS.register("daisy_bed",
+            () -> new NestBlock(
+                    BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.MOSS).strength(0.2F).noOcclusion()
+            ));
+
+    public static final DeferredHolder<Block, Block> ACACIA_BED = BLOCKS.register("acacia_bed",
+            () -> new NestBlock(
+                    BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.MOSS).strength(0.2F).noOcclusion()
+            ));
+
+    public static final DeferredHolder<Block, Block> TERRACOTTA_BED = BLOCKS.register("terracotta_bed",
+            () -> new NestBlock(
+                    BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.STONE).strength(0.2F).noOcclusion()
+            ));
+
+    public static final DeferredHolder<Block, Block> BAMBOO_BED = BLOCKS.register("bamboo_bed",
+            () -> new NestBlock(
+                    BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.BAMBOO).strength(0.2F).noOcclusion()
+            ));
+
+    public static final DeferredHolder<Block, Block> BERRY_BED = BLOCKS.register("berry_bed",
+            () -> new NestBlock(
+                    BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.MOSS).strength(0.2F).noOcclusion()
+            ));
+
+    public static final DeferredHolder<Block, Block> CORAL_BED = BLOCKS.register("coral_bed",
+            () -> new NestBlock(
+                    BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.CORAL_BLOCK).strength(0.2F).noOcclusion()
+            ));
+
+    public static final DeferredHolder<Block, Block> GLOWBERRY_BED = BLOCKS.register("glowberry_bed",
+            () -> new NestBlock(
+                    BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.MOSS).strength(0.2F).noOcclusion()
+                            .lightLevel(state -> 4)
+            ));
+
+    public static final DeferredHolder<Block, Block> MUDDY_BED = BLOCKS.register("muddy_bed",
+            () -> new NestBlock(
+                    BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.MUD).strength(0.2F).noOcclusion()
+            ));
+
+
+
+    public static final DeferredHolder<Block, Block> MOONSTONE_BLOCK = BLOCKS.register("moonstone",
+            () -> new MoonstoneBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_LIGHT_BLUE)
+                    .lightLevel(state -> 10).strength(0.5F).noOcclusion()
+            ));
+
+
+    public static final DeferredHolder<Block, Block> GLOWROCKS = BLOCKS.register("glowrocks",
+            () -> new GlowrocksBlock(BlockBehaviour.Properties.of().noCollission().strength(0.5f)
+                    .lightLevel(state -> lightLevel(6, state, GlowrocksBlock.AMOUNT_G, 14)).sound(SoundType.STONE)
+                    .pushReaction(PushReaction.DESTROY), ParticleTypes.END_ROD));
+
+    public static final DeferredHolder<Block, Block> WALL_GLOWROCKS = BLOCKS.register("wall_glowrocks",
+            () -> new WallGlowrocksBlock(BlockBehaviour.Properties.of().noCollission().strength(0.5f)
+                    .lightLevel((state) -> lightLevel(4, state, WallGlowrocksBlock.AMOUNT_WG, 14)).sound(SoundType.STONE)
+                    .pushReaction(PushReaction.DESTROY), ParticleTypes.END_ROD));
+
+
+    public static final DeferredHolder<Block, Block> GREEN_GLOWROCKS = BLOCKS.register("green_glowrocks",
+            () -> new GlowrocksBlock(BlockBehaviour.Properties.of().strength(0.5f)
+                    .lightLevel((state) -> lightLevel(6, state, GlowrocksBlock.AMOUNT_G, 13)).sound(SoundType.STONE)
+                    .pushReaction(PushReaction.DESTROY), ParticleTypes.END_ROD));
+
+    public static final DeferredHolder<Block, Block> GREEN_WALL_GLOWROCKS = BLOCKS.register("green_wall_glowrocks",
+            () -> new WallGlowrocksBlock(BlockBehaviour.Properties.of().strength(0.5f)
+                    .lightLevel((state) -> lightLevel(4, state, WallGlowrocksBlock.AMOUNT_WG, 13)).sound(SoundType.STONE)
+                    .pushReaction(PushReaction.DESTROY), ParticleTypes.END_ROD));
+
+
+    public static final DeferredHolder<Block, Block> PINK_GLOWROCKS = BLOCKS.register("pink_glowrocks",
+            () -> new GlowrocksBlock(BlockBehaviour.Properties.of().strength(0.5f)
+                    .lightLevel((state) -> lightLevel(6, state, GlowrocksBlock.AMOUNT_G, 13)).sound(SoundType.STONE)
+                    .pushReaction(PushReaction.DESTROY), ParticleTypes.END_ROD));
+
+    public static final DeferredHolder<Block, Block> PINK_WALL_GLOWROCKS = BLOCKS.register("pink_wall_glowrocks",
+            () -> new WallGlowrocksBlock(BlockBehaviour.Properties.of().strength(0.5f)
+                    .lightLevel((state) -> lightLevel(4, state, WallGlowrocksBlock.AMOUNT_WG, 13)).sound(SoundType.STONE)
+                    .pushReaction(PushReaction.DESTROY), ParticleTypes.END_ROD));
+
+
+    public static final DeferredHolder<Block, Block> RED_GLOWROCKS = BLOCKS.register("red_glowrocks",
+            () -> new GlowrocksBlock(BlockBehaviour.Properties.of().strength(0.5f)
+                    .lightLevel((state) -> lightLevel(6, state, GlowrocksBlock.AMOUNT_G, 10)).sound(SoundType.STONE)
+                    .pushReaction(PushReaction.DESTROY), ParticleTypes.END_ROD));
+
+    public static final DeferredHolder<Block, Block> RED_WALL_GLOWROCKS = BLOCKS.register("red_wall_glowrocks",
+            () -> new WallGlowrocksBlock(BlockBehaviour.Properties.of().strength(0.5f)
+                    .lightLevel((state) -> lightLevel(4, state, WallGlowrocksBlock.AMOUNT_WG, 10)).sound(SoundType.STONE)
+                    .pushReaction(PushReaction.DESTROY), ParticleTypes.END_ROD));
+
+
+    public static final DeferredHolder<Block, Block> YELLOW_GLOWROCKS = BLOCKS.register("yellow_glowrocks",
+            () -> new GlowrocksBlock(BlockBehaviour.Properties.of().strength(0.5f)
+                    .lightLevel((state) -> lightLevel(6, state, GlowrocksBlock.AMOUNT_G, 12)).sound(SoundType.STONE)
+                    .pushReaction(PushReaction.DESTROY), ParticleTypes.END_ROD));
+
+    public static final DeferredHolder<Block, Block> YELLOW_WALL_GLOWROCKS = BLOCKS.register("yellow_wall_glowrocks",
+            () -> new WallGlowrocksBlock(BlockBehaviour.Properties.of().strength(0.5f)
+                    .lightLevel((state) -> lightLevel(4, state, WallGlowrocksBlock.AMOUNT_WG, 12)).sound(SoundType.STONE)
+                    .pushReaction(PushReaction.DESTROY), ParticleTypes.END_ROD));
+    
+    
+
+    public static final DeferredHolder<Block, Block> ACORN_LANTERN = BLOCKS.register("acorn_lantern",
+            () -> new AcornLanternBlock(BlockBehaviour.Properties.of().forceSolidOn().strength(1.0F).sound(SoundType.LANTERN)
+                    .lightLevel((state) -> 15).noOcclusion().pushReaction(PushReaction.DESTROY)));
+
+
+    public static final DeferredHolder<Block, Block> DAISY_CHAIN = BLOCKS.register("daisy_chain",
+            () -> new WallDecorationBlock(BlockBehaviour.Properties.of().noCollission().instabreak()
+                    .sound(SoundType.CHERRY_LEAVES).pushReaction(PushReaction.DESTROY)));
+
+    public static final DeferredHolder<Block, Block> LAVENDER_CHAIN = BLOCKS.register("lavender_chain",
+            () -> new WallDecorationBlock(BlockBehaviour.Properties.of().noCollission().instabreak()
+                    .sound(SoundType.CHERRY_LEAVES).pushReaction(PushReaction.DESTROY)));
+
+
+    public static final DeferredHolder<Block, Block> STICKFIRE = BLOCKS.register("stickfire",
+            () -> new StickfireBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.CAMPFIRE).noOcclusion()));
+
 
 
 

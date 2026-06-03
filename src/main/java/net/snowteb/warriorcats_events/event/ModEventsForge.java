@@ -51,7 +51,6 @@ import net.snowteb.warriorcats_events.block.ModBlocks;
 import net.snowteb.warriorcats_events.block.custom.*;
 import net.snowteb.warriorcats_events.block.entity.KittypetBowlBlockEntity;
 import net.snowteb.warriorcats_events.clan.ClanData;
-import net.snowteb.warriorcats_events.attachments.WCEPlayerData;
 import net.snowteb.warriorcats_events.diseases.*;
 import net.snowteb.warriorcats_events.entity.custom.EagleEntity;
 import net.snowteb.warriorcats_events.entity.custom.MossBallEntity;
@@ -64,6 +63,7 @@ import net.snowteb.warriorcats_events.network.ModPackets;
 import net.snowteb.warriorcats_events.network.packet.s2c.others.ThirstDataSyncStCPacket;
 import net.snowteb.warriorcats_events.particles.WCEParticles;
 import net.snowteb.warriorcats_events.util.ModTags;
+import net.snowteb.warriorcats_events.zconfig.WCEPreyItemsConfig;
 import net.snowteb.warriorcats_events.zconfig.WCEServerConfig;
 import tocraft.walkers.api.PlayerShape;
 
@@ -274,10 +274,10 @@ public class ModEventsForge {
         Level level = player.level();
         BlockState state = level.getBlockState(sleepingPos);
 
-        if ((state.getBlock() instanceof MossBedBlock)) {
+        if ((state.getBlock() instanceof NestBlock)) {
             level.setBlock(
                     sleepingPos,
-                    state.setValue(MossBedBlock.OCCUPIED, false),
+                    state.setValue(NestBlock.OCCUPIED, false),
                     3
             );
 
@@ -367,7 +367,7 @@ public class ModEventsForge {
                     }
                 }
 
-                if (stack.is(ModTags.Items.ADDITIONAL_PREY)) {
+                if (stack.is(ModTags.Items.ADDITIONAL_PREY) || WCEPreyItemsConfig.PREY_ITEMS.contains(stack.getItem())) {
                     int randomThirst = 1 + player.getRandom().nextInt(2);
                     thirst.addThirst(randomThirst);
                     player.getFoodData().eat(4, 0.84f);

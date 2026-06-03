@@ -26,6 +26,7 @@ import net.snowteb.warriorcats_events.compat.CompatibilitiesClient;
 import net.snowteb.warriorcats_events.entity.custom.WCGenetics;
 import net.snowteb.warriorcats_events.entity.custom.WCatEntity;
 import net.snowteb.warriorcats_events.item.ModItems;
+import net.snowteb.warriorcats_events.item.custom.ButterflyWingArmorItem;
 import net.snowteb.warriorcats_events.item.custom.CatSocksArmorItem;
 import net.snowteb.warriorcats_events.item.custom.CollarArmorItem;
 import net.snowteb.warriorcats_events.item.custom.FeathersArmorItem;
@@ -142,6 +143,11 @@ public class WCAccesoriesLayer extends GeoRenderLayer<WCatEntity> {
             ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/accessories/paw_wrap.png")
     );
 
+    private final AccessoryModel butterflyWingModel = new AccessoryModel(
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "geo/wcat.head_butterfly_wing.geo.json"),
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/entity/accessories/bluemorphowing.png")
+    );
+
 
     private final ElytraModel elytraModel = new ElytraModel();
 
@@ -163,6 +169,8 @@ public class WCAccesoriesLayer extends GeoRenderLayer<WCatEntity> {
     private final AccessoryRenderer catBowRenderer;
     private final AccessoryRenderer skullMaskRenderer;
     private final AccessoryRenderer pawWrapRenderer;
+    private final AccessoryRenderer butterflyWingRenderer;
+
 
 
     public WCAccesoriesLayer(GeoRenderer<WCatEntity> entityRendererIn, EntityRendererProvider.Context context) {
@@ -188,6 +196,7 @@ public class WCAccesoriesLayer extends GeoRenderLayer<WCatEntity> {
 
         this.elytraRenderer = new AccessoryRenderer(context, elytraModel);
         this.pawWrapRenderer = new AccessoryRenderer(context, pawWrapModel0);
+        this.butterflyWingRenderer = new AccessoryRenderer(context, butterflyWingModel);
     }
 
     /*
@@ -3268,6 +3277,78 @@ public class WCAccesoriesLayer extends GeoRenderLayer<WCatEntity> {
                 buffer = bufferSource.getBuffer(renderType);
             }
         }
+
+        ItemStack butterflyWing = ItemStack.EMPTY;
+        ItemStack butterflyArmorWing = animatable.getItemBySlot(EquipmentSlot.HEAD);
+        if (butterflyArmorWing.getItem() instanceof ButterflyWingArmorItem) {
+            butterflyWing = butterflyArmorWing;
+        }
+
+        if (featherStack.isEmpty()) {
+            ItemStack curiosStack = CompatibilitiesClient.getCuriosItem(
+                    animatable.getPlayerBoundUuid(),
+                    ButterflyWingArmorItem.class
+            );
+
+            if (!curiosStack.isEmpty()) {
+                butterflyWing = curiosStack;
+            }
+        }
+
+        if (!butterflyWing.isEmpty()) {
+            if (butterflyWing.is(ModItems.BLUE_MORPHO_WING.get())) {
+                butterflyWingModel.texture = AccessoryModel.BUTTERFLYWING_TEXTURES[0];
+            } else if (butterflyWing.is(ModItems.GOLIATH_BIRDWING_WING.get())) {
+                butterflyWingModel.texture = AccessoryModel.BUTTERFLYWING_TEXTURES[1];
+            } else if (butterflyWing.is(ModItems.MONARCH_WING.get())) {
+                butterflyWingModel.texture = AccessoryModel.BUTTERFLYWING_TEXTURES[2];
+            } else {
+                butterflyWingModel.texture = AccessoryModel.BUTTERFLYWING_TEXTURES[3];
+            }
+
+            if (capturedBoneMatrices.get("head") != null) {
+
+                BoneMatrix current =  capturedBoneMatrices.get("head");
+
+                var bakedModel = butterflyWingModel.getBakedModel(butterflyWingModel.getModelResource(animatable));
+
+                poseStack.pushPose();
+                poseStack.mulPose(getRelative(entityMatrix, current));
+
+                poseStack.translate(-0.159D, 0.5D, -0.6D);
+                poseStack.mulPose(Axis.YP.rotationDegrees(-20f));
+                float scale = 0.8f;
+                poseStack.scale(scale, scale, scale);
+
+
+                RenderType accessoryRenderType = RenderType.entityCutout(butterflyWingModel.getTextureResource(animatable));
+
+                VertexConsumer accessoryBuffer = bufferSource.getBuffer(accessoryRenderType);
+
+                float interpolatedYaw = Mth.lerp(partialTick, animatable.yBodyRotO, animatable.yBodyRot);
+                poseStack.mulPose(Axis.YP.rotationDegrees(interpolatedYaw + 180f));
+
+
+                butterflyWingRenderer.reRender(
+                        bakedModel,
+                        poseStack,
+                        bufferSource,
+                        animatable,
+                        accessoryRenderType,
+                        accessoryBuffer,
+                        partialTick,
+                        packedLight,
+                        packedOverlay,
+                        0xFFFFFFFF
+                );
+
+                poseStack.popPose();
+                buffer = bufferSource.getBuffer(renderType);
+            }
+        }
+
+
+
 
         capturedBoneMatrices.clear();
 

@@ -7,7 +7,6 @@ import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -15,11 +14,11 @@ import net.snowteb.warriorcats_events.clan.ClanData;
 
 import java.util.UUID;
 
-public class MossBedBlockEntity extends BlockEntity {
+public class NestBlockEntity extends BlockEntity {
     private UUID catUUID = ClanData.EMPTY_UUID;
     private String catName = "";
 
-    public MossBedBlockEntity(BlockPos pos, BlockState blockState) {
+    public NestBlockEntity(BlockPos pos, BlockState blockState) {
         super(ModBlockEntities.MOSS_BED.get(), pos, blockState);
     }
 

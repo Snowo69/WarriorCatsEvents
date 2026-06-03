@@ -286,45 +286,32 @@ public class ModEvents2 {
         });
 
 
-        /**
-         * If the player dies, keep the stealth data as it was. Unlocked if it was unlocked, on if it was on, etc.
-         */
-        if (event.isWasDeath()) {
-            var oldData = event.getOriginal().getData(ModAttachments.PLAYER_STEALTH);
-            var newData = event.getEntity().getData(ModAttachments.PLAYER_STEALTH);
-            newData.copyFrom(oldData);
+        {
+
+            var oldStealthData = event.getOriginal().getData(ModAttachments.PLAYER_STEALTH);
+            var newStealthData = event.getEntity().getData(ModAttachments.PLAYER_STEALTH);
+            newStealthData.copyFrom(oldStealthData);
             if (event.getEntity() instanceof ServerPlayer player) {
-                newData.sync(player);
+                newStealthData.sync(player);
             }
 
-        }
-
-        if (event.isWasDeath()) {
-            var oldData = event.getOriginal().getData(ModAttachments.PLAYER_WCE_DATA);
-            var newData = event.getEntity().getData(ModAttachments.PLAYER_WCE_DATA);
-            newData.copyFrom(oldData);
+            var oldWCEData = event.getOriginal().getData(ModAttachments.PLAYER_WCE_DATA);
+            var newWCEData = event.getEntity().getData(ModAttachments.PLAYER_WCE_DATA);
+            newWCEData.copyFrom(oldWCEData);
             if (event.getEntity() instanceof ServerPlayer player) {
-                ModPackets.sendToPlayer(new S2CSyncClanDataPacket(newData), player);
+                ModPackets.sendToPlayer(new S2CSyncClanDataPacket(newWCEData), player);
             }
-        }
 
-        /**
-         * If the player dies, keep the skill data as it was.
-         * Then manually apply every attribute again. 1 by 1.
-         * Then sync it.
-         */
-        if (event.isWasDeath()) {
-
-            var oldData = event.getOriginal().getData(ModAttachments.PLAYER_SKILL);
-            var newData = event.getEntity().getData(ModAttachments.PLAYER_SKILL);
-            newData.copyFrom(oldData);
+            var oldSkillData = event.getOriginal().getData(ModAttachments.PLAYER_SKILL);
+            var newSkillData = event.getEntity().getData(ModAttachments.PLAYER_SKILL);
+            newSkillData.copyFrom(oldSkillData);
             if (event.getEntity() instanceof ServerPlayer player) {
-                PlayerSkill.reviveAttributes(player, newData);
+                PlayerSkill.reviveAttributes(player, newSkillData);
 
                 ModPackets.sendToPlayer(
-                        new SyncSkillDataPacket(newData.getSpeedLevel(), newData.getHPLevel(),
-                                newData.getDMGLevel(), newData.getJumpLevel(),
-                                newData.getArmorLevel(), newData.isClimbUnlocked()),
+                        new SyncSkillDataPacket(newSkillData.getSpeedLevel(), newSkillData.getHPLevel(),
+                                newSkillData.getDMGLevel(), newSkillData.getJumpLevel(),
+                                newSkillData.getArmorLevel(), newSkillData.isClimbUnlocked()),
                         player
                 );
             }
