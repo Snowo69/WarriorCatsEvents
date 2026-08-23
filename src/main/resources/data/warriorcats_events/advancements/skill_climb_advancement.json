@@ -4,8 +4,12 @@
     "icon": {
       "item": "minecraft:string"
     },
-    "title": "Spiderpaw",
-    "description": "You have unlocked the climbing skill!",
+    "title": {
+      "translate": "wce.advancement.skill_climb.title"
+    },
+    "description": {
+      "translate": "wce.advancement.skill_climb.desc"
+    },
     "show_toast": true,
     "announce_to_chat": true,
     "hidden": false

@@ -33,6 +33,7 @@ public class WCEServerConfig {
         public final ForgeConfigSpec.BooleanValue ENFORCE_TERRITORIES;
         public final ForgeConfigSpec.BooleanValue PROTECT_PLACE_AND_BREAK_BLOCKS;
         public final ForgeConfigSpec.BooleanValue PROTECT_CONTAINERS;
+        public final ForgeConfigSpec.BooleanValue PUBLIC_CLAN_CREATION;
 
         public final ForgeConfigSpec.DoubleValue SKILL_SPEED_MULTIPLIER;
         public final ForgeConfigSpec.DoubleValue SKILL_HP_MULTIPLIER;
@@ -42,6 +43,7 @@ public class WCEServerConfig {
 
         public final ForgeConfigSpec.IntValue MAX_TERRITORY_TIME;
         public final ForgeConfigSpec.IntValue MAX_TERRITORY_SIZE;
+        public final ForgeConfigSpec.DoubleValue TREE_STUMP_MULTIPLIER;
 
 
 
@@ -104,11 +106,19 @@ public class WCEServerConfig {
                     .comment("Whether the disease system is enabled")
                     .define("diseases", true);
 
+            PUBLIC_CLAN_CREATION = builder
+                    .comment("Whether creating clans is available for everyone, or only for server operators.")
+                    .define("canAnyoneCreateClans", true);
+
             builder.push("wce_territories");
 
             MAX_TERRITORY_TIME = builder
                     .comment("The time in minutes it takes for a territory marker to fade.")
                     .defineInRange("fadingTime", 240, 10, Integer.MAX_VALUE);
+
+            TREE_STUMP_MULTIPLIER = builder
+                    .comment("The fraction of the max time that will determine the cooldown for the Tree Stumps.")
+                    .defineInRange("treeStumpCD", 0.125D, 0, 1);
 
             MAX_TERRITORY_SIZE = builder
                     .comment("The max number of chunks a clan can possess.")

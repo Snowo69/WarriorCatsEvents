@@ -4,8 +4,12 @@
     "icon": {
       "item": "minecraft:slime_ball"
     },
-    "title": "Look! I can fly!",
-    "description": "You have mastered your jump skill!",
+    "title": {
+      "translate": "wce.advancement.skill_jump.title"
+    },
+    "description": {
+      "translate": "wce.advancement.skill_jump.desc"
+    },
     "show_toast": true,
     "announce_to_chat": true,
     "hidden": false

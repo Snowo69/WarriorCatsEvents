@@ -3,8 +3,12 @@
     "icon": {
       "item": "warriorcats_events:animal_tooth"
     },
-    "title": "Scourge...?",
-    "description": "You have obtained teeth claws made from animal tooths!",
+    "title": {
+      "translate": "wce.advancement.has_teeth_claws.title"
+    },
+    "description": {
+      "translate": "wce.advancement.has_teeth_claws.desc"
+    },
     "show_toast": true,
     "announce_to_chat": true,
     "hidden": false

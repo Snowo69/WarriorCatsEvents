@@ -2,6 +2,10 @@ package net.snowteb.warriorcats_events.item.custom;
 
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
+import net.minecraft.ChatFormatting;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
@@ -10,38 +14,38 @@ import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ArmorItem;
-import net.minecraft.world.item.ArmorMaterials;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.*;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.UUID;
 
-public class FlowerArmorItem extends ArmorItem {
+public class BraceletArmorItem extends ArmorItem implements DyeableLeatherItem {
 
     private static final UUID ARMOR_UUID =
-            UUID.fromString("a1b2c3d4-abbb-cccc-eeee-1a1b1c123456");
+            UUID.fromString("a1bbd3da-adad-cbdc-e13e-1a1b1c124456");
 
-    public FlowerArmorItem() {
-        super(ArmorMaterials.IRON, Type.CHESTPLATE, new Properties().stacksTo(1).durability(350));
+    public BraceletArmorItem() {
+        super(ArmorMaterials.IRON, Type.BOOTS, new Properties().stacksTo(1).durability(280));
     }
 
 
     @Override
     public EquipmentSlot getEquipmentSlot(ItemStack stack) {
-        return EquipmentSlot.CHEST;
+        return EquipmentSlot.FEET;
     }
 
     @Override
     public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot slot) {
-        if (slot == EquipmentSlot.CHEST) {
+        if (slot == EquipmentSlot.FEET) {
             ImmutableMultimap.Builder<Attribute, AttributeModifier> builder =
                     ImmutableMultimap.builder();
 
             builder.put(
                     Attributes.ARMOR,
-                    new AttributeModifier(ARMOR_UUID, "flower_armor_armor", 6.0, AttributeModifier.Operation.ADDITION)
+                    new AttributeModifier(ARMOR_UUID, "bracelet_armor_armor", 2.0, AttributeModifier.Operation.ADDITION)
             );
 
             return builder.build();
@@ -75,19 +79,42 @@ public class FlowerArmorItem extends ArmorItem {
     }
 
     @Override
-    public boolean isEnchantable(ItemStack stack) {
-        return true;
+    public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltipComponents, TooltipFlag pIsAdvanced) {
+
+        CompoundTag tag = pStack.getTag();
+        if (tag == null) return;
+
+        Style style = Style.EMPTY.withColor(ChatFormatting.DARK_PURPLE).withItalic(true);
+
+        if (tag.getBoolean("HasSpikes")) {
+            pTooltipComponents.add(Component.literal("Spikes").withStyle(style));
+        }
+
+        if (tag.getBoolean("HasGlow")) {
+            pTooltipComponents.add(Component.literal("Glow").withStyle(style));
+        }
+
+        super.appendHoverText(pStack, pLevel, pTooltipComponents, pIsAdvanced);
+    }
+
+    public boolean hasSpikes(ItemStack stack) {
+        CompoundTag tag = stack.getTag();
+        return tag != null && tag.getBoolean("HasSpikes");
+    }
+
+    public boolean hasGlow(ItemStack stack) {
+        CompoundTag tag = stack.getTag();
+        return tag != null && tag.getBoolean("HasGlow");
     }
 
     @Override
-    public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
-        return super.canApplyAtEnchantingTable(stack, enchantment);
+    public boolean isEnchantable(ItemStack stack) {
+        return true;
     }
 
     @Override
     public int getEnchantmentValue(ItemStack stack) {
         return 15;
     }
-
 
 }

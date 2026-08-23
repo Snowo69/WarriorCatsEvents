@@ -84,6 +84,9 @@ public class WallGlowrocksBlock extends TorchBlock {
         if (target.is(this)) {
             return target.setValue(AMOUNT_WG, Math.min(4, target.getValue(AMOUNT_WG) + 1));
         }
+        if (target.getBlock() instanceof GlowrocksBlock) {
+            return null;
+        }
 
         for(Direction direction : adirection) {
             if (direction.getAxis().isHorizontal()) {

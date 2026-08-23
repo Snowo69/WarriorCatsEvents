@@ -76,7 +76,7 @@ public class FancySubRenderablesSquare implements Renderable, SubRenderable, Gui
                 0, gradientColor, 0);
 
         WCEOptionsScreen.fillGradientHorizontal(pGuiGraphics,
-                this.width - gLenght, y0 + 1,
+                x0 + this.width - gLenght, y0 + 1,
                 x0 + this.width - 1, y0 + this.height - 1,
                 0, 0, gradientColor);
     }
@@ -242,6 +242,22 @@ public class FancySubRenderablesSquare implements Renderable, SubRenderable, Gui
     @Override
     public int getOriginalYPos1() {
         return originalY1;
+    }
+
+    public int getLeft() {
+        return x0;
+    }
+
+    public int getTop() {
+        return y0;
+    }
+
+    public int getRight() {
+        return x0 + width;
+    }
+
+    public int getBottom() {
+        return y0 + height;
     }
 
     @Override

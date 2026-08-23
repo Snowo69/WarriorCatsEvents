@@ -151,9 +151,13 @@ public class WCatEntity extends TamableAnimal implements GeoEntity, Diseaseable<
 
     private AnimatableInstanceCache cache = new SingletonAnimatableInstanceCache(this);
 
-    private GeneticsModule geneticsModule = new GeneticsModule(this);
-    private DialoguesModule dialogueModule = new DialoguesModule(this);
-    private MobInteractModule interactionModule = new MobInteractModule(this);
+    private final GeneticsModule geneticsModule = new GeneticsModule(this);
+    private final DialoguesModule dialogueModule = new DialoguesModule(this);
+    private final MobInteractModule interactionModule = new MobInteractModule(this);
+    private EmbeddedAccessoriesModule accessoriesModule;
+
+    public static final EntityDataAccessor<Byte> ACCESSORY_FLAGS =
+            SynchedEntityData.defineId(WCatEntity.class, EntityDataSerializers.BYTE);
 
     private Goal preyTarget;
     private Goal monsterTarget;
@@ -1235,7 +1239,6 @@ public class WCatEntity extends TamableAnimal implements GeoEntity, Diseaseable<
         this.goalSelector.addGoal(15, new WCGoals.WCatGiveRandomItemGoal(this));
         if (!this.isAnImage()) this.goalSelector.addGoal(15, new WCGoals.WCatRandomLookAroundGoal(this));
         if (!this.isAnImage()) this.goalSelector.addGoal(15, new WCGoals.WCatLookAtPlayerGoal(this, Player.class, 8.0F));
-        if (!this.isAnImage()) this.goalSelector.addGoal(16, new WCGoals.WCatCasualBlockSeekGoal(this, 0.8D, 15, 0.07D));
 
     }
 
@@ -1282,6 +1285,13 @@ public class WCatEntity extends TamableAnimal implements GeoEntity, Diseaseable<
 
     public MobInteractModule getInteractionModule() {
         return interactionModule;
+    }
+
+    public EmbeddedAccessoriesModule embeddedAccessories() {
+        if (this.accessoriesModule == null) {
+            this.accessoriesModule = new EmbeddedAccessoriesModule(this);
+        }
+        return this.accessoriesModule;
     }
 
     /**
@@ -1892,6 +1902,8 @@ public class WCatEntity extends TamableAnimal implements GeoEntity, Diseaseable<
         tag.put("PatrolData", patrolData);
 
         this.writeDiseasesNBT(tag);
+
+        this.embeddedAccessories().save(tag);
     }
 
     @Override
@@ -2107,6 +2119,8 @@ public class WCatEntity extends TamableAnimal implements GeoEntity, Diseaseable<
 
         this.loadDiseasesNBT(tag);
 
+        this.embeddedAccessories().load(tag);
+
     }
 
     /**
@@ -2140,7 +2154,12 @@ public class WCatEntity extends TamableAnimal implements GeoEntity, Diseaseable<
             state.getController().setTransitionLength(0);
 
             if (!playerAnimPlayed) {
-                if (animIndex == -3) {
+                if (animIndex == -4) {
+                    state.getController().setAnimation(RawAnimation.begin()
+                            .then("animation.wcat.start_levitate", Animation.LoopType.PLAY_ONCE)
+                            .then("animation.wcat.levitate_idle", Animation.LoopType.LOOP));
+                    playerAnimPlayed = true;
+                } else if (animIndex == -3) {
                     state.getController().setAnimation(RawAnimation.begin()
                             .then("animation.wcat.start_stand_premium", Animation.LoopType.PLAY_ONCE)
                             .then("animation.wcat.stand_idle_premium", Animation.LoopType.LOOP));
@@ -2760,8 +2779,9 @@ public class WCatEntity extends TamableAnimal implements GeoEntity, Diseaseable<
 
                     kit.setOwnerUUID(player.getUUID());
 
-                    Component messageKit = Component.translatable("wcat.has_been_born",
-                            Component.literal(kitName).withStyle(ChatFormatting.GREEN));
+                    Component messageKit = Component.translatable("item.warriorcats_events.kit.kit_born",
+                            Component.literal(kitName).withStyle(ChatFormatting.GREEN),
+                            Component.empty());
 
                     owner.sendSystemMessage(messageKit);
                     this.registerClanLog(messageKit);
@@ -2991,6 +3011,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity, Diseaseable<
         this.entityData.define(BROKEN_PAW, false);
         this.entityData.define(WRAPED_PAW, false);
 
+        this.embeddedAccessories().defineSyncedData();
 
     }
 
@@ -3903,7 +3924,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity, Diseaseable<
                 .append(". At: ")
                 .append(Component.literal(String.format("X=%.0f, Y=%.0f, Z=%.0f",
                         this.getX(), this.getY(), this.getZ())));
-        this.registerClanLog(message);
+        this.registerClanLog(ClanData.plainComponent(message));
 
         if (this.level() instanceof ServerLevel sLevel) {
             if (!this.getClanUUID().equals(ClanData.EMPTY_UUID)) {

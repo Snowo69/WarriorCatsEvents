@@ -22,12 +22,15 @@ import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.block.ModBlocks;
 import net.snowteb.warriorcats_events.block.entity.*;
 import net.snowteb.warriorcats_events.client.ClientStoredMorphs;
+import net.snowteb.warriorcats_events.client.DialogueMessage;
+import net.snowteb.warriorcats_events.client.HUDClientMessage;
 import net.snowteb.warriorcats_events.client.ThirstHUD;
 import net.snowteb.warriorcats_events.effect.FeverEffectOverlay;
 import net.snowteb.warriorcats_events.entity.ModEntities;
 import net.snowteb.warriorcats_events.entity.client.*;
 import net.snowteb.warriorcats_events.entity.custom.wcat.WCatEntity;
 import net.snowteb.warriorcats_events.item.ModItems;
+import net.snowteb.warriorcats_events.item.custom.BraceletArmorItem;
 import net.snowteb.warriorcats_events.item.custom.CollarArmorItem;
 import net.snowteb.warriorcats_events.network.ModPackets;
 import net.snowteb.warriorcats_events.network.packet.s2c.cats.OpenCatDataScreenPacket;
@@ -57,12 +60,14 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void onKeyRegister(RegisterKeyMappingsEvent event) {
-        event.register(ModKeybinds.HISSING_KEY);
+        event.register(ModKeybinds.SOUND_MENU_KEY);
         event.register(ModKeybinds.WATERDRINK_KEY);
         event.register(ModKeybinds.CLIMB_KEY);
         event.register(WCEClient.EMOTES_HUD_MENU_KEY);
         event.register(ModKeybinds.OPTIONS_KEY);
+        event.register(ModKeybinds.BACKPACK_KEY);
         event.register(ModKeybinds.LEAP_KEY);
+        event.register(ModKeybinds.LOCK_TARGET_KEY);
     }
 
     @SubscribeEvent
@@ -70,6 +75,8 @@ public class ClientEvents {
         event.registerBelowAll("thirst", ThirstHUD.HUD_THIRST);
         event.registerBelowAll("stealth", StealthClientState.HUD_STEALTH);
         event.registerBelowAll("fever", FeverEffectOverlay.HUD_FEVER);
+        event.registerBelowAll("hud_messages", HUDClientMessage.MESSAGE_OVERLAY);
+        event.registerBelowAll("dialogues", DialogueMessage.DIALOGUE_OVERLAY);
     }
 
     @SubscribeEvent
@@ -120,6 +127,7 @@ public class ClientEvents {
         MenuScreens.register(ModMenuTypes.FRESHKILL_PILE_MENU.get(), FreshkillPileScreen::new);
         MenuScreens.register(ModMenuTypes.WCAT_INVENTORY.get(), WCatScreen::new);
         MenuScreens.register(ModMenuTypes.HERB_MIXING.get(), HerbMixingRockScreen::new);
+        MenuScreens.register(ModMenuTypes.DOCK_BACKPACK.get(), DockBackpackScreen::new);
 
         UpdateCheck.checkForUpdates();
 
@@ -150,6 +158,16 @@ public class ClientEvents {
                         ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "has_glow"),
                         (stack, level, entity, seed) -> stack.getTag() != null && stack.getTag().getBoolean("HasGlow") ? 1f : 0f);
             }
+
+            ItemProperties.register(ModItems.CAT_BRACELET.get(),
+                    ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "has_spikes"),
+                    (stack, level, entity, seed) -> stack.getTag() != null && stack.getTag().getBoolean("HasSpikes") ? 1f : 0f);
+
+            ItemProperties.register(ModItems.CAT_BRACELET.get(),
+                    ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "has_glow"),
+                    (stack, level, entity, seed) -> stack.getTag() != null && stack.getTag().getBoolean("HasGlow") ? 1f : 0f);
+
+
 
             ItemProperties.register(ModItems.MOSS_BALL.get(),
                     ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "honeylevel"),
@@ -222,8 +240,12 @@ public class ClientEvents {
             if (stack.getItem() instanceof CollarArmorItem item) {
                 return item.getColor(stack);
             }
+
+            if (stack.getItem() instanceof BraceletArmorItem item) {
+                return item.getColor(stack);
+            }
             return DyeableLeatherItem.DEFAULT_LEATHER_COLOR;
-        }, ModItems.CAT_COLLAR.get());
+        }, ModItems.CAT_COLLAR.get(), ModItems.CAT_BRACELET.get());
     }
 
     @SubscribeEvent

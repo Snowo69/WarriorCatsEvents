@@ -65,9 +65,11 @@ public class WCEClient {
         private static final ResourceLocation ICON_SCARED = ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/hud/emotes/scared_icon.png");
         private static final ResourceLocation ICON_PREMIUM_STAND = ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/hud/emotes/twoleg_stand_icon.png");
         private static final ResourceLocation ICON_DROP = ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/hud/emotes/drop_icon.png");
+        private static final ResourceLocation ICON_LEVITATE = ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/hud/emotes/levitate_icon.png");
 
         public static ResourceLocation getIcon(int index) {
             return switch (index) {
+                case -4 -> ICON_LEVITATE;
                 case -3 -> ICON_PREMIUM_STAND;
                 case -2 -> ICON_BACKFLIP;
                 case -1 -> ICON_MORPH;
@@ -91,23 +93,24 @@ public class WCEClient {
 
         public static String getText(int index) {
             return switch (index) {
-                case -3 -> "Twoleg Stand";
-                case -2 -> "Backflip";
-                case -1 -> "Morph";
+                case -4 -> Component.translatable("wce.emotes.levitate").getString();
+                case -3 -> Component.translatable("wce.emotes.twoleg_stand").getString();
+                case -2 -> Component.translatable("wce.emotes.backflip").getString();
+                case -1 -> Component.translatable("wce.emotes.morph").getString();
                 case 0 -> "";
-                case 1 -> "Groom";
-                case 2 -> "Stretch";
-                case 3 -> "Scratch";
-                case 4 -> "Attack";
-                case 5 -> "Stand";
-                case 6 -> "Lay";
-                case 7 -> "Sit";
-                case 8 -> "Loaf";
-                case 9 -> "Sleep";
-                case 10 -> "Play dead";
-                case 11 -> "Roll";
-                case 12 -> "Scared";
-                case 13 -> "Drop";
+                case 1 -> Component.translatable("wce.emotes.groom").getString();
+                case 2 -> Component.translatable("wce.emotes.stretch").getString();
+                case 3 -> Component.translatable("wce.emotes.scratch").getString();
+                case 4 -> Component.translatable("wce.emotes.attack").getString();
+                case 5 -> Component.translatable("wce.emotes.stand").getString();
+                case 6 -> Component.translatable("wce.emotes.lay").getString();
+                case 7 -> Component.translatable("wce.emotes.sit").getString();
+                case 8 -> Component.translatable("wce.emotes.loaf").getString();
+                case 9 -> Component.translatable("wce.emotes.sleep").getString();
+                case 10 -> Component.translatable("wce.emotes.play_dead").getString();
+                case 11 -> Component.translatable("wce.emotes.roll").getString();
+                case 12 -> Component.translatable("wce.emotes.scared").getString();
+                case 13 -> Component.translatable("wce.emotes.drop").getString();
                 default -> "Unnamed";
             };
         }
@@ -153,13 +156,13 @@ public class WCEClient {
         public static String getText(int index) {
             return switch (index) {
                 case 0 -> "";
-                case 1 -> "Hiss";
-                case 2 -> "Meow";
-                case 3 -> "Purr";
-                case 4 -> "Purreow";
-                case 5 -> "Pitiful Meow";
-                case 6 -> "Cry";
-                case 7 -> "Dramatic cry";
+                case 1 -> Component.translatable("wce.sounds.hiss").getString();
+                case 2 -> Component.translatable("wce.sounds.meow").getString();
+                case 3 -> Component.translatable("wce.sounds.purr").getString();
+                case 4 -> Component.translatable("wce.sounds.purreow").getString();
+                case 5 -> Component.translatable("wce.sounds.pitiful_meow").getString();
+                case 6 -> Component.translatable("wce.sounds.cry").getString();
+                case 7 -> Component.translatable("wce.sounds.dramatic_cry").getString();
                 default -> "Unnamed";
             };
         }

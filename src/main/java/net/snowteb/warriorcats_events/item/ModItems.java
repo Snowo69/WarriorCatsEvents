@@ -363,7 +363,7 @@ public static final RegistryObject<Item> FLOWER_CROWN = ITEMS.register("flower_c
     public static final RegistryObject<Item> LEAF_MANE = ITEMS.register("leaf_mane",
             () -> new LeafManeItem());
     public static final RegistryObject<Item> FLOWER_ARMOR = ITEMS.register("flower_armor",
-            () -> new FlowerArmorItem());
+            () -> new GenericArmorItem());
     public static final RegistryObject<Item> TEETH_CLAWS = ITEMS.register("teeth_claws",
             () -> new TeethClawsItem());
 
@@ -554,7 +554,8 @@ public static final RegistryObject<Item> FLOWER_CROWN = ITEMS.register("flower_c
             () -> new BlockItem(ModBlocks.COMFREYPLANT.get(), new Item.Properties()));
 
 
-
+    public static final RegistryObject<Item> DOCK_BACKPACK = ITEMS.register("dock_bag",
+            () -> new DockBackpackItem(new Item.Properties().stacksTo(1)));
 
     public static final RegistryObject<Item> GENERATIONS_MUSIC_DISC = ITEMS.register("generations_music_disc",
             () -> new RecordItem(6, ModSounds.GENERATIONS, new Item.Properties().stacksTo(1), 2650));
@@ -615,6 +616,9 @@ public static final RegistryObject<Item> FLOWER_CROWN = ITEMS.register("flower_c
     public static final RegistryObject<Item> CAT_COLLAR = ITEMS.register("cat_collar",
             () -> new CollarArmorItem());
 
+    public static final RegistryObject<Item> CAT_BRACELET = ITEMS.register("cat_bracelets",
+            () -> new BraceletArmorItem());
+
     public static final RegistryObject<Item> COLLAR_BELL = ITEMS.register("collar_bell",
             () -> new Item(new Item.Properties().stacksTo(16)));
 
@@ -631,10 +635,13 @@ public static final RegistryObject<Item> FLOWER_CROWN = ITEMS.register("flower_c
     public static final RegistryObject<Item> CAT_RED_BOW = ITEMS.register("head_red_bow",
             () -> new FlowerCrownItem());
     public static final RegistryObject<Item> CAT_BLACK_BOW = ITEMS.register("black_bow",
-            () -> new FlowerArmorItem());
+            () -> new GenericArmorItem());
 
     public static final RegistryObject<Item> SKULL_MASK = ITEMS.register("skull_mask",
             () -> new BoneHelmetItem());
+
+    public static final RegistryObject<Item> BEE_COSTUME = ITEMS.register("bee_costume",
+            () -> new GenericArmorItem());
 
 
     public static void register(IEventBus modEventBus) {

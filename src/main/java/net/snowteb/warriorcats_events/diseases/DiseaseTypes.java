@@ -136,7 +136,9 @@ public class DiseaseTypes {
                                         extraChance -= disease.getHealedLevel()*0.1f;
 
                                         if (entity.getRandom().nextFloat() < (0.1 + extraChance) && isMoving) {
-                                            disease.hurt(entity);
+                                            if (disease.getHealedLevel() < 3) {
+                                                disease.hurt(entity);
+                                            }
                                         }
 
                                     }

@@ -3,14 +3,12 @@ package net.snowteb.warriorcats_events.util;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.common.data.ForgeEntityTypeTagsProvider;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
 
 public class ModTags {
@@ -44,7 +42,6 @@ public class ModTags {
         public static final TagKey<Item> HERBS = tag("herbs");
         public static final TagKey<Item> FEATHERS = tag("feathers");
         public static final TagKey<Item> WCE_FEATHERS = tag("wce_feathers");
-        public static final TagKey<Item> HERB_CRAFTING = tag("herb_crafting");
         public static final TagKey<Item> ADDITIONAL_PREY = tag("additional_prey");
         public static final TagKey<Item> SKULLS = tag("skulls");
         public static final TagKey<Item> FILL_BOWL = tag("fill_bowl");

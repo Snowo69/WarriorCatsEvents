@@ -41,9 +41,13 @@ public class WCRenderer extends GeoEntityRenderer<WCatEntity> {
 
     private static final ResourceLocation PLAYER_TEXT_BUBBLE =
             ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/hud/player_text_bubble.png");
-
     private static final ResourceLocation BIG_PLAYER_TEXT_BUBBLE =
             ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/hud/big_player_text_bubble.png");
+
+    private static final ResourceLocation PLAYER_TEXT_BUBBLE_CONT =
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/hud/player_text_bubble_cont.png");
+    private static final ResourceLocation BIG_PLAYER_TEXT_BUBBLE_CONT =
+            ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "textures/hud/big_player_text_bubble_cont.png");
 
     public WCRenderer(EntityRendererProvider.Context context) {
         super(context, new WCModel());
@@ -135,7 +139,7 @@ public class WCRenderer extends GeoEntityRenderer<WCatEntity> {
             poseStack.popPose();
         }
 
-        if (entity.shouldShowMorphName()) {
+        if (entity.shouldShowMorphName() && !Minecraft.getInstance().options.hideGui) {
             if (Minecraft.getInstance().player != null) {
                 if (!entity.getPlayerBoundUuid().equals(ClanData.EMPTY_UUID)) {
 
@@ -233,6 +237,7 @@ public class WCRenderer extends GeoEntityRenderer<WCatEntity> {
                         EntityChatBubbleManager.ChatBubble bubble = EntityChatBubbleManager.bubbles.get(boundUuid);
 
                         Player owner = Minecraft.getInstance().level.getPlayerByUUID(boundUuid);
+                        boolean contributor = WarriorCatsEvents.Collaborators.isContributor(boundUuid);
 
                         if (bubble != null && (owner != null && Minecraft.getInstance().player.distanceTo(owner) < 15)) {
 
@@ -266,15 +271,15 @@ public class WCRenderer extends GeoEntityRenderer<WCatEntity> {
                                 bubbleHeight = 28;
                             }
 
-                            VertexConsumer bubbleBuffer = bufferSource.getBuffer(RenderType.entitySmoothCutout(PLAYER_TEXT_BUBBLE));
+                            VertexConsumer bubbleBuffer = bufferSource.getBuffer(RenderType.entitySmoothCutout(contributor ? PLAYER_TEXT_BUBBLE_CONT : PLAYER_TEXT_BUBBLE));
                             if (lines.size() >= 5) {
-                                bubbleBuffer = bufferSource.getBuffer(RenderType.entitySmoothCutout(BIG_PLAYER_TEXT_BUBBLE));
+                                bubbleBuffer = bufferSource.getBuffer(RenderType.entitySmoothCutout(contributor ? BIG_PLAYER_TEXT_BUBBLE_CONT : BIG_PLAYER_TEXT_BUBBLE));
                             }
                             int alphaTextBubble = 255;
                             if (entity.isDiscrete()) {
-                                bubbleBuffer = bufferSource.getBuffer(RenderType.entityTranslucent(PLAYER_TEXT_BUBBLE));
+                                bubbleBuffer = bufferSource.getBuffer(RenderType.entityTranslucent(contributor ? PLAYER_TEXT_BUBBLE_CONT : PLAYER_TEXT_BUBBLE));
                                 if (lines.size() >= 5) {
-                                    bubbleBuffer = bufferSource.getBuffer(RenderType.entityTranslucent(BIG_PLAYER_TEXT_BUBBLE));
+                                    bubbleBuffer = bufferSource.getBuffer(RenderType.entityTranslucent(contributor ? BIG_PLAYER_TEXT_BUBBLE_CONT : BIG_PLAYER_TEXT_BUBBLE));
                                 }
                                 alphaTextBubble = 100;
                                 redRGB = 180;

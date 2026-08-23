@@ -80,7 +80,7 @@ public class StoneCleftBlockEntity extends BlockEntity implements MenuProvider {
 
     @Override
     public Component getDisplayName() {
-        return Component.translatable("block.warriorcats_events.stone_cleft");
+        return Component.translatable("block.warriorcats_events.stonecleft");
     }
 
     @Override

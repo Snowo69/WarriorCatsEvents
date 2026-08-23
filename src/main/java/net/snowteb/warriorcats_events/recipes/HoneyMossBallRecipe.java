@@ -1,7 +1,6 @@
 package net.snowteb.warriorcats_events.recipes;
 
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
@@ -10,8 +9,6 @@ import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CustomRecipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
-import net.snowteb.warriorcats_events.item.ModItems;
-import net.snowteb.warriorcats_events.item.custom.CollarArmorItem;
 import net.snowteb.warriorcats_events.item.custom.MossBallItem;
 
 public class HoneyMossBallRecipe extends CustomRecipe {

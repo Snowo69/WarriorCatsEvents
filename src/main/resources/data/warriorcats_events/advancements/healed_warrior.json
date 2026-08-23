@@ -4,8 +4,12 @@
     "icon": {
       "item": "warriorcats_events:dock_poultice"
     },
-    "title": "Good, you will live",
-    "description": "You have healed one of your clanmates.",
+    "title": {
+      "translate": "wce.advancement.healed_warrior.title"
+    },
+    "description": {
+      "translate": "wce.advancement.healed_warrior.desc"
+    },
     "show_toast": true,
     "announce_to_chat": true,
     "hidden": false

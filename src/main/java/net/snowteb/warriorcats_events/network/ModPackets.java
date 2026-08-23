@@ -522,6 +522,24 @@ public class ModPackets {
                 .consumerMainThread(KickNPCPacket::handle)
                 .add();
 
+        net.messageBuilder(SetCosmeticPacket.class, 78, NetworkDirection.PLAY_TO_SERVER)
+                .decoder(SetCosmeticPacket::decode)
+                .encoder(SetCosmeticPacket::encode)
+                .consumerMainThread(SetCosmeticPacket::handle)
+                .add();
+
+        net.messageBuilder(CtSOpenBackpackPacket.class, 79, NetworkDirection.PLAY_TO_SERVER)
+                .decoder(CtSOpenBackpackPacket::decode)
+                .encoder(CtSOpenBackpackPacket::encode)
+                .consumerMainThread(CtSOpenBackpackPacket::handle)
+                .add();
+
+        net.messageBuilder(SendDialoguePacket.class, 80, NetworkDirection.PLAY_TO_CLIENT)
+                .decoder(SendDialoguePacket::new)
+                .encoder(SendDialoguePacket::toBytes)
+                .consumerMainThread(SendDialoguePacket::handle)
+                .add();
+
 
     }
 

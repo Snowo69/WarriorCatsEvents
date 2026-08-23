@@ -1,6 +1,4 @@
 {
-
-
   "name": "- 致谢",
   "priority": true,
   "icon": "minecraft:enchanted_book",
@@ -9,8 +7,8 @@
     {
       "type": "patchouli:spotlight",
       "item": "warriorcats_events:generations_music_disc",
-      "text": "$(8)感谢 Sharon Hurvitz 允许我将她的一首美妙歌曲加入模组！$(br2)如果你有机会，请深入了解她的作品和音乐！",
-      "title": "世代"
+      "text": "$(8)感谢 Sharon Hurvitz 允许我将她的优美音乐加入模组！$(br2)如果你有机会，请深入了解她的作品和音乐！",
+      "title": "Sharon Hurvitz"
     },
     {
       "type": "patchouli:link",
@@ -18,6 +16,19 @@
       "link_text": "Linktree",
       "text": "$(8) $(br2)“Sharon Hurvitz 是一位母带工程师和作曲家，以其沉浸式的声学环境和复杂而富有想象力的配乐而闻名。她的作品从柔和的极简风格，到宏大而富有动感的管弦乐，皆有所涉猎。”",
       "title": "Sharon Hurvitz"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "minecraft:music_disc_cat",
+      "text": "$(8)感谢 Joabi 允许我将他的优美而深邃的音乐加入模组！$(br2)如果你有机会，请深入了解他的艺术作品！",
+      "title": "Joabi"
+    },
+    {
+      "type": "patchouli:link",
+      "url": "https://www.youtube.com/channel/UC11MxpwJFbUGkoUr3ZIJwgQ",
+      "link_text": "Youtube",
+      "text": "$(8) $(br2)“Joabi 是一位来自英国的音乐作曲家，擅长电子、电影和氛围音乐。他在 YouTube 上发布了超过 100 首歌曲，播放量超过 100 万，多年来一直在不断丰富自己的音乐作品集。”",
+      "title": "Joabi"
     },
     {
       "type": "patchouli:entity",
@@ -293,6 +304,4 @@
       "text": ""
     }
   ]
-
-
 }

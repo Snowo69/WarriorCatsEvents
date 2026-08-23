@@ -458,7 +458,8 @@ public class WCECommandHandles {
                         cat.genetics,
                         cat.chimeraGenetics,
                         cat.variants,
-                        cat.chimeraVariants
+                        cat.chimeraVariants,
+                        cat.catGenderValue
                 ));
             }
 
@@ -1357,6 +1358,13 @@ public class WCECommandHandles {
 
     public static int clanRegisterMenu(CommandSourceStack source) throws CommandSyntaxException {
         ServerPlayer player = source.getPlayerOrException();
+
+        if (!WCEServerConfig.SERVER.PUBLIC_CLAN_CREATION.get()) {
+            if (!player.hasPermissions(3)) {
+                player.sendSystemMessage(Component.translatable("clan.no_permissions").withStyle(ChatFormatting.RED));
+                return 0;
+            }
+        }
 
         String morphName = player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
                 .map(WCEPlayerData::getMorphName).orElse(player.getName().getString());

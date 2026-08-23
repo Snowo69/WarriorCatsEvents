@@ -4,8 +4,12 @@
     "icon": {
       "item": "minecraft:golden_apple"
     },
-    "title": "Thick skin",
-    "description": "You have mastered your health skill!",
+    "title": {
+      "translate": "wce.advancement.skill_hp.title"
+    },
+    "description": {
+      "translate": "wce.advancement.skill_hp.desc"
+    },
     "show_toast": true,
     "announce_to_chat": true,
     "hidden": false

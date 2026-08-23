@@ -4,8 +4,12 @@
     "icon": {
       "item": "minecraft:powder_snow_bucket"
     },
-    "title": "A rat or a cat?",
-    "description": "You have recruited a true albino cat for the first time!",
+    "title": {
+      "translate": "wce.advancement.albino_obtained.title"
+    },
+    "description": {
+      "translate": "wce.advancement.albino_obtained.desc"
+    },
     "show_toast": true,
     "announce_to_chat": true,
     "hidden": true

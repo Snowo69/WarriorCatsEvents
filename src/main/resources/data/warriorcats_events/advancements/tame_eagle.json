@@ -4,8 +4,12 @@
     "icon": {
       "item": "warriorcats_events:black_vulture_feather"
     },
-    "title": "Borrowing Wings",
-    "description": "You succesfully befriended a Golden Eagle.",
+    "title": {
+      "translate": "wce.advancement.tame_eagle.title"
+    },
+    "description": {
+      "translate": "wce.advancement.tame_eagle.desc"
+    },
     "show_toast": true,
     "announce_to_chat": true,
     "hidden": true

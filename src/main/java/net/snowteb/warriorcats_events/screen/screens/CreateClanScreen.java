@@ -333,7 +333,7 @@ public class CreateClanScreen extends Screen {
         infoX += incrementX;
 
         saveButton = Button.builder(
-                Component.literal("Register"),
+                Component.translatable("screen.createclan.register"),
                 btn -> saveAndSend()
         ).bounds(centerX-40, centerY + 85, 80, 20).build();
 

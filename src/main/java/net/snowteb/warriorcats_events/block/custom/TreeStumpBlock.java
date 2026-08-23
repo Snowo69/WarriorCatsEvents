@@ -200,7 +200,7 @@ public class TreeStumpBlock extends BaseEntityBlock implements SimpleWaterlogged
 
                                         if (pPos.getCenter().distanceTo(player.position()) < distance) {
                                             closestPlayer = player.getName().getString();
-                                            closestMorphName = player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
+                                                closestMorphName = player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
                                                     .map(WCEPlayerData::getMorphName).orElse(closestPlayer);
                                             distance = pPos.getCenter().distanceTo(player.position());
                                         }
@@ -221,20 +221,6 @@ public class TreeStumpBlock extends BaseEntityBlock implements SimpleWaterlogged
                                         String percentageString = String.format("%.1f", percentage*100) + "%";
 
                                         ChunkPos claimedPos = clan.claimedTerritory.get(treeStumpBlockEntity.getTerritoryPos()).chunkPos;
-
-//                                        Component log = Component.empty()
-//                                                .append(Component.literal(closestMorphName).withStyle(ChatFormatting.AQUA))
-//                                                .append(Component.literal("(").withStyle(ChatFormatting.DARK_GRAY))
-//                                                .append(Component.literal(closestPlayer).withStyle(ChatFormatting.DARK_GRAY))
-//                                                .append(Component.literal(")").withStyle(ChatFormatting.DARK_GRAY))
-//                                                .append(" has remarked territory ")
-//                                                .append(Component.literal(clan.claimedTerritory.get(treeStumpBlockEntity.getTerritoryPos()).name + " ").withStyle(ChatFormatting.GOLD))
-//                                                .append("at ")
-//                                                .append(Component.literal(
-//                                                        String.format("X=%d, Z=%d", claimedPos.x, claimedPos.z)
-//                                                ).withStyle(ChatFormatting.AQUA))
-//                                                .append(", new percentage: ")
-//                                                .append(Component.literal(percentageString).withStyle(ChatFormatting.GOLD));
 
                                         Component log1 = Component.translatable("blockinteraction.treestump.territoryremarkedlog",
                                                 Component.empty()

@@ -4,8 +4,12 @@
     "icon": {
       "item": "minecraft:barrier"
     },
-    "title": "A broken code",
-    "description": "You unnecessarily murdered a cat.",
+    "title": {
+      "translate": "wce.advancement.kill_wcat.title"
+    },
+    "description": {
+      "translate": "wce.advancement.kill_wcat.desc"
+    },
     "show_toast": true,
     "announce_to_chat": true,
     "hidden": true

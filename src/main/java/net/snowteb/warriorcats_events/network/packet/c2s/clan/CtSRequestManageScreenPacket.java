@@ -56,8 +56,12 @@ public class CtSRequestManageScreenPacket {
                     String morphName = data.playerMorphNames.getOrDefault(uuid, "Unknown");
                     WCGenetics.PackedGeneticData morphData = data.playerMorphData.getOrDefault(uuid, WCGenetics.PackedGeneticData.empty());
                     String rank = String.valueOf(clan.members.get(uuid));
-                    String perms = String.valueOf(clan.memberPerms.get(uuid));
-                    String age = "Undefined";
+                    String perms = switch (clan.memberPerms.get(uuid)) {
+                        case OWNER -> Component.translatable("clan.perms.owner").getString();
+                        case ADMIN -> Component.translatable("clan.perms.admin").getString();
+                        case MEMBER -> Component.translatable("clan.perms.member").getString();
+                        case GUEST -> Component.translatable("clan.perms.guest").getString();
+                    };                    String age = "Undefined";
                     boolean isOnline = false;
 
                     if (clanMember != null) {

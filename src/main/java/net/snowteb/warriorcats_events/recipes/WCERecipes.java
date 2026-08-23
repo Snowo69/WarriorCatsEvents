@@ -3,6 +3,7 @@ package net.snowteb.warriorcats_events.recipes;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -33,6 +34,9 @@ public class WCERecipes {
 
     public static final RegistryObject<RecipeSerializer<?>> HONEY_MOSSBALL_SERIALIZER =
             SERIALIZERS.register("honey_mossball_recipe", HoneyMossBallRecipeSerializer::new);
+
+    public static final RegistryObject<RecipeSerializer<?>> BRACELET_RECIPE_SERIALIZER =
+            SERIALIZERS.register("bracelet_recipe", BraceletRecipeSerializer::new);
 
 
     public static void register(IEventBus bus) {

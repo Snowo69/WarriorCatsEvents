@@ -122,11 +122,6 @@ public class CollarArmorItem extends ArmorItem implements DyeableLeatherItem {
     }
 
     @Override
-    public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
-        return super.canApplyAtEnchantingTable(stack, enchantment);
-    }
-
-    @Override
     public int getEnchantmentValue(ItemStack stack) {
         return 15;
     }

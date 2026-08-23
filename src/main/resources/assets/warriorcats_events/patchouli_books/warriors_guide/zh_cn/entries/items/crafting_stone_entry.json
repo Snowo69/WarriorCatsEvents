@@ -6,7 +6,7 @@
   "category": "warriorcats_events:items_category",
   "pages": [
     {
-      "type": "石制工作台",
+      "type": "patchouli:image",
       "images": [
         "warriorcats_events:textures/book/items/crafting_stone.png"
       ],

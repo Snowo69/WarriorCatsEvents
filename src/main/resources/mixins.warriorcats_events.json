@@ -15,7 +15,11 @@
     "LightTextureMixin",
     "LocalPlayerMixin",
     "MinecraftMixin",
+    "MusicManagerMixin",
+    "RenderItemInPawMixin",
     "ScreenClickedComponentMixin",
+    "SoundEngineMixin",
+    "SoundManagerMixin",
     "SplashMixin",
     "TitleScreenMixin"
   ],

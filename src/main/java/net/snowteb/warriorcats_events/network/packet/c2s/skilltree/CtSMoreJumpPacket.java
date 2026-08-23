@@ -100,8 +100,7 @@ public class CtSMoreJumpPacket {
                             }
                         }
                     }
-                }
-                else {
+                } else {
                     player.sendSystemMessage(Component.translatable("skills.jump_level_maxed", (currentLevel)).withStyle(ChatFormatting.YELLOW));
                 }
             } else {

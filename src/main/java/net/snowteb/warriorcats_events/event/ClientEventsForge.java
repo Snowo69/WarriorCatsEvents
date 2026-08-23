@@ -13,6 +13,9 @@ import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.ClickEvent;
@@ -23,6 +26,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -35,13 +39,17 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.snowteb.warriorcats_events.WCEClient;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
+import net.snowteb.warriorcats_events.client.DialogueMessage;
 import net.snowteb.warriorcats_events.client.EntityChatBubbleManager;
 import net.snowteb.warriorcats_events.client.LeapClientState;
 import net.snowteb.warriorcats_events.compat.CompatibilitiesClient;
 import net.snowteb.warriorcats_events.diseases.Disease;
 import net.snowteb.warriorcats_events.diseases.Diseaseable;
+import net.snowteb.warriorcats_events.entity.client.WCAccesoriesLayer;
+import net.snowteb.warriorcats_events.entity.client.WCRenderer;
 import net.snowteb.warriorcats_events.entity.custom.EagleEntity;
 import net.snowteb.warriorcats_events.entity.custom.wcat.WCatEntity;
+import net.snowteb.warriorcats_events.item.custom.DockBackpackItem;
 import net.snowteb.warriorcats_events.managers.ClimbDataAccessor;
 import net.snowteb.warriorcats_events.network.ModPackets;
 import net.snowteb.warriorcats_events.network.packet.c2s.clan.EmoteMorphPacket;
@@ -59,6 +67,11 @@ import net.snowteb.warriorcats_events.stealth.PlayerStealthProvider;
 import net.snowteb.warriorcats_events.util.ModKeybinds;
 import net.snowteb.warriorcats_events.zconfig.WCEServerConfig;
 import org.lwjgl.glfw.GLFW;
+import software.bernie.geckolib.GeckoLib;
+import software.bernie.geckolib.cache.GeckoLibCache;
+import software.bernie.geckolib.model.GeoModel;
+import software.bernie.geckolib.renderer.GeoEntityRenderer;
+import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 import tocraft.walkers.api.PlayerShape;
 
 import java.util.List;
@@ -87,6 +100,15 @@ public class ClientEventsForge {
             Minecraft.getInstance().setScreen(new WCEOptionsScreen());
         }
 
+        if (ModKeybinds.BACKPACK_KEY.isDown() && event.getAction() == GLFW.GLFW_PRESS) {
+            LocalPlayer player = Minecraft.getInstance().player;
+            if (player != null) {
+                DockBackpackItem.findEquippedBackpack(player).ifPresent(backpack -> {
+                    ModPackets.sendToServer(new CtSOpenBackpackPacket());
+                });
+            }
+        }
+
 
     }
 
@@ -100,12 +122,12 @@ public class ClientEventsForge {
             emoteOffset -= (int) event.getScrollDelta();
 
             if (WarriorCatsEvents.Collaborators.isContributor(Minecraft.getInstance().player.getUUID())) {
-                emoteOffset = Mth.clamp(emoteOffset, -3, EmoteIndexData.MAX_EMOTES);
+                emoteOffset = Mth.clamp(emoteOffset, -4, EmoteIndexData.MAX_EMOTES);
             } else {
                 emoteOffset = Mth.clamp(emoteOffset, -1, EmoteIndexData.MAX_EMOTES);
             }
 
-            WCEClient.playLocalSound(ModSounds.MENU_CLICK.get(), SoundSource.NEUTRAL, 0.1f, 1.3f);
+            playLocalSound(ModSounds.MENU_CLICK.get(), SoundSource.NEUTRAL, 0.1f, 1.3f);
 
             event.setCanceled(true);
         } else if (isRenderingSoundMenu && mc.screen == null) {
@@ -114,7 +136,7 @@ public class ClientEventsForge {
             soundOffset = Mth.clamp(soundOffset, 0, MAX_SOUNDS);
 
 
-            WCEClient.playLocalSound(ModSounds.MENU_CLICK.get(), SoundSource.NEUTRAL, 0.1f, 1.3f);
+            playLocalSound(ModSounds.MENU_CLICK.get(), SoundSource.NEUTRAL, 0.1f, 1.3f);
 
             event.setCanceled(true);
         }
@@ -199,8 +221,19 @@ public class ClientEventsForge {
         }
 
 
-        if (EMOTES_HUD_MENU_KEY.consumeClick()) {
+        if (EMOTES_HUD_MENU_KEY.isDown()) {
 
+            if (!isRenderingEmoteMenu) {
+                playLocalSound(ModSounds.MENU_OPEN.get(), SoundSource.NEUTRAL, 0.6f, 1f);
+
+                if (isRenderingSoundMenu) isRenderingSoundMenu = false;
+
+                emoteOffset = 0;
+                isRenderingEmoteMenu = true;
+            }
+
+
+        } else {
             if (isRenderingEmoteMenu) {
 
                 int selected = emoteOffset;
@@ -211,31 +244,26 @@ public class ClientEventsForge {
                     ModPackets.sendToServer(new EmoteMorphPacket(selected));
                 }
 
-            } else {
-                WCEClient.playLocalSound(ModSounds.MENU_OPEN.get(), SoundSource.NEUTRAL, 0.4f, 1f);
+                isRenderingEmoteMenu = false;
             }
-
-            if (isRenderingSoundMenu) isRenderingSoundMenu = false;
-
-
-            emoteOffset = 0;
-            isRenderingEmoteMenu = !isRenderingEmoteMenu;
         }
 
-        if (ModKeybinds.HISSING_KEY.consumeClick()) {
+        if (ModKeybinds.SOUND_MENU_KEY.isDown()) {
+            if (!isRenderingSoundMenu) {
+                playLocalSound(ModSounds.MENU_OPEN.get(), SoundSource.NEUTRAL, 0.6f, 1f);
+                if (isRenderingEmoteMenu) isRenderingEmoteMenu = false;
+
+                soundOffset = 0;
+                isRenderingSoundMenu = true;
+            }
+        } else {
             if (isRenderingSoundMenu) {
                 int selected = soundOffset;
                 if (selected != 0) {
                     ModPackets.sendToServer(new CtSPlayCatSoundPacket(selected));
                 }
-            } else {
-                WCEClient.playLocalSound(ModSounds.MENU_OPEN.get(), SoundSource.NEUTRAL, 0.4f, 1f);
+                isRenderingSoundMenu = false;
             }
-
-            if (isRenderingEmoteMenu) isRenderingEmoteMenu = false;
-
-            soundOffset = 0;
-            isRenderingSoundMenu = !isRenderingSoundMenu;
         }
 
         if (ModKeybinds.CLIMB_KEY.consumeClick()) {
@@ -268,7 +296,7 @@ public class ClientEventsForge {
             }
         }
 
-        WCEClient.climbClientTick();
+        climbClientTick();
 
         if (isRenderingEmoteMenu && (mc.screen != null || mc.player == null)) {
             isRenderingEmoteMenu = false;
@@ -494,7 +522,7 @@ public class ClientEventsForge {
                 int y1 = 0;
                 for (Disease<?> disease : list) {
                     {
-                        Component finalText = Component.literal("   ").withStyle(Style.EMPTY.withColor(WCEClient.diseaseTextColor(disease)));
+                        Component finalText = Component.literal("   ").withStyle(Style.EMPTY.withColor(diseaseTextColor(disease)));
 
                         if (!disease.canHeal()) {
                             finalText = finalText.copy()
@@ -909,7 +937,7 @@ public class ClientEventsForge {
             f = (float) LeapClientState.getSprintCounterThreshold() /8;
         }
 
-        WCEClient.playLocalSound(ModSounds.STEALTH_WOOSH.get(), SoundSource.AMBIENT, f*0.10f, f*minecraft.player.getRandom().nextFloat());
+        playLocalSound(ModSounds.STEALTH_WOOSH.get(), SoundSource.AMBIENT, f*0.10f, f*minecraft.player.getRandom().nextFloat());
 
         if (!(f <= 0.0f)) {
             pLightTexture.turnOnLightLayer();

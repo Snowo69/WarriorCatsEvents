@@ -16,6 +16,8 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
@@ -29,6 +31,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.item.alchemy.Potions;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Blocks;
@@ -39,6 +42,7 @@ import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
+import net.minecraftforge.event.entity.living.MobSpawnEvent;
 import net.minecraftforge.event.entity.player.*;
 import net.minecraftforge.event.level.SleepFinishedTimeEvent;
 import net.minecraftforge.eventbus.api.Event;
@@ -63,6 +67,7 @@ import net.snowteb.warriorcats_events.managers.Sequence;
 import net.snowteb.warriorcats_events.network.ModPackets;
 import net.snowteb.warriorcats_events.network.packet.s2c.others.ThirstDataSyncStCPacket;
 import net.snowteb.warriorcats_events.particles.WCEParticles;
+import net.snowteb.warriorcats_events.skills.PlayerSkill;
 import net.snowteb.warriorcats_events.skills.PlayerSkillProvider;
 import net.snowteb.warriorcats_events.thirst.PlayerThirstProvider;
 import net.snowteb.warriorcats_events.util.ModTags;
@@ -74,6 +79,25 @@ import java.util.*;
 
 @Mod.EventBusSubscriber(modid = WarriorCatsEvents.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ModEventsForge2 {
+
+    @SubscribeEvent
+    public static void onCheckSpawn(MobSpawnEvent.PositionCheck event) {
+
+        if (event.getSpawnType() != MobSpawnType.NATURAL) return;
+        if (event.getEntity().getType().getCategory() != MobCategory.MONSTER) return;
+
+        ServerLevel sLevel = event.getLevel().getLevel();
+        ClanData data = ClanData.get(sLevel.getServer().overworld());
+        ChunkPos pos = new ChunkPos(BlockPos.containing(event.getX(), event.getY(), event.getZ()));
+
+        for (ClanData.Clan clan : data.clans.values()) {
+            if (clan.claimedTerritory.containsKey(pos)) {
+                event.setResult(MobSpawnEvent.PositionCheck.Result.DENY);
+                return;
+            }
+        }
+
+    }
 
     private static final Map<UUID, List<ItemStack>> savedItems = new HashMap<>();
 
@@ -469,14 +493,15 @@ public class ModEventsForge2 {
                     }
                 }
             } else {
-                Player player = cat.level().getPlayerByUUID(cat.getPlayerBoundUuid());
+
+                Player player = ((ServerLevel) cat.level()).getServer().getPlayerList().getPlayer(cat.getPlayerBoundUuid());
+
                 if (player instanceof ServerPlayer sPlayer) {
                     if (sPlayer instanceof Diseaseable<?> diseaseable) {
                         if (diseaseable.allowReducedFallDamage()) {
                             sPlayer.getCapability(PlayerSkillProvider.SKILL_DATA).ifPresent(cap -> {
-                                if (cap.getJumpLevel() >= 2) {
-                                    event.setDistance(Math.max(0f, event.getDistance() - 8f));
-                                }
+                                int reduce = (int) (8f * ((float) cap.getJumpLevel() / PlayerSkill.maxJumpLevel));
+                                event.setDistance(Math.max(0f, event.getDistance() - reduce));
                             });
                         } else {
                             if (diseaseable.hasDisease(DiseaseTypes.BROKEN_PAW)) {

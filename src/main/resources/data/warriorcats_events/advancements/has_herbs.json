@@ -4,8 +4,12 @@
     "icon": {
       "item": "warriorcats_events:catmint_leaves"
     },
-    "title": "Medicine",
-    "description": "You have discovered herbs!",
+    "title": {
+      "translate": "wce.advancement.has_herbs.title"
+    },
+    "description": {
+      "translate": "wce.advancement.has_herbs.desc"
+    },
     "show_toast": true,
     "announce_to_chat": true,
     "hidden": false

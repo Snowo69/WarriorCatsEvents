@@ -45,7 +45,7 @@ public class EmoteMenu {
 
 
                 int minIndex = -1;
-                if (WarriorCatsEvents.Collaborators.isContributor(Minecraft.getInstance().player.getUUID())) minIndex = -3;
+                if (WarriorCatsEvents.Collaborators.isContributor(Minecraft.getInstance().player.getUUID())) minIndex = -4;
 
 
 

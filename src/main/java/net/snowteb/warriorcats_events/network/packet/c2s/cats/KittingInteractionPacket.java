@@ -49,9 +49,6 @@ public class KittingInteractionPacket {
             ServerLevel level = player.serverLevel();
             Entity entity = level.getEntity(msg.entityId);
 
-//            int sPlayerGender = player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
-//                    .map(WCEPlayerData::getGenderData).orElse(-1);
-
             String morphName = player.getCapability(WCEPlayerDataProvider.PLAYER_CLAN_DATA)
                     .map(WCEPlayerData::getMorphName).orElse("your character");
 

@@ -50,7 +50,7 @@ public class WCEPlayerData {
     private boolean usingFancyFont = true;
     private UUID mateUUID = ClanData.EMPTY_UUID;
     private BlockPos tempClickedPosData;
-    private Component mateName = Component.literal("Undefined");
+    private Component mateName = Component.translatable("generic.none");
     private int sleepingCooldown = 0;
 
     private UUID currentClanUUID = ClanData.EMPTY_UUID;

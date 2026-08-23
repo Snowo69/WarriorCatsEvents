@@ -94,6 +94,37 @@ public class ModSounds {
     public static final RegistryObject<SoundEvent> PIGEON_AMBIENT =
             registerSoundEvents("entity.pigeon.ambient");
 
+
+    public static final RegistryObject<SoundEvent> ANCIENT_TUNNELS =
+            registerSoundEvents("ancient_tunnels");
+    public static final RegistryObject<SoundEvent> CROSSING_THE_RIVER =
+            registerSoundEvents("crossing_the_river");
+    public static final RegistryObject<SoundEvent> DAWN_PATROL =
+            registerSoundEvents("dawn_patrol");
+    public static final RegistryObject<SoundEvent> LEAFBARE =
+            registerSoundEvents("leafbare");
+    public static final RegistryObject<SoundEvent> MOONHIGH_VIGIL =
+            registerSoundEvents("moonhigh_vigil");
+    public static final RegistryObject<SoundEvent> NEWLEAF =
+            registerSoundEvents("newleaf");
+    public static final RegistryObject<SoundEvent> THE_MEDICINE_CATS_DEN =
+            registerSoundEvents("the_medicine_cats_den");
+    public static final RegistryObject<SoundEvent> THE_MOONSTONE =
+            registerSoundEvents("the_moonstone");
+    public static final RegistryObject<SoundEvent> DOES_IT_HAVE_TO_END_ALREADY =
+            registerSoundEvents("does_it_have_to_end_already");
+    public static final RegistryObject<SoundEvent> I_MISS_YOU_ALREADY =
+            registerSoundEvents("i_miss_you_already");
+    public static final RegistryObject<SoundEvent> I_WANTED_IT_TO_BE_YOU =
+            registerSoundEvents("i_wanted_it_to_be_you");
+    public static final RegistryObject<SoundEvent> OH_TO_RELIVE_IT_ONCE_MORE =
+            registerSoundEvents("oh_to_relive_it_once_more");
+    public static final RegistryObject<SoundEvent> YOU_USED_TO_REMEMBER =
+            registerSoundEvents("you_used_to_remember");
+
+    public static final RegistryObject<SoundEvent> DIALOGUE_BOOP_1 =
+            registerSoundEvents("dialogue_boop_1");
+
     private static RegistryObject<SoundEvent> registerSoundEvents(String name) {
         return SOUND_EVENTS.register(name,
                 () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, name)));

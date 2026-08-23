@@ -4,8 +4,12 @@
     "icon": {
       "item": "warriorcats_events:squirrel"
     },
-    "title": "Learning to hunt",
-    "description": "You have hunted your first piece of fresh-kill!",
+    "title": {
+      "translate": "wce.advancement.kill_prey.title"
+    },
+    "description": {
+      "translate": "wce.advancement.kill_prey.desc"
+    },
     "show_toast": true,
     "announce_to_chat": true,
     "hidden": false

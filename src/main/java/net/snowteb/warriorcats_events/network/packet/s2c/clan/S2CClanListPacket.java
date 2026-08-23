@@ -63,6 +63,7 @@ public class S2CClanListPacket {
                 buf.writeUtf(cat.age);
                 buf.writeInt(cat.variant);
                 buf.writeUtf(cat.parents);
+                buf.writeInt(cat.genderValue);
 
                 buf.writeBoolean(cat.onGeneticalSkin);
                 cat.genetics.encode(buf);
@@ -117,6 +118,7 @@ public class S2CClanListPacket {
                 String age = buf.readUtf();
                 int variant = buf.readInt();
                 String parents = buf.readUtf();
+                int genderValue = buf.readInt();
 
                 boolean onGeneticalSkin = buf.readBoolean();
                 WCGenetics genetics = WCGenetics.decode(buf);
@@ -125,7 +127,7 @@ public class S2CClanListPacket {
                 WCGenetics.GeneticalChimeraVariants chimeraVariants = WCGenetics.GeneticalChimeraVariants.decode(buf);
 
                 cats.add(new ClanInfo.ClientClanCat(catUUID, catName, gender,
-                        rank, age, variant, parents, onGeneticalSkin, genetics, chimeraGens, variants, chimeraVariants));
+                        rank, age, variant, parents, onGeneticalSkin, genetics, chimeraGens, variants, chimeraVariants, genderValue));
             }
 
             int logSize = buf.readInt();

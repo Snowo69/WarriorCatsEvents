@@ -96,6 +96,20 @@ public class SkillScreen extends Screen {
                 0x20526885
         );
 
+        {
+            LocalPlayer localPlayer = Minecraft.getInstance().player;
+            if (localPlayer != null) {
+                int xpPoints = localPlayer.totalExperience;
+
+                guiGraphics.drawCenteredString(
+                        this.font,
+                        Component.translatable("screen.skill_tree_experience", xpPoints).withStyle(ChatFormatting.GRAY),
+                        centerX,
+                        centerY + 60,
+                        0xFFFFFFFF
+                );
+            }
+        }
 
         if (currentSpeedLevel < PlayerSkill.maxSpeedLevel || currentHPLevel < PlayerSkill.maxHPLevel) {
 
@@ -113,8 +127,6 @@ public class SkillScreen extends Screen {
             guiGraphics.pose().pushPose();
             guiGraphics.pose().translate(centerX - 40, centerY - 35, 0);
             guiGraphics.pose().scale(scale, scale, 1.0f);
-            int x = (int) (this.width / 2 + 30 / scale);
-            int y = (int) (this.height / 2 + 20 / scale);
 
             Component text = Text1.copy().append(Text2);
 

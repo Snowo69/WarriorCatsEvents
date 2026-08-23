@@ -1,9 +1,10 @@
-// 1.20.1	2026-07-11T10:33:26.5434277	Item Models: warriorcats_events
+// 1.20.1	2026-08-12T14:19:31.564809	Item Models: warriorcats_events
 708835a72e2f22ede2f26d05e662b8f2f9ac0af5 assets/warriorcats_events/models/item/acorn_lantern.json
 084f607aaae3e50de003da1d83a9a942a0dded77 assets/warriorcats_events/models/item/animal_teeth.json
 3a1487c1a290afb73915b37e63fad0e82c457db3 assets/warriorcats_events/models/item/animal_tooth.json
 6bfa38e71021adbc49150f6b5c0be969e93473a4 assets/warriorcats_events/models/item/badger_skull.json
 63ec6c618a3a23eab4cab9c52d7d3250de9b516e assets/warriorcats_events/models/item/badger_spawn_egg.json
+74e93aa5897ee4bdc5717936b32ff3479e3b5700 assets/warriorcats_events/models/item/bee_costume.json
 a46aacb6500a05de7b8a1580ac25565a16ed8572 assets/warriorcats_events/models/item/black_bow.json
 b5ca65e160d0afd88e5bac5ad08e4828611a05aa assets/warriorcats_events/models/item/black_cat_socks.json
 f04831819e8ceb6f80a0c8de40cfc8ad919d3aee assets/warriorcats_events/models/item/black_vulture_feather.json
@@ -36,6 +37,7 @@ cc46b22e5122a8cbdf7042c2a6d671f30c49602e assets/warriorcats_events/models/item/d
 b8a8be94fe48fe4bdebf158925ca347cc2eb2b05 assets/warriorcats_events/models/item/deathberries.json
 be50c744ae2579eafacea491a88f6cd3e537d31b assets/warriorcats_events/models/item/deathberries_bush.json
 6c0ce38978d07858c28bd134280935db272e3ebe assets/warriorcats_events/models/item/dock.json
+c4058f179a0697ecd3c9f1054e63bb9deb325f18 assets/warriorcats_events/models/item/dock_bag.json
 de1313697eb51f034e453ec57311ce5c905469d8 assets/warriorcats_events/models/item/dock_leaves.json
 e4f93b665ef2ae511a89e2b2ec4f74f47b015978 assets/warriorcats_events/models/item/draped_tail_vines.json
 dbb43d7e5051a9bdb2d0870569fecc6243b6d7b2 assets/warriorcats_events/models/item/feverfew.json

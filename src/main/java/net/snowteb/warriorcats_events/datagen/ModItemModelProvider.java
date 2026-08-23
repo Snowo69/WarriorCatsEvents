@@ -126,6 +126,9 @@ public class ModItemModelProvider extends ItemModelProvider {
         simpleItem(ModItems.TIGER_SWALLOWTAIL_WING);
         simpleItem(ModItems.MONARCH_WING);
 
+        simpleItem(ModItems.BEE_COSTUME);
+        simpleItem(ModItems.DOCK_BACKPACK);
+
         simpleItem(ModItems.LIZARD_EGG_ITEM);
 
 //        simpleItem(ModItems.MOSS_BALL);

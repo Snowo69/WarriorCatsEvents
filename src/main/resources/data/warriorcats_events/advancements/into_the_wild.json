@@ -4,8 +4,12 @@
     "icon": {
       "item": "minecraft:tall_grass"
     },
-    "title": "Into the wild",
-    "description": "The journey has begun!",
+    "title": {
+      "translate": "wce.advancement.into_the_wild.title"
+    },
+    "description": {
+      "translate": "wce.advancement.into_the_wild.desc"
+    },
     "show_toast": true,
     "announce_to_chat": true,
     "hidden": false

@@ -4,8 +4,12 @@
     "icon": {
       "item": "minecraft:spruce_sapling"
     },
-    "title": "Lurking in the Shadows",
-    "description": "You have unlocked the stealth skill!",
+    "title": {
+      "translate": "wce.advancement.skill_stealth.title"
+    },
+    "description": {
+      "translate": "wce.advancement.skill_stealth.desc"
+    },
     "show_toast": true,
     "announce_to_chat": true,
     "hidden": false

@@ -2,23 +2,15 @@ package net.snowteb.warriorcats_events.skills;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.ChatScreen;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.animal.Animal;
 import net.minecraftforge.client.gui.overlay.IGuiOverlay;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
-import net.snowteb.warriorcats_events.client.ClientThirstData;
 import net.snowteb.warriorcats_events.managers.ClimbDataAccessor;
 import net.snowteb.warriorcats_events.network.ModPackets;
 import net.snowteb.warriorcats_events.network.packet.c2s.skilltree.CtSToggleStealthPacket;
 import net.snowteb.warriorcats_events.stealth.PlayerStealthProvider;
-import net.snowteb.warriorcats_events.zconfig.WCEServerConfig;
-import tocraft.walkers.api.PlayerShape;
 
 public class StealthClientState {
     private static boolean lastState = false;

@@ -1,0 +1,49 @@
+{
+	"format_version": "1.12.0",
+	"minecraft:geometry": [
+		{
+			"description": {
+				"identifier": "geometry.unknown",
+				"texture_width": 16,
+				"texture_height": 16,
+				"visible_bounds_width": 2,
+				"visible_bounds_height": 1.5,
+				"visible_bounds_offset": [0, 0.25, 0]
+			},
+			"bones": [
+				{
+					"name": "all",
+					"pivot": [0, 0, 0]
+				},
+				{
+					"name": "spk",
+					"parent": "all",
+					"pivot": [-1.09537, 2.52131, -3.9994]
+				},
+				{
+					"name": "spikes",
+					"parent": "spk",
+					"pivot": [-0.99537, 2.22131, -5.2869],
+					"cubes": [
+						{"origin": [-2.19537, 2.02131, -5.5869], "size": [1, 1, 1], "inflate": -0.65, "pivot": [-1.69537, 2.52131, -5.0869], "rotation": [0, -90, 135], "uv": [0, 0]},
+						{"origin": [-1.59537, 2.44557, -2.98764], "size": [1, 1, 1], "inflate": -0.65, "pivot": [-1.09537, 2.52131, -2.9119], "rotation": [0, -90, 135], "uv": [0, 0]},
+						{"origin": [-1.59537, 1.59705, -3.83616], "size": [1, 1, 1], "inflate": -0.65, "pivot": [-1.09537, 2.52131, -2.9119], "rotation": [0, -90, 135], "uv": [0, 0]},
+						{"origin": [-0.99537, 2.02131, -5.5869], "size": [1, 1, 1], "inflate": -0.65, "pivot": [-0.49537, 2.52131, -5.0869], "rotation": [0, -90, 135], "uv": [0, 0]}
+					]
+				},
+				{
+					"name": "spikes2",
+					"parent": "spk",
+					"pivot": [-1.09537, 2.52131, -3.9994],
+					"rotation": [0, 90, 0],
+					"cubes": [
+						{"origin": [-2.19537, 2.02131, -5.5869], "size": [1, 1, 1], "inflate": -0.65, "pivot": [-1.69537, 2.52131, -5.0869], "rotation": [0, -90, 135], "uv": [0, 0]},
+						{"origin": [-1.59537, 2.44557, -2.98764], "size": [1, 1, 1], "inflate": -0.65, "pivot": [-1.09537, 2.52131, -2.9119], "rotation": [0, -90, 135], "uv": [0, 0]},
+						{"origin": [-1.59537, 1.59705, -3.83616], "size": [1, 1, 1], "inflate": -0.65, "pivot": [-1.09537, 2.52131, -2.9119], "rotation": [0, -90, 135], "uv": [0, 0]},
+						{"origin": [-0.99537, 2.02131, -5.5869], "size": [1, 1, 1], "inflate": -0.65, "pivot": [-0.49537, 2.52131, -5.0869], "rotation": [0, -90, 135], "uv": [0, 0]}
+					]
+				}
+			]
+		}
+	]
+}

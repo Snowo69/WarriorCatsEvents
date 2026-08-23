@@ -12,7 +12,7 @@
     },
     {
       "type": "patchouli:text",
-      "text": "$(8)With the genetics system, you can create a custom morph of your own any time you want. Run '/wce info createMorph' to create your first very own character! Choose from many colors, patterns, genes, eye colors, fur length, and even size!$(br)",
+      "text": "$(8)With the genetics system, you can create a custom morph of your own any time you want. Run '/wce morph create' to create your first very own character! Choose from many colors, patterns, genes, eye colors, fur length, and even size!$(br)",
       "title": "Genetics"
     }
   ]

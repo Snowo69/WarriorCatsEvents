@@ -7,6 +7,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.OwnableEntity;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
@@ -52,30 +53,42 @@ public class LeapClientState {
 
         if (!WCEClientConfig.CLIENT.LEAP.get()) return;
 
-        boolean hasTool = false;
+        LocalPlayer localPlayer = Minecraft.getInstance().player;
+        
+        if (localPlayer == null) return;
+        if (!(PlayerShape.getCurrentShape(localPlayer) instanceof Animal)) return;
 
-        if (Minecraft.getInstance().player != null) {
-            hasTool = (Minecraft.getInstance().player.getItemInHand(InteractionHand.MAIN_HAND).getItem() instanceof PickaxeItem
-                    || Minecraft.getInstance().player.getItemInHand(InteractionHand.MAIN_HAND).getItem() instanceof AxeItem
-                    || Minecraft.getInstance().player.getItemInHand(InteractionHand.MAIN_HAND).getItem() instanceof ShovelItem);
+        boolean hasTool = (localPlayer.getItemInHand(InteractionHand.MAIN_HAND).getItem() instanceof PickaxeItem
+                    || localPlayer.getItemInHand(InteractionHand.MAIN_HAND).getItem() instanceof AxeItem
+                    || localPlayer.getItemInHand(InteractionHand.MAIN_HAND).getItem() instanceof ShovelItem);
 
-            if (!(PlayerShape.getCurrentShape(Minecraft.getInstance().player) instanceof Animal)) return;
-        }
+        boolean onGround = localPlayer.onGround();
 
-
-        if (shifting && Minecraft.getInstance().player.onGround() && !hasTool) {
+        if (shifting && !hasTool) {
             sprintingCounter = 0;
 
-            if (shiftKeyDownCounter > MAX_SNEAK_COUNTER + 2 || !Minecraft.getInstance().player.onGround()) return;
+            if (!onGround) {
+                if (leapPowerCounter > 0) {
+                    leapPowerCounter-=3;
+                    leapPowerCounter = Math.max(leapPowerCounter, 0);
+                }
 
-            boolean lookKeyDown = Minecraft.getInstance().options.keyUse.isDown();
+                if (shiftKeyDownCounter > 0) shiftKeyDownCounter--;
+
+                localPlayer.setMaxUpStep(0.6f);
+                return;
+            }
+
+            if (shiftKeyDownCounter > MAX_SNEAK_COUNTER + 2) return;
+
+            boolean lookKeyDown = ModKeybinds.LOCK_TARGET_KEY.isDown();
             if (lookKeyDown && !wasLookKeyDown) {
-                lockedLookEntity = getEntityPlayerIsLookingAtClient(Minecraft.getInstance().player, 15.0D);
+                lockedLookEntity = getEntityPlayerIsLookingAtClient(localPlayer, 15.0D);
             }
 
             if (lockedLookEntity != null) {
                 if (!lockedLookEntity.isAlive()
-                        || lockedLookEntity.distanceTo(Minecraft.getInstance().player) > 17.0F) {
+                        || lockedLookEntity.distanceTo(localPlayer) > 17.0F) {
                     lockedLookEntity = null;
                     lockingTarget = false;
                 } else {
@@ -92,16 +105,15 @@ public class LeapClientState {
             if (shiftKeyDownCounter >= 20 && !attackWasDown) {
                 leapPowerCounter+=2;
                 leapPowerCounter = Math.min(leapPowerCounter, 100);
-                if (shiftKeyDownCounter <= MAX_SNEAK_COUNTER && Minecraft.getInstance().player.onGround()) {
-                    Minecraft.getInstance().player.playSound(ModSounds.SHORT_WOOSH.get(), 0.3f, 0.7f);
+                if (shiftKeyDownCounter <= MAX_SNEAK_COUNTER) {
+                    localPlayer.playSound(ModSounds.SHORT_WOOSH.get(), 0.3f, 0.7f);
                 } else {
                     leapPowerCounter = 0;
                     lockingTarget = false;
                 }
 
                 if (leapPowerCounter > 0) {
-                    if (shiftKeyDownCounter <= MAX_SNEAK_COUNTER && Minecraft.getInstance().player.onGround()
-                            && attackDown && !attackWasDown) {
+                    if (shiftKeyDownCounter <= MAX_SNEAK_COUNTER && attackDown && !attackWasDown) {
                         lockedLookEntity = null;
                         wasLookKeyDown = false;
                         lockingTarget = false;
@@ -116,18 +128,14 @@ public class LeapClientState {
             attackWasDown = attackDown;
 
         } else {
-            LocalPlayer localPlayer = Minecraft.getInstance().player;
-            int runSkillLevel = 0;
-            if (localPlayer != null) {
-                runSkillLevel = localPlayer.getCapability(PlayerSkillProvider.SKILL_DATA)
-                        .map(ISkillData::getSpeedLevel).orElse(0);
-            }
+            int runSkillLevel = localPlayer.getCapability(PlayerSkillProvider.SKILL_DATA)
+                    .map(ISkillData::getSpeedLevel).orElse(0);
 
             if (runSkillLevel >= 8 && !hasTool) {
                 if (PlayerShape.getCurrentShape(localPlayer) instanceof WCatEntity && localPlayer.isSprinting()) {
                     sprintingCounter = Math.min(sprintingCounter, 300);
 
-                    if (localPlayer.onGround() && localPlayer.getDeltaMovement().length() > 0.17) {
+                    if (onGround && localPlayer.getDeltaMovement().length() > 0.17) {
                         sprintingCounter++;
                         sprintCounterThreshold = 10;
 
@@ -209,7 +217,8 @@ public class LeapClientState {
                 reachVec,
                 searchBox,
                 e -> e.isAlive() && e != player
-                        && !(e instanceof TamableAnimal cat && cat.isTame() && (cat.getOwner() == player || isClanedWith(cat, player)))
+                        && !((e instanceof TamableAnimal cat && cat.isTame() && (cat.getOwner() == player || isClanedWith(cat, player)))
+                        || e instanceof OwnableEntity ownable && ownable.getOwner() == player)
         );
 
         if (result != null) {

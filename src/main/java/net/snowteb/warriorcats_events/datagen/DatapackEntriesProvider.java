@@ -14,7 +14,7 @@ import net.snowteb.warriorcats_events.worldgen.ModPlacedFeatures;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
-public class ModWorldgenProvider extends DatapackBuiltinEntriesProvider {
+public class DatapackEntriesProvider extends DatapackBuiltinEntriesProvider {
     public static final RegistrySetBuilder BUILDER = new RegistrySetBuilder()
 
             .add(Registries.CONFIGURED_FEATURE, ModConfiguredFeatures::bootstrap)
@@ -23,7 +23,7 @@ public class ModWorldgenProvider extends DatapackBuiltinEntriesProvider {
 
 
 
-    public ModWorldgenProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
+    public DatapackEntriesProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
         super(output, registries, BUILDER , Set.of(WarriorCatsEvents.MODID));
     }
 }

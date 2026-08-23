@@ -4,8 +4,12 @@
     "icon": {
       "item": "minecraft:experience_bottle"
     },
-    "title": "Skill Tree",
-    "description": "You have discovered you can improve your skills!",
+    "title": {
+      "translate": "wce.advancement.skill_tree.title"
+    },
+    "description": {
+      "translate": "wce.advancement.skill_tree.desc"
+    },
     "show_toast": false,
     "announce_to_chat": false,
     "hidden": false
