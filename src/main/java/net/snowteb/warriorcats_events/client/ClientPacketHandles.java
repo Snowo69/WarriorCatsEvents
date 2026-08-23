@@ -2,6 +2,7 @@ package net.snowteb.warriorcats_events.client;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -238,6 +239,19 @@ public class ClientPacketHandles {
             Minecraft mc = Minecraft.getInstance();
             mc.setScreen(new RenameTagMenu(item, pUsedHand));
         });
+    }
+
+
+    public static void sendDialogue(Component sender, String message, int catID) {
+        Minecraft mc = Minecraft.getInstance();
+        ClientLevel level = mc.level;
+        if (level == null) return;
+        Entity cat = level.getEntity(catID);
+        if (cat instanceof WCatEntity) {
+            Minecraft.getInstance().execute(() -> {
+                DialogueMessage.send(sender, message, (WCatEntity) cat);
+            });
+        }
     }
 
 }

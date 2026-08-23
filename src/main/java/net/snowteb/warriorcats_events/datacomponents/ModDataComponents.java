@@ -7,6 +7,7 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
+import net.snowteb.warriorcats_events.item.custom.DockBackpackContent;
 
 public class ModDataComponents {
 
@@ -42,6 +43,13 @@ public class ModDataComponents {
                     "waterlevel",
                     builder -> builder.persistent(Codec.INT)
             );
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<DockBackpackContent>> BACKPACK_CONTENTS =
+            DATA_COMPONENTS.register("backpack_contents", () -> DataComponentType.<DockBackpackContent>builder()
+                    .persistent(DockBackpackContent.CODEC)
+                    .networkSynchronized(DockBackpackContent.STREAM_CODEC)
+                    .build());
+
 
     public static void register(IEventBus bus) {
         DATA_COMPONENTS.register(bus);

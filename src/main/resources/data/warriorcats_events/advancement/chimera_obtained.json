@@ -5,8 +5,12 @@
       "id": "minecraft:dragon_breath",
       "count": 1
     },
-    "title": "2 in 1!",
-    "description": "You have recruited a cat with chimera gene for the first time!",
+    "title": {
+      "translate": "wce.advancement.chimera_obtained.title"
+    },
+    "description": {
+      "translate": "wce.advancement.chimera_obtained.desc"
+    },
     "show_toast": true,
     "announce_to_chat": true,
     "hidden": true,

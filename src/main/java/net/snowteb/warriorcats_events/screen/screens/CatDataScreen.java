@@ -128,7 +128,7 @@ public class CatDataScreen extends Screen {
 
         if (name != null) {
             if (interactionCooldownTooltip && wCatEntity.isTame()) {
-                pGuiGraphics.renderTooltip(Minecraft.getInstance().font, Component.empty().append(preText).append(name).append(" already interacted recently."), this.width, 30);
+                pGuiGraphics.renderTooltip(Minecraft.getInstance().font, Component.empty().append(preText).append(Component.translatable("screen.catdata.interacted_recently", name)), this.width, 30);
             }
         }
 
@@ -287,7 +287,7 @@ public class CatDataScreen extends Screen {
 
         name = wCatEntity.hasCustomName() ? wCatEntity.getCustomName() : Component.literal("Unknown cat");
         nameToString = wCatEntity.hasCustomName() ? wCatEntity.getCustomName().getString() : "Unknown cat";
-        genderText = wCatEntity.isMale() ? Component.literal("Tom-cat") : Component.literal("She-cat");
+        genderText = wCatEntity.isMale() ? Component.translatable("generic.wcat.tomcat") : Component.translatable("generic.wcat.shecat");
 
         catMother = wCatEntity.getMother();
         catFather = wCatEntity.getFather();
@@ -404,12 +404,12 @@ public class CatDataScreen extends Screen {
         }
 
         rankText = switch (wCatEntity.getRank()) {
-            case NONE -> Component.literal("Loner");
-            case KIT -> Component.literal("Kit");
-            case APPRENTICE -> Component.literal("Apprentice");
-            case WARRIOR -> Component.literal("Warrior");
-            case MEDICINE -> Component.literal("Medicine Cat");
-            case DEPUTY -> Component.literal("Deputy");
+            case NONE -> Component.translatable("generic.rank.none");
+            case KIT -> Component.translatable("generic.rank.kit");
+            case APPRENTICE -> Component.translatable("generic.rank.apprentice");
+            case WARRIOR -> Component.translatable("generic.rank.warrior");
+            case MEDICINE -> Component.translatable("generic.rank.medicine");
+            case DEPUTY -> Component.translatable("generic.rank.deputy");
         };
 
         personalityText = switch (wCatEntity.getPersonality()) {
@@ -503,7 +503,7 @@ public class CatDataScreen extends Screen {
 
         if (wCatEntity.isTame() && wCatEntity.getOwner() == Minecraft.getInstance().player) {
             this.addRenderableWidget(Button.builder(
-                    Component.translatable("screen.catdata.home"),
+                    Component.translatable("screen.catdata.mode"),
                     btn -> {
                         activeMenu = "mode";
                         drawModeMenu();

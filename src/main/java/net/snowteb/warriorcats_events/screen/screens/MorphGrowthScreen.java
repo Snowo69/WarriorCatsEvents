@@ -25,7 +25,6 @@ public class MorphGrowthScreen extends Screen {
     private int pigeonKilled; // app
     private int badgerKilled; // app
 
-    private int mossCollected; // kit & app
     private int feathersCollected; // kit
 
     private int minutesPlayed; // kit & app
@@ -46,7 +45,6 @@ public class MorphGrowthScreen extends Screen {
         this.pigeonKilled = MorphStatsClientData.pigeonKilled;
         this.badgerKilled = MorphStatsClientData.badgerKilled;
 
-        this.mossCollected = MorphStatsClientData.mossColected;
         this.feathersCollected = MorphStatsClientData.feathersCollected;
 
         this.minutesPlayed = (((MorphStatsClientData.timePlayed) / 20) / 60);
@@ -72,7 +70,7 @@ public class MorphGrowthScreen extends Screen {
         int centerY = this.height / 2;
 
         this.addRenderableWidget(Button.builder(
-                Component.literal("< Back"),
+                Component.translatable("screen.catdata.back"),
                 (btn) -> {
                     Minecraft.getInstance().setScreen(new SkillScreen());
                     ModPackets.sendToServer(new ReqSkillDataPacket());
@@ -81,7 +79,7 @@ public class MorphGrowthScreen extends Screen {
 
 
         growButton = Button.builder(
-                Component.literal("Grow"),
+                Component.translatable("screen.morph_stats.grow"),
                 btn -> {
                     if (Objects.equals(morphAgeKey, "kit")) {
                         performKitToApp();

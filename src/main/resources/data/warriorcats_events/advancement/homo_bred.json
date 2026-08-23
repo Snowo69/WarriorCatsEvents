@@ -5,8 +5,12 @@
       "id": "minecraft:large_amethyst_bud",
       "count": 1
     },
-    "title": "In this clan, everyone is valid!",
-    "description": "You used catmint to bring two same-gender cats together.",
+    "title": {
+      "translate": "wce.advancement.homo_bred.title"
+    },
+    "description": {
+      "translate": "wce.advancement.homo_bred.desc"
+    },
     "show_toast": true,
     "announce_to_chat": true,
     "hidden": true

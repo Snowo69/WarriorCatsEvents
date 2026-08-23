@@ -56,9 +56,10 @@ public class MemberScrollList extends AbstractSelectionList<MemberScrollList.Mem
 
     public void addOption(String name, UUID id, int varID, boolean usingVar,
                           boolean onGeneticalSkin, WCGenetics genetics, WCGenetics chimeraGens,
-                          WCGenetics.GeneticalVariants variants, WCGenetics.GeneticalChimeraVariants chimeraVariants) {
-        this.addEntry(new MemberEntry(name, id, varID, usingVar, onGeneticalSkin, genetics, chimeraGens, variants, chimeraVariants));
+                          WCGenetics.GeneticalVariants variants, WCGenetics.GeneticalChimeraVariants chimeraVariants, int gender) {
+        this.addEntry(new MemberEntry(name, id, varID, usingVar, onGeneticalSkin, genetics, chimeraGens, variants, chimeraVariants, gender));
     }
+
 
     public MemberEntry getSelectedEntry() {
         return this.getSelected();
@@ -78,7 +79,7 @@ public class MemberScrollList extends AbstractSelectionList<MemberScrollList.Mem
         }
 
         public MemberEntry(String name, UUID id, int varID, boolean usingVariant, boolean onGeneticalSkin, WCGenetics genetics, WCGenetics chimeraGens,
-                           WCGenetics.GeneticalVariants variants, WCGenetics.GeneticalChimeraVariants chimeraVariants) {
+                           WCGenetics.GeneticalVariants variants, WCGenetics.GeneticalChimeraVariants chimeraVariants, int gender) {
             this.name = name;
             this.id = id;
             this.varID = varID;
@@ -87,6 +88,7 @@ public class MemberScrollList extends AbstractSelectionList<MemberScrollList.Mem
             if (usingVariant) {
                 this.wCatEntity = new WCatEntity(ModEntities.WCAT.get(), Minecraft.getInstance().level);
                 this.wCatEntity.setAnImage(true);
+                this.wCatEntity.setGender(gender);
                 this.wCatEntity.setVariant(varID);
                 this.wCatEntity.setOnGround(true);
                 this.wCatEntity.setYRot(0);

@@ -8,9 +8,9 @@
   "pages": [
     {
       "type": "patchouli:spotlight",
-      "item": "minecraft:music_disc_cat",
-      "text": "$(8)Thanks to Sharon Hurvitz for allowing me to implement one of her magnificent songs into the mod! $(br2)If you have the chance, take a deeper look into her work and her music!",
-      "title": "Generations"
+      "item": "warriorcats_events:generations_music_disc",
+      "text": "$(8)Thanks to Sharon Hurvitz for allowing me to implement her magnificent music into the mod! $(br2)If you have the chance, take a deeper look into her work and her music!",
+      "title": "Sharon Hurvitz"
     },
     {
       "type": "patchouli:link",
@@ -18,6 +18,19 @@
       "link_text": "Linktree",
       "text": "$(8) $(br2)''Sharon Hurvitz is a mastering engineer and composer, known for her immersive sonic environments and intricate, imaginative scores. Her work ranges from soft minimalistic touches, to grand and driving orchestral music.''",
       "title": "Sharon Hurvitz"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "minecraft:music_disc_cat",
+      "text": "$(8)Thanks to Joabi for allowing me to implement his beautiful and deep music into the mod! $(br2)If you have the chance, take a deeper look into his art!",
+      "title": "Joabi"
+    },
+    {
+      "type": "patchouli:link",
+      "url": "https://www.youtube.com/channel/UC11MxpwJFbUGkoUr3ZIJwgQ",
+      "link_text": "Youtube",
+      "text": "$(8) $(br2)''Joabi is a music composer from the UK who specialises in electronic, cinematic and ambient tracks. With over 100 songs on YouTube and more than 1 million views, Joabi has been building his music catalog for several years now.''",
+      "title": "Joabi"
     },
     {
       "type": "patchouli:entity",

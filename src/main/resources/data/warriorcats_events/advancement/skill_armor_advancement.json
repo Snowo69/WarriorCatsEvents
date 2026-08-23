@@ -5,8 +5,12 @@
       "id": "minecraft:shield",
       "count": 1
     },
-    "title": "Longfur",
-    "description": "You have mastered your armor skill!",
+    "title": {
+      "translate": "wce.advancement.skill_armor.title"
+    },
+    "description": {
+      "translate": "wce.advancement.skill_armor.desc"
+    },
     "show_toast": true,
     "announce_to_chat": true,
     "hidden": false

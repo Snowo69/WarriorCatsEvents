@@ -1,14 +1,11 @@
 package net.snowteb.warriorcats_events.item.custom;
 
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.Multimap;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.EquipmentSlotGroup;
-import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
@@ -17,20 +14,17 @@ import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.ArmorMaterials;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
-import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.Level;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.UUID;
-
-public class FlowerArmorItem extends ArmorItem {
+public class GenericArmorItem extends ArmorItem {
 
     private static final ResourceLocation ARMOR_UUID =
             ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "flower_armor");
 
 
-    public FlowerArmorItem() {
+    public GenericArmorItem() {
         super(ArmorMaterials.IRON, Type.CHESTPLATE,
                 new Properties().stacksTo(1).durability(350)
                         .attributes(ItemAttributeModifiers.builder().add(Attributes.ARMOR,

@@ -1,6 +1,8 @@
 package net.snowteb.warriorcats_events.recipes;
 
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.NonNullList;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.*;
@@ -8,6 +10,7 @@ import net.minecraft.world.level.Level;
 import net.snowteb.warriorcats_events.datacomponents.ModDataComponents;
 import net.snowteb.warriorcats_events.item.ModItems;
 import net.snowteb.warriorcats_events.item.custom.CollarArmorItem;
+import org.jetbrains.annotations.NotNull;
 
 public class CollarRecipe extends CustomRecipe {
 
@@ -113,6 +116,29 @@ public class CollarRecipe extends CustomRecipe {
     @Override
     public RecipeSerializer<?> getSerializer() {
         return WCERecipes.COLLAR_RECIPE_SERIALIZER.get();
+    }
+
+    @Override
+    public boolean isSpecial() {
+        return false;
+    }
+
+    @Override
+    public ItemStack getResultItem(HolderLookup.Provider registries) {
+        return new ItemStack(ModItems.CAT_COLLAR.get());
+    }
+
+    @Override
+    public @NotNull NonNullList<Ingredient> getIngredients() {
+        NonNullList<Ingredient> ingredients = NonNullList.create();
+        ingredients.add(Ingredient.of(ModItems.CAT_COLLAR.get()));
+        ingredients.add(Ingredient.of(
+                ModItems.COLLAR_BELL.get(), Items.BELL,
+                Items.IRON_INGOT,
+                ModItems.GLOW_SHROOM.get(), Items.GLOW_BERRIES,
+                Items.GLOWSTONE_DUST, Items.GLOW_INK_SAC
+        ));
+        return ingredients;
     }
 
 }

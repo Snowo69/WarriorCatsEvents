@@ -4,8 +4,12 @@
       "id": "warriorcats_events:claws",
       "count": 1
     },
-    "title": "Warrior Cats Events",
-    "description": "The story of your clan begins",
+    "title": {
+      "translate": "wce.advancement.wce.title"
+    },
+    "description": {
+      "translate": "wce.advancement.wce.desc"
+    },
     "background": "warriorcats_events:textures/gui/advancements/backgrounds/moss_block.png",
     "show_toast": false,
     "announce_to_chat": false,

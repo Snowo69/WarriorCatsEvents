@@ -18,12 +18,13 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.block.ModBlocks;
 import net.snowteb.warriorcats_events.block.custom.PreyBonesBlock;
+import net.snowteb.warriorcats_events.datacomponents.ModDataComponents;
+import net.snowteb.warriorcats_events.datagen.WCEJukeboxSongs;
 import net.snowteb.warriorcats_events.entity.ModEntities;
 import net.snowteb.warriorcats_events.item.custom.*;
 import net.snowteb.warriorcats_events.util.ItemWithToolTip;
 import vazkii.patchouli.api.PatchouliAPI;
 
-import javax.annotation.Nullable;
 import java.util.List;
 
 
@@ -372,7 +373,7 @@ public static final DeferredHolder<Item, Item> FLOWER_CROWN = ITEMS.register("fl
     public static final DeferredHolder<Item, Item> LEAF_MANE = ITEMS.register("leaf_mane",
             () -> new LeafManeItem());
     public static final DeferredHolder<Item, Item> FLOWER_ARMOR = ITEMS.register("flower_armor",
-            () -> new FlowerArmorItem());
+            () -> new GenericArmorItem());
     public static final DeferredHolder<Item, Item> TEETH_CLAWS = ITEMS.register("teeth_claws",
             () -> new TeethClawsItem());
 
@@ -563,6 +564,14 @@ public static final DeferredHolder<Item, Item> FLOWER_CROWN = ITEMS.register("fl
             () -> new BlockItem(ModBlocks.COMFREYPLANT.get(), new Item.Properties()));
 
 
+    public static final DeferredHolder<Item, Item> DOCK_BACKPACK = ITEMS.register("dock_bag",
+            () -> new DockBackpackItem(new Item.Properties().stacksTo(1)
+                    .component(ModDataComponents.BACKPACK_CONTENTS, DockBackpackContent.empty())));
+
+    public static final DeferredHolder<Item, Item> GENERATIONS_MUSIC_DISC = ITEMS.register("generations_music_disc",
+            () -> new Item(new Item.Properties().stacksTo(1).jukeboxPlayable(WCEJukeboxSongs.GENERATIONS)));
+
+
     public static final DeferredHolder<Item, Item> GLOW_SHROOM = ITEMS.register("glowshroom",
             () -> new BlockItem(ModBlocks.GLOWSHROOM.get(), new Item.Properties().stacksTo(16)));
 
@@ -618,6 +627,9 @@ public static final DeferredHolder<Item, Item> FLOWER_CROWN = ITEMS.register("fl
     public static final DeferredHolder<Item, Item> CAT_COLLAR = ITEMS.register("cat_collar",
             () -> new CollarArmorItem());
 
+    public static final DeferredHolder<Item, Item> CAT_BRACELET = ITEMS.register("cat_bracelets",
+            () -> new BraceletArmorItem());
+
     public static final DeferredHolder<Item, Item> COLLAR_BELL = ITEMS.register("collar_bell",
             () -> new Item(new Item.Properties().stacksTo(16)));
 
@@ -634,10 +646,13 @@ public static final DeferredHolder<Item, Item> FLOWER_CROWN = ITEMS.register("fl
     public static final DeferredHolder<Item, Item> CAT_RED_BOW = ITEMS.register("head_red_bow",
             () -> new FlowerCrownItem());
     public static final DeferredHolder<Item, Item> CAT_BLACK_BOW = ITEMS.register("black_bow",
-            () -> new FlowerArmorItem());
+            () -> new GenericArmorItem());
 
     public static final DeferredHolder<Item, Item> SKULL_MASK = ITEMS.register("skull_mask",
             () -> new BoneHelmetItem());
+
+    public static final DeferredHolder<Item, Item> BEE_COSTUME = ITEMS.register("bee_costume",
+            () -> new GenericArmorItem());
 
 
     public static void register(IEventBus modEventBus) {

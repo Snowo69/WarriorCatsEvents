@@ -217,7 +217,7 @@ public class CtSClaimTerritory implements CustomPacketPayload {
                     if (entity instanceof TreeStumpBlockEntity tree) {
                         tree.setOwnerClanUUID(clan.clanUUID);
                         tree.setTerritoryPos(currentPosition);
-                        tree.setTimeUntilRenewScent((WCEServerConfig.SERVER.MAX_TERRITORY_TIME.get()*20*60)/8);
+                        tree.setTimeUntilRenewScent((int) ((WCEServerConfig.SERVER.MAX_TERRITORY_TIME.get()*20*60)*WCEServerConfig.SERVER.TREE_STUMP_MULTIPLIER.get()));
                         tree.setOwnerClanColor(clan.color);
                         tree.setOwnerClanName(clan.name);
                         tree.setTerritoryName(packet.name);

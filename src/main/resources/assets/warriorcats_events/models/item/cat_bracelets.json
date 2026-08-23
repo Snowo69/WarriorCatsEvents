@@ -1,0 +1,21 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "warriorcats_events:item/bracelet/cat_bracelet",
+    "layer1": "warriorcats_events:item/bracelet/empty"
+  },
+  "overrides": [
+    {
+      "predicate": { "warriorcats_events:has_spikes": 1.0 },
+      "model": "warriorcats_events:bracelet/cat_bracelet_spikes"
+    },
+    {
+      "predicate": { "warriorcats_events:has_glow": 1.0 },
+      "model": "warriorcats_events:bracelet/cat_bracelet_glow"
+    },
+    {
+      "predicate": { "warriorcats_events:has_spikes": 1.0, "warriorcats_events:has_glow": 1.0 },
+      "model": "warriorcats_events:bracelet/cat_bracelet_spikes_glow"
+    }
+  ]
+}

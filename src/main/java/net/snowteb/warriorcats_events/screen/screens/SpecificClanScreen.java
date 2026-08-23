@@ -164,7 +164,7 @@ public class SpecificClanScreen extends Screen {
 
         for (ClanInfo.ClientClanCat cat : clan.clanCats) {
             NPCmembersList.addOption(cat.name, cat.uuid, cat.variant, true, cat.onGeneticalSkin,
-                    cat.genetics, cat.chimeraGenetics, cat.variants, cat.chimeraVariants);
+                    cat.genetics, cat.chimeraGenetics, cat.variants, cat.chimeraVariants, cat.genderValue);
         }
 
         clanLogsList = new LogScrollList(
@@ -285,6 +285,7 @@ public class SpecificClanScreen extends Screen {
                 entityToRender.setPlayerBoundUuid(UUID.nameUUIDFromBytes(ModEntities.WCAT.get().toString().getBytes()));
                 entityToRender.setShowMorphName(false);
                 entityToRender.setVariant(cat.variant);
+                entityToRender.setGender(cat.genderValue);
 
                 entityToRender.setOnGeneticalSkin(cat.onGeneticalSkin);
                 entityToRender.getGeneticsModule().setGenetics(cat.genetics);
@@ -350,8 +351,7 @@ public class SpecificClanScreen extends Screen {
 
         if (activeScreen.equals("players") || activeScreen.equals("cats") || activeScreen.equals("members")) {
             pGuiGraphics.renderOutline(centerX-80, centerY-10, 160, 90, 0x40FFFFFF);
-            pGuiGraphics.drawCenteredString(Minecraft.getInstance().font,
-                    "Members: " + (clan.memberCount + clan.clanCats.size()), centerX, centerY - 35, 0xFFFFFF);
+            pGuiGraphics.drawCenteredString(Minecraft.getInstance().font,Component.translatable("screen.clan.member_count", (clan.memberCount + clan.clanCats.size())), centerX, centerY - 35, 0xFFFFFF);
 
             if (activeScreen.equals("players")) {
                 pGuiGraphics.drawCenteredString(Minecraft.getInstance().font,Component.translatable("screen.clan.players", (clan.memberCount)) , centerX, centerY - 20, 0xFFFFFF);
@@ -592,7 +592,7 @@ public class SpecificClanScreen extends Screen {
         for (ClanInfo.ClientClanCat cat : clan.clanCats) {
             if (cat.name.toLowerCase().contains(lower)) {
                 NPCmembersList.addOption(cat.name, cat.uuid, cat.variant, true, cat.onGeneticalSkin,
-                        cat.genetics, cat.chimeraGenetics, cat.variants, cat.chimeraVariants);
+                        cat.genetics, cat.chimeraGenetics, cat.variants, cat.chimeraVariants, cat.genderValue);
             }
         }
     }

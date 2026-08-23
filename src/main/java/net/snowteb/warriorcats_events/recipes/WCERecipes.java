@@ -34,6 +34,9 @@ public class WCERecipes {
     public static final DeferredHolder<RecipeSerializer<?>,RecipeSerializer<?>> HONEY_MOSSBALL_SERIALIZER =
             SERIALIZERS.register("honey_mossball_recipe", () -> new SimpleCraftingRecipeSerializer<>(HoneyMossBallRecipe::new));
 
+    public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<?>> BRACELET_RECIPE_SERIALIZER =
+            SERIALIZERS.register("bracelet_recipe", () -> new SimpleCraftingRecipeSerializer<>(BraceletRecipe::new));
+
 
     public static void register(IEventBus bus) {
         SERIALIZERS.register(bus);

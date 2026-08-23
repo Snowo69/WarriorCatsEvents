@@ -1,4 +1,4 @@
-package net.snowteb.warriorcats_events.network.packet.c2s.clan;
+package net.snowteb.warriorcats_events.network.packet.c2s.others;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;

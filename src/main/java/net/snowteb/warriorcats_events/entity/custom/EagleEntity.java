@@ -296,6 +296,49 @@ public class EagleEntity extends FlyingMob implements GeoEntity, OwnableEntity {
         }
     }
 
+    public class EagleSitWhenOrderedGoal extends Goal {
+
+        private final EagleEntity mob;
+
+        public EagleSitWhenOrderedGoal(EagleEntity mob) {
+            this.mob = mob;
+            this.setFlags(EnumSet.of(Goal.Flag.JUMP, Goal.Flag.MOVE));
+        }
+
+        @Override
+        public boolean canContinueToUse() {
+            return this.mob.isOrderedToSit();
+        }
+
+        @Override
+        public boolean canUse() {
+            if (!this.mob.isTame()) {
+                return false;
+            } else if (this.mob.isInWaterOrBubble()) {
+                return false;
+            } else if (!this.mob.onGround()) {
+                return false;
+            } else {
+                LivingEntity livingentity = this.mob.getOwner();
+                if (livingentity == null) {
+                    return true;
+                } else {
+                    return (!(this.mob.distanceToSqr(livingentity) < 144.0) || livingentity.getLastHurtByMob() == null) && this.mob.isOrderedToSit();
+                }
+            }
+        }
+
+        @Override
+        public void start() {
+            this.mob.getNavigation().stop();
+            this.mob.setInSittingPose(true);
+        }
+
+        @Override
+        public void stop() {
+            this.mob.setInSittingPose(false);
+        }
+    }
 
     private int ownerCallForTicks = 0;
 
@@ -395,10 +438,14 @@ public class EagleEntity extends FlyingMob implements GeoEntity, OwnableEntity {
                 this.setControlMode(Control.FLY);
             }
 
+            if (this.isOrderedToSit() && this.getControlMode() != Control.WALK && !this.isLatching) {
+                this.setNewControlMode(Control.WALK);
+            }
+
             if (this.switchControlTicks > 0) {
                 this.switchControlTicks--;
             } else {
-                if (this.getTarget() == null) {
+                if (this.getTarget() == null && !this.isOrderedToSit()) {
                     this.navigation.stop();
                     if (this.getControlMode() == Control.FLY) {
                         this.setNewControlMode(Control.WALK);
@@ -671,6 +718,7 @@ public class EagleEntity extends FlyingMob implements GeoEntity, OwnableEntity {
     @Override
     public @Nullable SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData) {
         this.anchorPoint = this.blockPosition().above(5);
+        this.moveTargetPoint = this.position();
         return super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData);
     }
 
@@ -707,6 +755,7 @@ public class EagleEntity extends FlyingMob implements GeoEntity, OwnableEntity {
 //        });
 
 
+        this.goalSelector.addGoal(0, new EagleSitWhenOrderedGoal(this));
         this.goalSelector.addGoal(1, new EagleAttackStrategy());
         this.goalSelector.addGoal(2, new EagleSweepAttackGoal());
         this.goalSelector.addGoal(3, new EagleCircleAroundAnchorGoal());
@@ -813,6 +862,8 @@ public class EagleEntity extends FlyingMob implements GeoEntity, OwnableEntity {
     @Override
     public void readAdditionalSaveData(CompoundTag pCompound) {
         super.readAdditionalSaveData(pCompound);
+        this.moveTargetPoint = this.position();
+
         if (pCompound.contains("AX")) {
             this.anchorPoint = new BlockPos(pCompound.getInt("AX"), pCompound.getInt("AY"), pCompound.getInt("AZ"));
         }
@@ -1376,10 +1427,14 @@ public class EagleEntity extends FlyingMob implements GeoEntity, OwnableEntity {
     @Override
     protected InteractionResult mobInteract(Player pPlayer, InteractionHand pHand) {
 
+        if (pHand == InteractionHand.OFF_HAND) {
+            return InteractionResult.PASS;
+        }
+
         if (!this.level().isClientSide()) {
             if (PlayerShape.getCurrentShape(pPlayer) instanceof WCatEntity) {
                 if (!this.isTame() && !this.wasBornAgressive && !this.isFlying() && !this.isLatching()) {
-                    if (pPlayer.getItemInHand(InteractionHand.MAIN_HAND).is(ModItems.SHREDDED_MEAT.get()) && this.canFinallyTame.get(pPlayer.getUUID())) {
+                    if (pPlayer.getItemInHand(InteractionHand.MAIN_HAND).is(ModItems.SHREDDED_MEAT.get()) && this.canFinallyTame.getOrDefault(pPlayer.getUUID(), false)) {
                         if (!pPlayer.getAbilities().instabuild) {
                             pPlayer.getItemInHand(InteractionHand.MAIN_HAND).shrink(1);
                         }
@@ -1442,8 +1497,24 @@ public class EagleEntity extends FlyingMob implements GeoEntity, OwnableEntity {
                     }
                 }
 
+                if (pPlayer.isShiftKeyDown()) {
+                    if (this.isOwnedBy(pPlayer)) {
+                        boolean orderedToSit = !this.isOrderedToSit();
+
+                        this.setOrderedToSit(orderedToSit);
+                        if (orderedToSit) {
+                            pPlayer.displayClientMessage(Component.translatable("wcat.stay_message", this.getName()), true);
+                        } else {
+                            pPlayer.displayClientMessage(Component.translatable("wcat.wander_message", this.getName()), true);
+                        }
+
+                        return InteractionResult.SUCCESS;
+                    }
+                }
+
                 if (this.isTame() && WCEServerConfig.SERVER.CAN_EAGLES_BE_TAMED.get()) {
                     if (!this.wasBornAgressive && !this.isLatching() && this.isOwnedBy(pPlayer)) {
+                        this.setOrderedToSit(false);
                         pPlayer.startRiding(this, true);
                         pPlayer.hurtMarked = true;
                         pPlayer.setDeltaMovement(Vec3.ZERO);

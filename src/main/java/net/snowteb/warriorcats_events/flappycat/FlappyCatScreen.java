@@ -354,8 +354,8 @@ public class FlappyCatScreen extends Screen {
 
         int color = currentScore > FlappyCatClientData.getClientScore() ? 0xFFE8D966 : 0xFFFFFFFF;
 
-        pGuiGraphics.drawString(this.font, "Score: " + currentScore, 5,5, color);
-        pGuiGraphics.drawString(this.font, "Highest: " + FlappyCatClientData.getClientScore(), 5,15, 0xFFFFFFFF);
+        pGuiGraphics.drawString(this.font, Component.translatable("screen.flappycat.score", currentScore), 5,5, color);
+        pGuiGraphics.drawString(this.font, Component.translatable("screen.flappycat.highest", FlappyCatClientData.getClientScore()), 5,15, 0xFFFFFFFF);
 
         for (Renderable renderable : this.renderables) {
             renderable.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick);

@@ -201,7 +201,7 @@ public class TreeStumpBlock extends BaseEntityBlock implements SimpleWaterlogged
                                     String closestMorphName = "";
 
                                     for (Player player : list) {
-                                        Component message = Component.translatable("blockinteraction.treestump.territoryname",
+                                        Component message = Component.translatable("blockinteraction.treestump.territoryremarked",
                                                 clan.claimedTerritory.get(treeStumpBlockEntity.getTerritoryPos()).name);
 
                                         player.sendSystemMessage(message.copy().withStyle(ChatFormatting.GREEN));

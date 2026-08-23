@@ -48,21 +48,6 @@ public class JEIPlugin implements IModPlugin {
                 Component.literal("")
         );
 
-//        RecipeManager recipeManager = Minecraft.getInstance().level.getRecipeManager();
-//        List<RecipeHolder<HerbsRecipe>> herbsRecipes = recipeManager.getAllRecipesFor(WCERecipes.HERBS.get());
-//        List<HerbsRecipe> finalList = new ArrayList<>();
-//        herbsRecipes.forEach(recipe -> {
-//            finalList.add(recipe.value());
-//        });
-//
-//        registration.addRecipes(CraftingRockCategory.HERBS_RECIPE_TYPE, finalList);
-//        registration.addItemStackInfo(
-//                finalList.stream()
-//                        .map(recipe -> recipe.getResultItem(Minecraft.getInstance().level.registryAccess()))
-//                        .toList(),
-//                Component.literal("")
-//        );
-
     }
 
     @Override

@@ -15,8 +15,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
@@ -30,6 +29,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.alchemy.Potions;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Blocks;
@@ -43,11 +43,13 @@ import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDropsEvent;
 import net.neoforged.neoforge.event.entity.living.LivingEntityUseItemEvent;
 import net.neoforged.neoforge.event.entity.living.LivingFallEvent;
+import net.neoforged.neoforge.event.entity.living.MobSpawnEvent;
 import net.neoforged.neoforge.event.entity.player.*;
 import net.neoforged.neoforge.event.level.SleepFinishedTimeEvent;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.attachments.CapabilityManager;
 import net.snowteb.warriorcats_events.attachments.ModAttachments;
+import net.snowteb.warriorcats_events.attachments.PlayerSkill;
 import net.snowteb.warriorcats_events.block.ModBlocks;
 import net.snowteb.warriorcats_events.block.custom.*;
 import net.snowteb.warriorcats_events.block.entity.KittypetBowlBlockEntity;
@@ -72,6 +74,25 @@ import java.util.*;
 
 @EventBusSubscriber(modid = WarriorCatsEvents.MODID)
 public class ModEventsForge2 {
+
+    @SubscribeEvent
+    public static void onCheckSpawn(MobSpawnEvent.PositionCheck event) {
+
+        if (event.getSpawnType() != MobSpawnType.NATURAL) return;
+        if (event.getEntity().getType().getCategory() != MobCategory.MONSTER) return;
+
+        ServerLevel sLevel = event.getLevel().getLevel();
+        ClanData data = ClanData.get(sLevel.getServer().overworld());
+        ChunkPos pos = new ChunkPos(BlockPos.containing(event.getX(), event.getY(), event.getZ()));
+
+        for (ClanData.Clan clan : data.clans.values()) {
+            if (clan.claimedTerritory.containsKey(pos)) {
+                event.setResult(MobSpawnEvent.PositionCheck.Result.FAIL);
+                return;
+            }
+        }
+
+    }
 
     private static final Map<UUID, List<ItemStack>> savedItems = new HashMap<>();
 
@@ -466,6 +487,7 @@ public class ModEventsForge2 {
             if (cat.level().isClientSide()) return;
 
             if (cat.getPlayerBoundUuid().equals(ClanData.EMPTY_UUID)) {
+
                 if (cat.returnHomeFlag) {
                     event.setDistance(Math.max(0f, event.getDistance() - 12f));
                 } else {
@@ -474,14 +496,13 @@ public class ModEventsForge2 {
                     }
                 }
             } else {
-                Player player = cat.level().getPlayerByUUID(cat.getPlayerBoundUuid());
+                Player player = ((ServerLevel) cat.level()).getServer().getPlayerList().getPlayer(cat.getPlayerBoundUuid());
                 if (player instanceof ServerPlayer sPlayer) {
                     if (sPlayer instanceof Diseaseable<?> diseaseable) {
                         if (diseaseable.allowReducedFallDamage()) {
                             CapabilityManager.attachmentProvider(player, ModAttachments.PLAYER_SKILL, cap -> {
-                                if (cap.getJumpLevel() >= 2) {
-                                    event.setDistance(Math.max(0f, event.getDistance() - 8f));
-                                }
+                                int reduce = (int) (8f * ((float) cap.getJumpLevel() / PlayerSkill.maxJumpLevel));
+                                event.setDistance(Math.max(0f, event.getDistance() - reduce));
                             });
                         } else {
                             if (diseaseable.hasDisease(DiseaseTypes.BROKEN_PAW)) {

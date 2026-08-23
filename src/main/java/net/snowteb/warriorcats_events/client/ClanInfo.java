@@ -132,12 +132,13 @@ public class ClanInfo {
         public WCGenetics chimeraGenetics = new WCGenetics();
         public WCGenetics.GeneticalVariants variants = new WCGenetics.GeneticalVariants();
         public WCGenetics.GeneticalChimeraVariants chimeraVariants = new WCGenetics.GeneticalChimeraVariants();
+        public int genderValue;
 
 
         public ClientClanCat(UUID uuid, String name, String gender, String rank,
                              String age, int variant, String parents, boolean onGeneticalSkin,
                              WCGenetics genetics, WCGenetics chimeraGenetics,
-                             WCGenetics.GeneticalVariants variants, WCGenetics.GeneticalChimeraVariants chimeraVariants) {
+                             WCGenetics.GeneticalVariants variants, WCGenetics.GeneticalChimeraVariants chimeraVariants, int genderValue) {
             this.uuid = uuid;
             this.name = name;
             this.gender = gender;
@@ -145,6 +146,7 @@ public class ClanInfo {
             this.parents = parents;
             this.rank = rank;
             this.age = age;
+            this.genderValue = genderValue;
 
             this.onGeneticalSkin = onGeneticalSkin;
             this.genetics = genetics;

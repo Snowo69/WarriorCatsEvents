@@ -5,6 +5,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import net.snowteb.warriorcats_events.attachments.ModAttachments;
+import net.snowteb.warriorcats_events.client.DialogueMessageDistributor;
 
 import java.util.Arrays;
 import java.util.List;
@@ -1185,14 +1186,8 @@ public class DialoguesModule {
         String morphName = player.getData(ModAttachments.PLAYER_WCE_DATA).getMorphName();
         String resultCooked = result.replace("<morph.name>", morphName);
 
-        if (player != null) {
-            Component name = cat.hasCustomName() ?
-                    Component.literal("<").append(cat.getCustomName().copy().withStyle(ChatFormatting.WHITE)).append("> ")
-                    :
-                    Component.literal("<???> ");
-            if (cat.getRank() != KIT && cat.getRank() != APPRENTICE) {
-                player.sendSystemMessage(Component.empty().append(name.copy()).append(Component.literal(resultCooked)));
-            }
+        if (cat.getRank() != KIT) {
+            DialogueMessageDistributor.send(player, cat, resultCooked);
         }
     }
     

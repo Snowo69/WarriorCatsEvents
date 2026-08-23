@@ -22,11 +22,12 @@ public class ModItemTagGenerator extends ItemTagsProvider {
     @Override
     protected void addTags(HolderLookup.Provider pProvider) {
 
+        this.tag(ItemTags.CREEPER_DROP_MUSIC_DISCS).add(ModItems.GENERATIONS_MUSIC_DISC.get());
         this.tag(CompatibilityTags.SERENE_SEASONS_SPRING_CROPS).add(ModItems.DOCK_LEAVES.get(), ModItems.SORREL.get(), ModItems.BURNET.get(), ModItems.DAISY.get());
         this.tag(CompatibilityTags.SERENE_SEASONS_SUMMER_CROPS).add(ModItems.CHAMOMILE.get(), ModItems.CATMINT.get(), ModItems.YARROW.get(), ModItems.FEVERFEW.get(), ModItems.COMFREY_LEAVES.get(), ModItems.COMFREY_ROOT.get());
         this.tag(CompatibilityTags.SERENE_SEASONS_AUTUMN_CROPS).add(ModItems.DEATHBERRIES.get(), ModItems.COMFREY_LEAVES.get(), ModItems.COMFREY_ROOT.get());
         this.tag(CompatibilityTags.SERENE_SEASONS_WINTER_CROPS).add(ModItems.JUNIPER_BERRIES.get());
 
-        this.tag(ItemTags.DYEABLE).add(ModItems.CAT_COLLAR.get());
+        this.tag(ItemTags.DYEABLE).add(ModItems.CAT_COLLAR.get(), ModItems.CAT_BRACELET.get());
     }
 }

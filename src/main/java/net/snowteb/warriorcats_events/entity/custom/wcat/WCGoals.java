@@ -250,127 +250,6 @@ public class WCGoals {
 
     }
 
-    public static class WCatCasualBlockSeekGoal extends Goal {
-
-        private final WCatEntity cat;
-        private final double speed;
-        private final int baseRadius;
-        private final double chance;
-        private int cooldown = 0;
-
-        private BlockPos targetPos = null;
-        private Predicate<BlockState> targetPredicate;
-
-        public WCatCasualBlockSeekGoal(WCatEntity cat, double speed, int baseRadius, double chance) {
-            this.cat = cat;
-            this.speed = speed;
-            this.baseRadius = baseRadius;
-            this.chance = chance;
-            this.setFlags(EnumSet.of(Flag.MOVE));
-        }
-
-        @Override
-        public boolean canUse() {
-            if (cat.returnHomeFlag) return false;
-
-            if (cooldown > 0) {
-                cooldown--;
-                return false;
-            }
-
-            if (cat.isResting() || cat.isChilling()) return false;
-
-            if (cat.isOrderedToSit()) return false;
-
-            if (this.targetPos != null) {
-                if (targetPredicate != null &&
-                        targetPredicate.test(cat.level().getBlockState(this.targetPos))) {
-                    return false;
-                }
-                this.targetPos = null;
-            }
-
-
-            if (cat.mode != WCatEntity.CatMode.WANDER) return false;
-
-            if (cat.isExpectingKits()) {
-                if (cat.getRandom().nextDouble() >= this.chance * 2) return false;
-            } else {
-                if (cat.getRandom().nextDouble() >= this.chance) return false;
-            }
-
-            this.targetPredicate = defineTargetPredicate();
-
-            this.targetPos = findTargetBlock();
-            return this.targetPos != null;
-        }
-
-        @Override
-        public boolean canContinueToUse() {
-            return targetPos != null &&
-                    !cat.getNavigation().isDone() &&
-                    !cat.isOrderedToSit();
-        }
-
-        @Override
-        public void start() {
-
-            if (cat.wanderCenter != null &&
-                    cat.blockPosition().distSqr(cat.wanderCenter) > cat.getWanderRadius() * cat.getWanderRadius()) {
-                cat.getNavigation().moveTo(cat.wanderCenter.getX(), cat.wanderCenter.getY(), cat.wanderCenter.getZ(), speed);
-                return;
-            }
-
-            if (targetPos != null) {
-                cat.getNavigation().moveTo(
-                        targetPos.getX() + 0.5,
-                        targetPos.getY(),
-                        targetPos.getZ() + 0.5,
-                        speed
-                );
-            }
-        }
-
-        @Override
-        public void stop() {
-            targetPos = null;
-            cat.getNavigation().stop();
-            this.cooldown = 400 + cat.getRandom().nextInt(4) * 80;
-        }
-
-        private Predicate<BlockState> defineTargetPredicate() {
-
-            return switch (cat.getRank()) {
-                case MEDICINE -> state -> state.is(ModBlocks.STONECLEFT.get());
-                default -> state -> state.getBlock() instanceof NestBlock;
-            };
-        }
-
-        private BlockPos findTargetBlock() {
-            Level level = cat.level();
-            BlockPos origin = cat.blockPosition();
-
-            List<BlockPos> found = new ArrayList<>();
-
-            int radius = this.baseRadius;
-
-            for (int x = -radius; x <= radius; x++) {
-                for (int y = -2; y <= 2; y++) {
-                    for (int z = -radius; z <= radius; z++) {
-                        BlockPos pos = origin.offset(x, y, z);
-                        if (targetPredicate.test(level.getBlockState(pos))) {
-                            found.add(pos);
-                        }
-                    }
-                }
-            }
-
-            if (found.isEmpty()) return null;
-
-            return found.get(cat.getRandom().nextInt(found.size()));
-        }
-    }
-
     public static class WCatBoundedWanderGoal extends WaterAvoidingRandomStrollGoal {
 
         private final WCatEntity cat;
@@ -1727,7 +1606,7 @@ public class WCGoals {
                 }
             }
 
-            checkCooldown = 100 + (6 + cat.getRandom().nextInt(4))*20;
+            checkCooldown = 100 + (cat.getId() % 40) + (6 + cat.getRandom().nextInt(4))*20;
 
             return false;
         }

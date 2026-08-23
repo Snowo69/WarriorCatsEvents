@@ -1,0 +1,8 @@
+{
+  "comparator_output": 6,
+  "description": {
+    "translate": "item.warriorcats_events.generations_music_disc.desc"
+  },
+  "length_in_seconds": 2650.0,
+  "sound_event": "warriorcats_events:generations"
+}

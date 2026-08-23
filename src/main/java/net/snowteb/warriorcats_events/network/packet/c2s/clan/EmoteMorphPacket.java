@@ -44,7 +44,7 @@ public class EmoteMorphPacket implements CustomPacketPayload {
 
                 PlayerShape.updateShapes(player, catShape);
 
-                player.getPersistentData().putInt("wcat_animation_playing", player.server.getTickCount() + 10);
+                player.getPersistentData().putInt("wcat_animation_playing", player.server.getTickCount() + 5);
 
                 if (packet.animIndex == -2) {
                     player.getPersistentData().putInt("wcat_jump", player.server.getTickCount() + 25);

@@ -165,59 +165,54 @@ public class WCEChangelogScreen extends Screen {
 
 
     private void defineChangelogLines() {
-        lines.add("$(#) 1.11.0 | Reworks, more languages, and more!");
-        lines.add("Greetingss, this update will be mainly focused on internal reworks, and some very nice changes.\n" +
+        lines.add("$(#) 1.12.0 | Dock bags, first person paw, and more!");
+        lines.add("Greetings, I took and i'm still on a break to focus more on my personal life, but i'm still here.\n" +
                 "\n" +
-                "This includes a complete rework of the Create Morph menu. Now it will be not only more pretty, but also a lot more friendly with our 'squared-screen' friends.\n" +
+                "This update is mostly focused on fixes of some translation keys and other issues, but also includes the very much requested Dock bags!\n" +
                 "\n" +
-                "Not only this, but also some huge news...\n" +
+                "Dock bags can be crafted from the Herb Rock, these work as any other backpack. You can put items in them and carry them anywhere.\n" +
                 "\n" +
-                "WCE is now available in other languages!!!!\n" +
-                "Thanks to the amazing work of tangyunyun, who contacted me to voluntarily help with this, WCE is now available in Chinese!!! \n" +
-                "希望你喜欢\n" +
-                "\n" +
-                "Additionally, WCE is now also available in Spanish. This is a translation made of my own, since I myself speak spanish. Espero aprecien el arduo trabajo c:\n" +
-                "\n" +
-                "Also, thanks to 'Dazzy / Phen' and 'Bog' and their amazing contribution of a piece of code... WCE now also supports custom cat textures! You can now make a resourcepack with the ID \"warriorcats_events\" and add any textures you want. Here is a template to make your own resource packs. You can force resourcepacks in Multiplayer servers.\n" +
-                "\n" +
-                "https://www.mediafire.com/file/sd9qmmnoy2apld2/example_pack_1.20.1.zip/file\n" +
-                "\n" +
-                "There is also a lot more changes, adjustements, and additions in this update, so...");
+                "This update also introduces background music for territories! Whenever you are in a clan territory, tracks from a internal playlist will play. Special thanks to Sharon Hurvitz and Joabi for allowing their songs to be part of this.");
         lines.add("$(##) Changelog");
 
-        lines.add("- Fixed kits showing as fleas when the server config is changed.");
-        lines.add("- Removed all Hard-coded Strings and replaced by translation keys.");
-        lines.add("- Replaced genetics serializing for Wild Cats. From 1.16.0, Wild Cats that are not migrated from older versions to 1.11.X-1.15.X, will lose all their genetic traits.");
-        lines.add("- Reworked and improved Create Morph menu.");
-        lines.add("- Improved rendering for carrying kits.");
-        lines.add("- Fixed the infinite XP glitch in the Skill Tree.");
-        lines.add("- Added server config for max claimable territory.");
-        lines.add("- All cat collars have been removed. Cat collars are now replaced by a single dyable cat collar, that allows endless color combinations.");
-        lines.add("- Stored morphs now support preset cats.");
-        lines.add("- Replaced player morph serializing. You might experience minor one-time issues.");
-        lines.add("- Added Chinese and Spanish translations.");
-        lines.add("- Added prefix randomization to the \"Kit\" item.");
-        lines.add("- Added Carved stone! You can now Right-click stone to carve it, and obtain pebbles, which can be crafted into cobblestone.");
-        lines.add("- Reworked herb mixing system. Now it wont be managed through the Crafting Rock.");
-        lines.add("- Added Herb Rock, a dedicated block for mixing herbs.");
-        lines.add("- Added skin shades! You can change the skin shade of your character in the Details section.");
-        lines.add("- Updated Warrior's Guide.");
-        lines.add("- Warrior Nametags are now renamable. Shift+Right-click to rename a Warrior Nametag.");
-        lines.add("- Claws, Whiskers, and Warriors Guide will no longer drop on death.");
-        lines.add("- Improved cats AI. Now they will run and avoid damage sources such as fire, cactus, and others.");
-        lines.add("- Cats are now inmune to Sweet Berry bushes.");
-        lines.add("- Added an option to kick/remove NPCs from clans in the clan menu.");
-        lines.add("- Added Flappy Cat! Play Flappy Cat from the last option in the WCE Options menu.");
-        lines.add("- Other minor adjustements.");
-        lines.add("- Other minor reworks.");
-        lines.add("- Removed Herobrinepaw.");
+        lines.add("- Added Bee Costume");
+        lines.add("- Added Morph Cosmetics for contributors (more to come in the future)");
+        lines.add("- Added Levitating emote for contributors.");
+        lines.add("- Added Paw Bracelets");
+        lines.add("- Fixed Golden Eagles. They will no longer fly away, no longer eat double food, and will now be able to stay or wander.");
+        lines.add("- Fixed Moss balls, can no longer be filled with lava.");
+        lines.add("- Added Dock Bags, they can be equipped as a chest armor piece, and as a curio.");
+        lines.add("- Added config field for tree stump cooldowns.");
+        lines.add("- Added background music for clan territories.");
+        lines.add("- The lock on target button for leap is now a configurable keybind.");
+        lines.add("- Jumping while leaping will now longer reset the leap, but decrease it instead.");
+        lines.add("- Blocked monster spawn in clan territories.");
+        lines.add("- The paw of you character will now render in first person instead of the old two-leg hand.");
+        lines.add("- Changed the position in which held items render in first person.");
+        lines.add("- Improved the client config menu.");
+        lines.add("- Replaced the morph pose menu with the new morph cosmetics menu.");
+        lines.add("- Fixed probably all of the issues with translation keys.");
+        lines.add("- Improved horizontal momentum while jumping with the Jump skill.");
+        lines.add("- Fall damage adjusted and fixed.");
+        lines.add("- Added Collar and Paw Bracelets recipes to vanilla recipe book.");
+        lines.add("- Adjustements to Broken paws, now they shouldn't be as annoying as before.");
+        lines.add("- Added config field to allow or unallow anyone from creating a clan.");
+        lines.add("- Replaced the way NPCs display their dialogues.");
+        lines.add("- Removed Herobrinepaw");
+        lines.add("- Other minor adjustements and fixes");
+
 
         lines.add("$(##) Discord Boosters");
         lines.add("Boost our Discord server to be a contributor and have exclusive emotes, bigger cat sizes, and other features!");
 
+        lines.add("$(##) Our Minecraft server!");
+        lines.add("Join our Minecraft server today! More information in the Discord server.");
+
 
         lines.add("$(/#) Thank you for reading 🐈");
     }
+
+
 //    private void defineChangelogLines() {
 //        lines.add("$(#) ");
 //        lines.add("");

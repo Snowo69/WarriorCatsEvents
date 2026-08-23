@@ -5,12 +5,14 @@ import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.OwnableEntity;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.animal.Animal;
@@ -18,6 +20,7 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -423,21 +426,26 @@ public class ModEventsForge1 {
                         case ADULT -> 1.0f;
                     };
 
-                    float damage = ((float) (5.0F + ((float) cap.getDMGLevel() /1.25)*damagePowerMultiplier))*finalMultiplier;
+                    float damage = ((float) (6.0F + ((float) cap.getDMGLevel() /1.25)*damagePowerMultiplier))*finalMultiplier;
                     if (event.getEntity().hasLineOfSight(target)) {
                         boolean isAClanmate = false;
 
+                        UUID thisClan = player.getData(ModAttachments.PLAYER_WCE_DATA).getCurrentClanUUID();
+
                         if (target instanceof Player playerTarget) {
                             UUID targetClan = playerTarget.getData(ModAttachments.PLAYER_WCE_DATA).getCurrentClanUUID();
-                            UUID thisClan = playerTarget.getData(ModAttachments.PLAYER_WCE_DATA).getCurrentClanUUID();
 
                             if (targetClan.equals(thisClan)) {
+                                isAClanmate = true;
+                            }
+                        } else if (target instanceof WCatEntity catTarget) {
+                            if (catTarget.getClanUUID().equals(thisClan)) {
                                 isAClanmate = true;
                             }
                         }
 
                         if (!((target instanceof TamableAnimal cat && cat.isTame() && cat.getOwner() == event.getEntity())
-                                || (target instanceof EagleEntity eagle && eagle.getOwner() == event.getEntity()) || isAClanmate)) {
+                                || (target instanceof OwnableEntity ownable && ownable.getOwner() == event.getEntity()) || isAClanmate)) {
                             BlockParticleOption particle = new BlockParticleOption(ParticleTypes.BLOCK,
                                     Blocks.REDSTONE_BLOCK.defaultBlockState());
 
@@ -581,10 +589,13 @@ public class ModEventsForge1 {
             if (att == null) return;
             double extra = att.getValue();
             if (extra > 0) {
+                Vec3 look = player.getLookAngle();
+                Vec3 horizontalVec = new Vec3(look.x, 0, look.z).normalize();
+
                 player.setDeltaMovement(
-                        player.getDeltaMovement().x,
+                        player.getDeltaMovement().x + horizontalVec.x * extra*0.8f,
                         player.getDeltaMovement().y + extra,
-                        player.getDeltaMovement().z
+                        player.getDeltaMovement().z + horizontalVec.z * extra*0.8f
                 );
             }
         }
@@ -605,6 +616,12 @@ public class ModEventsForge1 {
 
 
         if (player instanceof ServerPlayer sPlayer) {
+            RecipeManager recipeManager = player.level().getRecipeManager();
+            recipeManager.byKey(ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "collar_recipe"))
+                    .ifPresent(recipe -> player.awardRecipes(List.of(recipe)));
+            recipeManager.byKey(ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "bracelet_recipe"))
+                    .ifPresent(recipe -> player.awardRecipes(List.of(recipe)));
+
             ClanData clanData = ClanData.get(sPlayer.serverLevel().getServer().overworld());
 
             UUID clanUUID = sPlayer.getData(ModAttachments.PLAYER_WCE_DATA).getCurrentClanUUID();

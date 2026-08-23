@@ -5,8 +5,12 @@
       "id": "warriorcats_events:deathberries",
       "count": 1
     },
-    "title": "D-Darkstripe?...",
-    "description": "You fed deathberries to a kit...?",
+    "title": {
+      "translate": "wce.advancement.fed_kit_deathberries.title"
+    },
+    "description": {
+      "translate": "wce.advancement.fed_kit_deathberries.desc"
+    },
     "show_toast": true,
     "announce_to_chat": true,
     "hidden": true,

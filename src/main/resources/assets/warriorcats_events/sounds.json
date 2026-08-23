@@ -276,5 +276,80 @@
       { "name": "warriorcats_events:entity/pigeon/pigeon_7", "volume": 0.6, "pitch": 1.0}
     ],
     "subtitle": "subtitles.wce.pigeon_ambient"
+  },
+
+
+
+  "ancient_tunnels": {
+    "sounds": [
+      {"name": "warriorcats_events:music/ancient_tunnels", "stream": true}
+    ]
+  },
+  "crossing_the_river": {
+    "sounds": [
+      {"name": "warriorcats_events:music/crossing_the_river", "stream": true}
+    ]
+  },
+  "dawn_patrol": {
+    "sounds": [
+      {"name": "warriorcats_events:music/dawn_patrol", "stream": true}
+    ]
+  },
+  "leafbare": {
+    "sounds": [
+      {"name": "warriorcats_events:music/leafbare", "stream": true}
+    ]
+  },
+  "moonhigh_vigil": {
+    "sounds": [
+      {"name": "warriorcats_events:music/moonhigh_vigil", "stream": true}
+    ]
+  },
+  "newleaf": {
+    "sounds": [
+      {"name": "warriorcats_events:music/newleaf", "stream": true}
+    ]
+  },
+  "the_medicine_cats_den": {
+    "sounds": [
+      {"name": "warriorcats_events:music/the_medicine_cats_den", "stream": true}
+    ]
+  },
+  "the_moonstone": {
+    "sounds": [
+      {"name": "warriorcats_events:music/the_moonstone", "stream": true}
+    ]
+  },
+  "does_it_have_to_end_already": {
+    "sounds": [
+      {"name": "warriorcats_events:music/does_it_have_to_end_already", "stream": true}
+    ]
+  },
+  "i_miss_you_already": {
+    "sounds": [
+      {"name": "warriorcats_events:music/i_miss_you_already", "stream": true}
+    ]
+  },
+  "i_wanted_it_to_be_you": {
+    "sounds": [
+      {"name": "warriorcats_events:music/i_wanted_it_to_be_you", "stream": true}
+    ]
+  },
+  "oh_to_relive_it_once_more": {
+    "sounds": [
+      {"name": "warriorcats_events:music/oh_to_relive_it_once_more", "stream": true}
+    ]
+  },
+  "you_used_to_remember": {
+    "sounds": [
+      {"name": "warriorcats_events:music/you_used_to_remember", "stream": true}
+    ]
+  },
+
+  "dialogue_boop_1": {
+    "sounds": [
+      {"name": "warriorcats_events:menu/dialogue_boop_1", "volume": 1.0, "pitch": 1.0}
+    ]
   }
+
 }

@@ -5,8 +5,12 @@
       "id": "warriorcats_events:claws",
       "count": 1
     },
-    "title": "Piercing Claws",
-    "description": "You have mastered your damage skill!",
+    "title": {
+      "translate": "wce.advancement.skill_damage.title"
+    },
+    "description": {
+      "translate": "wce.advancement.skill_damage.desc"
+    },
     "show_toast": true,
     "announce_to_chat": true,
     "hidden": false

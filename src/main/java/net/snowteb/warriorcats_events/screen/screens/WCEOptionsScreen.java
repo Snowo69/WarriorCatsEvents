@@ -51,9 +51,9 @@ public class WCEOptionsScreen extends Screen {
         list.addButton(Component.translatable("screen.options.info_setup"), () -> {
             player.connection.sendCommand("wce info setup");
         }, Component.translatable("screen.options.info_setup.tip"));
-        list.addButton(Component.translatable("screen.options.morph_pose"), () -> {
-            player.connection.sendCommand("wce info morphPose");
-        }, Component.translatable("screen.options.morph_pose.tip"));
+        list.addButton(Component.translatable("screen.options.cosmetics"), () -> {
+            player.connection.sendCommand("wce morph cosmetics");
+        }, Component.translatable("screen.options.cosmetics.tip"));
         list.addButton(Component.translatable("screen.options.manage_clan"), () -> {
             player.connection.sendCommand("wce clan manage");
         }, Component.translatable("screen.options.manage_clan.tip"));

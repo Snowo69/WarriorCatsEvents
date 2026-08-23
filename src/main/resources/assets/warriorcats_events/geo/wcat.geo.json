@@ -752,8 +752,13 @@
 					]
 				},
 				{
-					"name": "tail2",
+					"name": "main_tail2",
 					"parent": "tailsub",
+					"pivot": [0, 1.5, 9]
+				},
+				{
+					"name": "tail2",
+					"parent": "main_tail2",
 					"pivot": [0, 1.5, 9],
 					"rotation": [35, 0, 0],
 					"cubes": [

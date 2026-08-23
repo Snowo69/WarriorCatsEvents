@@ -22,6 +22,7 @@ public class ModItemModelProvider extends ItemModelProvider {
     @Override
     protected void registerModels() {
 
+        simpleItem(ModItems.GENERATIONS_MUSIC_DISC);
         simpleItem(ModItems.WHISKERS);
         simpleItem(ModItems.CLAWS);
 
@@ -127,6 +128,8 @@ public class ModItemModelProvider extends ItemModelProvider {
         simpleItem(ModItems.TIGER_SWALLOWTAIL_WING);
         simpleItem(ModItems.MONARCH_WING);
 
+        simpleItem(ModItems.BEE_COSTUME);
+        simpleItem(ModItems.DOCK_BACKPACK);
 
         simpleItem(ModItems.LIZARD_EGG_ITEM);
 

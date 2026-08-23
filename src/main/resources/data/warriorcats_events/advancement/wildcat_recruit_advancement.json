@@ -5,8 +5,12 @@
       "id": "warriorcats_events:freshkill_and_herbs",
       "count": 1
     },
-    "title": "Our first warrior was...",
-    "description": "You recruited your first warrior for your clan!",
+    "title": {
+      "translate": "wce.advancement.warrior_cat_recruited.title"
+    },
+    "description": {
+      "translate": "wce.advancement.warrior_cat_recruited.desc"
+    },
     "show_toast": true,
     "announce_to_chat": true,
     "hidden": false

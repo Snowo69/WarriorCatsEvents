@@ -17,7 +17,6 @@ import net.snowteb.warriorcats_events.network.packet.s2c.cats.*;
 import net.snowteb.warriorcats_events.network.packet.s2c.clan.*;
 import net.snowteb.warriorcats_events.network.packet.s2c.others.*;
 import net.snowteb.warriorcats_events.network.packet.s2c.skilltree.*;
-import net.snowteb.warriorcats_events.network.packet.s2c.skilltree.*;
 
 /**
  * All about this or any packets, just ask me personally, i aint explaining all that
@@ -487,6 +486,24 @@ public class ModPackets {
                 KickNPCPacket.TYPE,
                 KickNPCPacket.CODEC,
                 (pkt, ctx) -> KickNPCPacket.handle(pkt, ctx)
+        );
+
+        registrar.playToServer(
+                SetCosmeticPacket.TYPE,
+                SetCosmeticPacket.CODEC,
+                (pkt, ctx) -> SetCosmeticPacket.handle(pkt, ctx)
+        );
+
+        registrar.playToServer(
+                CtSOpenBackpackPacket.TYPE,
+                CtSOpenBackpackPacket.CODEC,
+                (pkt, ctx) -> CtSOpenBackpackPacket.handle(pkt, ctx)
+        );
+
+        registrar.playToClient(
+                SendDialoguePacket.TYPE,
+                SendDialoguePacket.CODEC,
+                (pkt, ctx) -> pkt.handle(ctx)
         );
 
 

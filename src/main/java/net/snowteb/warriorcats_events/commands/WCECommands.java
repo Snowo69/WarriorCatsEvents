@@ -134,8 +134,8 @@ public class WCECommands {
 
         dispatcher.register(
                 Commands.literal("wce")
-                        .then(Commands.literal("info")
-                                .then(Commands.literal("morphPose")
+                        .then(Commands.literal("morph")
+                                .then(Commands.literal("cosmetics")
                                         .executes((command)
                                                 -> WCECommandHandles.setPoseMenu(command.getSource()))
                                 )
@@ -200,8 +200,8 @@ public class WCECommands {
 
         dispatcher.register(
                 Commands.literal("wce")
-                        .then(Commands.literal("info")
-                                .then(Commands.literal("createMorph")
+                        .then(Commands.literal("morph")
+                                .then(Commands.literal("create")
                                         .executes((command)
                                                 -> WCECommandHandles.createMorphMenu(command.getSource()))
                                 )

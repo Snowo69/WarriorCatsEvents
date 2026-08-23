@@ -18,20 +18,20 @@ import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.block.ModBlocks;
 import net.snowteb.warriorcats_events.block.entity.*;
 import net.snowteb.warriorcats_events.client.ClientStoredMorphs;
+import net.snowteb.warriorcats_events.client.DialogueMessage;
+import net.snowteb.warriorcats_events.client.HUDClientMessage;
 import net.snowteb.warriorcats_events.client.ThirstHUD;
 import net.snowteb.warriorcats_events.datacomponents.ModDataComponents;
 import net.snowteb.warriorcats_events.effect.FeverEffectOverlay;
 import net.snowteb.warriorcats_events.entity.ModEntities;
 import net.snowteb.warriorcats_events.entity.client.*;
 import net.snowteb.warriorcats_events.item.ModItems;
-import net.snowteb.warriorcats_events.item.custom.CollarArmorItem;
 import net.snowteb.warriorcats_events.particles.*;
 import net.snowteb.warriorcats_events.screen.menus.ModMenuTypes;
 import net.snowteb.warriorcats_events.screen.screens.*;
 import net.snowteb.warriorcats_events.attachments.StealthClientState;
 import net.snowteb.warriorcats_events.util.ModKeybinds;
 
-import java.util.Arrays;
 import java.util.List;
 
 @EventBusSubscriber(modid = WarriorCatsEvents.MODID, value = Dist.CLIENT)
@@ -47,12 +47,14 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void onKeyRegister(RegisterKeyMappingsEvent event) {
-        event.register(ModKeybinds.HISSING_KEY);
+        event.register(ModKeybinds.SOUND_MENU_KEY);
         event.register(ModKeybinds.WATERDRINK_KEY);
         event.register(ModKeybinds.CLIMB_KEY);
         event.register(WCEClient.EMOTES_HUD_MENU_KEY);
         event.register(ModKeybinds.OPTIONS_KEY);
+        event.register(ModKeybinds.BACKPACK_KEY);
         event.register(ModKeybinds.LEAP_KEY);
+        event.register(ModKeybinds.LOCK_TARGET_KEY);
 //            event.register(ModKeybinds.SKILLMENU_KEY);
     }
 
@@ -61,6 +63,8 @@ public class ClientEvents {
         event.registerBelowAll(ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "thirst"), ThirstHUD.HUD_THIRST);
         event.registerBelowAll(ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "stealth"), StealthClientState.HUD_STEALTH);
         event.registerBelowAll(ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "fever"), FeverEffectOverlay.HUD_FEVER);
+        event.registerBelowAll(ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "hud_messages"), HUDClientMessage.MESSAGE_OVERLAY);
+        event.registerBelowAll(ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "dialogues"), DialogueMessage.DIALOGUE_OVERLAY);
     }
 
     @SubscribeEvent
@@ -110,6 +114,7 @@ public class ClientEvents {
         event.register(ModMenuTypes.FRESHKILL_PILE_MENU.get(), FreshkillPileScreen::new);
         event.register(ModMenuTypes.WCAT_INVENTORY.get(), WCatScreen::new);
         event.register(ModMenuTypes.HERB_MIXING.get(), HerbMixingRockScreen::new);
+        event.register(ModMenuTypes.DOCK_BACKPACK.get(), DockBackpackScreen::new);
     }
 
 
@@ -145,6 +150,22 @@ public class ClientEvents {
                 );
             }
 
+
+            ItemProperties.register(
+                    ModItems.CAT_BRACELET.get(),
+                    ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "has_spikes"),
+                    (stack, level, entity, seed) ->
+                            stack.getOrDefault(ModDataComponents.HAS_SPIKES.get(), false) ? 1f : 0f
+            );
+
+            ItemProperties.register(
+                    ModItems.CAT_BRACELET.get(),
+                    ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "has_glow"),
+                    (stack, level, entity, seed) ->
+                            stack.getOrDefault(ModDataComponents.HAS_GLOW.get(), false) ? 1f : 0f
+            );
+
+
             ItemProperties.register(
                     ModItems.MOSS_BALL.get(),
                     ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "honeylevel"),
@@ -172,7 +193,7 @@ public class ClientEvents {
             int rgb = dyedColor != null ? dyedColor.rgb() : DyedItemColor.LEATHER_COLOR;
 
             return 0xFF000000 | rgb;
-        }, ModItems.CAT_COLLAR.get());
+        }, ModItems.CAT_COLLAR.get(), ModItems.CAT_BRACELET.get());
     }
 
 

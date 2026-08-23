@@ -696,15 +696,15 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .save(pWriter);
 
 
-//        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.GENERATIONS_MUSIC_DISC.get(), 1)
-//                .pattern("ABA")
-//                .pattern("BCB")
-//                .pattern("ABA")
-//                .define('A', ModTags.Items.HERBS)
-//                .define('B', Items.DIAMOND_BLOCK)
-//                .define('C', ItemTags.MUSIC_DISCS)
-//                .unlockedBy("has_item", has(ItemTags.MUSIC_DISCS))
-//                .save(pWriter);
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.GENERATIONS_MUSIC_DISC.get(), 1)
+                .pattern("ABA")
+                .pattern("BCB")
+                .pattern("ABA")
+                .define('A', ModTags.Items.HERBS)
+                .define('B', Items.DIAMOND_BLOCK)
+                .define('C', ItemTags.CREEPER_DROP_MUSIC_DISCS)
+                .unlockedBy("has_item", has(ItemTags.CREEPER_DROP_MUSIC_DISCS))
+                .save(pWriter);
 
 
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Items.NAME_TAG, 1)

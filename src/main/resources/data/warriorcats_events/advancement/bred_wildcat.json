@@ -5,8 +5,12 @@
       "id": "warriorcats_events:wildcat_spawn_egg",
       "count": 1
     },
-    "title": "Our clan is growing!",
-    "description": "You used catmint to bring kits to your clan!",
+    "title": {
+      "translate": "wce.advancement.bred_wildcat.title"
+    },
+    "description": {
+      "translate": "wce.advancement.bred_wildcat.desc"
+    },
     "show_toast": true,
     "announce_to_chat": true,
     "hidden": false

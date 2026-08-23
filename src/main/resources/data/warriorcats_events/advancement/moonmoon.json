@@ -5,8 +5,12 @@
       "id": "minecraft:large_amethyst_bud",
       "count": 1
     },
-    "title": "Dammit Moonmoon...",
-    "description": "Who invited Moonmoon...?",
+    "title": {
+      "translate": "wce.advancement.moonmoon.title"
+    },
+    "description": {
+      "translate": "wce.advancement.moonmoon.desc"
+    },
     "show_toast": true,
     "announce_to_chat": true,
     "hidden": true,

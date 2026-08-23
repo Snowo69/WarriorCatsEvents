@@ -5,8 +5,12 @@
       "id": "minecraft:ender_eye",
       "count": 1
     },
-    "title": "Split Gaze",
-    "description": "You have recruited an heterochromic cat for the first time!",
+    "title": {
+      "translate": "wce.advancement.heterochromic_obtained.title"
+    },
+    "description": {
+      "translate": "wce.advancement.heterochromic_obtained.desc"
+    },
     "show_toast": true,
     "announce_to_chat": true,
     "hidden": true,

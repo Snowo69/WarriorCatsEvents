@@ -64,12 +64,16 @@ public class ClanTerritoryEvents {
 
         if (!WCEServerConfig.SERVER.PROTECT_CONTAINERS.get()) return;
 
+        if (player.hasPermissions(2)) return;
+
         ChunkPos pos = new ChunkPos(event.getPos());
         if (isInEnemyTerritory(player, pos)) {
             if (player.serverLevel().getBlockEntity(event.getPos()) != null) {
                 player.displayClientMessage(Component.translatable("clan.cannot_open_containers").withStyle(ChatFormatting.RED), true);
-                event.setCanceled(true);
+            } else if (!event.getItemStack().isEmpty()) {
+                player.displayClientMessage(Component.translatable("clan.cannot_place_blocks").withStyle(ChatFormatting.RED), true);
             }
+            event.setCanceled(true);
         }
     }
 

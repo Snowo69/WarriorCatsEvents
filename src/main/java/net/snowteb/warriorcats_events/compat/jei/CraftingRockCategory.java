@@ -31,7 +31,7 @@ public class CraftingRockCategory implements IRecipeCategory<HerbsRecipe> {
 
     public CraftingRockCategory(IGuiHelper guiHelper) {
         this.background = guiHelper.createDrawable(TEXTURE, 0, 0, 100, 90);
-        this.icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(ModBlocks.STONE_CRAFTING_TABLE.get()));
+        this.icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(ModBlocks.HERB_MIXING_ROCK.get()));
     }
 
     @Override
@@ -41,7 +41,7 @@ public class CraftingRockCategory implements IRecipeCategory<HerbsRecipe> {
 
     @Override
     public Component getTitle() {
-        return Component.translatable("block.warriorcats_events.stone_crafting_table");
+        return Component.translatable("block.warriorcats_events.herb_rock");
     }
 
     @Override

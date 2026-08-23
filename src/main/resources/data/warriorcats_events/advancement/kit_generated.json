@@ -5,8 +5,12 @@
       "id": "warriorcats_events:kit",
       "count": 1
     },
-    "title": "Welcome, my child",
-    "description": "You have brought to life your first very own kit!",
+    "title": {
+      "translate": "wce.advancement.kit_generated.title"
+    },
+    "description": {
+      "translate": "wce.advancement.kit_generated.desc"
+    },
     "show_toast": true,
     "announce_to_chat": true,
     "hidden": false

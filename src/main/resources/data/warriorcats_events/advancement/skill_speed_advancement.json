@@ -5,8 +5,12 @@
       "id": "minecraft:sugar",
       "count": 1
     },
-    "title": "Uncatchable",
-    "description": "You have mastered the speed skill!",
+    "title": {
+      "translate": "wce.advancement.skill_speed.title"
+    },
+    "description": {
+      "translate": "wce.advancement.skill_speed.desc"
+    },
     "show_toast": true,
     "announce_to_chat": true,
     "hidden": false

@@ -489,7 +489,7 @@ public class ManageClanScreen extends Screen {
             }
 
             if (currentMenu.equals("renameClan")) {
-                Component message = Component.translatable("Renaming clan");
+                Component message = Component.translatable("screen.clan_manage.renaming_clan");
 
                 int y = 60;
 

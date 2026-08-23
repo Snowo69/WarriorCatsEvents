@@ -4,8 +4,12 @@
     "icon": {
       "id": "warriorcats_events:golden_eagle_meat"
     },
-    "text": "Once upon a tribe cat...",
-    "description": "You succesfully defeated a golden eagle.",
+    "title": {
+      "translate": "wce.advancement.kill_eagle.title"
+    },
+    "description": {
+      "translate": "wce.advancement.kill_eagle.desc"
+    },
     "show_toast": true,
     "announce_to_chat": true,
     "hidden": false,

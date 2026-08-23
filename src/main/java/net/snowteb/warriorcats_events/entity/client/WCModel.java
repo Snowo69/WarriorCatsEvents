@@ -187,8 +187,8 @@ public class WCModel extends GeoModel<WCatEntity> {
                 head.setPosY(yPos);
                 head.setPosZ(zPos);
 
-                if (getAnimationProcessor().getBone("tail2") != null) {
-                    GeoBone bone = getAnimationProcessor().getBone("tail2");
+                if (getAnimationProcessor().getBone("main_tail2") != null) {
+                    GeoBone bone = getAnimationProcessor().getBone("main_tail2");
                     if (tail2InitialRot == -213) {
                         tail2InitialRot = bone.getRotX();
                     }

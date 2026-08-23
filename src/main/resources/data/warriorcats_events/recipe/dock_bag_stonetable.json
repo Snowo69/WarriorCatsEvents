@@ -1,0 +1,14 @@
+{
+  "type": "warriorcats_events:herbs",
+  "ingredients": [
+    { "item": "warriorcats_events:dock_leaves" },
+    { "item": "warriorcats_events:dock_leaves" },
+    { "item": "minecraft:vine" },
+    { "item": "minecraft:slime_ball" },
+    { "item": "warriorcats_events:cobweb_on_a_stick"}
+  ],
+  "result": {
+    "id": "warriorcats_events:dock_bag",
+    "count": 1
+  }
+}

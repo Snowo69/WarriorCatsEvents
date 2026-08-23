@@ -7,6 +7,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -91,6 +92,7 @@ public class ClanData extends SavedData {
     public static class ClanCat {
         public UUID catUUID;
         public String catGender;
+        public int catGenderValue;
         public Component catName;
         public int catVariant;
         public Component catAge;
@@ -108,14 +110,15 @@ public class ClanData extends SavedData {
             ClanCat clanCat = new ClanCat();
 
             clanCat.catUUID = cat.getUUID();
-            clanCat.catGender = cat.getGender() == 0 ? Component.translatable("generic.tomcat").getString()
-                    : Component.translatable("generic.shecat").getString();
-            clanCat.catName = cat.hasCustomName() ? cat.getCustomName() : Component.translatable("generic.unnamedcat");
+            clanCat.catGender = cat.getGender() == 0 ? Component.translatable("generic.wcat.tomcat").getString()
+                    : Component.translatable("generic.wcat.shecat").getString();
+            clanCat.catGenderValue = cat.getGender();
+            clanCat.catName = cat.hasCustomName() ? cat.getCustomName() : Component.translatable("generic.wcat.unnamedcat");
             clanCat.catVariant = cat.getVariant();
             clanCat.catAge = cat.getAge() < 0
-                    ? Component.translatable("generic.age_moons",
+                    ? Component.translatable("generic.wcat.age_moons",
                     String.format("%.2f", cat.getAgeInMoons()))
-                    : Component.translatable("generic.fully_grown");
+                    : Component.translatable("generic.wcat.fully_grown");
 
             clanCat.catRank = cat.getRank().name();
 
@@ -378,7 +381,7 @@ public class ClanData extends SavedData {
         return false;
     }
 
-    public static class TerritoryChunk{
+    public static class TerritoryChunk {
         public ChunkPos chunkPos;
         public String name;
         public int time;
@@ -450,7 +453,7 @@ public class ClanData extends SavedData {
 
         TerritoryChunk claimedChunk = new TerritoryChunk(pos, name,
                 (WCEServerConfig.SERVER.MAX_TERRITORY_TIME.get()*60*20)/2,
-                ((WCEServerConfig.SERVER.MAX_TERRITORY_TIME.get()*20*60)/8));
+                (int) ((WCEServerConfig.SERVER.MAX_TERRITORY_TIME.get()*20*60)*WCEServerConfig.SERVER.TREE_STUMP_MULTIPLIER.get()));
 
         clan.claimedTerritory.put(pos, claimedChunk);
 
@@ -460,7 +463,7 @@ public class ClanData extends SavedData {
                 if (!clan.claimedTerritory.containsKey(checking)) {
                     TerritoryChunk currentClaiming = new TerritoryChunk(checking, "",
                             (WCEServerConfig.SERVER.MAX_TERRITORY_TIME.get()*60*20)/2,
-                            ((WCEServerConfig.SERVER.MAX_TERRITORY_TIME.get()*20*60)/8));
+                            (int) ((WCEServerConfig.SERVER.MAX_TERRITORY_TIME.get()*20*60)*WCEServerConfig.SERVER.TREE_STUMP_MULTIPLIER.get()));
 
                     clan.claimedTerritory.put(checking, currentClaiming);
                 }
@@ -480,7 +483,7 @@ public class ClanData extends SavedData {
 
         int time = Mth.clamp(claimedChunk.time + (getMaxTerritoryTime()/3), 0, getMaxTerritoryTime());
 
-        TerritoryChunk newClaimedChunk = new TerritoryChunk(pos, claimedChunk.name, time, (WCEServerConfig.SERVER.MAX_TERRITORY_TIME.get()*20*60)/8);
+        TerritoryChunk newClaimedChunk = new TerritoryChunk(pos, claimedChunk.name, time, (int) ((WCEServerConfig.SERVER.MAX_TERRITORY_TIME.get()*20*60)*WCEServerConfig.SERVER.TREE_STUMP_MULTIPLIER.get()));
 
         clan.claimedTerritory.put(pos, newClaimedChunk);
 
@@ -491,7 +494,7 @@ public class ClanData extends SavedData {
 
                 int t = Mth.clamp(currentChecking.time + (getMaxTerritoryTime()/3), 0, getMaxTerritoryTime());
 
-                TerritoryChunk newCurrentClaimedChunk = new TerritoryChunk(checking, currentChecking.name, t, (WCEServerConfig.SERVER.MAX_TERRITORY_TIME.get()*20*60)/8);
+                TerritoryChunk newCurrentClaimedChunk = new TerritoryChunk(checking, currentChecking.name, t, (int) ((WCEServerConfig.SERVER.MAX_TERRITORY_TIME.get()*20*60)*WCEServerConfig.SERVER.TREE_STUMP_MULTIPLIER.get()));
 
                 clan.claimedTerritory.put(checking, newCurrentClaimedChunk);
             }
@@ -841,7 +844,7 @@ public class ClanData extends SavedData {
         if (clan == null) return false;
 
 
-        Component catLeftClanLog1 = Component.translatable("clandata.cat_left_clan",
+        Component catLeftClanLog1 = Component.translatable("clan.cat_left_clan",
                 cat.hasCustomName() ? cat.getCustomName().copy() : Component.translatable("generic.catname"),
                 Component.literal(clan.name).withStyle(Style.EMPTY.withColor(clan.color)));
 
@@ -1433,6 +1436,22 @@ public class ClanData extends SavedData {
                 .append(Component.literal("(").withStyle(ChatFormatting.GRAY))
                 .append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GRAY))
                 .append(Component.literal(")").withStyle(ChatFormatting.GRAY));
+    }
+
+    public static Component plainComponent(Component input) {
+        MutableComponent result = MutableComponent.create(input.getContents());
+
+        Style style = input.getStyle();
+        if (style.getHoverEvent() != null) {
+            style = style.withHoverEvent(null);
+        }
+        result.setStyle(style);
+
+        for (Component sibling : input.getSiblings()) {
+            result.append(plainComponent(sibling));
+        }
+
+        return result;
     }
 
 }

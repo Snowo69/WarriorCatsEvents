@@ -10,7 +10,8 @@
 		"7": "warriorcats_events:block/daisy_petals_3",
 		"8": "warriorcats_events:block/daisy_petals_2",
 		"9": "warriorcats_events:block/daisy_petals_1",
-		"10": "warriorcats_events:block/daisy_stems"
+		"10": "warriorcats_events:block/daisy_stems",
+		"particle": "warriorcats_events:block/daisy_surround"
 	},
 	"elements": [
 		{

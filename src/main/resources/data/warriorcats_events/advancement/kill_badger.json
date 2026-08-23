@@ -5,8 +5,12 @@
       "id": "warriorcats_events:badger_skull",
       "count": 1
     },
-    "title": "I killed the badger!",
-    "description": "You succesfully defeated a badger.",
+    "title": {
+      "translate": "wce.advancement.kill_badger.title"
+    },
+    "description": {
+      "translate": "wce.advancement.kill_badger.desc"
+    },
     "show_toast": true,
     "announce_to_chat": true,
     "hidden": false,

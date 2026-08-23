@@ -24,6 +24,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.neoforged.api.distmarker.Dist;
@@ -75,7 +76,7 @@ public class MossBallItem extends Item {
             BlockPos pos = hit.getBlockPos();
             BlockState state = pLevel.getBlockState(pos);
 
-            if (state.getFluidState().isSource() && getHoneyLevel(itemstack) <= 0) {
+            if ((state.getFluidState().isSourceOfType(Fluids.FLOWING_WATER) || state.getFluidState().isSourceOfType(Fluids.WATER)) && getHoneyLevel(itemstack) <= 0) {
 
                 if (!pLevel.isClientSide) {
                     if (PlayerShape.getCurrentShape(pPlayer) instanceof Animal) {

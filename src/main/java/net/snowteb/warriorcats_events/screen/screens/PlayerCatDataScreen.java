@@ -96,7 +96,11 @@ public class PlayerCatDataScreen extends Screen {
             clanName = Component.translatable("screen.catdata.clan", Component.literal(data.clanName));
         }
 
-        ageText = Component.nullToEmpty(data.age.name());
+        ageText = switch (data.age) {
+            case KIT -> Component.translatable("generic.age.kit");
+            case APPRENTICE -> Component.translatable("generic.age.apprentice");
+            case ADULT -> Component.translatable("generic.age.adult");
+        };
 
         drawMainMenu();
 
