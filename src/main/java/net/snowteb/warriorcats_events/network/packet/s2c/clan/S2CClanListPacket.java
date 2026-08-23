@@ -75,7 +75,7 @@ public class S2CClanListPacket {
             buf.writeInt(info.clanLogs.size());
             for (ClanInfo.ClientLogEntry log : info.clanLogs) {
                 buf.writeLong(log.gameTimeID);
-                buf.writeComponent(log.message);
+                buf.writeComponent(log.message.plainCopy());
             }
 
             buf.writeInt(info.symbolIndex);

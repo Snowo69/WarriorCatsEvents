@@ -6,7 +6,7 @@
         "items": [
           {
             "items": [
-              "minecraft:leather"
+              "minecraft:honeycomb"
             ]
           }
         ]
@@ -15,7 +15,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "warriorcats_events:cat_collar"
+        "recipe": "warriorcats_events:bee_costume"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -28,7 +28,7 @@
   ],
   "rewards": {
     "recipes": [
-      "warriorcats_events:cat_collar"
+      "warriorcats_events:bee_costume"
     ]
   },
   "sends_telemetry_event": false

@@ -15,7 +15,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "warriorcats_events:cat_collar"
+        "recipe": "warriorcats_events:cat_bracelets"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -28,7 +28,7 @@
   ],
   "rewards": {
     "recipes": [
-      "warriorcats_events:cat_collar"
+      "warriorcats_events:cat_bracelets"
     ]
   },
   "sends_telemetry_event": false

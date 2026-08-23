@@ -91,7 +91,9 @@
     "warriorcats_events:blue_morpho_wing",
     "warriorcats_events:goliath_birdwing_wing",
     "warriorcats_events:monarch_wing",
-    "warriorcats_events:tiger_swallowtail_wing"
+    "warriorcats_events:tiger_swallowtail_wing",
+    "warriorcats_events:bee_costume",
+    "warriorcats_events:cat_bracelets"
   ],
   "chance": 0.35
 }

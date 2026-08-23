@@ -166,6 +166,8 @@ public class WCEChangelogScreen extends Screen {
     }
 
     private void defineChangelogLines() {
+        lines.add("$(##) 1.12.2 | Fixed crashes when opening clan list, and other issues");
+
         lines.add("$(#) 1.12.0 | Dock bags, first person paw, and more!");
         lines.add("Greetings, I took and i'm still on a break to focus more on my personal life, but i'm still here.\n" +
                 "\n" +
