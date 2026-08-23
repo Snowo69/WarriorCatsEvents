@@ -1,7 +1,9 @@
 package net.snowteb.warriorcats_events.network.packet.s2c.clan;
 
 import io.netty.buffer.Unpooled;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.network.codec.StreamCodec;
@@ -33,13 +35,13 @@ public class S2CClanListPacket implements CustomPacketPayload {
         this.territoryMap = territoryMap;
     }
 
-    public static int measure(S2CClanListPacket msg) {
-        FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
+    public static int measure(S2CClanListPacket msg, RegistryAccess registryAccess) {
+        RegistryFriendlyByteBuf buf = new RegistryFriendlyByteBuf(Unpooled.buffer(), registryAccess);
         encode(msg, buf);
         return buf.readableBytes();
     }
 
-    public static void encode(S2CClanListPacket msg, FriendlyByteBuf buf) {
+    public static void encode(S2CClanListPacket msg, RegistryFriendlyByteBuf buf) {
         buf.writeInt(msg.clans.size());
         for (ClanInfo info : msg.clans) {
             buf.writeUUID(info.uuid);
@@ -76,7 +78,7 @@ public class S2CClanListPacket implements CustomPacketPayload {
             buf.writeInt(info.clanLogs.size());
             for (ClanInfo.ClientLogEntry log : info.clanLogs) {
                 buf.writeLong(log.gameTimeID);
-                buf.writeJsonWithCodec(ComponentSerialization.CODEC, log.message);
+                ComponentSerialization.STREAM_CODEC.encode(buf, log.message);
             }
 
             buf.writeInt(info.symbolIndex);
@@ -89,7 +91,7 @@ public class S2CClanListPacket implements CustomPacketPayload {
     }
 
 
-    public static S2CClanListPacket decode(FriendlyByteBuf buf) {
+    public static S2CClanListPacket decode(RegistryFriendlyByteBuf buf) {
         int size = buf.readInt();
         List<ClanInfo> list = new ArrayList<>();
 
@@ -136,7 +138,7 @@ public class S2CClanListPacket implements CustomPacketPayload {
 
             for (int j = 0; j < logSize; j++) {
                 long time = buf.readLong();
-                Component message = buf.readJsonWithCodec(ComponentSerialization.CODEC);
+                Component message = ComponentSerialization.STREAM_CODEC.decode(buf);
                 logs.add(new ClanInfo.ClientLogEntry(time, message));
             }
 
@@ -170,7 +172,7 @@ public class S2CClanListPacket implements CustomPacketPayload {
     public static final Type<S2CClanListPacket> TYPE =
             new Type<>(ResourceLocation.fromNamespaceAndPath(WarriorCatsEvents.MODID, "clan_list"));
 
-    public static final StreamCodec<FriendlyByteBuf, S2CClanListPacket> CODEC =
+    public static final StreamCodec<RegistryFriendlyByteBuf, S2CClanListPacket> CODEC =
             StreamCodec.of(
                     (buf, pkt) -> encode(pkt, buf),
                     buf -> decode(buf)

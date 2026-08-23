@@ -5,6 +5,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -223,10 +224,11 @@ public class ClientPacketHandles {
 
     public static void measurePacketSize(S2CClanListPacket msg) {
         if (Minecraft.getInstance().player != null) {
+            RegistryAccess registryAccess = Minecraft.getInstance().level.registryAccess();
             LocalPlayer localPlayer = Minecraft.getInstance().player;
             if (WarriorCatsEvents.Collaborators.isOwner(localPlayer.getUUID())) {
                 if (localPlayer.isSpectator()) {
-                    int size = S2CClanListPacket.measure(msg);
+                    int size = S2CClanListPacket.measure(msg, registryAccess);
                     String text = "Size: " + size/1000 + " kb";
                     localPlayer.sendSystemMessage(Component.literal(text));
                 }

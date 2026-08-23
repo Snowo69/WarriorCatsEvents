@@ -41,7 +41,7 @@ import java.util.concurrent.Executors;
 @Mod(WarriorCatsEvents.MODID)
 public class WarriorCatsEvents {
     public static final String MODID = "warriorcats_events";
-    public static final String MOD_VERSION = "1.12.0";
+    public static final String MOD_VERSION = "1.12.2";
     public static final Logger LOGGER = LogUtils.getLogger();
 
     public static final ExecutorService singleThreadExecutor = Executors.newSingleThreadExecutor();

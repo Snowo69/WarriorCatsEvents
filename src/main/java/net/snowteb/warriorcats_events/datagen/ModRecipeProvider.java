@@ -5,6 +5,7 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.common.conditions.IConditionBuilder;
@@ -721,7 +722,7 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.CAT_COLLAR.get(), 1)
                 .pattern("AAA")
                 .define('A', Items.LEATHER)
-                .unlockedBy("has_item", has(ItemTags.CREEPER_DROP_MUSIC_DISCS))
+                .unlockedBy("has_item", has(Items.LEATHER))
                 .save(pWriter);
 
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModBlocks.HERB_MIXING_ROCK.get(), 1)
@@ -858,6 +859,22 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.POPPY_SEEDS.get(), 1)
                 .requires(Items.POPPY)
                 .unlockedBy("has_item", has(Items.POPPY))
+                .save(pWriter);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.BEE_COSTUME.get(), 1)
+                .pattern("B B")
+                .pattern("CAC")
+                .pattern("B B")
+                .define('A', Items.BLACK_WOOL)
+                .define('B', Items.HONEYCOMB)
+                .define('C', Items.YELLOW_WOOL)
+                .unlockedBy("has_item", has(Items.HONEYCOMB))
+                .save(pWriter);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.CAT_BRACELET.get(), 1)
+                .pattern("AA")
+                .define('A', Items.LEATHER)
+                .unlockedBy("has_item", has(Items.LEATHER))
                 .save(pWriter);
 
 
