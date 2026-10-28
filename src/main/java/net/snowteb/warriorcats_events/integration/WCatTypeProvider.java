@@ -50,7 +50,7 @@ public class WCatTypeProvider extends TypeProvider<WCatEntity> {
                                 cap.getPlayerChimeraVariants(),
                                 cap.isOnGeneticalSkin(), cap.getVariantData());
 
-                clanData.playerMorphData.put(player.getUUID(), morphData);
+                clanData.getPlayer(player).setGenetics(morphData);
             });
 
             clanData.setDirty();

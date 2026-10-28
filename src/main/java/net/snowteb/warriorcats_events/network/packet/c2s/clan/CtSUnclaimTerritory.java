@@ -14,6 +14,9 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.attachments.ModAttachments;
 import net.snowteb.warriorcats_events.clan.ClanData;
+import net.snowteb.warriorcats_events.clan.ClanObjects;
+import net.snowteb.warriorcats_events.network.ModPackets;
+import net.snowteb.warriorcats_events.network.packet.s2c.clan.DisplayClanMenuMessage;
 
 import java.util.UUID;
 
@@ -44,34 +47,33 @@ public class CtSUnclaimTerritory implements CustomPacketPayload {
 
             UUID uuid = player.getData(ModAttachments.PLAYER_WCE_DATA).getCurrentClanUUID();
 
-            String morphName = player.getData(ModAttachments.PLAYER_WCE_DATA).getMorphName();
 
             if (player.level().dimension() != Level.OVERWORLD) {
-                player.sendSystemMessage(Component.translatable("territory.not_available_in_dimensions").withStyle(ChatFormatting.RED));
+                ModPackets.sendToPlayer(new DisplayClanMenuMessage(Component.translatable("territory.not_available_in_dimensions"),true), player);
                 return;
             }
 
             if (uuid.equals(ClanData.EMPTY_UUID)) {
-                player.sendSystemMessage(Component.translatable("clan.player_not_clan").withStyle(ChatFormatting.RED));
+                ModPackets.sendToPlayer(new DisplayClanMenuMessage(Component.translatable("clan.player_not_clan"),true), player);
                 return;
             }
 
             ClanData data = ClanData.get(overworldLevel);
             ClanData.Clan clan = data.getClan(uuid);
             if (clan == null) {
-                player.sendSystemMessage(Component.literal("Invalid clan provided.").withStyle(ChatFormatting.RED));
+                ModPackets.sendToPlayer(new DisplayClanMenuMessage(Component.literal("Invalid clan provided."),true), player);
                 return;
             }
 
             ChunkPos currentPosition = packet.chunkPos;
 
             if (!data.canManage(clan, player.getUUID())) {
-                player.sendSystemMessage(Component.translatable("clan.no_permissions").withStyle(ChatFormatting.RED));
+                ModPackets.sendToPlayer(new DisplayClanMenuMessage(Component.translatable("clan.no_permissions"),true), player);
                 return;
             }
 
             if (!clan.claimedTerritory.containsKey(currentPosition)) {
-                player.sendSystemMessage(Component.translatable("territory.not_claimed").withStyle(ChatFormatting.RED));
+                ModPackets.sendToPlayer(new DisplayClanMenuMessage(Component.translatable("territory.not_claimed"),true), player);
                 return;
             }
 
@@ -85,8 +87,8 @@ public class CtSUnclaimTerritory implements CustomPacketPayload {
 
             boolean result = data.unclaimChunk(clan.clanUUID, currentPosition, overworldLevel);
             if (result) {
-                data.registerLog(overworldLevel, clan.clanUUID, log);
-                player.sendSystemMessage(Component.translatable("territory.success_unclaimed").withStyle(ChatFormatting.GREEN));
+                data.registerLog(overworldLevel, clan.clanUUID, log, ClanObjects.ClanLogEntry.Type.OTHERS);
+                ModPackets.sendToPlayer(new DisplayClanMenuMessage(Component.translatable("territory.success_unclaimed"),false), player);
                 data.syncTerritoriesToClients(overworldLevel);
             } else {
                 player.sendSystemMessage(Component.literal("Territory couldn't be accessed.").withStyle(ChatFormatting.RED));

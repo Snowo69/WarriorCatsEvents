@@ -59,7 +59,6 @@ public class SpawnLocationScreen extends Screen {
             if (menuX < targetX) menuX = targetX;
         }
 
-//        pGuiGraphics.blit(BG_TEXTURE, 0, 0, 0, 0, this.width, this.height, this.width, this.height);
 
         this.renderPanorama(pGuiGraphics, pPartialTick);
         this.renderMenuBackground(pGuiGraphics);

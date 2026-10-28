@@ -36,6 +36,7 @@ import net.snowteb.warriorcats_events.block.custom.NestBlock;
 import net.snowteb.warriorcats_events.block.entity.FreshkillPileBlockEntity;
 import net.snowteb.warriorcats_events.block.entity.TreeStumpBlockEntity;
 import net.snowteb.warriorcats_events.clan.ClanData;
+import net.snowteb.warriorcats_events.clan.ClanObjects;
 import net.snowteb.warriorcats_events.entity.custom.MossBallEntity;
 import net.snowteb.warriorcats_events.item.ModItems;
 import net.snowteb.warriorcats_events.sound.ModSounds;
@@ -826,7 +827,7 @@ public class WCGoals {
                 ClanData data = ClanData.get(cat.getServer().overworld());
                 ClanData.Clan clan = data.getClan(cat.getClanUUID());
                 if (clan != null) {
-                    data.registerLog(cat.getServer().overworld(), clan.clanUUID, log);
+                    data.registerLog(cat.getServer().overworld(), clan.clanUUID, log, ClanObjects.ClanLogEntry.Type.OTHERS);
                 }
             }
         }
@@ -1968,7 +1969,7 @@ public class WCGoals {
                                                     .append(Component.literal(
                                                             String.format("X=%d, Z=%d", pos.x, pos.z)
                                                     ).withStyle(ChatFormatting.AQUA));
-                                            data.registerLog(cat.getServer().overworld(), clanUUID, log);
+                                            data.registerLog(cat.getServer().overworld(), clanUUID, log, ClanObjects.ClanLogEntry.Type.OTHERS);
 
                                             treeStumpBlock.resetTimer();
                                             sLevel.sendBlockUpdated(treeStumpBlock.getBlockPos(),
@@ -2008,7 +2009,7 @@ public class WCGoals {
                                                             .append(Component.literal(
                                                                     String.format("X=%d, Z=%d", pos.x, pos.z)
                                                             ).withStyle(ChatFormatting.AQUA));
-                                                    data.registerLog(cat.getServer().overworld(), clanUUID, log);
+                                                    data.registerLog(cat.getServer().overworld(), clanUUID, log, ClanObjects.ClanLogEntry.Type.OTHERS);
 
                                                     treeStumpBlock.resetTimer();
                                                     sLevel.sendBlockUpdated(treeStumpBlock.getBlockPos(),

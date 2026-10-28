@@ -58,6 +58,7 @@ import net.snowteb.warriorcats_events.attachments.ModAttachments;
 import net.snowteb.warriorcats_events.block.custom.NestBlock;
 import net.snowteb.warriorcats_events.block.entity.NestBlockEntity;
 import net.snowteb.warriorcats_events.clan.ClanData;
+import net.snowteb.warriorcats_events.clan.ClanObjects;
 import net.snowteb.warriorcats_events.damagesources.WCEDamageTypes;
 import net.snowteb.warriorcats_events.diseases.*;
 import net.snowteb.warriorcats_events.diseases.kinds.BrokenPaw;
@@ -1554,7 +1555,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity, Diseaseable<
                 mateName.copy(),
                 thisName.copy());
 
-        this.registerClanLog(message);
+        this.registerClanLog(message, ClanObjects.ClanLogEntry.Type.OTHERS);
 
         if (Objects.equals(partner.getMate(), Component.literal("None"))) {
             partner.setMate(this.getCustomName());
@@ -1568,7 +1569,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity, Diseaseable<
 
 
     /**
-     * Called every tick.
+     * Called every tickkkk.
      */
     @Override
     public void aiStep() {
@@ -1993,6 +1994,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity, Diseaseable<
     public void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
 
+        this.getGeneticsModule().loadGeneticsNBT(tag);
 
         if (tag.contains("Family")) {
             CompoundTag family = tag.getCompound("Family");
@@ -2152,8 +2154,6 @@ public class WCatEntity extends TamableAnimal implements GeoEntity, Diseaseable<
             this.setClanUUID(ClanData.EMPTY_UUID);
         }
 
-
-        this.getGeneticsModule().loadGeneticsNBT(tag);
 
         if (tag.contains("StoredFatherGenetics")) {
 
@@ -2793,7 +2793,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity, Diseaseable<
                 (this.hasCustomName() ? this.getCustomName().copy() : Component.translatable("generic.a_she_cat")),
                 litterSize);
 
-        this.registerClanLog(message);
+        this.registerClanLog(message, ClanObjects.ClanLogEntry.Type.OTHERS);
 
 
         for (int i = 0; i < litterSize; i++) {
@@ -2849,7 +2849,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity, Diseaseable<
 
                     /**
                      * This is so that kits born in the same litter dont have the same prefix when they are born.
-                     * Since all this can happen in the same tick, then they all might share the same name, that's why this exists.
+                     * Since all this can happen in the same tickkkk, then they all might share the same name, that's why this exists.
                      */
                     if (prefixSet[k].equals(lastPrefix)) {
                         k = (int) (kit.random.nextInt(prefixSet.length) / 1.5F);
@@ -2876,7 +2876,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity, Diseaseable<
                             Component.empty());
 
                     owner.sendSystemMessage(messageKit);
-                    this.registerClanLog(messageKit);
+                    this.registerClanLog(messageKit, ClanObjects.ClanLogEntry.Type.OTHERS);
 
                     kit.rewardGeneticsAdvancements();
 
@@ -2891,7 +2891,6 @@ public class WCatEntity extends TamableAnimal implements GeoEntity, Diseaseable<
 
                 kit.setHomePosition(this.getHomePosition());
                 kit.setClan(this.getClan());
-                kit.setClanUUID(this.getClanUUID());
 
                 LivingEntity father = this.getMateEntity();
 
@@ -2915,6 +2914,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity, Diseaseable<
                     kit.setForbiddingFutureGensFromMatingPlayer(true);
                 }
 
+                kit.setClanUUID(this.getClanUUID());
 
                 server.addFreshEntity(kit);
             }
@@ -2961,7 +2961,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity, Diseaseable<
             }
 
             this.updateClanCatData();
-            this.registerClanLog(message);
+            this.registerClanLog(message, ClanObjects.ClanLogEntry.Type.OTHERS);
 
 
             this.updateNest();
@@ -3533,7 +3533,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity, Diseaseable<
         }
 
         this.updateClanCatData();
-        this.registerClanLog(message);
+        this.registerClanLog(message, ClanObjects.ClanLogEntry.Type.OTHERS);
 
 
         this.updateNest();
@@ -3851,18 +3851,29 @@ public class WCatEntity extends TamableAnimal implements GeoEntity, Diseaseable<
         return super.isInvulnerableTo(source);
     }
 
-    public void registerClanLog(Component message) {
+    public void registerClanLog(Component message, ClanObjects.ClanLogEntry.Type type) {
 
         if (this.level() instanceof ServerLevel sLevel) {
             ClanData data = ClanData.get(sLevel);
             ClanData.Clan clan = data.getClan(this.getClanUUID());
 
             if (clan != null) {
-                data.registerLog(sLevel, clan.clanUUID, message);
+                data.registerLog(sLevel, clan.clanUUID, message, type);
                 data.setDirty();
             }
         }
 
+    }
+
+    public void disown() {
+        this.setTame(false, false);
+        this.setOwnerUUID(null);
+        this.setClanUUID(ClanData.EMPTY_UUID);
+        this.setClan(Component.translatable("generic.no_clan"));
+        this.setRank(NONE);
+        this.setHomePosition(null);
+        this.mode = CatMode.WANDER;
+        this.updateClanCatData();
     }
 
     public void updateClanCatData() {
@@ -3874,8 +3885,10 @@ public class WCatEntity extends TamableAnimal implements GeoEntity, Diseaseable<
                 if (this.getRank() != NONE) {
                     data.addClanCat(clan, this);
                 } else {
-                    data.removeClanCatFromClan(clan.clanUUID, this);
-                    this.setClan(Component.empty());
+                    if (clan.clanCats.containsKey(this.getUUID())) {
+                        data.removeClanCatFromClan(clan.clanUUID, this);
+                        this.setClan(Component.empty());
+                    }
                 }
             }
         }
@@ -4005,7 +4018,7 @@ public class WCatEntity extends TamableAnimal implements GeoEntity, Diseaseable<
                 .append(". At: ")
                 .append(Component.literal(String.format("X=%.0f, Y=%.0f, Z=%.0f",
                         this.getX(), this.getY(), this.getZ())));
-        this.registerClanLog(ClanData.plainComponent(message));
+        this.registerClanLog(ClanData.plainComponent(message), ClanObjects.ClanLogEntry.Type.DEATHS);
 
         if (this.level() instanceof ServerLevel sLevel) {
             if (!this.getClanUUID().equals(ClanData.EMPTY_UUID)) {

@@ -17,8 +17,6 @@ import net.snowteb.warriorcats_events.entity.custom.wcat.WCatEntity;
 import java.util.List;
 import java.util.UUID;
 
-import static net.snowteb.warriorcats_events.screen.screens.CreateClanScreen.BG_TEXTURE;
-
 public class CreateMorphChimeraScreen extends BaseMorphScreen {
 
     private float animationTime = 0f;

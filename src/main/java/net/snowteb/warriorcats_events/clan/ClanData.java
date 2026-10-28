@@ -5,6 +5,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -22,23 +23,50 @@ import net.minecraft.world.level.saveddata.SavedData;
 import net.snowteb.warriorcats_events.attachments.CapabilityManager;
 import net.snowteb.warriorcats_events.attachments.ModAttachments;
 import net.snowteb.warriorcats_events.block.entity.TreeStumpBlockEntity;
+import net.snowteb.warriorcats_events.client.ClientClans;
 import net.snowteb.warriorcats_events.entity.custom.wcat.WCGenetics;
 import net.snowteb.warriorcats_events.entity.custom.wcat.WCatEntity;
 import net.snowteb.warriorcats_events.network.ModPackets;
 import net.snowteb.warriorcats_events.network.packet.s2c.clan.S2CSyncClanDataPacket;
 import net.snowteb.warriorcats_events.network.packet.s2c.clan.SyncTerritoryToClients;
+import net.snowteb.warriorcats_events.network.packet.s2c.clan.UpdateClanEntryPacket;
 import net.snowteb.warriorcats_events.zconfig.WCEServerConfig;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class ClanData extends SavedData {
     public Map<UUID, Clan> clans = new HashMap<>();
-    public Map<UUID, String> playerMorphNames = new HashMap<>();
-    public Map<UUID, WCGenetics.PackedGeneticData> playerMorphData = new HashMap<>();
+//    public Map<UUID, String> playerMorphNames = new HashMap<>();
+//    public Map<UUID, WCGenetics.PackedGeneticData> playerMorphData = new HashMap<>();
+//
+    public Map<UUID, ClanObjects.Player> players = new HashMap<>();
 
+    public Map<UUID, ClanObjects.JoinRequest> pendingJoins = new HashMap<>();
 
+    public ClanObjects.Player getPlayer(@Nonnull Player player) {
+        if (!players.containsKey(player.getUUID())) {
+            UUID uuid = player.getUUID();
+            String username = player.getName().getString();
+            String morphName = player.getData(ModAttachments.PLAYER_WCE_DATA).getMorphName();
+
+            WCGenetics.PackedGeneticData data = player.getData(ModAttachments.PLAYER_WCE_DATA).getGeneticData();
+
+            players.put(uuid, new ClanObjects.Player(username, morphName, data, player.getUUID()));
+        }
+
+        return players.get(player.getUUID());
+    }
+
+    public ClanObjects.Player getPlayer(UUID uuid) {
+        if (!players.containsKey(uuid)) {
+            players.put(uuid, new ClanObjects.Player());
+        }
+
+        return players.get(uuid);
+    }
 
     public static final UUID EMPTY_UUID = UUID.fromString("00000000-0000-0000-0000-000000000000");
 
@@ -53,40 +81,43 @@ public class ClanData extends SavedData {
         ELDER,
         QUEEN,
         APPRENTICE,
-        KIT
+        KIT,
+        ;
+
+        public String getString() {
+            return switch (this) {
+                case LEADER -> Component.translatable("generic.rank.leader").getString();
+                case DEPUTY -> Component.translatable("generic.rank.deputy").getString();
+                case MEDICINE -> Component.translatable("generic.rank.medicine").getString();
+                case MEDICINEAPP -> Component.translatable("generic.rank.medicineapp").getString();
+                case WARRIOR -> Component.translatable("generic.rank.warrior").getString();
+                case ELDER -> Component.translatable("generic.rank.elder").getString();
+                case QUEEN -> Component.translatable("generic.rank.queen").getString();
+                case APPRENTICE -> Component.translatable("generic.rank.apprentice").getString();
+                case KIT -> Component.translatable("generic.rank.kit").getString();
+            };
+        }
     }
 
     public enum ClanPermissions {
         OWNER,
         ADMIN,
         MEMBER,
-        GUEST
-    }
+        GUEST,
+        ;
 
-
-    public static class ClanLogEntry {
-        public long gameTimeID;
-        public Component message;
-
-        public ClanLogEntry(long gameTimeID, Component message) {
-            this.gameTimeID = gameTimeID;
-            this.message = message;
-        }
-
-        public CompoundTag save(HolderLookup.Provider provider) {
-            CompoundTag tag = new CompoundTag();
-            tag.putLong("Time", gameTimeID);
-            tag.putString("Message", Component.Serializer.toJson(message, provider));
-            return tag;
-        }
-
-        public static ClanLogEntry load(CompoundTag tag, HolderLookup.Provider provider) {
-            return new ClanLogEntry(
-                    tag.getLong("Time"),
-                    Component.Serializer.fromJson(tag.getString("Message"), provider)
-            );
+        public String getString() {
+            return switch (this) {
+                case OWNER -> Component.translatable("clan.perms.owner").getString();
+                case ADMIN -> Component.translatable("clan.perms.admin").getString();
+                case MEMBER -> Component.translatable("clan.perms.member").getString();
+                case GUEST -> Component.translatable("clan.perms.guest").getString();
+            };
         }
     }
+
+
+
 
 
     public static class ClanCat {
@@ -98,6 +129,7 @@ public class ClanData extends SavedData {
         public Component catAge;
         public String catRank;
         public Component catParents;
+        public BlockPos lastSeen;
 
         public boolean onGeneticalSkin = false;
         public WCGenetics genetics = new WCGenetics();
@@ -121,6 +153,7 @@ public class ClanData extends SavedData {
                     : Component.translatable("generic.wcat.fully_grown");
 
             clanCat.catRank = cat.getRank().name();
+            clanCat.lastSeen = cat.blockPosition();
 
 
             clanCat.onGeneticalSkin = cat.isOnGeneticalSkin();
@@ -166,72 +199,16 @@ public class ClanData extends SavedData {
             tag.putString("Age", Component.Serializer.toJson(this.catAge, provider));
             tag.putString("Rank", this.catRank);
             tag.putString("Parents", Component.Serializer.toJson(this.catParents, provider));
+            tag.putInt("GenderValue", this.catGenderValue);
+            tag.put("LastSeen", NbtUtils.writeBlockPos(this.lastSeen));
 
-            {
-                CompoundTag geneticsTag = new CompoundTag();
+            WCGenetics.PackedGeneticData geneticData = new WCGenetics.PackedGeneticData(
+                    genetics, variants, chimeraGenetics, chimeraVariants,
+                    onGeneticalSkin, catVariant
+            );
 
-                geneticsTag.putBoolean("Genetical", onGeneticalSkin);
+            WCGenetics.saveModuleNBT(tag, geneticData);
 
-                geneticsTag.putString("ChestFur", genetics.chestFur);
-                geneticsTag.putString("BellyFur", genetics.bellyFur);
-                geneticsTag.putString("LegsFur", genetics.legsFur);
-                geneticsTag.putString("HeadFur", genetics.headFur);
-                geneticsTag.putString("CheekFur", genetics.cheekFur);
-                geneticsTag.putString("BackFur", genetics.backFur);
-                geneticsTag.putString("TailFur", genetics.tailFur);
-                geneticsTag.putString("Bobtail", genetics.bobtail);
-
-                geneticsTag.putString("Base", genetics.base);
-                geneticsTag.putString("OrangeBase", genetics.orangeBase);
-                geneticsTag.putString("WhiteRatio", genetics.whiteRatio);
-                geneticsTag.putString("Albino", genetics.albino);
-                geneticsTag.putString("Dilute", genetics.dilute);
-                geneticsTag.putString("Agouti", genetics.agouti);
-                geneticsTag.putString("TabbyStripes", genetics.tabbyStripes);
-                geneticsTag.putString("EyeColorLeft", variants.eyeColorLeft);
-                geneticsTag.putString("EyeColorRight", variants.eyeColorRight);
-                geneticsTag.putString("EyesAnomaly", genetics.eyesAnomaly);
-                geneticsTag.putString("Silver", genetics.silver);
-
-                geneticsTag.putInt("Rufousing", variants.rufousingVariant);
-                geneticsTag.putInt("BlueRufousing", variants.blueRufousingVariant);
-                geneticsTag.putInt("OrangeBaseVariant", variants.orangeVar);
-                geneticsTag.putInt("WhiteRatioVariant", variants.whiteVar);
-                geneticsTag.putInt("AlbinoVariant", variants.albinoVar);
-                geneticsTag.putInt("SilverVariant", variants.silverVar);
-
-                geneticsTag.putInt("TabbyStripesVariant", variants.tabbyVar);
-                geneticsTag.putInt("EyeColorVariantLeft", variants.leftEyeVar);
-                geneticsTag.putInt("EyeColorVariantRight", variants.rightEyeVar);
-                geneticsTag.putInt("Noise", variants.noise);
-                geneticsTag.putFloat("Size", variants.size);
-                geneticsTag.putFloat("Scars", variants.scars);
-                geneticsTag.putInt("SkinColor", variants.skin_color);
-
-                geneticsTag.putString("BaseChimera", chimeraGenetics.base);
-                geneticsTag.putString("OrangeBaseChimera", chimeraGenetics.orangeBase);
-                geneticsTag.putString("WhiteRatioChimera", chimeraGenetics.whiteRatio);
-                geneticsTag.putString("AlbinoChimera", chimeraGenetics.albino);
-                geneticsTag.putString("DiluteChimera", chimeraGenetics.dilute);
-                geneticsTag.putString("AgoutiChimera", chimeraGenetics.agouti);
-                geneticsTag.putString("TabbyStripesChimera", chimeraGenetics.tabbyStripes);
-
-                geneticsTag.putInt("RufousingChimera", chimeraVariants.rufousingVariant);
-                geneticsTag.putInt("BlueRufousingChimera", chimeraVariants.blueRufousingVariant);
-                geneticsTag.putInt("OrangeBaseVariantChimera", chimeraVariants.orangeVar);
-                geneticsTag.putInt("WhiteRatioVariantChimera", chimeraVariants.whiteVar);
-                geneticsTag.putInt("AlbinoVariantChimera", chimeraVariants.albinoVar);
-
-                geneticsTag.putInt("TabbyStripesVariantChimera", chimeraVariants.tabbyVar);
-                geneticsTag.putInt("NoiseChimera", chimeraVariants.noise);
-
-                geneticsTag.putString("Chimera", chimeraGenetics.chimeraGene);
-                geneticsTag.putInt("ChimeraVariant", chimeraVariants.chimeraVariant);
-                geneticsTag.putInt("SilverVariantChimera", chimeraVariants.silverVar);
-                geneticsTag.putString("SilverChimera", chimeraGenetics.silver);
-
-                tag.put("Genetics", geneticsTag);
-            }
 
             return tag;
         }
@@ -246,7 +223,10 @@ public class ClanData extends SavedData {
             cat.catAge = Component.Serializer.fromJson(tag.getString("Age"), provider);
             cat.catRank = tag.getString("Rank");
             cat.catParents = Component.Serializer.fromJson(tag.getString("Parents"), provider);
+            cat.catGenderValue = tag.getInt("GenderValue");
+            cat.lastSeen = NbtUtils.readBlockPos(tag, "LastSeen").orElse(BlockPos.ZERO);
 
+            // DEPRECATED
             {
                 if (tag.contains("Genetics")) {
                     CompoundTag geneticsTag = tag.getCompound("Genetics");
@@ -328,6 +308,16 @@ public class ClanData extends SavedData {
 
                 }
             }
+            // DEPRECATED
+
+            WCGenetics.PackedGeneticData data = WCGenetics.loadModuleNBT(tag);
+            if (data != null) {
+                cat.genetics = new WCGenetics(data.genetics);
+                cat.variants = new WCGenetics.GeneticalVariants(data.variants);
+                cat.chimeraGenetics = new WCGenetics(data.chimerasGenetics);
+                cat.chimeraVariants = new WCGenetics.GeneticalChimeraVariants(data.chimeraVariants);
+                cat.onGeneticalSkin = data.onGeneticalSkin;
+            }
 
             return cat;
         }
@@ -335,21 +325,252 @@ public class ClanData extends SavedData {
     }
 
     public static class Clan {
-        public UUID clanUUID;
-        public String name;
-        public String clanBioSentence;
+        public UUID clanUUID = ClanData.EMPTY_UUID;
+        public String name = "";
+        public String clanBioSentence = "";
         public int clanSymbolIndex;
         public int color;
-        UUID leader;
-        public String leaderName;
-        public String normalizedName;
-        public Map<UUID, ClanPlayerRank> members = new HashMap<>();
-        public Map<UUID, ClanPermissions> memberPerms = new HashMap<>();
+        UUID leader = ClanData.EMPTY_UUID;
+        public String leaderName = "";
+        public String normalizedName = "";
+        public Map<UUID, Member> members = new HashMap<>();
         public Map<UUID, ClanCat> clanCats = new HashMap<>();
-        public List<ClanLogEntry> logs = new ArrayList<>();
+        public List<ClanObjects.ClanLogEntry> logs = new ArrayList<>();
+        public List<ClanObjects.JoinRequest> joinRequests = new ArrayList<>();
 
         public Map<ChunkPos, TerritoryChunk> claimedTerritory = new HashMap<>();
+        @Nullable
         public ChunkPos coreTerritory;
+
+        public String leaderClanMessage = "";
+
+        public boolean allowJoinRequests = true;
+        public boolean publicClanLogs = true;
+        public boolean protectTerritory = true;
+        public boolean protectContainers = true;
+
+
+        public static class Member {
+            private ClanPlayerRank memberRank;
+            private ClanPermissions memberPermissions;
+
+            public Member(ClanPlayerRank memberRank, ClanPermissions memberPermissions) {
+                this.memberRank = memberRank;
+                this.memberPermissions = memberPermissions;
+            }
+
+            public static Member empty() {
+                return new Member(ClanPlayerRank.WARRIOR, ClanPermissions.GUEST);
+            }
+
+            public ClanPlayerRank getRank() {
+                return memberRank;
+            }
+
+            public ClanPermissions getPermissions() {
+                return memberPermissions;
+            }
+
+            public void setPermissions(ClanPermissions memberPermissions) {
+                this.memberPermissions = memberPermissions;
+            }
+
+            public void setRank(ClanPlayerRank memberRank) {
+                this.memberRank = memberRank;
+            }
+        }
+
+        public void serializeNBT(CompoundTag clanTag, HolderLookup.Provider provider) {
+            serializeClan(clanTag, provider);
+            serializeTerritory(clanTag);
+        }
+
+        public void serializeClan(CompoundTag clanTag, HolderLookup.Provider provider) {
+            clanTag.putUUID("ClanUUID", this.clanUUID);
+            clanTag.putString("Name", this.name);
+            clanTag.putInt("Color", this.color);
+
+            clanTag.putUUID("Leader", this.leader);
+            clanTag.putString("NameKey", this.normalizedName);
+            clanTag.putString("LeaderName", this.leaderName);
+            clanTag.putString("ClanBio", this.clanBioSentence);
+            clanTag.putInt("SymbolIndex", this.clanSymbolIndex);
+            clanTag.putString("LeaderMessage", this.leaderClanMessage);
+            clanTag.putBoolean("AllowJoinRequests", this.allowJoinRequests);
+            clanTag.putBoolean("PublicClanLogs", this.publicClanLogs);
+            clanTag.putBoolean("ProtectTerritory", this.protectTerritory);
+            clanTag.putBoolean("ProtectContainers", this.protectContainers);
+
+            // NEW
+            ListTag members = new ListTag();
+            for (var entry : this.members.entrySet()) {
+                CompoundTag m = new CompoundTag();
+                m.putUUID("UUID", entry.getKey());
+
+                m.putString("Rank", entry.getValue().getRank().name());
+                m.putString("Perms", entry.getValue().getPermissions().name());
+
+                members.add(m);
+            }
+            clanTag.put("ClanMembers", members);
+            // NEW
+
+            clanTag.put("Members", members);
+
+            ListTag catList = new ListTag();
+            for (ClanCat cat : this.clanCats.values()) {
+                catList.add(cat.save(provider));
+            }
+            clanTag.put("ClanCats", catList);
+
+
+            ListTag logList = new ListTag();
+            for (ClanObjects.ClanLogEntry log : this.logs) {
+                logList.add(log.save(provider));
+            }
+            clanTag.put("Logs", logList);
+
+
+//            ListTag permsList = new ListTag();
+//            for (var entry : this.memberPerms.entrySet()) {
+//                CompoundTag p = new CompoundTag();
+//                p.putUUID("UUID", entry.getKey());
+//                p.putString("Perm", entry.getValue().name());
+//                permsList.add(p);
+//            }
+//            clanTag.put("Permissions", permsList);
+
+            ClanObjects.JoinRequest.serializeRequests(joinRequests, clanTag, provider);
+        }
+
+        private void serializeTerritory(CompoundTag clanTag) {
+            CompoundTag territoryTag = saveTerritory(this.claimedTerritory);
+            clanTag.put("Territory", territoryTag);
+
+            if (this.coreTerritory != null) {
+                CompoundTag coreTag = new CompoundTag();
+                coreTag.putInt("x", this.coreTerritory.x);
+                coreTag.putInt("z", this.coreTerritory.z);
+
+                clanTag.put("CoreTerritory", coreTag);
+            }
+        }
+
+        public static Clan deserializeNBT(CompoundTag clanTag, HolderLookup.Provider provider) {
+            Clan clan = new Clan();
+
+            deserializeClan(clanTag, clan, provider);
+            deserializeTerritory(clanTag, clan);
+
+            return clan;
+        }
+
+        public static void deserializeClan(CompoundTag clanTag, Clan clan, HolderLookup.Provider provider) {
+            clan.clanUUID = clanTag.getUUID("ClanUUID");
+            clan.name = clanTag.getString("Name");
+            clan.color = clanTag.getInt("Color");
+            clan.leader = clanTag.getUUID("Leader");
+            clan.leaderName = clanTag.getString("LeaderName");
+            clan.clanBioSentence = clanTag.getString("ClanBio");
+            clan.clanSymbolIndex = clanTag.getInt("SymbolIndex");
+            clan.normalizedName = clanTag.getString("NameKey");
+            clan.leaderClanMessage = clanTag.getString("LeaderMessage");
+            if (clanTag.contains("AllowJoinRequests")) {
+                clan.allowJoinRequests = clanTag.getBoolean("AllowJoinRequests");
+            }
+            if (clanTag.contains("PublicClanLogs")) {
+                clan.publicClanLogs = clanTag.getBoolean("PublicClanLogs");
+            }
+            if (clanTag.contains("ProtectTerritory")) {
+                clan.protectTerritory = clanTag.getBoolean("ProtectTerritory");
+            }
+            if (clanTag.contains("ProtectContainers")) {
+                clan.protectContainers = clanTag.getBoolean("ProtectContainers");
+            }
+
+            // DEPRECATED
+            clan.members = new HashMap<>();
+            ListTag members = clanTag.getList("Members", Tag.TAG_COMPOUND);
+            for (Tag m : members) {
+                CompoundTag mt = (CompoundTag) m;
+                ClanPlayerRank rank = ClanPlayerRank.values()[mt.getInt("Rank")];
+                Member member = Member.empty();
+                member.setRank(rank);
+                clan.members.put(mt.getUUID("UUID"), member);
+            }
+            // DEPRECATED
+
+            ListTag catList = clanTag.getList("ClanCats", Tag.TAG_COMPOUND);
+            for (int i = 0; i < catList.size(); i++) {
+                CompoundTag catTag = catList.getCompound(i);
+                ClanCat cat = ClanCat.load(catTag, provider);
+
+                clan.clanCats.put(cat.catUUID, cat);
+            }
+
+
+            if (clanTag.contains("Logs", Tag.TAG_LIST)) {
+                ListTag logList = clanTag.getList("Logs", Tag.TAG_COMPOUND);
+                for (int i = 0; i < logList.size(); i++) {
+                    CompoundTag logTag = logList.getCompound(i);
+                    clan.logs.add(ClanObjects.ClanLogEntry.load(logTag, provider));
+                }
+            }
+
+            // DEPRECATED
+            if (clanTag.contains("Permissions", Tag.TAG_LIST)) {
+                ListTag permsList = clanTag.getList("Permissions", Tag.TAG_COMPOUND);
+                for (Tag p : permsList) {
+                    CompoundTag pt = (CompoundTag) p;
+                    ClanPermissions perms = ClanPermissions.valueOf(pt.getString("Perm"));
+                    UUID uuid = pt.getUUID("UUID");
+                    if (clan.members.get(uuid) != null) {
+                        clan.members.get(uuid).setPermissions(perms);
+                    }
+                }
+            }
+            // DEPRECATED
+
+            // NEW
+            if (clanTag.contains("ClanMembers", Tag.TAG_LIST)) {
+                clan.members = new HashMap<>();
+                ListTag memberList = clanTag.getList("ClanMembers", Tag.TAG_COMPOUND);
+                for (Tag p : memberList) {
+                    CompoundTag pt = (CompoundTag) p;
+
+                    UUID uuid = pt.getUUID("UUID");
+
+                    ClanPermissions perms = ClanPermissions.GUEST;
+                    if (pt.contains("Perms")) {
+                        perms = ClanPermissions.valueOf(pt.getString("Perms"));
+                    }
+                    ClanPlayerRank rank = ClanPlayerRank.WARRIOR;
+                    if (pt.contains("Rank")) {
+                        rank = ClanPlayerRank.valueOf(pt.getString("Rank"));
+                    }
+
+                    clan.members.put(uuid, new Member(rank, perms));
+                }
+            }
+            // NEW
+
+            clan.joinRequests = ClanObjects.JoinRequest.deserializeRequests(clanTag, provider);
+        }
+
+        private static void deserializeTerritory(CompoundTag clanTag, Clan clan) {
+            if (clanTag.contains("Territory", Tag.TAG_COMPOUND)) {
+                clan.claimedTerritory = loadTerritory(clanTag.getCompound("Territory"));
+            }
+
+            if (clanTag.contains("CoreTerritory", Tag.TAG_COMPOUND)) {
+                CompoundTag coreTag = clanTag.getCompound("CoreTerritory");
+
+                int x = coreTag.getInt("x");
+                int z = coreTag.getInt("z");
+
+                clan.coreTerritory = new ChunkPos(x, z);
+            }
+        }
     }
 
 
@@ -359,26 +580,25 @@ public class ClanData extends SavedData {
 
 
 
-
-
-    public static boolean isInEnemyTerritory(ServerPlayer player, ChunkPos pos) {
+    @Nullable
+    public static Clan getOwnerOfTerritory(ServerPlayer player, ChunkPos pos) {
         ClanData data = ClanData.get(player.serverLevel());
 
         UUID playerClanUUID = player.getData(ModAttachments.PLAYER_WCE_DATA).getCurrentClanUUID();
 
-        for (ClanData.Clan clan : data.clans.values()) {
+        for (Clan clan : data.clans.values()) {
             if (clan.claimedTerritory.containsKey(pos)) {
                 if (!clan.clanUUID.equals(playerClanUUID)) {
-                    return true;
+                    return clan;
                 } else {
                     if (!data.canCommandWarriors(clan, player.getUUID())) {
-                        return true;
+                        return clan;
                     }
                 }
             }
         }
 
-        return false;
+        return null;
     }
 
     public static class TerritoryChunk {
@@ -522,6 +742,18 @@ public class ClanData extends SavedData {
         clan.claimedTerritory.remove(pos);
 
         removeTerritoryNotConnected(clan, level);
+
+        setDirty();
+        return true;
+    }
+
+    public boolean renameChunk(UUID clanUUID, ChunkPos pos, ServerLevel level, String newName) {
+        Clan clan = getClan(clanUUID);
+        if (clan == null) return false;
+
+        if (!clan.claimedTerritory.containsKey(pos)) return false;
+
+        clan.claimedTerritory.get(pos).name = newName;
 
         setDirty();
         return true;
@@ -724,8 +956,7 @@ public class ClanData extends SavedData {
 
         createNormalizedName(clan, name);
 
-        clan.members.put(leader, ClanPlayerRank.LEADER);
-        clan.memberPerms.put(leader, ClanPermissions.OWNER);
+        clan.members.put(leader, new Clan.Member(ClanPlayerRank.LEADER, ClanPermissions.OWNER));
 
         clans.put(clan.clanUUID, clan);
 
@@ -817,6 +1048,7 @@ public class ClanData extends SavedData {
     public boolean addClanCat(Clan clan, WCatEntity cat) {
         if (clan == null) return false;
         if (cat == null) return false;
+        if (cat.getRank() == WCatEntity.Rank.NONE) return false;
 
         ClanCat clanCat = ClanCat.buildCat(cat);
 
@@ -829,6 +1061,7 @@ public class ClanData extends SavedData {
         if (cat == null) return false;
         Clan clan = getClan(cat.getClanUUID());
         if (clan == null) return false;
+        if (cat.getRank() == WCatEntity.Rank.NONE) return false;
 
         for (Clan clan2 : clans.values()) {
             clan2.clanCats.remove(cat.getUUID());
@@ -843,18 +1076,22 @@ public class ClanData extends SavedData {
         Clan clan = getClan(clanUUID);
         if (clan == null) return false;
 
+        if (clan.clanCats.remove(cat.getUUID()) != null) {
 
-        Component catLeftClanLog1 = Component.translatable("clan.cat_left_clan",
-                cat.hasCustomName() ? cat.getCustomName().copy() : Component.translatable("generic.catname"),
-                Component.literal(clan.name).withStyle(Style.EMPTY.withColor(clan.color)));
+            Component catLeftClanLog1 = Component.translatable("clan.cat_left_clan",
+                    cat.hasCustomName() ? cat.getCustomName().copy() : Component.translatable("generic.catname"),
+                    Component.literal(clan.name).withStyle(Style.EMPTY.withColor(clan.color)));
 
-        if (cat.level() instanceof ServerLevel serverLevel) {
-            this.registerLog(serverLevel, clan.clanUUID, catLeftClanLog1);
+            if (cat.level() instanceof ServerLevel serverLevel) {
+                this.registerLog(serverLevel, clan.clanUUID, catLeftClanLog1, ClanObjects.ClanLogEntry.Type.OTHERS);
+            }
+
+            setDirty();
+
+            return true;
         }
 
-        clan.clanCats.remove(cat.getUUID());
-        setDirty();
-        return true;
+        return false;
     }
 
     public boolean changeMemberPermissions(ServerPlayer player, UUID clanUUID, ClanPermissions permissions) {
@@ -863,15 +1100,15 @@ public class ClanData extends SavedData {
         if (player == null) return false;
 
         UUID playerUUID = player.getUUID();
-        if (!clan.memberPerms.containsKey(playerUUID)) return false;
+        if (!clan.members.containsKey(playerUUID)) return false;
 
-        clan.memberPerms.put(playerUUID, permissions);
+        clan.members.get(playerUUID).setPermissions(permissions);
 
         Component playerJoinedLog1 = Component.translatable("clan.member_perms",
                 Component.literal(player.getName().getString()).withStyle(ChatFormatting.YELLOW),
                 Component.literal(permissions.name()).withStyle(ChatFormatting.RED));
 
-        this.registerLog(player.serverLevel().getServer().overworld(), clan.clanUUID, playerJoinedLog1);
+        this.registerLog(player.serverLevel().getServer().overworld(), clan.clanUUID, playerJoinedLog1, ClanObjects.ClanLogEntry.Type.PLAYERS);
 
         Component message = Component.translatable("clan.player_set_perms",
                 Component.literal(permissions.name()).withStyle(ChatFormatting.RED),
@@ -888,9 +1125,9 @@ public class ClanData extends SavedData {
     public boolean changeMemberPermissions(UUID playerUUID, UUID clanUUID, ClanPermissions permissions) {
         Clan clan = getClan(clanUUID);
         if (clan == null) return false;
-        if (!clan.memberPerms.containsKey(playerUUID)) return false;
+        if (!clan.members.containsKey(playerUUID)) return false;
 
-        clan.memberPerms.put(playerUUID, permissions);
+        clan.members.get(playerUUID).setPermissions(permissions);
 
         setDirty();
 
@@ -905,8 +1142,7 @@ public class ClanData extends SavedData {
         UUID playerUUID = player.getUUID();
         if (clan.members.containsKey(playerUUID)) return false;
 
-        clan.members.put(playerUUID, rank);
-        clan.memberPerms.put(playerUUID, ClanPermissions.GUEST);
+        clan.members.put(playerUUID, new Clan.Member(rank, ClanPermissions.GUEST));
 
         CapabilityManager.attachmentProvider(player, ModAttachments.PLAYER_WCE_DATA, cap -> {
             cap.setClanName(clan.name);
@@ -928,7 +1164,7 @@ public class ClanData extends SavedData {
                     Component.literal(clan.name).withStyle(Style.EMPTY.withColor(clan.color))
             );
 
-            this.registerLog(player.serverLevel().getServer().overworld(), clan.clanUUID, playerJoinedLog);
+            this.registerLog(player.serverLevel().getServer().overworld(), clan.clanUUID, playerJoinedLog, ClanObjects.ClanLogEntry.Type.PLAYERS);
 
         });
 
@@ -946,6 +1182,41 @@ public class ClanData extends SavedData {
         return true;
     }
 
+    public boolean requestJoin(ServerPlayer requester, UUID clanUUID, ServerLevel level, String msg) {
+        Clan clan = getClan(clanUUID);
+        if (clan == null) return false;
+        if (requester == null) return false;
+        UUID playerUUID = requester.getUUID();
+        if (pendingJoins.containsKey(playerUUID)) return false;
+
+        boolean alreadyRequested = clan.joinRequests.stream()
+                .anyMatch(req -> req.getApplicantUUID().equals(playerUUID));
+        if (alreadyRequested) return false;
+
+        clan.joinRequests.add(new ClanObjects.JoinRequest(requester, clan, msg));
+
+        for (UUID uuid : clan.members.keySet()) {
+            if (canManage(clan, uuid)) {
+                ServerPlayer manager = level.getServer().getPlayerList().getPlayer(uuid);
+                if (manager != null) {
+                    manager.sendSystemMessage(
+                            Component.empty()
+                                    .append(Component.literal("[" + clan.name + "] ").withStyle(Style.EMPTY.withColor(clan.color)))
+                                    .append(Component.translatable("clan.join_request.chatmessage",
+                                            logFormattedPlayerName(requester),
+                                            Component.literal(clan.name).withStyle(Style.EMPTY.withColor(clan.color))
+                                            )
+                                    )
+                    );
+                }
+            }
+        }
+
+        setDirty();
+
+        return true;
+    }
+
     public boolean removeMember(ServerPlayer player, UUID clanUUID) {
         Clan clan = getClan(clanUUID);
         if (clan == null) return false;
@@ -955,7 +1226,6 @@ public class ClanData extends SavedData {
         if (!clan.members.containsKey(playerUUID)) return false;
 
         clan.members.remove(playerUUID);
-        clan.memberPerms.remove(playerUUID);
 
         CapabilityManager.attachmentProvider(player, ModAttachments.PLAYER_WCE_DATA, cap -> {
             cap.setClanName("None");
@@ -977,7 +1247,7 @@ public class ClanData extends SavedData {
                     Component.literal(clan.name).withStyle(Style.EMPTY.withColor(clan.color))
             );
 
-            this.registerLog(player.serverLevel().getServer().overworld(), clan.clanUUID, playerLeftLog);
+            this.registerLog(player.serverLevel().getServer().overworld(), clan.clanUUID, playerLeftLog, ClanObjects.ClanLogEntry.Type.PLAYERS);
         });
         player.sendSystemMessage(Component.translatable("clan.client_clan_left").withStyle(ChatFormatting.YELLOW));
 
@@ -999,7 +1269,6 @@ public class ClanData extends SavedData {
         if (!clan.members.containsKey(targetUUID)) return false;
 
         clan.members.remove(targetUUID);
-        clan.memberPerms.remove(targetUUID);
 
         setDirty();
         return true;
@@ -1018,9 +1287,9 @@ public class ClanData extends SavedData {
                 Component.literal(newRank.name()).withStyle(ChatFormatting.GOLD)
         );
 
-        this.registerLog(player.serverLevel().getServer().overworld(), clan.clanUUID, playerRankChangeLog);
+        this.registerLog(player.serverLevel().getServer().overworld(), clan.clanUUID, playerRankChangeLog, ClanObjects.ClanLogEntry.Type.PLAYERS);
 
-        clan.members.put(playerUUID, newRank);
+        clan.members.get(playerUUID).setRank(newRank);
         setDirty();
         return true;
     }
@@ -1031,7 +1300,7 @@ public class ClanData extends SavedData {
 
         if (!clan.members.containsKey(targetUUID)) return false;
 
-        clan.members.put(targetUUID, newRank);
+        clan.members.get(targetUUID).setRank(newRank);
         setDirty();
         return true;
     }
@@ -1042,7 +1311,6 @@ public class ClanData extends SavedData {
         if (clan == null) return false;
 
         clan.members.clear();
-        clan.memberPerms.clear();
 
         for (ChunkPos chunkPos : clan.claimedTerritory.keySet()) {
             removeMarkersFromChunk(level.getServer().overworld(), chunkPos);
@@ -1080,16 +1348,16 @@ public class ClanData extends SavedData {
         return clans.get(clanUUID);
     }
 
-    public void registerLog(ServerLevel level, UUID clanUUID, Component message) {
+    public void registerLog(ServerLevel level, UUID clanUUID, Component message, ClanObjects.ClanLogEntry.Type type) {
         Clan clan = getClan(clanUUID);
         if (clan == null) return;
 
         long time = level.getGameTime();
 
-        clan.logs.add(new ClanLogEntry(time, message));
+        clan.logs.add(new ClanObjects.ClanLogEntry(time, message, type));
 
-        if (clan.logs.size() > 300) {
-            clan.logs.remove(0);
+        if (clan.logs.size() > 400) {
+            clan.logs.removeFirst();
         }
 
         setDirty();
@@ -1114,8 +1382,11 @@ public class ClanData extends SavedData {
     }
 
     public boolean canManage(Clan clan, UUID player) {
-        ClanPlayerRank rank = clan.members.get(player);
-        ClanPermissions perms = clan.memberPerms.get(player);
+        if (!clan.members.containsKey(player)) return false;
+
+        ClanPlayerRank rank = clan.members.get(player).getRank();
+        ClanPermissions perms = clan.members.get(player).getPermissions();
+
         if (rank == null) return false;
         if (perms == null) return false;
 
@@ -1129,10 +1400,12 @@ public class ClanData extends SavedData {
     public boolean canManagePlayer(UUID clanUUID, UUID managerUUID, UUID targetUUID) {
         ClanData.Clan clan = getClan(clanUUID);
         if (clan == null) return false;
-        ClanPermissions managerPerms = clan.memberPerms.get(managerUUID);
-        ClanPermissions targetPerms = clan.memberPerms.get(targetUUID);
-        if (!clan.memberPerms.containsKey(managerUUID)) return false;
-        if (!clan.memberPerms.containsKey(targetUUID)) return false;
+
+        if (!clan.members.containsKey(targetUUID)) return false;
+        if (!clan.members.containsKey(managerUUID)) return false;
+
+        ClanPermissions managerPerms = clan.members.get(managerUUID).getPermissions();
+        ClanPermissions targetPerms = clan.members.get(targetUUID).getPermissions();
 
 
         if (targetPerms == ClanPermissions.OWNER) return false;
@@ -1143,8 +1416,11 @@ public class ClanData extends SavedData {
     }
 
     public boolean canInvite(Clan clan, UUID player) {
-        ClanPlayerRank rank = clan.members.get(player);
-        ClanPermissions perms = clan.memberPerms.get(player);
+        if (!clan.members.containsKey(player)) return false;
+
+        ClanPlayerRank rank = clan.members.get(player).getRank();
+        ClanPermissions perms = clan.members.get(player).getPermissions();
+
         if (rank == null) return false;
         if (perms == null) return false;
 
@@ -1156,7 +1432,9 @@ public class ClanData extends SavedData {
     }
 
     public boolean canCommandWarriors(Clan clan, UUID player) {
-        ClanPermissions perms = clan.memberPerms.get(player);
+        if (!clan.members.containsKey(player)) return false;
+
+        ClanPermissions perms = clan.members.get(player).getPermissions();
         if (perms == null) return false;
 
         boolean can = (perms != ClanPermissions.GUEST);
@@ -1167,108 +1445,63 @@ public class ClanData extends SavedData {
     @Override
     public CompoundTag save(CompoundTag tag, HolderLookup.Provider provider) {
 
-        tag.putInt("Version", DATA_VERSION);
         ListTag clanList = new ListTag();
 
         for (Clan clan : clans.values()) {
 
             CompoundTag clanTag = new CompoundTag();
-            clanTag.putUUID("ClanUUID", clan.clanUUID);
-            clanTag.putString("Name", clan.name);
-            clanTag.putInt("Color", clan.color);
-
-            clanTag.putUUID("Leader", clan.leader);
-            clanTag.putString("NameKey", clan.normalizedName);
-            clanTag.putString("LeaderName", clan.leaderName);
-            clanTag.putString("ClanBio", clan.clanBioSentence);
-            clanTag.putInt("SymbolIndex", clan.clanSymbolIndex);
-
-
-            ListTag members = new ListTag();
-            for (var entry : clan.members.entrySet()) {
-                CompoundTag m = new CompoundTag();
-                m.putUUID("UUID", entry.getKey());
-                m.putString("Rank", entry.getValue().name());
-                members.add(m);
-            }
-
-            clanTag.put("Members", members);
-
-            ListTag catList = new ListTag();
-            for (ClanCat cat : clan.clanCats.values()) {
-                catList.add(cat.save(provider));
-            }
-            clanTag.put("ClanCats", catList);
-
-
-            ListTag logList = new ListTag();
-            for (ClanLogEntry log : clan.logs) {
-                logList.add(log.save(provider));
-            }
-            clanTag.put("Logs", logList);
-
-
-            ListTag permsList = new ListTag();
-            for (var entry : clan.memberPerms.entrySet()) {
-                CompoundTag p = new CompoundTag();
-                p.putUUID("UUID", entry.getKey());
-                p.putString("Perm", entry.getValue().name());
-                permsList.add(p);
-            }
-            clanTag.put("Permissions", permsList);
+            clan.serializeNBT(clanTag, provider);
 
             clanList.add(clanTag);
-
-            CompoundTag territoryTag = new CompoundTag();
-            territoryTag = saveTerritory(clan.claimedTerritory);
-            clanTag.put("Territory", territoryTag);
-
-            if (clan.coreTerritory != null) {
-                CompoundTag coreTag = new CompoundTag();
-                coreTag.putInt("x", clan.coreTerritory.x);
-                coreTag.putInt("z", clan.coreTerritory.z);
-
-                clanTag.put("CoreTerritory", coreTag);
-            }
-
         }
         tag.put("Clans", clanList);
 
 
 
 
-        ListTag morphList = new ListTag();
-        for (var entry : playerMorphNames.entrySet()) {
+//        ListTag morphList = new ListTag();
+//        for (var entry : playerMorphNames.entrySet()) {
+//            CompoundTag morphTag = new CompoundTag();
+//            morphTag.putUUID("UUID", entry.getKey());
+//            morphTag.putString("MorphName", entry.getValue());
+//            morphList.add(morphTag);
+//        }
+//        tag.put("PlayerMorphNames", morphList);
+//
+//        ListTag morphDataList = new ListTag();
+//        for (var entry : playerMorphData.entrySet()) {
+//            CompoundTag morphTag = new CompoundTag();
+//            morphTag.putUUID("UUID", entry.getKey());
+//
+//            CompoundTag morphData = new CompoundTag();
+//            WCGenetics.writeGeneticsNBT(morphData, entry.getValue().genetics, entry.getValue().variants,
+//                    entry.getValue().chimerasGenetics, entry.getValue().chimeraVariants,
+//                    entry.getValue().onGeneticalSkin, entry.getValue().morphSkin);
+//
+//            morphTag.put("MorphData", morphData);
+//
+//            morphDataList.add(morphTag);
+//        }
+//        tag.put("PlayerMorphData", morphDataList);
+
+        ListTag playerList = new ListTag();
+        for (var entry : players.entrySet()) {
             CompoundTag morphTag = new CompoundTag();
+
             morphTag.putUUID("UUID", entry.getKey());
-            morphTag.putString("MorphName", entry.getValue());
-            morphList.add(morphTag);
+            entry.getValue().serialize(morphTag);
+
+            playerList.add(morphTag);
         }
-        tag.put("PlayerMorphNames", morphList);
+        tag.put("Players", playerList);
 
-        ListTag morphDataList = new ListTag();
-        for (var entry : playerMorphData.entrySet()) {
-            CompoundTag morphTag = new CompoundTag();
-            morphTag.putUUID("UUID", entry.getKey());
-
-            CompoundTag morphData = new CompoundTag();
-            WCGenetics.writeGeneticsNBT(morphData, entry.getValue().genetics, entry.getValue().variants,
-                    entry.getValue().chimerasGenetics, entry.getValue().chimeraVariants,
-                    entry.getValue().onGeneticalSkin, entry.getValue().morphSkin);
-
-            morphTag.put("MorphData", morphData);
-
-            morphDataList.add(morphTag);
-        }
-        tag.put("PlayerMorphData", morphDataList);
+        ClanObjects.JoinRequest.serializeMap(pendingJoins, tag, provider);
 
         return tag;
     }
 
     public static ClanData load(CompoundTag tag, HolderLookup.Provider provider) {
         ClanData data = new ClanData();
-
-        int version = tag.contains("Version") ? tag.getInt("Version") : 0;
 
         if (!tag.contains("Clans", Tag.TAG_LIST)) {
             return data;
@@ -1277,110 +1510,59 @@ public class ClanData extends SavedData {
         ListTag clanList = tag.getList("Clans", Tag.TAG_COMPOUND);
         for (Tag t : clanList) {
             CompoundTag clanTag = (CompoundTag) t;
-
-            Clan clan = new Clan();
-            clan.clanUUID = clanTag.getUUID("ClanUUID");
-            clan.name = clanTag.getString("Name");
-            clan.color = clanTag.getInt("Color");
-            clan.leader = clanTag.getUUID("Leader");
-            clan.leaderName = clanTag.getString("LeaderName");
-            clan.clanBioSentence = clanTag.getString("ClanBio");
-            clan.clanSymbolIndex = clanTag.getInt("SymbolIndex");
-
-            clan.normalizedName = clanTag.getString("NameKey");
-
-            clan.members = new HashMap<>();
-            ListTag members = clanTag.getList("Members", Tag.TAG_COMPOUND);
-            for (Tag m : members) {
-                CompoundTag mt = (CompoundTag) m;
-                clan.members.put(
-                        mt.getUUID("UUID"),
-                        ClanPlayerRank.valueOf(mt.getString("Rank"))
-                );
-            }
-
-            ListTag catList = clanTag.getList("ClanCats", Tag.TAG_COMPOUND);
-            for (int i = 0; i < catList.size(); i++) {
-                CompoundTag catTag = catList.getCompound(i);
-                ClanCat cat = ClanCat.load(catTag, provider);
-
-                clan.clanCats.put(cat.catUUID, cat);
-            }
-
-
-            if (clanTag.contains("Logs", Tag.TAG_LIST)) {
-                ListTag logList = clanTag.getList("Logs", Tag.TAG_COMPOUND);
-                for (int i = 0; i < logList.size(); i++) {
-                    CompoundTag logTag = logList.getCompound(i);
-                    clan.logs.add(ClanLogEntry.load(logTag, provider));
-                }
-            }
-
-            clan.memberPerms = new HashMap<>();
-
-            if (clanTag.contains("Permissions", Tag.TAG_LIST)) {
-                ListTag permsList = clanTag.getList("Permissions", Tag.TAG_COMPOUND);
-                for (Tag p : permsList) {
-                    CompoundTag pt = (CompoundTag) p;
-                    clan.memberPerms.put(
-                            pt.getUUID("UUID"),
-                            ClanPermissions.valueOf(pt.getString("Perm"))
-                    );
-                }
-            }
-
-            if (clanTag.contains("Territory", Tag.TAG_COMPOUND)) {
-                clan.claimedTerritory = loadTerritory(clanTag.getCompound("Territory"));
-            }
-
-            if (clanTag.contains("CoreTerritory", Tag.TAG_COMPOUND)) {
-                CompoundTag coreTag = clanTag.getCompound("CoreTerritory");
-
-                int x = coreTag.getInt("x");
-                int z = coreTag.getInt("z");
-
-                clan.coreTerritory = new ChunkPos(x, z);
-            }
-
-
+            Clan clan = Clan.deserializeNBT(clanTag, provider);
             data.clans.put(clan.clanUUID, clan);
         }
 
-        if (tag.contains("PlayerMorphNames", Tag.TAG_LIST)) {
-            ListTag morphList = tag.getList("PlayerMorphNames", Tag.TAG_COMPOUND);
+//        if (tag.contains("PlayerMorphNames", Tag.TAG_LIST)) {
+//            ListTag morphList = tag.getList("PlayerMorphNames", Tag.TAG_COMPOUND);
+//            for (Tag t : morphList) {
+//                CompoundTag morphTag = (CompoundTag) t;
+//                data.playerMorphNames.put(
+//                        morphTag.getUUID("UUID"),
+//                        morphTag.getString("MorphName")
+//                );
+//            }
+//        }
+//
+//        if (tag.contains("PlayerMorphData", Tag.TAG_LIST)) {
+//            ListTag morphList = tag.getList("PlayerMorphData", Tag.TAG_COMPOUND);
+//            for (Tag t : morphList) {
+//                CompoundTag morphTag = (CompoundTag) t;
+//
+//                WCGenetics.PackedGeneticData morphData;
+//                if (morphTag.contains("MorphData")) {
+//                    morphData = WCGenetics.loadGeneticsNBT(morphTag.getCompound("MorphData"));
+//                } else {
+//                    morphData = WCGenetics.PackedGeneticData.empty();
+//                }
+//
+//                data.playerMorphData.put(
+//                        morphTag.getUUID("UUID"),
+//                        morphData
+//                );
+//            }
+//        }
+
+        if (tag.contains("Players", Tag.TAG_COMPOUND)) {
+            ListTag morphList = tag.getList("Players", Tag.TAG_COMPOUND);
             for (Tag t : morphList) {
                 CompoundTag morphTag = (CompoundTag) t;
-                data.playerMorphNames.put(
-                        morphTag.getUUID("UUID"),
-                        morphTag.getString("MorphName")
-                );
+
+                UUID uuid = morphTag.getUUID("UUID");
+                ClanObjects.Player player = ClanObjects.Player.deserialize(morphTag);
+
+                data.players.put(uuid, player);
             }
         }
 
-        if (tag.contains("PlayerMorphData", Tag.TAG_LIST)) {
-            ListTag morphList = tag.getList("PlayerMorphData", Tag.TAG_COMPOUND);
-            for (Tag t : morphList) {
-                CompoundTag morphTag = (CompoundTag) t;
-
-                WCGenetics.PackedGeneticData morphData;
-                if (morphTag.contains("MorphData")) {
-                    morphData = WCGenetics.loadGeneticsNBT(morphTag.getCompound("MorphData"));
-                } else {
-                    morphData = WCGenetics.PackedGeneticData.empty();
-                }
-
-                data.playerMorphData.put(
-                        morphTag.getUUID("UUID"),
-                        morphData
-                );
-            }
-        }
+        data.pendingJoins = ClanObjects.JoinRequest.deserializeMap(tag, provider);
 
         return data;
     }
 
     public static ClanData get(ServerLevel level) {
-        return level.getDataStorage().computeIfAbsent(
+        return level.getServer().overworld().getDataStorage().computeIfAbsent(
                 new SavedData.Factory<>(ClanData::new, ClanData::load),
                 "wce_clans"
         );
@@ -1388,43 +1570,6 @@ public class ClanData extends SavedData {
 
     public List<Clan> getAllClans() {
         return new ArrayList<>(clans.values());
-    }
-
-    @Nullable
-    public Clan getClanByCat(UUID catUUID) {
-        for (Clan clan : clans.values()) {
-            if (clan.clanCats.containsKey(catUUID)) {
-                return clan;
-            }
-        }
-        return null;
-    }
-
-    public void checkForEmptyClans(ServerLevel serverLevel) {
-
-        Iterator<Clan> clanIterator = clans.values().iterator();
-
-        while(clanIterator.hasNext()){
-            Clan clan = clanIterator.next();
-
-            Iterator<UUID> iterator = clan.members.keySet().iterator();
-            while (iterator.hasNext()) {
-                UUID uuid = iterator.next();
-                ServerPlayer player = serverLevel.getServer().getPlayerList().getPlayer(uuid);
-                if (player != null) {
-                    UUID playerClanUUID = player.getData(ModAttachments.PLAYER_WCE_DATA)
-                            .getCurrentClanUUID();
-
-                    if (!playerClanUUID.equals(clan.clanUUID)) {
-                        iterator.remove();
-                    }
-                }
-            }
-
-            if(clan.members.isEmpty()){
-                clanIterator.remove();
-            }
-        }
     }
 
 
@@ -1452,6 +1597,15 @@ public class ClanData extends SavedData {
         }
 
         return result;
+    }
+
+    public void updateScreen(Clan clan, ServerPlayer player) {
+        Map<UUID, ClanObjects.Player> members = new HashMap<>();
+        for (UUID uuid : clan.members.keySet()) {
+            members.put(uuid, getPlayer(uuid));
+        }
+        ClientClans.Entry entry = new ClientClans.Entry(clan, canManage(clan, player.getUUID()), members);
+        ModPackets.sendToPlayer(new UpdateClanEntryPacket(entry), player);
     }
 
 }

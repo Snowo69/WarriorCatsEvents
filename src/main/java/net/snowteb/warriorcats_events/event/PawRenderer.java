@@ -67,8 +67,6 @@ public class PawRenderer {
 
             poseStack.pushPose();
 
-            float bone0rotX = bone.getRotX(), bone0rotY = bone.getRotY(), bone0rotZ = bone.getRotZ();
-            float bone0posX = bone.getPosX(), bone0posY = bone.getPosY(), bone0posZ = bone.getPosZ();
 
             {
                 poseStack.translate(-1.1, -1.5, 1.3);
@@ -104,8 +102,6 @@ public class PawRenderer {
 
             model.getBone("front_right_legDOWN").ifPresent(b -> {
 
-                float bone1rotX = b.getRotX(), bone1rotY = b.getRotY(), bone1rotZ = b.getRotZ();
-                float bone1posX = b.getPosX(), bone1posY = b.getPosY(), bone1posZ = b.getPosZ();
 
                 b.setRotX(0); b.setRotY(0); b.setRotZ(0);
                 b.setPosX(0); b.setPosY(0); b.setPosZ(0);
@@ -140,10 +136,10 @@ public class PawRenderer {
                             }
                         });
 
-                bone.setRotX(bone0rotX); bone.setRotY(bone0rotY); bone.setRotZ(bone0rotZ);
-                bone.setPosX(bone0posX); bone.setPosY(bone0posY); bone.setPosZ(bone0posZ);
-                b.setRotX(bone1rotX); b.setRotY(bone1rotY); b.setRotZ(bone1rotZ);
-                b.setPosX(bone1posX); b.setPosY(bone1posY); b.setPosZ(bone1posZ);
+                bone.setRotX(0); bone.setRotY(0); bone.setRotZ(0);
+                bone.setPosX(0); bone.setPosY(0); bone.setPosZ(0);
+                b.setRotX(0); b.setRotY(0); b.setRotZ(0);
+                b.setPosX(0); b.setPosY(0); b.setPosZ(0);
 
             });
 
@@ -159,8 +155,6 @@ public class PawRenderer {
 
             poseStack.pushPose();
 
-            float bone0rotX = bone.getRotX(), bone0rotY = bone.getRotY(), bone0rotZ = bone.getRotZ();
-            float bone0posX = bone.getPosX(), bone0posY = bone.getPosY(), bone0posZ = bone.getPosZ();
 
             {
                 poseStack.translate(-1.5, 1.4, 2.0);
@@ -199,8 +193,6 @@ public class PawRenderer {
 
             model.getBone("front_left_leg2down").ifPresent(b -> {
 
-                float bone1rotX = b.getRotX(), bone1rotY = b.getRotY(), bone1rotZ = b.getRotZ();
-                float bone1posX = b.getPosX(), bone1posY = b.getPosY(), bone1posZ = b.getPosZ();
 
                 b.setRotX(0); b.setRotY(0); b.setRotZ(0);
                 b.setPosX(0); b.setPosY(0); b.setPosZ(0);
@@ -235,10 +227,10 @@ public class PawRenderer {
                             }
                         });
 
-                bone.setRotX(bone0rotX); bone.setRotY(bone0rotY); bone.setRotZ(bone0rotZ);
-                bone.setPosX(bone0posX); bone.setPosY(bone0posY); bone.setPosZ(bone0posZ);
-                b.setRotX(bone1rotX); b.setRotY(bone1rotY); b.setRotZ(bone1rotZ);
-                b.setPosX(bone1posX); b.setPosY(bone1posY); b.setPosZ(bone1posZ);
+                bone.setRotX(0); bone.setRotY(0); bone.setRotZ(0);
+                bone.setPosX(0); bone.setPosY(0); bone.setPosZ(0);
+                b.setRotX(0); b.setRotY(0); b.setRotZ(0);
+                b.setPosX(0); b.setPosY(0); b.setPosZ(0);
 
             });
 

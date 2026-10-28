@@ -13,6 +13,7 @@ import net.minecraft.world.entity.Entity;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.attachments.*;
+import net.snowteb.warriorcats_events.clan.ClanObjects;
 import net.snowteb.warriorcats_events.entity.custom.wcat.WCGenetics;
 import net.snowteb.warriorcats_events.network.packet.s2c.clan.S2CSyncClanDataPacket;
 import net.snowteb.warriorcats_events.clan.ClanData;
@@ -78,7 +79,7 @@ public class SaveClanDataPacket implements CustomPacketPayload {
             ClanData data = ClanData.get(player.serverLevel().getServer().overworld());
 
             CapabilityManager.attachmentProvider(player, ModAttachments.PLAYER_WCE_DATA, cap -> {
-                data.playerMorphNames.put(player.getUUID(), cap.getMorphName());
+                data.getPlayer(player).setMorphName(cap.getMorphName());
 
                 WCGenetics.PackedGeneticData morphData =
                         new WCGenetics.PackedGeneticData(cap.getPlayerGenetics(),
@@ -87,7 +88,7 @@ public class SaveClanDataPacket implements CustomPacketPayload {
                                 cap.getPlayerChimeraVariants(),
                                 cap.isOnGeneticalSkin(), cap.getVariantData());
 
-                data.playerMorphData.put(player.getUUID(), morphData);
+                data.getPlayer(player).setGenetics(morphData);
 
                 ClanData.Clan clan = data.getClan(cap.getCurrentClanUUID());
                 if (clan != null) {
@@ -96,9 +97,9 @@ public class SaveClanDataPacket implements CustomPacketPayload {
                             Component.literal(oldMorphName).withStyle(ChatFormatting.AQUA),
                             Component.literal(cap.getMorphName()).withStyle(ChatFormatting.AQUA));
 
-                    data.registerLog(player.serverLevel().getServer().overworld(), clan.clanUUID, message);
+                    data.registerLog(player.serverLevel().getServer().overworld(), clan.clanUUID, message, ClanObjects.ClanLogEntry.Type.PLAYERS);
 
-                    if (clan.members.get(player.getUUID()) == ClanData.ClanPlayerRank.LEADER) {
+                    if (clan.members.containsKey(player.getUUID()) && clan.members.get(player.getUUID()).getRank() == ClanData.ClanPlayerRank.LEADER) {
                         clan.leaderName = cap.getMorphName();
                     }
 

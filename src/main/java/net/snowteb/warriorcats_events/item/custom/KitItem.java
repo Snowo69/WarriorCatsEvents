@@ -78,7 +78,7 @@ public class KitItem extends Item {
 
                 if (kitten == null) return InteractionResult.FAIL;
 
-                new Sequence(sPlayer.serverLevel()).wait(2).then(() -> {
+                new Sequence(sPlayer.serverLevel()).thenWait(2).then((lvl) -> {
                     ModPackets.sendToPlayer(new StCKitCreateScreenPacket(kitten.getId()), sPlayer);
                 }).run();
             }

@@ -78,8 +78,8 @@ public class CtSFishSuccesful implements CustomPacketPayload {
                         .subtract(Vec3.atCenterOf(msg.pos)).add(0,2,0)
                         .normalize();
                 fish.setDeltaMovement(direction.scale(0.8));
-                new Sequence(level).wait(20).then(
-                        () -> fish.addEffect(new MobEffectInstance(ModEffects.NUMB_EFFECT,
+                new Sequence(level).thenWait(20).then(
+                        (lvl) -> fish.addEffect(new MobEffectInstance(ModEffects.NUMB_EFFECT,
                                 1000, 0, false, false))
                 ).run();
             }

@@ -148,7 +148,7 @@ public class HerbMixingRockScreen extends AbstractContainerScreen<HerbMixingMenu
 
         for (Renderable renderable : this.renderables) {
             if (renderable instanceof SubRenderable sub) {
-                sub.tick();
+                sub.tickkkk();
             }
         }
     }

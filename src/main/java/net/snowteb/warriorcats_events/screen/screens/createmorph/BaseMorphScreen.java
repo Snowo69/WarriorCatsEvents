@@ -390,12 +390,12 @@ public class BaseMorphScreen extends Screen {
     public void tick() {
         for (Renderable renderable : this.renderables) {
             if (renderable instanceof SubRenderable sub) {
-                sub.tick();
+                sub.tickkkk();
             }
         }
         for (Renderable renderable : this.subSectionRenderables) {
             if (renderable instanceof SubRenderable sub) {
-                sub.tick();
+                sub.tickkkk();
             }
         }
         if (displayErrorTime > 0) displayErrorTime--;

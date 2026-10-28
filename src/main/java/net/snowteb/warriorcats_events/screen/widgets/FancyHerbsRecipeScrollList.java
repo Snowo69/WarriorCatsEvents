@@ -28,7 +28,9 @@ import java.util.function.BiPredicate;
 public class FancyHerbsRecipeScrollList extends AbstractSelectionList<FancyHerbsRecipeScrollList.Entry> implements SubRenderable {
 
     final int originalYPos0;
+    final int originalXPos0;
     final int originalYPos1;
+    final int originalXPos1;
     private BiPredicate<Double, Double> isClickableIn;
 
     List<Component> currentTooltip = new ArrayList<>();
@@ -37,6 +39,8 @@ public class FancyHerbsRecipeScrollList extends AbstractSelectionList<FancyHerbs
         super(mc, width, bottom - top, top, 50);
         originalYPos0 = top;
         originalYPos1 = bottom;
+        originalXPos0 = 0;
+        originalXPos1 = width;
     }
 
     public void addRecipes(List<RecipeHolder<HerbsRecipe>> recipes) {
@@ -178,6 +182,21 @@ public class FancyHerbsRecipeScrollList extends AbstractSelectionList<FancyHerbs
     @Override
     public void setClickableIn(BiPredicate<Double, Double> predicate) {
         isClickableIn = predicate;
+    }
+
+    @Override
+    public void adjustXPos(int xOffset) {
+        this.setX(originalXPos0 + xOffset);
+    }
+
+    @Override
+    public int getOriginalXPos0() {
+        return originalXPos0;
+    }
+
+    @Override
+    public int getOriginalXPos1() {
+        return originalXPos1;
     }
 
     @Override

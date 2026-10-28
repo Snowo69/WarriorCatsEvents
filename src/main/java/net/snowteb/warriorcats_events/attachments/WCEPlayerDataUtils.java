@@ -83,9 +83,11 @@ public class WCEPlayerDataUtils {
             }
 
             ClanData data = ClanData.get(((ServerLevel) level).getServer().overworld());
-            data.playerMorphData.put(player.getUUID(), new WCGenetics.PackedGeneticData(cap.getPlayerGenetics(),
+            WCGenetics.PackedGeneticData genetics = new WCGenetics.PackedGeneticData(cap.getPlayerGenetics(),
                     cap.getPlayerGeneticalVariants(), cap.getPlayerChimeraGenetics(),
-                    cap.getPlayerChimeraVariants(), cap.isOnGeneticalSkin(), cap.getVariantData()));
+                    cap.getPlayerChimeraVariants(), cap.isOnGeneticalSkin(), cap.getVariantData());
+
+            data.getPlayer(player).setGenetics(genetics);
             data.setDirty();
 
             cat.setIdlePose(cap.getIdlePose());

@@ -14,6 +14,7 @@ import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.attachments.CapabilityManager;
 import net.snowteb.warriorcats_events.attachments.ModAttachments;
 import net.snowteb.warriorcats_events.clan.ClanData;
+import net.snowteb.warriorcats_events.clan.ClanObjects;
 import net.snowteb.warriorcats_events.entity.custom.wcat.WCatEntity;
 import net.snowteb.warriorcats_events.network.ModPackets;
 import net.snowteb.warriorcats_events.network.packet.s2c.clan.S2CSyncClanDataPacket;
@@ -87,11 +88,11 @@ public class C2SRegisterClanPacket implements CustomPacketPayload {
                     ClanData.logFormattedPlayerName(player),
                     Component.literal(clan.name).withStyle(Style.EMPTY.withColor(clan.color)));
 
-            data.registerLog(level, clan.clanUUID, clanCreatedLog);
+            data.registerLog(level, clan.clanUUID, clanCreatedLog, ClanObjects.ClanLogEntry.Type.CUSTOM);
 
             level.getAllEntities().forEach(entity -> {
                 if (entity instanceof WCatEntity cat) {
-                    if (cat.isOwnedBy(player)) {
+                    if (cat.isOwnedBy(player) && cat.getRank() != WCatEntity.Rank.NONE) {
                         cat.setClanUUID(clan.clanUUID);
                         data.addClanCat(clan, cat);
 
@@ -100,7 +101,7 @@ public class C2SRegisterClanPacket implements CustomPacketPayload {
                                 Component.literal(clan.name).withStyle(Style.EMPTY.withColor(clan.color)));
 
                         if (cat.level() instanceof ServerLevel serverLevel) {
-                            data.registerLog(serverLevel, clan.clanUUID, catJoinedClanLog);
+                            data.registerLog(serverLevel, clan.clanUUID, catJoinedClanLog, ClanObjects.ClanLogEntry.Type.OTHERS);
                         }
                     }
                 }

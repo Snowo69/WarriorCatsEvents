@@ -128,14 +128,14 @@ public class UpdateClanDataPacket implements CustomPacketPayload {
             ClanData data = ClanData.get(player.serverLevel());
 
             CapabilityManager.attachmentProvider(player, ModAttachments.PLAYER_WCE_DATA, cap -> {
-                data.playerMorphNames.put(player.getUUID(), cap.getMorphName());
+                data.getPlayer(player).setMorphName(cap.getMorphName());
                 WCGenetics.PackedGeneticData morphData =
                         new WCGenetics.PackedGeneticData(cap.getPlayerGenetics(),
                                 cap.getPlayerGeneticalVariants(),
                                 cap.getPlayerChimeraGenetics(),
                                 cap.getPlayerChimeraVariants(),
                                 cap.isOnGeneticalSkin(), cap.getVariantData());
-                data.playerMorphData.put(player.getUUID(), morphData);
+                data.getPlayer(player).setGenetics(morphData);
                 data.setDirty();
             });
 

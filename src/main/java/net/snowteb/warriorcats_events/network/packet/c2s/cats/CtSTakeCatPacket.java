@@ -12,6 +12,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.attachments.ModAttachments;
 import net.snowteb.warriorcats_events.clan.ClanData;
+import net.snowteb.warriorcats_events.clan.ClanObjects;
 import net.snowteb.warriorcats_events.entity.custom.wcat.WCatEntity;
 
 import java.util.Objects;
@@ -68,13 +69,11 @@ public class CtSTakeCatPacket implements CustomPacketPayload {
 
                 cat.setOwnerUUID(player.getUUID());
 
-                String morphName = player.getData(ModAttachments.PLAYER_WCE_DATA).getMorphName();
-
                 Component message = Component.translatable("clan.player_took_cat",
                         ClanData.logFormattedPlayerName(player),
                         cat.hasCustomName() ? cat.getCustomName().copy() : Component.translatable("generic.catname"));
 
-                cat.registerClanLog(message);
+                cat.registerClanLog(message, ClanObjects.ClanLogEntry.Type.OTHERS);
 
 
                 Component catName = cat.hasCustomName() ? cat.getCustomName() : Component.translatable("generic.catname");

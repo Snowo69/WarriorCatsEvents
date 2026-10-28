@@ -15,6 +15,7 @@ import net.snowteb.warriorcats_events.network.ModPackets;
 import net.snowteb.warriorcats_events.network.packet.c2s.skilltree.ReqSkillDataPacket;
 import net.snowteb.warriorcats_events.screen.screens.createmorph.CreateMorphScreen;
 import net.snowteb.warriorcats_events.screen.widgets.ButtonScrollList;
+import net.snowteb.warriorcats_events.util.ModKeybinds;
 import org.joml.Matrix4f;
 import org.lwjgl.glfw.GLFW;
 
@@ -54,9 +55,6 @@ public class WCEOptionsScreen extends Screen {
         list.addButton(Component.translatable("screen.options.cosmetics"), () -> {
             player.connection.sendCommand("wce morph cosmetics");
         }, Component.translatable("screen.options.cosmetics.tip"));
-        list.addButton(Component.translatable("screen.options.manage_clan"), () -> {
-            player.connection.sendCommand("wce clan manage");
-        }, Component.translatable("screen.options.manage_clan.tip"));
         list.addButton(Component.translatable("screen.options.territory_map"), () -> {
             player.connection.sendCommand("wce clan map");
         }, Component.translatable("screen.options.territory_map.tip"));
@@ -167,7 +165,8 @@ public class WCEOptionsScreen extends Screen {
                 ||  pKeyCode == GLFW.GLFW_KEY_W
                 || pKeyCode == GLFW.GLFW_KEY_A
                 || pKeyCode == GLFW.GLFW_KEY_S
-                || pKeyCode == GLFW.GLFW_KEY_D) {
+                || pKeyCode == GLFW.GLFW_KEY_D
+                || pKeyCode == ModKeybinds.OPTIONS_KEY.getKey().getValue()) {
             this.onClose();
             return true;
         }

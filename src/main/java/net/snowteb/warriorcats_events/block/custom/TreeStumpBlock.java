@@ -37,6 +37,7 @@ import net.snowteb.warriorcats_events.attachments.ModAttachments;
 import net.snowteb.warriorcats_events.block.entity.TreeStumpBlockEntity;
 import net.snowteb.warriorcats_events.clan.ClanData;
 import net.snowteb.warriorcats_events.attachments.WCEPlayerData;
+import net.snowteb.warriorcats_events.clan.ClanObjects;
 import net.snowteb.warriorcats_events.particles.WCEParticles;
 import net.snowteb.warriorcats_events.zconfig.WCEServerConfig;
 import org.jetbrains.annotations.Nullable;
@@ -196,6 +197,7 @@ public class TreeStumpBlock extends BaseEntityBlock implements SimpleWaterlogged
 
                                 if (treeStumpBlockEntity.getProgressToReclaim() >= 100) {
 
+                                    treeStumpBlockEntity.setProgressToReclaim(0);
                                     double distance = 20;
                                     String closestPlayer = "";
                                     String closestMorphName = "";
@@ -243,7 +245,7 @@ public class TreeStumpBlock extends BaseEntityBlock implements SimpleWaterlogged
                                         );
 
 
-                                        data.registerLog(pLevel.getServer().overworld(), clanUUID, log1);
+                                        data.registerLog(pLevel.getServer().overworld(), clanUUID, log1, ClanObjects.ClanLogEntry.Type.OTHERS);
 
                                     }
 

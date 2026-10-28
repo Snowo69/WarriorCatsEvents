@@ -73,6 +73,8 @@ public class WCEPlayerData implements INBTSerializable<CompoundTag> {
 
     private int playerKitsCooldown = 0;
 
+    private boolean hasClanChat = false;
+
 
     public enum Age {
         KIT,
@@ -95,6 +97,11 @@ public class WCEPlayerData implements INBTSerializable<CompoundTag> {
     private WCGenetics.GeneticalVariants variants = new WCGenetics.GeneticalVariants();
     private WCGenetics chimeraPlayerGenetics = new WCGenetics();
     private WCGenetics.GeneticalChimeraVariants chimeraPlayerVariants = new WCGenetics.GeneticalChimeraVariants();
+
+
+    public WCGenetics.PackedGeneticData getGeneticData() {
+        return new WCGenetics.PackedGeneticData(genetics, variants, chimeraPlayerGenetics, chimeraPlayerVariants, isOnGeneticalSkin, variantData);
+    }
 
     public void setMateGenetics(WCGenetics mateGenetics) {
         this.mateGenetics = mateGenetics;
@@ -327,6 +334,13 @@ public class WCEPlayerData implements INBTSerializable<CompoundTag> {
         this.usingFancyFont = usingFancyFont;
     }
 
+    public boolean isInClanChat() {
+        return hasClanChat;
+    }
+    public void setInClanChat(boolean inClanChat) {
+        this.hasClanChat = inClanChat;
+    }
+
     public void copyFrom(WCEPlayerData source) {
         this.clanName = source.clanName;
         this.variantData = source.variantData;
@@ -346,6 +360,12 @@ public class WCEPlayerData implements INBTSerializable<CompoundTag> {
         this.characterBio = source.characterBio;
 
         this.isOnGeneticalSkin = source.isOnGeneticalSkin;
+
+        this.morphNameInChat = source.morphNameInChat;
+        this.usingFancyFont = source.usingFancyFont;
+        this.playerKitsCooldown = source.playerKitsCooldown;
+        this.idlePose = source.idlePose;
+        this.hasClanChat = source.hasClanChat;
 
         this.mateGenetics = source.mateGenetics;
 
@@ -418,7 +438,7 @@ public class WCEPlayerData implements INBTSerializable<CompoundTag> {
             nbt.putUUID("clanUUID", currentClanUUID);
         }
 
-        nbt.putString("mateName", this.mateName != null ? this.mateName.getString() : "Undefined");
+        nbt.putString("mateName", this.mateName != null ? this.mateName.getString() : "---");
 
         nbt.putInt("playerKitCooldown", this.playerKitsCooldown);
 

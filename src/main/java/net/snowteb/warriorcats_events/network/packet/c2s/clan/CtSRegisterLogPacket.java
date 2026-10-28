@@ -12,7 +12,12 @@ import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.clan.ClanData;
+import net.snowteb.warriorcats_events.clan.ClanObjects;
+import net.snowteb.warriorcats_events.client.ClientClans;
 import net.snowteb.warriorcats_events.commands.WCECommandHandles;
+import net.snowteb.warriorcats_events.network.ModPackets;
+import net.snowteb.warriorcats_events.network.packet.s2c.clan.DisplayClanMenuMessage;
+import net.snowteb.warriorcats_events.network.packet.s2c.clan.UpdateClanEntryPacket;
 
 import java.util.*;
 
@@ -27,7 +32,7 @@ public class CtSRegisterLogPacket implements CustomPacketPayload {
     }
 
     public static CtSRegisterLogPacket decode(FriendlyByteBuf buf) {
-        String message = buf.readUtf(140);
+        String message = buf.readUtf(250);
         UUID  clanuuid = buf.readUUID();
         return new CtSRegisterLogPacket(message, clanuuid);
     }
@@ -56,14 +61,15 @@ public class CtSRegisterLogPacket implements CustomPacketPayload {
                                 .append(Component.literal("] ").withStyle(ChatFormatting.DARK_GRAY))
                         .append(parseColoredText(packet.message, data).copy());
 
-                data.registerLog(player.serverLevel().getServer().overworld(), clan.clanUUID, finalMessage);
+                data.registerLog(player.serverLevel().getServer().overworld(), clan.clanUUID, finalMessage, ClanObjects.ClanLogEntry.Type.CUSTOM);
 
-                player.displayClientMessage(Component.translatable("clan.log_registered").withStyle(ChatFormatting.GREEN), false);
+                Component msg = Component.translatable("clan.log_registered").withStyle(ChatFormatting.GREEN);
+
+                ModPackets.sendToPlayer(new DisplayClanMenuMessage(msg, false), player);
+
+                data.updateScreen(clan, player);
 
 
-                WCECommandHandles.clanList(player, true, false);
-
-//                ModPackets.sendToPlayer(new OpenSpecificClanScreen(clan.name, clan.clanUUID), player);
 
             } else {
                 player.sendSystemMessage(Component.translatable("clan.player_not_clan").withStyle(ChatFormatting.GRAY));
@@ -79,7 +85,8 @@ public class CtSRegisterLogPacket implements CustomPacketPayload {
 
         String[] words = text.split("\\s+");
 
-        Collection<String> morphNames = data.playerMorphNames.values();
+        Collection<String> morphNames = data.players.values().stream().map(ClanObjects.Player::getMorphName).toList();
+
         Set<String> clanCatNames = new HashSet<>();
 
         for (ClanData.Clan clan : data.getAllClans()) {

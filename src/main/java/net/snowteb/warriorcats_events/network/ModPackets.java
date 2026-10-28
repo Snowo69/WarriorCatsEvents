@@ -242,12 +242,6 @@ public class ModPackets {
                 (pkt, ctx) -> KittingInteractionPacket.handle(pkt, ctx)
         );
 
-        registrar.playToClient(
-                S2CManageClanPacket.TYPE,
-                S2CManageClanPacket.CODEC,
-                (pkt, ctx) -> S2CManageClanPacket.handle(pkt, ctx)
-        );
-
         registrar.playToServer(
                 C2SRegisterClanPacket.TYPE,
                 C2SRegisterClanPacket.CODEC,
@@ -258,12 +252,6 @@ public class ModPackets {
                 S2COpenRegisterClanScreenPacket.TYPE,
                 S2COpenRegisterClanScreenPacket.CODEC,
                 (pkt, ctx) -> S2COpenRegisterClanScreenPacket.handle(pkt, ctx)
-        );
-
-        registrar.playToClient(
-                S2CClanListPacket.TYPE,
-                S2CClanListPacket.CODEC,
-                (pkt, ctx) -> S2CClanListPacket.handle(pkt, ctx)
         );
 
         registrar.playToServer(
@@ -282,12 +270,6 @@ public class ModPackets {
                 SavePlayerGeneticsPacket.TYPE,
                 SavePlayerGeneticsPacket.CODEC,
                 (pkt, ctx) -> SavePlayerGeneticsPacket.handle(pkt, ctx)
-        );
-
-        registrar.playToServer(
-                CtSRequestManageScreenPacket.TYPE,
-                CtSRequestManageScreenPacket.CODEC,
-                (pkt, ctx) -> CtSRequestManageScreenPacket.handle(pkt, ctx)
         );
 
         registrar.playToServer(
@@ -503,6 +485,54 @@ public class ModPackets {
         registrar.playToClient(
                 SendDialoguePacket.TYPE,
                 SendDialoguePacket.CODEC,
+                (pkt, ctx) -> pkt.handle(ctx)
+        );
+
+        registrar.playToClient(
+                S2CClanPackagePacket.TYPE,
+                S2CClanPackagePacket.CODEC,
+                (pkt, ctx) -> pkt.handle(pkt, ctx)
+        );
+
+        registrar.playToClient(
+                DisplayClanMenuMessage.TYPE,
+                DisplayClanMenuMessage.CODEC,
+                (pkt, ctx) -> pkt.handle(ctx)
+        );
+
+        registrar.playToClient(
+                UpdateClanEntryPacket.TYPE,
+                UpdateClanEntryPacket.CODEC,
+                (pkt, ctx) -> pkt.handle(ctx)
+        );
+
+        registrar.playToServer(
+                ManageJoinRequestPacket.TYPE,
+                ManageJoinRequestPacket.CODEC,
+                (pkt, ctx) -> pkt.handle(pkt, ctx)
+        );
+
+        registrar.playToServer(
+                RequestClanJoinPacket.TYPE,
+                RequestClanJoinPacket.CODEC,
+                (pkt, ctx) -> pkt.handle(pkt, ctx)
+        );
+
+        registrar.playToServer(
+                CtSRenameTerritoryChunk.TYPE,
+                CtSRenameTerritoryChunk.CODEC,
+                (pkt, ctx) -> pkt.handle(pkt, ctx)
+        );
+
+        registrar.playToServer(
+                ManageClanPacket.TYPE,
+                ManageClanPacket.CODEC,
+                (pkt, ctx) -> pkt.handle(pkt, ctx)
+        );
+
+        registrar.playToClient(
+                SendBubbleMessagePacket.TYPE,
+                SendBubbleMessagePacket.CODEC,
                 (pkt, ctx) -> pkt.handle(ctx)
         );
 

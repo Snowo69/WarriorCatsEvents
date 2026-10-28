@@ -32,6 +32,7 @@ import net.snowteb.warriorcats_events.attachments.ModAttachments;
 import net.snowteb.warriorcats_events.attachments.WCEPlayerData;
 import net.snowteb.warriorcats_events.block.ModBlocks;
 import net.snowteb.warriorcats_events.clan.ClanData;
+import net.snowteb.warriorcats_events.clan.ClanObjects;
 import net.snowteb.warriorcats_events.client.LeapClientState;
 import net.snowteb.warriorcats_events.diseases.DiseaseManager;
 import net.snowteb.warriorcats_events.effect.ModEffects;
@@ -168,7 +169,7 @@ public class MobInteractModule {
                             .append(" has given Deathberries to ")
                             .append(cat.hasCustomName() ? cat.getCustomName().copy() : Component.literal("a kit"))
                             .append("!");
-                    cat.registerClanLog(message);
+                    cat.registerClanLog(message, ClanObjects.ClanLogEntry.Type.OTHERS);
                 }
 
                 cat.addEffect(new MobEffectInstance(ModEffects.DEATHBERRIES, 3600, 0));
@@ -236,7 +237,7 @@ public class MobInteractModule {
 
                 ClanData.Clan clan = data.getClan(clanUUID);
                 if (clan != null) {
-                    isValidDeputy = clan.members.get(pPlayer.getUUID()) == ClanData.ClanPlayerRank.DEPUTY
+                    isValidDeputy = (clan.members.containsKey(pPlayer.getUUID()) && clan.members.get(pPlayer.getUUID()).getRank() == ClanData.ClanPlayerRank.DEPUTY)
                             && data.canCommandWarriors(clan, pPlayer.getUUID())
                             && (cat.getHealth() > cat.getMaxHealth() / 2)
                             && !(cat.onBorderPatrolFlag || cat.onHuntingPatrolFlag || cat.returnHomeFlag || cat.tellingCatsToPatrol)
@@ -349,14 +350,12 @@ public class MobInteractModule {
 
             cat.setNameColor(cat.getRank());
 
-            String morphName = pPlayer.getData(ModAttachments.PLAYER_WCE_DATA).getMorphName();
-
             Component message = Component.translatable("wcat.change_name_log",
                     ClanData.logFormattedPlayerName(pPlayer),
                     oldName,
                     cat.hasCustomName() ? cat.getCustomName().copy() : Component.literal("null"));
 
-            cat.registerClanLog(message);
+            cat.registerClanLog(message, ClanObjects.ClanLogEntry.Type.PLAYERS);
             cat.updateClanCatData();
             cat.updateMatesName();
             cat.updateNest();
@@ -407,14 +406,13 @@ public class MobInteractModule {
 
         cat.setNameColor(cat.getRank());
 
-        String morphName = pPlayer.getData(ModAttachments.PLAYER_WCE_DATA).getMorphName();
 
         Component message = Component.translatable("wcat.change_name_log",
                 ClanData.logFormattedPlayerName(pPlayer),
                 oldName,
                 cat.hasCustomName() ? cat.getCustomName().copy() : Component.literal("null"));
 
-        cat.registerClanLog(message);
+        cat.registerClanLog(message, ClanObjects.ClanLogEntry.Type.PLAYERS);
         cat.updateClanCatData();
         cat.updateMatesName();
         cat.updateNest();
@@ -486,7 +484,7 @@ public class MobInteractModule {
                         cat.hasCustomName() ? cat.getCustomName() : Component.translatable("generic.catname"),
                         ClanData.logFormattedPlayerName(pPlayer));
 
-                cat.registerClanLog(messageLog);
+                cat.registerClanLog(messageLog, ClanObjects.ClanLogEntry.Type.OTHERS);
 
                 pPlayer.sendSystemMessage(message);
 
@@ -497,7 +495,7 @@ public class MobInteractModule {
                 WCGenetics finalMateGenetics = mateGenetics;
                 CapabilityManager.attachmentProvider(sPlayer, ModAttachments.PLAYER_WCE_DATA, cap -> {
                     cap.setMateUUID(cat.getUUID());
-                    cap.setMateName(cat.hasCustomName() ? cat.getCustomName() : Component.literal("Undefined"));
+                    cap.setMateName(cat.hasCustomName() ? cat.getCustomName() : cat.getName());
                     cap.setMateGenetics(finalMateGenetics);
                     ModPackets.sendToPlayer(new S2CSyncClanDataPacket(cap), sPlayer);
                 });
@@ -570,7 +568,7 @@ public class MobInteractModule {
                 cat.hasCustomName() ? cat.getCustomName() : Component.translatable("generic.catname"),
                 Component.literal(cat.getRank().name()).withStyle(ChatFormatting.YELLOW));
 
-        cat.registerClanLog(message);
+        cat.registerClanLog(message, ClanObjects.ClanLogEntry.Type.PLAYERS);
         cat.updateClanCatData();
 
         cat.sendRankMessage(pPlayer);
@@ -598,7 +596,7 @@ public class MobInteractModule {
                             ClanData.logFormattedPlayerName(pPlayer),
                             cat.hasCustomName() ? cat.getCustomName().copy() : Component.translatable("generic.catname"));
 
-                    cat.registerClanLog(message);
+                    cat.registerClanLog(message, ClanObjects.ClanLogEntry.Type.PLAYERS);
                 }
 
                 switch (cat.mode) {
@@ -645,8 +643,7 @@ public class MobInteractModule {
                 cat.tame(pPlayer);
                 cat.level().broadcastEntityEvent(cat, (byte) 7);
 
-                if (!cat.hasCustomName()) {
-                    int variant = cat.getVariant();
+                {
                     String[] prefixSet = cat.getPrefixForVariant();
 
                     String genderS;
@@ -667,18 +664,15 @@ public class MobInteractModule {
                         finalName = prefixSet[i] + WCatEntity.SUFIXES[j] + genderS;
                         cat.setRank(WARRIOR);
                     }
-                    //String finalName = prefixSet[i] + SUFIX[j] + genderS;
 
-                    cat.setCustomName(Component.literal(finalName));
-                    cat.setCustomNameVisible(true);
+                    if (!cat.hasCustomName()){
+                        cat.setCustomName(Component.literal(finalName));
+                        cat.setCustomNameVisible(true);
+                    }
                     cat.setPrefix(Component.literal(prefixSet[i]));
 
                     cat.setNameColor(cat.getRank());
-
                 }
-
-                cat.setNameColor(cat.getRank());
-
 
                 CapabilityManager.attachmentProvider(pPlayer ,ModAttachments.PLAYER_WCE_DATA, cap -> {
                     String clanName = cap.getClanName(pPlayer.level());
@@ -694,7 +688,7 @@ public class MobInteractModule {
                                     cat.hasCustomName() ? cat.getCustomName() : Component.translatable("generic.catname"),
                                     Component.literal(clan.name).withStyle(Style.EMPTY.withColor(clan.color)));
 
-                            cat.registerClanLog(catJoinedClanLog);
+                            cat.registerClanLog(catJoinedClanLog, ClanObjects.ClanLogEntry.Type.OTHERS);
                         }
                     }
 
@@ -709,7 +703,6 @@ public class MobInteractModule {
 
             } else {
                 cat.level().broadcastEntityEvent(cat, (byte) 6);
-                cat.setCustomName(null);
             }
         }
 

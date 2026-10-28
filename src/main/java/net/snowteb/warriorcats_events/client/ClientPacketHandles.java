@@ -5,7 +5,6 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -14,17 +13,19 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.attachments.CapabilityManager;
 import net.snowteb.warriorcats_events.attachments.ModAttachments;
+import net.snowteb.warriorcats_events.attachments.PlayerSkill;
 import net.snowteb.warriorcats_events.attachments.WCEPlayerData;
 import net.snowteb.warriorcats_events.diseases.Diseaseable;
 import net.snowteb.warriorcats_events.entity.custom.EagleEntity;
 import net.snowteb.warriorcats_events.entity.custom.wcat.WCGenetics;
 import net.snowteb.warriorcats_events.entity.custom.wcat.WCatEntity;
-import net.snowteb.warriorcats_events.network.packet.s2c.clan.S2CClanListPacket;
 import net.snowteb.warriorcats_events.screen.menus.SetPoseMenu;
 import net.snowteb.warriorcats_events.screen.screens.*;
+import net.snowteb.warriorcats_events.screen.screens.clan.FancyClanListScreen;
+import net.snowteb.warriorcats_events.screen.screens.clan.FancyCreateClanScreen;
+import net.snowteb.warriorcats_events.screen.screens.clan.FancySpecificClanScreen;
 import net.snowteb.warriorcats_events.screen.screens.createmorph.CreateMorphScreen;
 
 import java.util.List;
@@ -83,13 +84,13 @@ public class ClientPacketHandles {
             Minecraft mc = Minecraft.getInstance();
             if (mc.level == null) return;
 
-            mc.setScreen(new CreateClanScreen(morphName));
+            mc.setScreen(new FancyCreateClanScreen(morphName));
         });
 
     }
 
     public static void openClanListScreen(boolean seeingMyClan, boolean territoryMap) {
-        Screen parent = new ClanListScreen(seeingMyClan);
+        Screen parent = new FancyClanListScreen(seeingMyClan);
 
         if (territoryMap) {
             Minecraft.getInstance().execute(() -> Minecraft.getInstance().setScreen(new TerritoryMapScreen(parent)));
@@ -99,16 +100,12 @@ public class ClientPacketHandles {
         Minecraft.getInstance().execute(() -> Minecraft.getInstance().setScreen(parent));
     }
 
-    public static void openManageClanScreen(ClanInfo info) {
-        Minecraft.getInstance().execute(() -> Minecraft.getInstance().setScreen(new ManageClanScreen(info)));
-    }
-
-    public static void openSpecificClan(String clanName, UUID clanUUID) {
+    public static void openSpecificClan(ClientClans.Entry entry) {
         Minecraft.getInstance().execute(() -> {
             Minecraft mc = Minecraft.getInstance();
             if (mc.level == null) return;
 
-            mc.setScreen(new SpecificClanScreen(clanName, clanUUID));
+            mc.setScreen(new FancySpecificClanScreen(entry));
         });
 
     }
@@ -208,33 +205,15 @@ public class ClientPacketHandles {
         });
     }
 
-    public static void syncSkillData(int speedLevel, int hpLevel, int dmgLevel, int jumpLevel, int armorLevel, boolean climbUnlocked) {
+    public static void syncSkillData(PlayerSkill skill) {
         LocalPlayer player = Minecraft.getInstance().player;
         if (player == null) return;
 
         CapabilityManager.attachmentProvider(player, ModAttachments.PLAYER_SKILL, data -> {
-            data.setSpeedLevel(speedLevel);
-            data.setHPLevel(hpLevel);
-            data.setDMGLevel(dmgLevel);
-            data.setJumpLevel(jumpLevel);
-            data.setArmorLevel(armorLevel);
-            data.setClimbUnlocked(climbUnlocked);
+            data.copyFrom(skill);
         });
     }
 
-    public static void measurePacketSize(S2CClanListPacket msg) {
-        if (Minecraft.getInstance().player != null) {
-            RegistryAccess registryAccess = Minecraft.getInstance().level.registryAccess();
-            LocalPlayer localPlayer = Minecraft.getInstance().player;
-            if (WarriorCatsEvents.Collaborators.isOwner(localPlayer.getUUID())) {
-                if (localPlayer.isSpectator()) {
-                    int size = S2CClanListPacket.measure(msg, registryAccess);
-                    String text = "Size: " + size/1000 + " kb";
-                    localPlayer.sendSystemMessage(Component.literal(text));
-                }
-            }
-        }
-    }
 
     public static void openNametagScreen(ItemStack item, InteractionHand pUsedHand) {
         Minecraft.getInstance().execute(() -> {
@@ -256,5 +235,29 @@ public class ClientPacketHandles {
         }
     }
 
+    public static void displayScreenMessage(boolean error, Component message) {
+        Minecraft.getInstance().execute(() -> {
+            if (Minecraft.getInstance().screen instanceof AbstractWCEScreen screen) {
+                screen.displayMessage(message, error);
+            }
+        });
+    }
+
+    public static void updateClanEntry(ClientClans.Entry entry) {
+        Minecraft.getInstance().execute(() -> {
+            ClientClans.addClan(entry);
+
+            if (Minecraft.getInstance().screen instanceof FancySpecificClanScreen screen) {
+                screen.setClan(entry);
+            }
+        });
+    }
+
+    public static void addBubbleMessage(UUID sender, Component message) {
+        Minecraft.getInstance().execute(() -> {
+            int time = (int) (200 + message.getString().length()*0.7f);
+            EntityChatBubbleManager.add(sender, message, time);
+        });
+    }
 }
 

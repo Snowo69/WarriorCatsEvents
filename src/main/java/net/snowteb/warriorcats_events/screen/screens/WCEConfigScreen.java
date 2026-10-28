@@ -12,12 +12,11 @@ import net.snowteb.warriorcats_events.WCEClient;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
 import net.snowteb.warriorcats_events.compat.CompatibilitiesClient;
 import net.snowteb.warriorcats_events.screen.screens.createmorph.FancyDoubleSelectableButtonList;
-import net.snowteb.warriorcats_events.screen.widgets.GradientSwitchButton;
 import net.snowteb.warriorcats_events.screen.widgets.GradientToggleButton;
 import net.snowteb.warriorcats_events.zconfig.WCEClientConfig;
 import org.lwjgl.glfw.GLFW;
 
-import static net.snowteb.warriorcats_events.screen.screens.CreateClanScreen.BG_TEXTURE;
+import static net.snowteb.warriorcats_events.screen.screens.clan.FancyCreateClanScreen.BG_TEXTURE;
 
 @OnlyIn(Dist.CLIENT)
 public class WCEConfigScreen extends Screen {

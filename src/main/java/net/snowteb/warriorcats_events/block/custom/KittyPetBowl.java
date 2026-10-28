@@ -36,6 +36,7 @@ import net.snowteb.warriorcats_events.attachments.ModAttachments;
 import net.snowteb.warriorcats_events.block.entity.KittypetBowlBlockEntity;
 import net.snowteb.warriorcats_events.util.ModTags;
 import net.snowteb.warriorcats_events.zconfig.WCEPreyItemsConfig;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class KittyPetBowl extends BaseEntityBlock implements SimpleWaterloggedBlock {
@@ -266,6 +267,11 @@ public class KittyPetBowl extends BaseEntityBlock implements SimpleWaterloggedBl
 
         }
         return super.useItemOn(pStack, pState, pLevel, pPos, pPlayer, pHand, hitResult);
+    }
+
+    @Override
+    public @NotNull ItemStack pickupBlock(@Nullable Player pPlayer, LevelAccessor pLevel, BlockPos pPos, BlockState pState) {
+        return ItemStack.EMPTY;
     }
 
     public void updateBlockStateFromEntity(KittypetBowlBlockEntity bowlEntity, BlockState pState, Level pLevel, BlockPos pPos) {

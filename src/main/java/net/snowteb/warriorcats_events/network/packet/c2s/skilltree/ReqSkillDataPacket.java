@@ -25,9 +25,7 @@ public class ReqSkillDataPacket implements CustomPacketPayload {
             ServerPlayer player = (ServerPlayer) context.player();
 
             CapabilityManager.attachmentProvider(player, ModAttachments.PLAYER_SKILL, data -> {
-                ModPackets.sendToPlayer(new SyncSkillDataPacket(data.getSpeedLevel(),
-                        data.getHPLevel(), data.getDMGLevel(), data.getJumpLevel(),
-                        data.getArmorLevel(), data.isClimbUnlocked()), player);
+                ModPackets.sendToPlayer(new SyncSkillDataPacket(data), player);
             });
 
         });

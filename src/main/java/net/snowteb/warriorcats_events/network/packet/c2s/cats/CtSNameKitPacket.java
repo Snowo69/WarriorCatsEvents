@@ -11,6 +11,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.snowteb.warriorcats_events.WarriorCatsEvents;
+import net.snowteb.warriorcats_events.clan.ClanObjects;
 import net.snowteb.warriorcats_events.entity.custom.wcat.WCatEntity;
 
 public class CtSNameKitPacket implements CustomPacketPayload {
@@ -68,7 +69,7 @@ public class CtSNameKitPacket implements CustomPacketPayload {
                                     .append(Component.literal(sPlayer.getName().getString()).withStyle(ChatFormatting.GRAY))
                                     .append(Component.literal(")").withStyle(ChatFormatting.GRAY)));
 
-                    kit.registerClanLog(messageLog);
+                    kit.registerClanLog(messageLog, ClanObjects.ClanLogEntry.Type.OTHERS);
 
                     sPlayer.sendSystemMessage(
                             Component.translatable("item.warriorcats_events.kit.kit_born",
